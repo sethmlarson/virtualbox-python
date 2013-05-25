@@ -14,9 +14,8 @@ except:
     import builtin
 
 
-
 __doc__ = """\
-Welcome to the VirtualBox Main API documentation. This documentation
+  Welcome to the VirtualBox Main API documentation. This documentation
   describes the so-called VirtualBox Main API which comprises all public
   COM interfaces and components provided by the VirtualBox server and by the
   VirtualBox client library.
@@ -71,6 +70,8 @@ Welcome to the VirtualBox Main API documentation. This documentation
   character to upper case, some not). See the SDK reference for more details
   about how to call a method or attribute from a specific programming language.
 """
+
+
 lib_version = 1.3
 lib_app_uuid = '819B4D85-9CEE-493C-B6FC-64FFE759B3C9'
 lib_uuid = 'd7569351-1750-46f0-936e-bd127d5bc264'

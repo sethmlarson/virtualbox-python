@@ -525,7 +525,7 @@ def main(virtualbox_xidl):
     idl = xml.getElementsByTagName('idl')
     assert len(idl) == 1
     idl = idl[0]
-    lib_doc = '''\n__doc__ = """\\\n%s\n"""''' %get_doc(idl)
+    lib_doc = '''__doc__ = """\\\n  %s\n"""\n\n''' %get_doc(idl)
 
     # Process the library
     library = xml.getElementsByTagName('library')
