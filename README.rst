@@ -19,8 +19,6 @@ Simply run the following::
 
     > python setup.py install
     > python setup.py test
-    > python -m restq -h
-
 
 Example::
 
