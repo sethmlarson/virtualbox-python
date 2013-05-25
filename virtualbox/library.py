@@ -1,7 +1,7 @@
 # A Pythonic VirtalBox Main API
 #
-# Source code by Michael Dorman 
-#                mjdorma+pyvbox@gmail.com
+# By Michael Dorman.
+# Email mjdorma+pyvbox@gmail.com
 #
 # Note: Commenting, and API structure generation was carved from 
 #       VirtualBox project's VirtualBox.xidl Main API definition.
