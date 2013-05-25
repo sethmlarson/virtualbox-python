@@ -26,8 +26,8 @@ Example::
     import virtualbox
     vbox = virtualbox.VirtualBox()
     session = virtualbox.Session()
-    vm = vbox.find_vm('test_vm')
-    vm.launch_vm(session, 'headless', '')
+    vm = vbox.find_machine('test_vm')
+    progress = vm.launch_vm_process(session, 'headless', '')
     session.console ...
     #WIN WIN
 
