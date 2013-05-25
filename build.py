@@ -298,8 +298,8 @@ ATTR_GET = '''\
     @property
     def %(pname)s(self):
         """%(doc_action)s %(ntype)s value for '%(name)s'%(doc)s"""
-        value = self._get_attr('%(name)s')
-        return %(ntype)s(value)
+        ret = self.%(callname)s
+        return %(retval)s 
 '''
 ATTR_SET = '''\
     @%(pname)s.setter
@@ -330,6 +330,7 @@ def type_to_name(t):
 def process_interface_attribute(node):
     name = node.getAttribute('name')
     atype = node.getAttribute('type')
+    array = node.getAttribute('safearray') == 'yes'
     ntype = type_to_name(atype)
     readonly = node.getAttribute('readonly') == 'yes'
     if readonly:
@@ -344,8 +345,15 @@ def process_interface_attribute(node):
 
     code = []
     pname = pythonic_name(name)
-    code.append(ATTR_GET % dict(name=name, pname=pname, ntype=ntype, 
-                doc=doc, doc_action=doc_action))
+    if array:
+        callname = "_call_method('get%s')" % (name[0].upper() + name[1:])
+        retval = "[%s(a) for a in ret]" % ntype
+    else:
+        callname = "_get_attr('%s')" % name
+        retval = "%s(ret)" % (ntype)
+    code.append(ATTR_GET % dict(name=name, pname=pname, callname=callname, ntype=ntype, 
+                doc=doc, doc_action=doc_action,
+                retval=retval))
     if not readonly:
         if rdoc: 
             doc = "\n        %s\n        " % (rdoc)
