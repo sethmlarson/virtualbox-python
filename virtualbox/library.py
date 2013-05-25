@@ -1,7 +1,9 @@
-##### VirtalBox api #### 
+# A Pythonic VirtalBox Main API
 #
+# Source code by Michael Dorman 
+#                mjdorma+pyvbox@gmail.com
 #
-#    By Michael Dorman
+# Note: Commenting, and API structure generated from VirtualBox.xidl 
 #
 import sys
 import re
