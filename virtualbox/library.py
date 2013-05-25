@@ -1462,7 +1462,8 @@ class INATNetwork(Interface):
 
     @network_name.setter
     def network_name(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('NetworkName', value)
 
     @property
@@ -1473,7 +1474,8 @@ class INATNetwork(Interface):
 
     @enabled.setter
     def enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('enabled', value)
 
     @property
@@ -1489,7 +1491,8 @@ class INATNetwork(Interface):
 
     @network.setter
     def network(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('network', value)
 
     @property
@@ -1511,7 +1514,8 @@ class INATNetwork(Interface):
 
     @i_pv6_enabled.setter
     def i_pv6_enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('IPv6Enabled', value)
 
     @property
@@ -1524,7 +1528,8 @@ class INATNetwork(Interface):
 
     @i_pv6_prefix.setter
     def i_pv6_prefix(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('IPv6Prefix', value)
 
     @property
@@ -1535,7 +1540,8 @@ class INATNetwork(Interface):
 
     @advertise_default_i_pv6_route_enabled.setter
     def advertise_default_i_pv6_route_enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('advertiseDefaultIPv6RouteEnabled', value)
 
     @property
@@ -1546,7 +1552,8 @@ class INATNetwork(Interface):
 
     @need_dhcp_server.setter
     def need_dhcp_server(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('needDhcpServer', value)
 
     @property
@@ -1600,13 +1607,27 @@ class INATNetwork(Interface):
             The port number to forward.
 
         """
-        assert is_ipv6 is bool
-        assert rule_name is str
-        assert proto is NATProtocol
-        assert host_ip is str
-        assert host_port is int
-        assert guest_ip is str
-        assert guest_port is int
+        assert isinstance(is_ipv6, bool), \
+                "is_ipv6 is not an instance of bool"
+        
+        assert isinstance(rule_name, str), \
+                "rule_name is not an instance of str"
+        
+        assert isinstance(proto, NATProtocol), \
+                "proto is not an instance of NATProtocol"
+        
+        assert isinstance(host_ip, str), \
+                "host_ip is not an instance of str"
+        
+        assert isinstance(host_port, int), \
+                "host_port is not an instance of int"
+        
+        assert isinstance(guest_ip, str), \
+                "guest_ip is not an instance of str"
+        
+        assert isinstance(guest_port, int), \
+                "guest_port is not an instance of int"
+        
         self._call_method('addPortForwardRule',
                      in_p=[is_ipv6, rule_name, proto, host_ip, host_port, guest_ip, guest_port])
         
@@ -1618,8 +1639,12 @@ class INATNetwork(Interface):
         in rule_name of type str
 
         """
-        assert i_sipv6 is bool
-        assert rule_name is str
+        assert isinstance(i_sipv6, bool), \
+                "i_sipv6 is not an instance of bool"
+        
+        assert isinstance(rule_name, str), \
+                "rule_name is not an instance of str"
+        
         self._call_method('removePortForwardRule',
                      in_p=[i_sipv6, rule_name])
         
@@ -1630,7 +1655,9 @@ class INATNetwork(Interface):
             Type of internal network trunk.
 
         """
-        assert trunk_type is str
+        assert isinstance(trunk_type, str), \
+                "trunk_type is not an instance of str"
+        
         self._call_method('start',
                      in_p=[trunk_type])
         
@@ -1661,7 +1688,8 @@ class IDHCPServer(Interface):
 
     @enabled.setter
     def enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('enabled', value)
 
     @property
@@ -1723,10 +1751,18 @@ class IDHCPServer(Interface):
             invalid configuration supplied
         
         """
-        assert ip_address is str
-        assert network_mask is str
-        assert from_ip_address is str
-        assert to_ip_address is str
+        assert isinstance(ip_address, str), \
+                "ip_address is not an instance of str"
+        
+        assert isinstance(network_mask, str), \
+                "network_mask is not an instance of str"
+        
+        assert isinstance(from_ip_address, str), \
+                "from_ip_address is not an instance of str"
+        
+        assert isinstance(to_ip_address, str), \
+                "to_ip_address is not an instance of str"
+        
         self._call_method('setConfiguration',
                      in_p=[ip_address, network_mask, from_ip_address, to_ip_address])
         
@@ -1746,9 +1782,15 @@ class IDHCPServer(Interface):
             Failed to start the process.
         
         """
-        assert network_name is str
-        assert trunk_name is str
-        assert trunk_type is str
+        assert isinstance(network_name, str), \
+                "network_name is not an instance of str"
+        
+        assert isinstance(trunk_name, str), \
+                "trunk_name is not an instance of str"
+        
+        assert isinstance(trunk_type, str), \
+                "trunk_type is not an instance of str"
+        
         self._call_method('start',
                      in_p=[network_name, trunk_name, trunk_type])
         
@@ -2069,10 +2111,18 @@ class IVirtualBox(Interface):
             Fully qualified path where the machine would be created.
 
         """
-        assert name is str
-        assert group is str
-        assert create_flags is str
-        assert base_folder is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(group, str), \
+                "group is not an instance of str"
+        
+        assert isinstance(create_flags, str), \
+                "create_flags is not an instance of str"
+        
+        assert isinstance(base_folder, str), \
+                "base_folder is not an instance of str"
+        
         file_p =\
             self._call_method('composeMachineFilename',
                      in_p=[name, group, create_flags, base_folder])
@@ -2171,11 +2221,21 @@ class IVirtualBox(Interface):
             @a name is empty or @c null.
         
         """
-        assert settings_file is str
-        assert name is str
-        assert groups is str
-        assert os_type_id is str
-        assert flags is str
+        assert isinstance(settings_file, str), \
+                "settings_file is not an instance of str"
+        
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(groups, str), \
+                "groups is not an instance of str"
+        
+        assert isinstance(os_type_id, str), \
+                "os_type_id is not an instance of str"
+        
+        assert isinstance(flags, str), \
+                "flags is not an instance of str"
+        
         machine =\
             self._call_method('createMachine',
                      in_p=[settings_file, name, groups, os_type_id, flags])
@@ -2200,7 +2260,9 @@ class IVirtualBox(Interface):
             Settings file name invalid, not found or sharing violation.
         
         """
-        assert settings_file is str
+        assert isinstance(settings_file, str), \
+                "settings_file is not an instance of str"
+        
         machine =\
             self._call_method('openMachine',
                      in_p=[settings_file])
@@ -2226,7 +2288,9 @@ class IVirtualBox(Interface):
             Virtual machine was not created within this VirtualBox instance.
         
         """
-        assert machine is IMachine
+        assert isinstance(machine, IMachine), \
+                "machine is not an instance of IMachine"
+        
         self._call_method('registerMachine',
                      in_p=[machine])
         
@@ -2246,7 +2310,9 @@ class IVirtualBox(Interface):
             Could not find registered machine matching @a nameOrId.
         
         """
-        assert name_or_id is str
+        assert isinstance(name_or_id, str), \
+                "name_or_id is not an instance of str"
+        
         machine =\
             self._call_method('findMachine',
                      in_p=[name_or_id])
@@ -2264,7 +2330,9 @@ class IVirtualBox(Interface):
             All machines which matched.
 
         """
-        assert groups is str
+        assert isinstance(groups, str), \
+                "groups is not an instance of str"
+        
         machines =\
             self._call_method('getMachinesByGroups',
                      in_p=[groups])
@@ -2280,7 +2348,9 @@ class IVirtualBox(Interface):
             Machine states, corresponding to the machines.
 
         """
-        assert machines is IMachine
+        assert isinstance(machines, IMachine), \
+                "machines is not an instance of IMachine"
+        
         states =\
             self._call_method('getMachineStates',
                      in_p=[machines])
@@ -2346,8 +2416,12 @@ class IVirtualBox(Interface):
             @a location is a not valid file name (for file-based formats only).
         
         """
-        assert format_p is str
-        assert location is str
+        assert isinstance(format_p, str), \
+                "format_p is not an instance of str"
+        
+        assert isinstance(location, str), \
+                "location is not an instance of str"
+        
         medium =\
             self._call_method('createHardDisk',
                      in_p=[format_p, location])
@@ -2442,10 +2516,18 @@ class IVirtualBox(Interface):
             Medium has already been added to a media registry.
         
         """
-        assert location is str
-        assert device_type is DeviceType
-        assert access_mode is AccessMode
-        assert force_new_uuid is bool
+        assert isinstance(location, str), \
+                "location is not an instance of str"
+        
+        assert isinstance(device_type, DeviceType), \
+                "device_type is not an instance of DeviceType"
+        
+        assert isinstance(access_mode, AccessMode), \
+                "access_mode is not an instance of AccessMode"
+        
+        assert isinstance(force_new_uuid, bool), \
+                "force_new_uuid is not an instance of bool"
+        
         medium =\
             self._call_method('openMedium',
                      in_p=[location, device_type, access_mode, force_new_uuid])
@@ -2475,7 +2557,9 @@ class IVirtualBox(Interface):
             @a id is not a valid Guest OS type.
         
         """
-        assert id_p is str
+        assert isinstance(id_p, str), \
+                "id_p is not an instance of str"
+        
         type_p =\
             self._call_method('getGuestOSType',
                      in_p=[id_p])
@@ -2504,10 +2588,18 @@ class IVirtualBox(Interface):
           or not.
 
         """
-        assert name is str
-        assert host_path is str
-        assert writable is bool
-        assert automount is bool
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(host_path, str), \
+                "host_path is not an instance of str"
+        
+        assert isinstance(writable, bool), \
+                "writable is not an instance of bool"
+        
+        assert isinstance(automount, bool), \
+                "automount is not an instance of bool"
+        
         self._call_method('createSharedFolder',
                      in_p=[name, host_path, writable, automount])
         
@@ -2523,7 +2615,9 @@ class IVirtualBox(Interface):
             Logical name of the shared folder to remove.
 
         """
-        assert name is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         self._call_method('removeSharedFolder',
                      in_p=[name])
         
@@ -2558,7 +2652,9 @@ class IVirtualBox(Interface):
             Could not parse the settings file.
         
         """
-        assert key is str
+        assert isinstance(key, str), \
+                "key is not an instance of str"
+        
         value =\
             self._call_method('getExtraData',
                      in_p=[key])
@@ -2599,8 +2695,12 @@ class IVirtualBox(Interface):
             Modification request refused.
         
         """
-        assert key is str
-        assert value is str
+        assert isinstance(key, str), \
+                "key is not an instance of str"
+        
+        assert isinstance(value, str), \
+                "value is not an instance of str"
+        
         self._call_method('setExtraData',
                      in_p=[key, value])
         
@@ -2615,7 +2715,9 @@ class IVirtualBox(Interface):
             Virtual machine is not mutable.
         
         """
-        assert password is str
+        assert isinstance(password, str), \
+                "password is not an instance of str"
+        
         self._call_method('setSettingsSecret',
                      in_p=[password])
         
@@ -2632,7 +2734,9 @@ class IVirtualBox(Interface):
             Host network interface @a name already exists.
         
         """
-        assert name is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         server =\
             self._call_method('createDHCPServer',
                      in_p=[name])
@@ -2651,7 +2755,9 @@ class IVirtualBox(Interface):
             Host network interface @a name already exists.
         
         """
-        assert name is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         server =\
             self._call_method('findDHCPServerByNetworkName',
                      in_p=[name])
@@ -2667,7 +2773,9 @@ class IVirtualBox(Interface):
             Host network interface @a name already exists.
         
         """
-        assert server is IDHCPServer
+        assert isinstance(server, IDHCPServer), \
+                "server is not an instance of IDHCPServer"
+        
         self._call_method('removeDHCPServer',
                      in_p=[server])
         
@@ -2679,7 +2787,9 @@ class IVirtualBox(Interface):
         return network of type INATNetwork
 
         """
-        assert network_name is str
+        assert isinstance(network_name, str), \
+                "network_name is not an instance of str"
+        
         network =\
             self._call_method('createNATNetwork',
                      in_p=[network_name])
@@ -2693,7 +2803,9 @@ class IVirtualBox(Interface):
         return network of type INATNetwork
 
         """
-        assert network_name is str
+        assert isinstance(network_name, str), \
+                "network_name is not an instance of str"
+        
         network =\
             self._call_method('findNATNetworkByName',
                      in_p=[network_name])
@@ -2705,7 +2817,9 @@ class IVirtualBox(Interface):
         in network of type INATNetwork
 
         """
-        assert network is INATNetwork
+        assert isinstance(network, INATNetwork), \
+                "network is not an instance of INATNetwork"
+        
         self._call_method('removeNATNetwork',
                      in_p=[network])
         
@@ -2731,8 +2845,12 @@ class IVirtualBox(Interface):
             If firmware of this type and version is available.
 
         """
-        assert firmware_type is FirmwareType
-        assert version is str
+        assert isinstance(firmware_type, FirmwareType), \
+                "firmware_type is not an instance of FirmwareType"
+        
+        assert isinstance(version, str), \
+                "version is not an instance of str"
+        
         (url, file_p, result) =\
             self._call_method('checkFirmwarePresent',
                      in_p=[firmware_type, version])
@@ -2788,7 +2906,9 @@ class IVFSExplorer(Interface):
             Progress object to track the operation completion.
 
         """
-        assert dir_p is str
+        assert isinstance(dir_p, str), \
+                "dir_p is not an instance of str"
+        
         progress =\
             self._call_method('cd',
                      in_p=[dir_p])
@@ -2837,7 +2957,9 @@ class IVFSExplorer(Interface):
             The names which exist.
 
         """
-        assert names is str
+        assert isinstance(names, str), \
+                "names is not an instance of str"
+        
         exists =\
             self._call_method('exists',
                      in_p=[names])
@@ -2853,7 +2975,9 @@ class IVFSExplorer(Interface):
             Progress object to track the operation completion.
 
         """
-        assert names is str
+        assert isinstance(names, str), \
+                "names is not an instance of str"
+        
         progress =\
             self._call_method('remove',
                      in_p=[names])
@@ -3024,7 +3148,9 @@ class IAppliance(Interface):
             Progress object to track the operation completion.
 
         """
-        assert file_p is str
+        assert isinstance(file_p, str), \
+                "file_p is not an instance of str"
+        
         progress =\
             self._call_method('read',
                      in_p=[file_p])
@@ -3070,7 +3196,9 @@ class IAppliance(Interface):
             Progress object to track the operation completion.
 
         """
-        assert options is ImportOptions
+        assert isinstance(options, ImportOptions), \
+                "options is not an instance of ImportOptions"
+        
         progress =\
             self._call_method('importMachines',
                      in_p=[options])
@@ -3086,7 +3214,9 @@ class IAppliance(Interface):
             <desc/>
 
         """
-        assert uri is str
+        assert isinstance(uri, str), \
+                "uri is not an instance of str"
+        
         explorer =\
             self._call_method('createVFSExplorer',
                      in_p=[uri])
@@ -3118,9 +3248,15 @@ class IAppliance(Interface):
             Progress object to track the operation completion.
 
         """
-        assert format_p is str
-        assert manifest is bool
-        assert path is str
+        assert isinstance(format_p, str), \
+                "format_p is not an instance of str"
+        
+        assert isinstance(manifest, bool), \
+                "manifest is not an instance of bool"
+        
+        assert isinstance(path, str), \
+                "path is not an instance of str"
+        
         progress =\
             self._call_method('write',
                      in_p=[format_p, manifest, path])
@@ -3312,7 +3448,9 @@ class IVirtualSystemDescription(Interface):
             <desc/>
 
         """
-        assert type_p is VirtualSystemDescriptionType
+        assert isinstance(type_p, VirtualSystemDescriptionType), \
+                "type_p is not an instance of VirtualSystemDescriptionType"
+        
         (types, refs, ovf_values, v_box_values, extra_config_values) =\
             self._call_method('getDescriptionByType',
                      in_p=[type_p])
@@ -3333,8 +3471,12 @@ class IVirtualSystemDescription(Interface):
             <desc/>
 
         """
-        assert type_p is VirtualSystemDescriptionType
-        assert which is VirtualSystemDescriptionValueType
+        assert isinstance(type_p, VirtualSystemDescriptionType), \
+                "type_p is not an instance of VirtualSystemDescriptionType"
+        
+        assert isinstance(which, VirtualSystemDescriptionValueType), \
+                "which is not an instance of VirtualSystemDescriptionValueType"
+        
         values =\
             self._call_method('getValuesByType',
                      in_p=[type_p, which])
@@ -3367,9 +3509,15 @@ class IVirtualSystemDescription(Interface):
             <desc/>
 
         """
-        assert enabled is bool
-        assert v_box_values is str
-        assert extra_config_values is str
+        assert isinstance(enabled, bool), \
+                "enabled is not an instance of bool"
+        
+        assert isinstance(v_box_values, str), \
+                "v_box_values is not an instance of str"
+        
+        assert isinstance(extra_config_values, str), \
+                "extra_config_values is not an instance of str"
+        
         self._call_method('setFinalValues',
                      in_p=[enabled, v_box_values, extra_config_values])
         
@@ -3389,9 +3537,15 @@ class IVirtualSystemDescription(Interface):
             <desc/>
 
         """
-        assert type_p is VirtualSystemDescriptionType
-        assert v_box_value is str
-        assert extra_config_value is str
+        assert isinstance(type_p, VirtualSystemDescriptionType), \
+                "type_p is not an instance of VirtualSystemDescriptionType"
+        
+        assert isinstance(v_box_value, str), \
+                "v_box_value is not an instance of str"
+        
+        assert isinstance(extra_config_value, str), \
+                "extra_config_value is not an instance of str"
+        
         self._call_method('addDescription',
                      in_p=[type_p, v_box_value, extra_config_value])
         
@@ -3411,7 +3565,9 @@ class IInternalMachineControl(Interface):
         in remove of type bool
 
         """
-        assert remove is bool
+        assert isinstance(remove, bool), \
+                "remove is not an instance of bool"
+        
         self._call_method('setRemoveSavedStateFile',
                      in_p=[remove])
         
@@ -3425,7 +3581,9 @@ class IInternalMachineControl(Interface):
         in state of type MachineState
 
         """
-        assert state is MachineState
+        assert isinstance(state, MachineState), \
+                "state is not an instance of MachineState"
+        
         self._call_method('updateState',
                      in_p=[state])
         
@@ -3451,7 +3609,9 @@ class IInternalMachineControl(Interface):
         in progress of type IProgress
 
         """
-        assert progress is IProgress
+        assert isinstance(progress, IProgress), \
+                "progress is not an instance of IProgress"
+        
         self._call_method('beginPowerUp',
                      in_p=[progress])
         
@@ -3465,7 +3625,9 @@ class IInternalMachineControl(Interface):
         in result of type int
 
         """
-        assert result is int
+        assert isinstance(result, int), \
+                "result is not an instance of int"
+        
         self._call_method('endPowerUp',
                      in_p=[result])
         
@@ -3500,8 +3662,12 @@ class IInternalMachineControl(Interface):
             Could not parse the settings file.
         
         """
-        assert result is int
-        assert err_msg is str
+        assert isinstance(result, int), \
+                "result is not an instance of int"
+        
+        assert isinstance(err_msg, str), \
+                "err_msg is not an instance of str"
+        
         self._call_method('endPoweringDown',
                      in_p=[result, err_msg])
         
@@ -3521,7 +3687,9 @@ class IInternalMachineControl(Interface):
         out masked_interfaces of type int
 
         """
-        assert device is IUSBDevice
+        assert isinstance(device, IUSBDevice), \
+                "device is not an instance of IUSBDevice"
+        
         (matched, masked_interfaces) =\
             self._call_method('runUSBDeviceFilters',
                      in_p=[device])
@@ -3536,7 +3704,9 @@ class IInternalMachineControl(Interface):
         in id_p of type str
 
         """
-        assert id_p is str
+        assert isinstance(id_p, str), \
+                "id_p is not an instance of str"
+        
         self._call_method('captureUSBDevice',
                      in_p=[id_p])
         
@@ -3556,8 +3726,12 @@ class IInternalMachineControl(Interface):
         in done of type bool
 
         """
-        assert id_p is str
-        assert done is bool
+        assert isinstance(id_p, str), \
+                "id_p is not an instance of str"
+        
+        assert isinstance(done, bool), \
+                "done is not an instance of bool"
+        
         self._call_method('detachUSBDevice',
                      in_p=[id_p, done])
         
@@ -3584,7 +3758,9 @@ class IInternalMachineControl(Interface):
         in done of type bool
 
         """
-        assert done is bool
+        assert isinstance(done, bool), \
+                "done is not an instance of bool"
+        
         self._call_method('detachAllUSBDevices',
                      in_p=[done])
         
@@ -3601,7 +3777,9 @@ class IInternalMachineControl(Interface):
           Returned only when this session is a direct one.
 
         """
-        assert session is ISession
+        assert isinstance(session, ISession), \
+                "session is not an instance of ISession"
+        
         progress =\
             self._call_method('onSessionEnd',
                      in_p=[session])
@@ -3641,8 +3819,12 @@ class IInternalMachineControl(Interface):
             Could not parse the settings file.
         
         """
-        assert result is int
-        assert err_msg is str
+        assert isinstance(result, int), \
+                "result is not an instance of int"
+        
+        assert isinstance(err_msg, str), \
+                "err_msg is not an instance of str"
+        
         self._call_method('endSavingState',
                      in_p=[result, err_msg])
         
@@ -3656,7 +3838,9 @@ class IInternalMachineControl(Interface):
             Invalid saved state file path.
         
         """
-        assert saved_state_file is str
+        assert isinstance(saved_state_file, str), \
+                "saved_state_file is not an instance of str"
+        
         self._call_method('adoptSavedState',
                      in_p=[saved_state_file])
         
@@ -3697,11 +3881,21 @@ class IInternalMachineControl(Interface):
             Could not parse the settings file.
         
         """
-        assert initiator is IConsole
-        assert name is str
-        assert description is str
-        assert console_progress is IProgress
-        assert f_taking_snapshot_online is bool
+        assert isinstance(initiator, IConsole), \
+                "initiator is not an instance of IConsole"
+        
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(description, str), \
+                "description is not an instance of str"
+        
+        assert isinstance(console_progress, IProgress), \
+                "console_progress is not an instance of IProgress"
+        
+        assert isinstance(f_taking_snapshot_online, bool), \
+                "f_taking_snapshot_online is not an instance of bool"
+        
         state_file_path =\
             self._call_method('beginTakingSnapshot',
                      in_p=[initiator, name, description, console_progress, f_taking_snapshot_online])
@@ -3716,7 +3910,9 @@ class IInternalMachineControl(Interface):
             @c true to indicate success and @c false otherwise
 
         """
-        assert success is bool
+        assert isinstance(success, bool), \
+                "success is not an instance of bool"
+        
         self._call_method('endTakingSnapshot',
                      in_p=[success])
         
@@ -3749,10 +3945,18 @@ class IInternalMachineControl(Interface):
           not meet the linearity condition.
         
         """
-        assert initiator is IConsole
-        assert start_id is str
-        assert end_id is str
-        assert delete_all_children is bool
+        assert isinstance(initiator, IConsole), \
+                "initiator is not an instance of IConsole"
+        
+        assert isinstance(start_id, str), \
+                "start_id is not an instance of str"
+        
+        assert isinstance(end_id, str), \
+                "end_id is not an instance of str"
+        
+        assert isinstance(delete_all_children, bool), \
+                "delete_all_children is not an instance of bool"
+        
         (machine_state, progress) =\
             self._call_method('deleteSnapshot',
                      in_p=[initiator, start_id, end_id, delete_all_children])
@@ -3781,12 +3985,24 @@ class IInternalMachineControl(Interface):
         updated.
 
         """
-        assert medium_attachment is IMediumAttachment
-        assert source is IMedium
-        assert target is IMedium
-        assert merge_forward is bool
-        assert parent_for_target is IMedium
-        assert children_to_reparent is IMedium
+        assert isinstance(medium_attachment, IMediumAttachment), \
+                "medium_attachment is not an instance of IMediumAttachment"
+        
+        assert isinstance(source, IMedium), \
+                "source is not an instance of IMedium"
+        
+        assert isinstance(target, IMedium), \
+                "target is not an instance of IMedium"
+        
+        assert isinstance(merge_forward, bool), \
+                "merge_forward is not an instance of bool"
+        
+        assert isinstance(parent_for_target, IMedium), \
+                "parent_for_target is not an instance of IMedium"
+        
+        assert isinstance(children_to_reparent, IMedium), \
+                "children_to_reparent is not an instance of IMedium"
+        
         self._call_method('finishOnlineMergeMedium',
                      in_p=[medium_attachment, source, target, merge_forward, parent_for_target, children_to_reparent])
         
@@ -3806,8 +4022,12 @@ class IInternalMachineControl(Interface):
             Progress object to track the operation completion.
 
         """
-        assert initiator is IConsole
-        assert snapshot is ISnapshot
+        assert isinstance(initiator, IConsole), \
+                "initiator is not an instance of IConsole"
+        
+        assert isinstance(snapshot, ISnapshot), \
+                "snapshot is not an instance of ISnapshot"
+        
         (machine_state, progress) =\
             self._call_method('restoreSnapshot',
                      in_p=[initiator, snapshot])
@@ -3854,10 +4074,18 @@ class IInternalMachineControl(Interface):
             The flags of the property.
 
         """
-        assert name is str
-        assert value is str
-        assert timestamp is int
-        assert flags is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(value, str), \
+                "value is not an instance of str"
+        
+        assert isinstance(timestamp, int), \
+                "timestamp is not an instance of int"
+        
+        assert isinstance(flags, str), \
+                "flags is not an instance of str"
+        
         self._call_method('pushGuestProperty',
                      in_p=[name, value, timestamp, flags])
         
@@ -3895,7 +4123,9 @@ class IInternalMachineControl(Interface):
           result in the creation of a new instance.
 
         """
-        assert attachment is IMediumAttachment
+        assert isinstance(attachment, IMediumAttachment), \
+                "attachment is not an instance of IMediumAttachment"
+        
         new_attachment =\
             self._call_method('ejectMedium',
                      in_p=[attachment])
@@ -3954,22 +4184,54 @@ class IInternalMachineControl(Interface):
             Network transmit rate for VM.
 
         """
-        assert valid_stats is int
-        assert cpu_user is int
-        assert cpu_kernel is int
-        assert cpu_idle is int
-        assert mem_total is int
-        assert mem_free is int
-        assert mem_balloon is int
-        assert mem_shared is int
-        assert mem_cache is int
-        assert paged_total is int
-        assert mem_alloc_total is int
-        assert mem_free_total is int
-        assert mem_balloon_total is int
-        assert mem_shared_total is int
-        assert vm_net_rx is int
-        assert vm_net_tx is int
+        assert isinstance(valid_stats, int), \
+                "valid_stats is not an instance of int"
+        
+        assert isinstance(cpu_user, int), \
+                "cpu_user is not an instance of int"
+        
+        assert isinstance(cpu_kernel, int), \
+                "cpu_kernel is not an instance of int"
+        
+        assert isinstance(cpu_idle, int), \
+                "cpu_idle is not an instance of int"
+        
+        assert isinstance(mem_total, int), \
+                "mem_total is not an instance of int"
+        
+        assert isinstance(mem_free, int), \
+                "mem_free is not an instance of int"
+        
+        assert isinstance(mem_balloon, int), \
+                "mem_balloon is not an instance of int"
+        
+        assert isinstance(mem_shared, int), \
+                "mem_shared is not an instance of int"
+        
+        assert isinstance(mem_cache, int), \
+                "mem_cache is not an instance of int"
+        
+        assert isinstance(paged_total, int), \
+                "paged_total is not an instance of int"
+        
+        assert isinstance(mem_alloc_total, int), \
+                "mem_alloc_total is not an instance of int"
+        
+        assert isinstance(mem_free_total, int), \
+                "mem_free_total is not an instance of int"
+        
+        assert isinstance(mem_balloon_total, int), \
+                "mem_balloon_total is not an instance of int"
+        
+        assert isinstance(mem_shared_total, int), \
+                "mem_shared_total is not an instance of int"
+        
+        assert isinstance(vm_net_rx, int), \
+                "vm_net_rx is not an instance of int"
+        
+        assert isinstance(vm_net_tx, int), \
+                "vm_net_tx is not an instance of int"
+        
         self._call_method('reportVmStatistics',
                      in_p=[valid_stats, cpu_user, cpu_kernel, cpu_idle, mem_total, mem_free, mem_balloon, mem_shared, mem_cache, paged_total, mem_alloc_total, mem_free_total, mem_balloon_total, mem_shared_total, vm_net_rx, vm_net_tx])
         
@@ -3992,7 +4254,8 @@ class IBIOSSettings(Interface):
 
     @logo_fade_in.setter
     def logo_fade_in(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('logoFadeIn', value)
 
     @property
@@ -4005,7 +4268,8 @@ class IBIOSSettings(Interface):
 
     @logo_fade_out.setter
     def logo_fade_out(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('logoFadeOut', value)
 
     @property
@@ -4018,7 +4282,8 @@ class IBIOSSettings(Interface):
 
     @logo_display_time.setter
     def logo_display_time(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('logoDisplayTime', value)
 
     @property
@@ -4032,7 +4297,8 @@ class IBIOSSettings(Interface):
 
     @logo_image_path.setter
     def logo_image_path(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('logoImagePath', value)
 
     @property
@@ -4045,7 +4311,8 @@ class IBIOSSettings(Interface):
 
     @boot_menu_mode.setter
     def boot_menu_mode(self, value):
-        assert type(value) is BIOSBootMenuMode
+        assert isinstance(value, BIOSBootMenuMode), \
+                "value is not an instance of BIOSBootMenuMode"
         return self._set_attr('bootMenuMode', value)
 
     @property
@@ -4058,7 +4325,8 @@ class IBIOSSettings(Interface):
 
     @acpi_enabled.setter
     def acpi_enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('ACPIEnabled', value)
 
     @property
@@ -4072,7 +4340,8 @@ class IBIOSSettings(Interface):
 
     @ioapic_enabled.setter
     def ioapic_enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('IOAPICEnabled', value)
 
     @property
@@ -4089,7 +4358,8 @@ class IBIOSSettings(Interface):
 
     @time_offset.setter
     def time_offset(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('timeOffset', value)
 
     @property
@@ -4103,7 +4373,8 @@ class IBIOSSettings(Interface):
 
     @pxe_debug_enabled.setter
     def pxe_debug_enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('PXEDebugEnabled', value)
 
 
@@ -4124,7 +4395,8 @@ class IPCIAddress(Interface):
 
     @bus.setter
     def bus(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('bus', value)
 
     @property
@@ -4137,7 +4409,8 @@ class IPCIAddress(Interface):
 
     @device.setter
     def device(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('device', value)
 
     @property
@@ -4150,7 +4423,8 @@ class IPCIAddress(Interface):
 
     @dev_function.setter
     def dev_function(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('devFunction', value)
 
     def as_long(self):
@@ -4169,7 +4443,9 @@ class IPCIAddress(Interface):
         in number of type int
 
         """
-        assert number is int
+        assert isinstance(number, int), \
+                "number is not an instance of int"
+        
         self._call_method('fromLong',
                      in_p=[number])
         
@@ -4364,7 +4640,8 @@ class IMachine(Interface):
 
     @name.setter
     def name(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('name', value)
 
     @property
@@ -4382,7 +4659,8 @@ class IMachine(Interface):
 
     @description.setter
     def description(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('description', value)
 
     @property
@@ -4408,7 +4686,8 @@ class IMachine(Interface):
 
     @groups.setter
     def groups(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('groups', value)
 
     @property
@@ -4428,7 +4707,8 @@ class IMachine(Interface):
 
     @os_type_id.setter
     def os_type_id(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('OSTypeId', value)
 
     @property
@@ -4441,7 +4721,8 @@ class IMachine(Interface):
 
     @hardware_version.setter
     def hardware_version(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('hardwareVersion', value)
 
     @property
@@ -4458,7 +4739,8 @@ class IMachine(Interface):
 
     @hardware_uuid.setter
     def hardware_uuid(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('hardwareUUID', value)
 
     @property
@@ -4471,7 +4753,8 @@ class IMachine(Interface):
 
     @cpu_count.setter
     def cpu_count(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('CPUCount', value)
 
     @property
@@ -4485,7 +4768,8 @@ class IMachine(Interface):
 
     @cpu_hot_plug_enabled.setter
     def cpu_hot_plug_enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('CPUHotPlugEnabled', value)
 
     @property
@@ -4500,7 +4784,8 @@ class IMachine(Interface):
 
     @cpu_execution_cap.setter
     def cpu_execution_cap(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('CPUExecutionCap', value)
 
     @property
@@ -4513,7 +4798,8 @@ class IMachine(Interface):
 
     @memory_size.setter
     def memory_size(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('memorySize', value)
 
     @property
@@ -4526,7 +4812,8 @@ class IMachine(Interface):
 
     @memory_balloon_size.setter
     def memory_balloon_size(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('memoryBalloonSize', value)
 
     @property
@@ -4540,7 +4827,8 @@ class IMachine(Interface):
 
     @page_fusion_enabled.setter
     def page_fusion_enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('pageFusionEnabled', value)
 
     @property
@@ -4553,7 +4841,8 @@ class IMachine(Interface):
 
     @graphics_controller_type.setter
     def graphics_controller_type(self, value):
-        assert type(value) is GraphicsControllerType
+        assert isinstance(value, GraphicsControllerType), \
+                "value is not an instance of GraphicsControllerType"
         return self._set_attr('graphicsControllerType', value)
 
     @property
@@ -4566,7 +4855,8 @@ class IMachine(Interface):
 
     @vram_size.setter
     def vram_size(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('VRAMSize', value)
 
     @property
@@ -4580,7 +4870,8 @@ class IMachine(Interface):
 
     @accelerate3_d_enabled.setter
     def accelerate3_d_enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('accelerate3DEnabled', value)
 
     @property
@@ -4594,7 +4885,8 @@ class IMachine(Interface):
 
     @accelerate2_d_video_enabled.setter
     def accelerate2_d_video_enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('accelerate2DVideoEnabled', value)
 
     @property
@@ -4610,7 +4902,8 @@ class IMachine(Interface):
 
     @monitor_count.setter
     def monitor_count(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('monitorCount', value)
 
     @property
@@ -4624,7 +4917,8 @@ class IMachine(Interface):
 
     @video_capture_enabled.setter
     def video_capture_enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('VideoCaptureEnabled', value)
 
     @property
@@ -4638,7 +4932,8 @@ class IMachine(Interface):
 
     @video_capture_screens.setter
     def video_capture_screens(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('VideoCaptureScreens', value)
 
     @property
@@ -4652,7 +4947,8 @@ class IMachine(Interface):
 
     @video_capture_file.setter
     def video_capture_file(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('VideoCaptureFile', value)
 
     @property
@@ -4665,7 +4961,8 @@ class IMachine(Interface):
 
     @video_capture_width.setter
     def video_capture_width(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('VideoCaptureWidth', value)
 
     @property
@@ -4678,7 +4975,8 @@ class IMachine(Interface):
 
     @video_capture_height.setter
     def video_capture_height(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('VideoCaptureHeight', value)
 
     @property
@@ -4693,7 +4991,8 @@ class IMachine(Interface):
 
     @video_capture_rate.setter
     def video_capture_rate(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('VideoCaptureRate', value)
 
     @property
@@ -4709,7 +5008,8 @@ class IMachine(Interface):
 
     @video_capture_fps.setter
     def video_capture_fps(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('VideoCaptureFps', value)
 
     @property
@@ -4731,7 +5031,8 @@ class IMachine(Interface):
 
     @firmware_type.setter
     def firmware_type(self, value):
-        assert type(value) is FirmwareType
+        assert isinstance(value, FirmwareType), \
+                "value is not an instance of FirmwareType"
         return self._set_attr('firmwareType', value)
 
     @property
@@ -4746,7 +5047,8 @@ class IMachine(Interface):
 
     @pointing_hid_type.setter
     def pointing_hid_type(self, value):
-        assert type(value) is PointingHIDType
+        assert isinstance(value, PointingHIDType), \
+                "value is not an instance of PointingHIDType"
         return self._set_attr('pointingHIDType', value)
 
     @property
@@ -4761,7 +5063,8 @@ class IMachine(Interface):
 
     @keyboard_hid_type.setter
     def keyboard_hid_type(self, value):
-        assert type(value) is KeyboardHIDType
+        assert isinstance(value, KeyboardHIDType), \
+                "value is not an instance of KeyboardHIDType"
         return self._set_attr('keyboardHIDType', value)
 
     @property
@@ -4777,7 +5080,8 @@ class IMachine(Interface):
 
     @hpet_enabled.setter
     def hpet_enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('HPETEnabled', value)
 
     @property
@@ -4790,7 +5094,8 @@ class IMachine(Interface):
 
     @chipset_type.setter
     def chipset_type(self, value):
-        assert type(value) is ChipsetType
+        assert isinstance(value, ChipsetType), \
+                "value is not an instance of ChipsetType"
         return self._set_attr('chipsetType', value)
 
     @property
@@ -4830,7 +5135,8 @@ class IMachine(Interface):
 
     @snapshot_folder.setter
     def snapshot_folder(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('snapshotFolder', value)
 
     @property
@@ -4849,7 +5155,8 @@ class IMachine(Interface):
 
     @emulated_usb_webcamera_enabled.setter
     def emulated_usb_webcamera_enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('emulatedUSBWebcameraEnabled', value)
 
     @property
@@ -4860,7 +5167,8 @@ class IMachine(Interface):
 
     @emulated_usb_card_reader_enabled.setter
     def emulated_usb_card_reader_enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('emulatedUSBCardReaderEnabled', value)
 
     @property
@@ -5088,7 +5396,8 @@ class IMachine(Interface):
 
     @clipboard_mode.setter
     def clipboard_mode(self, value):
-        assert type(value) is ClipboardMode
+        assert isinstance(value, ClipboardMode), \
+                "value is not an instance of ClipboardMode"
         return self._set_attr('clipboardMode', value)
 
     @property
@@ -5101,7 +5410,8 @@ class IMachine(Interface):
 
     @drag_and_drop_mode.setter
     def drag_and_drop_mode(self, value):
-        assert type(value) is DragAndDropMode
+        assert isinstance(value, DragAndDropMode), \
+                "value is not an instance of DragAndDropMode"
         return self._set_attr('dragAndDropMode', value)
 
     @property
@@ -5116,7 +5426,8 @@ class IMachine(Interface):
 
     @guest_property_notification_patterns.setter
     def guest_property_notification_patterns(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('guestPropertyNotificationPatterns', value)
 
     @property
@@ -5134,7 +5445,8 @@ class IMachine(Interface):
 
     @teleporter_enabled.setter
     def teleporter_enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('teleporterEnabled', value)
 
     @property
@@ -5152,7 +5464,8 @@ class IMachine(Interface):
 
     @teleporter_port.setter
     def teleporter_port(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('teleporterPort', value)
 
     @property
@@ -5166,7 +5479,8 @@ class IMachine(Interface):
 
     @teleporter_address.setter
     def teleporter_address(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('teleporterAddress', value)
 
     @property
@@ -5184,7 +5498,8 @@ class IMachine(Interface):
 
     @teleporter_password.setter
     def teleporter_password(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('teleporterPassword', value)
 
     @property
@@ -5199,7 +5514,8 @@ class IMachine(Interface):
 
     @fault_tolerance_state.setter
     def fault_tolerance_state(self, value):
-        assert type(value) is FaultToleranceState
+        assert isinstance(value, FaultToleranceState), \
+                "value is not an instance of FaultToleranceState"
         return self._set_attr('faultToleranceState', value)
 
     @property
@@ -5213,7 +5529,8 @@ class IMachine(Interface):
 
     @fault_tolerance_port.setter
     def fault_tolerance_port(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('faultTolerancePort', value)
 
     @property
@@ -5226,7 +5543,8 @@ class IMachine(Interface):
 
     @fault_tolerance_address.setter
     def fault_tolerance_address(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('faultToleranceAddress', value)
 
     @property
@@ -5241,7 +5559,8 @@ class IMachine(Interface):
 
     @fault_tolerance_password.setter
     def fault_tolerance_password(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('faultTolerancePassword', value)
 
     @property
@@ -5254,7 +5573,8 @@ class IMachine(Interface):
 
     @fault_tolerance_sync_interval.setter
     def fault_tolerance_sync_interval(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('faultToleranceSyncInterval', value)
 
     @property
@@ -5269,7 +5589,8 @@ class IMachine(Interface):
 
     @rtc_use_utc.setter
     def rtc_use_utc(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('RTCUseUTC', value)
 
     @property
@@ -5283,7 +5604,8 @@ class IMachine(Interface):
 
     @io_cache_enabled.setter
     def io_cache_enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('IOCacheEnabled', value)
 
     @property
@@ -5296,7 +5618,8 @@ class IMachine(Interface):
 
     @io_cache_size.setter
     def io_cache_size(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('IOCacheSize', value)
 
     @property
@@ -5333,7 +5656,8 @@ class IMachine(Interface):
 
     @tracing_enabled.setter
     def tracing_enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('tracingEnabled', value)
 
     @property
@@ -5355,7 +5679,8 @@ class IMachine(Interface):
 
     @tracing_config.setter
     def tracing_config(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('tracingConfig', value)
 
     @property
@@ -5375,7 +5700,8 @@ class IMachine(Interface):
 
     @allow_tracing_to_access_vm.setter
     def allow_tracing_to_access_vm(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('allowTracingToAccessVM', value)
 
     @property
@@ -5388,7 +5714,8 @@ class IMachine(Interface):
 
     @autostart_enabled.setter
     def autostart_enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('autostartEnabled', value)
 
     @property
@@ -5401,7 +5728,8 @@ class IMachine(Interface):
 
     @autostart_delay.setter
     def autostart_delay(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('autostartDelay', value)
 
     @property
@@ -5414,7 +5742,8 @@ class IMachine(Interface):
 
     @autostop_type.setter
     def autostop_type(self, value):
-        assert type(value) is AutostopType
+        assert isinstance(value, AutostopType), \
+                "value is not an instance of AutostopType"
         return self._set_attr('autostopType', value)
 
     @property
@@ -5437,7 +5766,8 @@ class IMachine(Interface):
 
     @default_frontend.setter
     def default_frontend(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('defaultFrontend', value)
 
     def lock_machine(self, session, lock_type):
@@ -5531,8 +5861,12 @@ class IMachine(Interface):
             Failed to assign machine to session.
         
         """
-        assert session is ISession
-        assert lock_type is LockType
+        assert isinstance(session, ISession), \
+                "session is not an instance of ISession"
+        
+        assert isinstance(lock_type, LockType), \
+                "lock_type is not an instance of LockType"
+        
         self._call_method('lockMachine',
                      in_p=[session, lock_type])
         
@@ -5642,9 +5976,15 @@ class IMachine(Interface):
             Failed to assign machine to session.
         
         """
-        assert session is ISession
-        assert type_p is str
-        assert environment is str
+        assert isinstance(session, ISession), \
+                "session is not an instance of ISession"
+        
+        assert isinstance(type_p, str), \
+                "type_p is not an instance of str"
+        
+        assert isinstance(environment, str), \
+                "environment is not an instance of str"
+        
         progress =\
             self._call_method('launchVMProcess',
                      in_p=[session, type_p, environment])
@@ -5674,8 +6014,12 @@ class IMachine(Interface):
             Booting from USB @a device currently not supported.
         
         """
-        assert position is int
-        assert device is DeviceType
+        assert isinstance(position, int), \
+                "position is not an instance of int"
+        
+        assert isinstance(device, DeviceType), \
+                "device is not an instance of DeviceType"
+        
         self._call_method('setBootOrder',
                      in_p=[position, device])
         
@@ -5705,7 +6049,9 @@ class IMachine(Interface):
             Boot @a position out of range.
         
         """
-        assert position is int
+        assert isinstance(position, int), \
+                "position is not an instance of int"
+        
         device =\
             self._call_method('getBootOrder',
                      in_p=[position])
@@ -5799,11 +6145,21 @@ class IMachine(Interface):
             A medium is already attached to this or another virtual machine.
         
         """
-        assert name is str
-        assert controller_port is int
-        assert device is int
-        assert type_p is DeviceType
-        assert medium is IMedium
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(controller_port, int), \
+                "controller_port is not an instance of int"
+        
+        assert isinstance(device, int), \
+                "device is not an instance of int"
+        
+        assert isinstance(type_p, DeviceType), \
+                "type_p is not an instance of DeviceType"
+        
+        assert isinstance(medium, IMedium), \
+                "medium is not an instance of IMedium"
+        
         self._call_method('attachDevice',
                      in_p=[name, controller_port, device, type_p, medium])
         
@@ -5888,10 +6244,18 @@ class IMachine(Interface):
             A medium is already attached to this or another virtual machine.
         
         """
-        assert name is str
-        assert controller_port is int
-        assert device is int
-        assert type_p is DeviceType
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(controller_port, int), \
+                "controller_port is not an instance of int"
+        
+        assert isinstance(device, int), \
+                "device is not an instance of int"
+        
+        assert isinstance(type_p, DeviceType), \
+                "type_p is not an instance of DeviceType"
+        
         self._call_method('attachDeviceWithoutMedium',
                      in_p=[name, controller_port, device, type_p])
         
@@ -5935,9 +6299,15 @@ class IMachine(Interface):
           created differencing media, should not happen).
         
         """
-        assert name is str
-        assert controller_port is int
-        assert device is int
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(controller_port, int), \
+                "controller_port is not an instance of int"
+        
+        assert isinstance(device, int), \
+                "device is not an instance of int"
+        
         self._call_method('detachDevice',
                      in_p=[name, controller_port, device])
         
@@ -5973,10 +6343,18 @@ class IMachine(Interface):
             Invalid machine state.
         
         """
-        assert name is str
-        assert controller_port is int
-        assert device is int
-        assert passthrough is bool
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(controller_port, int), \
+                "controller_port is not an instance of int"
+        
+        assert isinstance(device, int), \
+                "device is not an instance of int"
+        
+        assert isinstance(passthrough, bool), \
+                "passthrough is not an instance of bool"
+        
         self._call_method('passthroughDevice',
                      in_p=[name, controller_port, device, passthrough])
         
@@ -6012,10 +6390,18 @@ class IMachine(Interface):
             Invalid machine state.
         
         """
-        assert name is str
-        assert controller_port is int
-        assert device is int
-        assert temporary_eject is bool
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(controller_port, int), \
+                "controller_port is not an instance of int"
+        
+        assert isinstance(device, int), \
+                "device is not an instance of int"
+        
+        assert isinstance(temporary_eject, bool), \
+                "temporary_eject is not an instance of bool"
+        
         self._call_method('temporaryEjectDevice',
                      in_p=[name, controller_port, device, temporary_eject])
         
@@ -6054,10 +6440,18 @@ class IMachine(Interface):
             Invalid machine state.
         
         """
-        assert name is str
-        assert controller_port is int
-        assert device is int
-        assert non_rotational is bool
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(controller_port, int), \
+                "controller_port is not an instance of int"
+        
+        assert isinstance(device, int), \
+                "device is not an instance of int"
+        
+        assert isinstance(non_rotational, bool), \
+                "non_rotational is not an instance of bool"
+        
         self._call_method('nonRotationalDevice',
                      in_p=[name, controller_port, device, non_rotational])
         
@@ -6096,10 +6490,18 @@ class IMachine(Interface):
             Invalid machine state.
         
         """
-        assert name is str
-        assert controller_port is int
-        assert device is int
-        assert discard is bool
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(controller_port, int), \
+                "controller_port is not an instance of int"
+        
+        assert isinstance(device, int), \
+                "device is not an instance of int"
+        
+        assert isinstance(discard, bool), \
+                "discard is not an instance of bool"
+        
         self._call_method('setAutoDiscardForDevice',
                      in_p=[name, controller_port, device, discard])
         
@@ -6133,10 +6535,18 @@ class IMachine(Interface):
             Invalid machine state.
         
         """
-        assert name is str
-        assert controller_port is int
-        assert device is int
-        assert bandwidth_group is IBandwidthGroup
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(controller_port, int), \
+                "controller_port is not an instance of int"
+        
+        assert isinstance(device, int), \
+                "device is not an instance of int"
+        
+        assert isinstance(bandwidth_group, IBandwidthGroup), \
+                "bandwidth_group is not an instance of IBandwidthGroup"
+        
         self._call_method('setBandwidthGroupForDevice',
                      in_p=[name, controller_port, device, bandwidth_group])
         
@@ -6166,9 +6576,15 @@ class IMachine(Interface):
             Invalid machine state.
         
         """
-        assert name is str
-        assert controller_port is int
-        assert device is int
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(controller_port, int), \
+                "controller_port is not an instance of int"
+        
+        assert isinstance(device, int), \
+                "device is not an instance of int"
+        
         self._call_method('setNoBandwidthGroupForDevice',
                      in_p=[name, controller_port, device])
         
@@ -6220,10 +6636,18 @@ class IMachine(Interface):
             Medium not attached to specified port, device, controller.
         
         """
-        assert name is str
-        assert controller_port is int
-        assert device is int
-        assert force is bool
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(controller_port, int), \
+                "controller_port is not an instance of int"
+        
+        assert isinstance(device, int), \
+                "device is not an instance of int"
+        
+        assert isinstance(force, bool), \
+                "force is not an instance of bool"
+        
         self._call_method('unmountMedium',
                      in_p=[name, controller_port, device, force])
         
@@ -6277,11 +6701,21 @@ class IMachine(Interface):
             Medium already attached to this or another virtual machine.
         
         """
-        assert name is str
-        assert controller_port is int
-        assert device is int
-        assert medium is IMedium
-        assert force is bool
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(controller_port, int), \
+                "controller_port is not an instance of int"
+        
+        assert isinstance(device, int), \
+                "device is not an instance of int"
+        
+        assert isinstance(medium, IMedium), \
+                "medium is not an instance of IMedium"
+        
+        assert isinstance(force, bool), \
+                "force is not an instance of bool"
+        
         self._call_method('mountMedium',
                      in_p=[name, controller_port, device, medium, force])
         
@@ -6311,9 +6745,15 @@ class IMachine(Interface):
             No medium attached to given slot/bus.
         
         """
-        assert name is str
-        assert controller_port is int
-        assert device is int
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(controller_port, int), \
+                "controller_port is not an instance of int"
+        
+        assert isinstance(device, int), \
+                "device is not an instance of int"
+        
         medium =\
             self._call_method('getMedium',
                      in_p=[name, controller_port, device])
@@ -6331,7 +6771,9 @@ class IMachine(Interface):
             A storage controller with given name doesn't exist.
         
         """
-        assert name is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         medium_attachments =\
             self._call_method('getMediumAttachmentsOfController',
                      in_p=[name])
@@ -6353,9 +6795,15 @@ class IMachine(Interface):
             No attachment exists for the given controller/port/device combination.
         
         """
-        assert name is str
-        assert controller_port is int
-        assert device is int
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(controller_port, int), \
+                "controller_port is not an instance of int"
+        
+        assert isinstance(device, int), \
+                "device is not an instance of int"
+        
         attachment =\
             self._call_method('getMediumAttachment',
                      in_p=[name, controller_port, device])
@@ -6390,9 +6838,15 @@ class IMachine(Interface):
             Hardware or host OS doesn't allow PCI device passthrought.
         
         """
-        assert host_address is int
-        assert desired_guest_address is int
-        assert try_to_unbind is bool
+        assert isinstance(host_address, int), \
+                "host_address is not an instance of int"
+        
+        assert isinstance(desired_guest_address, int), \
+                "desired_guest_address is not an instance of int"
+        
+        assert isinstance(try_to_unbind, bool), \
+                "try_to_unbind is not an instance of bool"
+        
         self._call_method('attachHostPCIDevice',
                      in_p=[host_address, desired_guest_address, try_to_unbind])
         
@@ -6420,7 +6874,9 @@ class IMachine(Interface):
             Hardware or host OS doesn't allow PCI device passthrought.
         
         """
-        assert host_address is int
+        assert isinstance(host_address, int), \
+                "host_address is not an instance of int"
+        
         self._call_method('detachHostPCIDevice',
                      in_p=[host_address])
         
@@ -6439,7 +6895,9 @@ class IMachine(Interface):
             Invalid @a slot number.
         
         """
-        assert slot is int
+        assert isinstance(slot, int), \
+                "slot is not an instance of int"
+        
         adapter =\
             self._call_method('getNetworkAdapter',
                      in_p=[slot])
@@ -6472,8 +6930,12 @@ class IMachine(Interface):
             Invalid @a controllerType.
         
         """
-        assert name is str
-        assert connection_type is StorageBus
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(connection_type, StorageBus), \
+                "connection_type is not an instance of StorageBus"
+        
         controller =\
             self._call_method('addStorageController',
                      in_p=[name, connection_type])
@@ -6490,7 +6952,9 @@ class IMachine(Interface):
             A storage controller with given name doesn't exist.
         
         """
-        assert name is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         storage_controller =\
             self._call_method('getStorageControllerByName',
                      in_p=[name])
@@ -6507,7 +6971,9 @@ class IMachine(Interface):
             A storage controller with given instance number doesn't exist.
         
         """
-        assert instance is int
+        assert isinstance(instance, int), \
+                "instance is not an instance of int"
+        
         storage_controller =\
             self._call_method('getStorageControllerByInstance',
                      in_p=[instance])
@@ -6526,7 +6992,9 @@ class IMachine(Interface):
           created differencing media, should not happen).
         
         """
-        assert name is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         self._call_method('removeStorageController',
                      in_p=[name])
         
@@ -6544,8 +7012,12 @@ class IMachine(Interface):
             Another storage controller is marked as bootable already.
         
         """
-        assert name is str
-        assert bootable is bool
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(bootable, bool), \
+                "bootable is not an instance of bool"
+        
         self._call_method('setStorageControllerBootable',
                      in_p=[name, bootable])
         
@@ -6564,7 +7036,9 @@ class IMachine(Interface):
             Invalid @a slot number.
         
         """
-        assert slot is int
+        assert isinstance(slot, int), \
+                "slot is not an instance of int"
+        
         port =\
             self._call_method('getSerialPort',
                      in_p=[slot])
@@ -6585,7 +7059,9 @@ class IMachine(Interface):
             Invalid @a slot number.
         
         """
-        assert slot is int
+        assert isinstance(slot, int), \
+                "slot is not an instance of int"
+        
         port =\
             self._call_method('getParallelPort',
                      in_p=[slot])
@@ -6622,7 +7098,9 @@ class IMachine(Interface):
             Could not parse the settings file.
         
         """
-        assert key is str
+        assert isinstance(key, str), \
+                "key is not an instance of str"
+        
         value =\
             self._call_method('getExtraData',
                      in_p=[key])
@@ -6665,8 +7143,12 @@ class IMachine(Interface):
             Could not parse the settings file.
         
         """
-        assert key is str
-        assert value is str
+        assert isinstance(key, str), \
+                "key is not an instance of str"
+        
+        assert isinstance(value, str), \
+                "value is not an instance of str"
+        
         self._call_method('setExtraData',
                      in_p=[key, value])
         
@@ -6683,7 +7165,9 @@ class IMachine(Interface):
             Invalid property.
         
         """
-        assert property_p is CPUPropertyType
+        assert isinstance(property_p, CPUPropertyType), \
+                "property_p is not an instance of CPUPropertyType"
+        
         value =\
             self._call_method('getCPUProperty',
                      in_p=[property_p])
@@ -6702,8 +7186,12 @@ class IMachine(Interface):
             Invalid property.
         
         """
-        assert property_p is CPUPropertyType
-        assert value is bool
+        assert isinstance(property_p, CPUPropertyType), \
+                "property_p is not an instance of CPUPropertyType"
+        
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
+        
         self._call_method('setCPUProperty',
                      in_p=[property_p, value])
         
@@ -6736,7 +7224,9 @@ class IMachine(Interface):
             Invalid id.
         
         """
-        assert id_p is int
+        assert isinstance(id_p, int), \
+                "id_p is not an instance of int"
+        
         (val_eax, val_ebx, val_ecx, val_edx) =\
             self._call_method('getCPUIDLeaf',
                      in_p=[id_p])
@@ -6775,11 +7265,21 @@ class IMachine(Interface):
             Invalid id.
         
         """
-        assert id_p is int
-        assert val_eax is int
-        assert val_ebx is int
-        assert val_ecx is int
-        assert val_edx is int
+        assert isinstance(id_p, int), \
+                "id_p is not an instance of int"
+        
+        assert isinstance(val_eax, int), \
+                "val_eax is not an instance of int"
+        
+        assert isinstance(val_ebx, int), \
+                "val_ebx is not an instance of int"
+        
+        assert isinstance(val_ecx, int), \
+                "val_ecx is not an instance of int"
+        
+        assert isinstance(val_edx, int), \
+                "val_edx is not an instance of int"
+        
         self._call_method('setCPUIDLeaf',
                      in_p=[id_p, val_eax, val_ebx, val_ecx, val_edx])
         
@@ -6793,7 +7293,9 @@ class IMachine(Interface):
             Invalid id.
         
         """
-        assert id_p is int
+        assert isinstance(id_p, int), \
+                "id_p is not an instance of int"
+        
         self._call_method('removeCPUIDLeaf',
                      in_p=[id_p])
         
@@ -6816,7 +7318,9 @@ class IMachine(Interface):
             Invalid property.
         
         """
-        assert property_p is HWVirtExPropertyType
+        assert isinstance(property_p, HWVirtExPropertyType), \
+                "property_p is not an instance of HWVirtExPropertyType"
+        
         value =\
             self._call_method('getHWVirtExProperty',
                      in_p=[property_p])
@@ -6835,8 +7339,12 @@ class IMachine(Interface):
             Invalid property.
         
         """
-        assert property_p is HWVirtExPropertyType
-        assert value is bool
+        assert isinstance(property_p, HWVirtExPropertyType), \
+                "property_p is not an instance of HWVirtExPropertyType"
+        
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
+        
         self._call_method('setHWVirtExProperty',
                      in_p=[property_p, value])
         
@@ -6967,7 +7475,9 @@ class IMachine(Interface):
             Machine is currently locked for a session.
         
         """
-        assert cleanup_mode is CleanupMode
+        assert isinstance(cleanup_mode, CleanupMode), \
+                "cleanup_mode is not an instance of CleanupMode"
+        
         media =\
             self._call_method('unregister',
                      in_p=[cleanup_mode])
@@ -7020,7 +7530,9 @@ class IMachine(Interface):
             Could not delete the settings file.
         
         """
-        assert media is IMedium
+        assert isinstance(media, IMedium), \
+                "media is not an instance of IMedium"
+        
         progress =\
             self._call_method('deleteConfig',
                      in_p=[media])
@@ -7040,8 +7552,12 @@ class IMachine(Interface):
             VirtualSystemDescription object which is created for this machine.
 
         """
-        assert appliance is IAppliance
-        assert location is str
+        assert isinstance(appliance, IAppliance), \
+                "appliance is not an instance of IAppliance"
+        
+        assert isinstance(location, str), \
+                "location is not an instance of str"
+        
         description =\
             self._call_method('exportTo',
                      in_p=[appliance, location])
@@ -7066,7 +7582,9 @@ class IMachine(Interface):
             Virtual machine has no snapshots or snapshot not found.
         
         """
-        assert name_or_id is str
+        assert isinstance(name_or_id, str), \
+                "name_or_id is not an instance of str"
+        
         snapshot =\
             self._call_method('findSnapshot',
                      in_p=[name_or_id])
@@ -7098,10 +7616,18 @@ class IMachine(Interface):
             Shared folder @a hostPath not accessible.
         
         """
-        assert name is str
-        assert host_path is str
-        assert writable is bool
-        assert automount is bool
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(host_path, str), \
+                "host_path is not an instance of str"
+        
+        assert isinstance(writable, bool), \
+                "writable is not an instance of bool"
+        
+        assert isinstance(automount, bool), \
+                "automount is not an instance of bool"
+        
         self._call_method('createSharedFolder',
                      in_p=[name, host_path, writable, automount])
         
@@ -7120,7 +7646,9 @@ class IMachine(Interface):
             Shared folder @a name does not exist.
         
         """
-        assert name is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         self._call_method('removeSharedFolder',
                      in_p=[name])
         
@@ -7195,7 +7723,9 @@ class IMachine(Interface):
             Machine session is not open.
         
         """
-        assert name is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         (value, timestamp, flags) =\
             self._call_method('getGuestProperty',
                      in_p=[name])
@@ -7215,7 +7745,9 @@ class IMachine(Interface):
             Machine session is not open.
         
         """
-        assert property_p is str
+        assert isinstance(property_p, str), \
+                "property_p is not an instance of str"
+        
         value =\
             self._call_method('getGuestPropertyValue',
                      in_p=[property_p])
@@ -7235,7 +7767,9 @@ class IMachine(Interface):
             Machine session is not open.
         
         """
-        assert property_p is str
+        assert isinstance(property_p, str), \
+                "property_p is not an instance of str"
+        
         value =\
             self._call_method('getGuestPropertyTimestamp',
                      in_p=[property_p])
@@ -7271,9 +7805,15 @@ class IMachine(Interface):
             Cannot set transient property when machine not running.
         
         """
-        assert property_p is str
-        assert value is str
-        assert flags is str
+        assert isinstance(property_p, str), \
+                "property_p is not an instance of str"
+        
+        assert isinstance(value, str), \
+                "value is not an instance of str"
+        
+        assert isinstance(flags, str), \
+                "flags is not an instance of str"
+        
         self._call_method('setGuestProperty',
                      in_p=[property_p, value, flags])
         
@@ -7300,8 +7840,12 @@ class IMachine(Interface):
             Cannot set transient property when machine not running.
         
         """
-        assert property_p is str
-        assert value is str
+        assert isinstance(property_p, str), \
+                "property_p is not an instance of str"
+        
+        assert isinstance(value, str), \
+                "value is not an instance of str"
+        
         self._call_method('setGuestPropertyValue',
                      in_p=[property_p, value])
         
@@ -7315,7 +7859,9 @@ class IMachine(Interface):
             Machine session is not open.
         
         """
-        assert name is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         self._call_method('deleteGuestProperty',
                      in_p=[name])
         
@@ -7343,7 +7889,9 @@ class IMachine(Interface):
           corresponding entries in the @a name array.
 
         """
-        assert patterns is str
+        assert isinstance(patterns, str), \
+                "patterns is not an instance of str"
+        
         (names, values, timestamps, flags) =\
             self._call_method('enumerateGuestProperties',
                      in_p=[patterns])
@@ -7371,7 +7919,9 @@ class IMachine(Interface):
             Whether the monitor is enabled in the guest.
 
         """
-        assert screen_id is int
+        assert isinstance(screen_id, int), \
+                "screen_id is not an instance of int"
+        
         (origin_x, origin_y, width, height, enabled) =\
             self._call_method('querySavedGuestScreenInfo',
                      in_p=[screen_id])
@@ -7393,7 +7943,9 @@ class IMachine(Interface):
             Bitmap height.
 
         """
-        assert screen_id is int
+        assert isinstance(screen_id, int), \
+                "screen_id is not an instance of int"
+        
         (size, width, height) =\
             self._call_method('querySavedThumbnailSize',
                      in_p=[screen_id])
@@ -7419,8 +7971,12 @@ class IMachine(Interface):
             Array with resulting bitmap data.
 
         """
-        assert screen_id is int
-        assert bgr is bool
+        assert isinstance(screen_id, int), \
+                "screen_id is not an instance of int"
+        
+        assert isinstance(bgr, bool), \
+                "bgr is not an instance of bool"
+        
         (width, height, data) =\
             self._call_method('readSavedThumbnailToArray',
                      in_p=[screen_id, bgr])
@@ -7442,7 +7998,9 @@ class IMachine(Interface):
             Array with resulting PNG data.
 
         """
-        assert screen_id is int
+        assert isinstance(screen_id, int), \
+                "screen_id is not an instance of int"
+        
         (width, height, data) =\
             self._call_method('readSavedThumbnailPNGToArray',
                      in_p=[screen_id])
@@ -7464,7 +8022,9 @@ class IMachine(Interface):
             Image height.
 
         """
-        assert screen_id is int
+        assert isinstance(screen_id, int), \
+                "screen_id is not an instance of int"
+        
         (size, width, height) =\
             self._call_method('querySavedScreenshotPNGSize',
                      in_p=[screen_id])
@@ -7486,7 +8046,9 @@ class IMachine(Interface):
             Array with resulting PNG data.
 
         """
-        assert screen_id is int
+        assert isinstance(screen_id, int), \
+                "screen_id is not an instance of int"
+        
         (width, height, data) =\
             self._call_method('readSavedScreenshotPNGToArray',
                      in_p=[screen_id])
@@ -7499,7 +8061,9 @@ class IMachine(Interface):
             The CPU id to insert.
 
         """
-        assert cpu is int
+        assert isinstance(cpu, int), \
+                "cpu is not an instance of int"
+        
         self._call_method('hotPlugCPU',
                      in_p=[cpu])
         
@@ -7510,7 +8074,9 @@ class IMachine(Interface):
             The CPU id to remove.
 
         """
-        assert cpu is int
+        assert isinstance(cpu, int), \
+                "cpu is not an instance of int"
+        
         self._call_method('hotUnplugCPU',
                      in_p=[cpu])
         
@@ -7524,7 +8090,9 @@ class IMachine(Interface):
             Status of the CPU.
 
         """
-        assert cpu is int
+        assert isinstance(cpu, int), \
+                "cpu is not an instance of int"
+        
         attached =\
             self._call_method('getCPUStatus',
                      in_p=[cpu])
@@ -7541,7 +8109,9 @@ class IMachine(Interface):
             On return the full path to the log file or an empty string on error.
 
         """
-        assert idx is int
+        assert isinstance(idx, int), \
+                "idx is not an instance of int"
+        
         filename =\
             self._call_method('queryLogFilename',
                      in_p=[idx])
@@ -7567,9 +8137,15 @@ class IMachine(Interface):
           the system the server is running on.
 
         """
-        assert idx is int
-        assert offset is int
-        assert size is int
+        assert isinstance(idx, int), \
+                "idx is not an instance of int"
+        
+        assert isinstance(offset, int), \
+                "offset is not an instance of int"
+        
+        assert isinstance(size, int), \
+                "size is not an instance of int"
+        
         data =\
             self._call_method('readLog',
                      in_p=[idx, offset, size])
@@ -7605,9 +8181,15 @@ class IMachine(Interface):
             @a target is @c null.
         
         """
-        assert target is IMachine
-        assert mode is CloneMode
-        assert options is CloneOptions
+        assert isinstance(target, IMachine), \
+                "target is not an instance of IMachine"
+        
+        assert isinstance(mode, CloneMode), \
+                "mode is not an instance of CloneMode"
+        
+        assert isinstance(options, CloneOptions), \
+                "options is not an instance of CloneOptions"
+        
         progress =\
             self._call_method('cloneTo',
                      in_p=[target, mode, options])
@@ -7920,7 +8502,8 @@ class IConsole(Interface):
 
     @use_host_clipboard.setter
     def use_host_clipboard(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('useHostClipboard', value)
 
     def power_up(self):
@@ -8180,7 +8763,9 @@ class IConsole(Interface):
             Virtual machine state neither PoweredOff nor Aborted.
         
         """
-        assert saved_state_file is str
+        assert isinstance(saved_state_file, str), \
+                "saved_state_file is not an instance of str"
+        
         self._call_method('adoptSavedState',
                      in_p=[saved_state_file])
         
@@ -8208,7 +8793,9 @@ class IConsole(Interface):
             Virtual machine not in state Saved.
         
         """
-        assert f_remove_file is bool
+        assert isinstance(f_remove_file, bool), \
+                "f_remove_file is not an instance of bool"
+        
         self._call_method('discardSavedState',
                      in_p=[f_remove_file])
         
@@ -8223,7 +8810,9 @@ class IConsole(Interface):
             Invalid device type.
         
         """
-        assert type_p is DeviceType
+        assert isinstance(type_p, DeviceType), \
+                "type_p is not an instance of DeviceType"
+        
         activity =\
             self._call_method('getDeviceActivity',
                      in_p=[type_p])
@@ -8256,7 +8845,9 @@ class IConsole(Interface):
             Virtual machine does not have a USB controller.
         
         """
-        assert id_p is str
+        assert isinstance(id_p, str), \
+                "id_p is not an instance of str"
+        
         self._call_method('attachUSBDevice',
                      in_p=[id_p])
         
@@ -8285,7 +8876,9 @@ class IConsole(Interface):
             USB device not attached to this virtual machine.
         
         """
-        assert id_p is str
+        assert isinstance(id_p, str), \
+                "id_p is not an instance of str"
+        
         device =\
             self._call_method('detachUSBDevice',
                      in_p=[id_p])
@@ -8309,7 +8902,9 @@ class IConsole(Interface):
             Given @c name does not correspond to any USB device.
         
         """
-        assert name is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         device =\
             self._call_method('findUSBDeviceByAddress',
                      in_p=[name])
@@ -8332,7 +8927,9 @@ class IConsole(Interface):
             Given @c id does not correspond to any USB device.
         
         """
-        assert id_p is str
+        assert isinstance(id_p, str), \
+                "id_p is not an instance of str"
+        
         device =\
             self._call_method('findUSBDeviceById',
                      in_p=[id_p])
@@ -8364,10 +8961,18 @@ class IConsole(Interface):
             Shared folder already exists or not accessible.
         
         """
-        assert name is str
-        assert host_path is str
-        assert writable is bool
-        assert automount is bool
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(host_path, str), \
+                "host_path is not an instance of str"
+        
+        assert isinstance(writable, bool), \
+                "writable is not an instance of bool"
+        
+        assert isinstance(automount, bool), \
+                "automount is not an instance of bool"
+        
         self._call_method('createSharedFolder',
                      in_p=[name, host_path, writable, automount])
         
@@ -8386,7 +8991,9 @@ class IConsole(Interface):
             Shared folder does not exists.
         
         """
-        assert name is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         self._call_method('removeSharedFolder',
                      in_p=[name])
         
@@ -8423,8 +9030,12 @@ class IConsole(Interface):
             Virtual machine currently changing state.
         
         """
-        assert name is str
-        assert description is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(description, str), \
+                "description is not an instance of str"
+        
         progress =\
             self._call_method('takeSnapshot',
                      in_p=[name, description])
@@ -8498,7 +9109,9 @@ class IConsole(Interface):
           text explains the reason for the failure.
         
         """
-        assert id_p is str
+        assert isinstance(id_p, str), \
+                "id_p is not an instance of str"
+        
         progress =\
             self._call_method('deleteSnapshot',
                      in_p=[id_p])
@@ -8534,7 +9147,9 @@ class IConsole(Interface):
             The method is not implemented yet.
         
         """
-        assert id_p is str
+        assert isinstance(id_p, str), \
+                "id_p is not an instance of str"
+        
         progress =\
             self._call_method('deleteSnapshotAndAllChildren',
                      in_p=[id_p])
@@ -8575,8 +9190,12 @@ class IConsole(Interface):
             The method is not implemented yet.
         
         """
-        assert start_id is str
-        assert end_id is str
+        assert isinstance(start_id, str), \
+                "start_id is not an instance of str"
+        
+        assert isinstance(end_id, str), \
+                "end_id is not an instance of str"
+        
         progress =\
             self._call_method('deleteSnapshotRange',
                      in_p=[start_id, end_id])
@@ -8617,7 +9236,9 @@ class IConsole(Interface):
             Virtual machine is running.
         
         """
-        assert snapshot is ISnapshot
+        assert isinstance(snapshot, ISnapshot), \
+                "snapshot is not an instance of ISnapshot"
+        
         progress =\
             self._call_method('restoreSnapshot',
                      in_p=[snapshot])
@@ -8656,10 +9277,18 @@ class IConsole(Interface):
             Virtual machine not running or paused.
         
         """
-        assert hostname is str
-        assert tcpport is int
-        assert password is str
-        assert max_downtime is int
+        assert isinstance(hostname, str), \
+                "hostname is not an instance of str"
+        
+        assert isinstance(tcpport, int), \
+                "tcpport is not an instance of int"
+        
+        assert isinstance(password, str), \
+                "password is not an instance of str"
+        
+        assert isinstance(max_downtime, int), \
+                "max_downtime is not an instance of int"
+        
         progress =\
             self._call_method('teleport',
                      in_p=[hostname, tcpport, password, max_downtime])
@@ -8790,8 +9419,12 @@ class IHostNetworkInterface(Interface):
             network mask.
 
         """
-        assert ip_address is str
-        assert network_mask is str
+        assert isinstance(ip_address, str), \
+                "ip_address is not an instance of str"
+        
+        assert isinstance(network_mask, str), \
+                "network_mask is not an instance of str"
+        
         self._call_method('enableStaticIPConfig',
                      in_p=[ip_address, network_mask])
         
@@ -8805,8 +9438,12 @@ class IHostNetworkInterface(Interface):
             network mask.
 
         """
-        assert ipv6_address is str
-        assert ipv6_network_mask_prefix_length is int
+        assert isinstance(ipv6_address, str), \
+                "ipv6_address is not an instance of str"
+        
+        assert isinstance(ipv6_network_mask_prefix_length, int), \
+                "ipv6_network_mask_prefix_length is not an instance of int"
+        
         self._call_method('enableStaticIPConfigV6',
                      in_p=[ipv6_address, ipv6_network_mask_prefix_length])
         
@@ -8937,7 +9574,9 @@ class IHost(Interface):
           invalid.
 
         """
-        assert cpu_id is int
+        assert isinstance(cpu_id, int), \
+                "cpu_id is not an instance of int"
+        
         speed =\
             self._call_method('getProcessorSpeed',
                      in_p=[cpu_id])
@@ -8953,7 +9592,9 @@ class IHost(Interface):
             Feature is supported or not.
 
         """
-        assert feature is ProcessorFeature
+        assert isinstance(feature, ProcessorFeature), \
+                "feature is not an instance of ProcessorFeature"
+        
         supported =\
             self._call_method('getProcessorFeature',
                      in_p=[feature])
@@ -8973,7 +9614,9 @@ class IHost(Interface):
           @a cpuId is invalid.
 
         """
-        assert cpu_id is int
+        assert isinstance(cpu_id, int), \
+                "cpu_id is not an instance of int"
+        
         description =\
             self._call_method('getProcessorDescription',
                      in_p=[cpu_id])
@@ -9009,9 +9652,15 @@ class IHost(Interface):
             CPUID leaf value for register edx.
 
         """
-        assert cpu_id is int
-        assert leaf is int
-        assert sub_leaf is int
+        assert isinstance(cpu_id, int), \
+                "cpu_id is not an instance of int"
+        
+        assert isinstance(leaf, int), \
+                "leaf is not an instance of int"
+        
+        assert isinstance(sub_leaf, int), \
+                "sub_leaf is not an instance of int"
+        
         (val_eax, val_ebx, val_ecx, val_edx) =\
             self._call_method('getProcessorCPUIDLeaf',
                      in_p=[cpu_id, leaf, sub_leaf])
@@ -9095,7 +9744,9 @@ class IHost(Interface):
             No host network interface matching @a id found.
         
         """
-        assert id_p is str
+        assert isinstance(id_p, str), \
+                "id_p is not an instance of str"
+        
         progress =\
             self._call_method('removeHostOnlyNetworkInterface',
                      in_p=[id_p])
@@ -9118,7 +9769,9 @@ class IHost(Interface):
             Created filter object.
 
         """
-        assert name is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         filter_p =\
             self._call_method('createUSBDeviceFilter',
                      in_p=[name])
@@ -9156,8 +9809,12 @@ class IHost(Interface):
             USB device filter already in list.
         
         """
-        assert position is int
-        assert filter_p is IHostUSBDeviceFilter
+        assert isinstance(position, int), \
+                "position is not an instance of int"
+        
+        assert isinstance(filter_p, IHostUSBDeviceFilter), \
+                "filter_p is not an instance of IHostUSBDeviceFilter"
+        
         self._call_method('insertUSBDeviceFilter',
                      in_p=[position, filter_p])
         
@@ -9183,7 +9840,9 @@ class IHost(Interface):
             USB device filter list empty or invalid @a position.
         
         """
-        assert position is int
+        assert isinstance(position, int), \
+                "position is not an instance of int"
+        
         self._call_method('removeUSBDeviceFilter',
                      in_p=[position])
         
@@ -9200,7 +9859,9 @@ class IHost(Interface):
             Given @c name does not correspond to any host drive.
         
         """
-        assert name is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         drive =\
             self._call_method('findHostDVDDrive',
                      in_p=[name])
@@ -9219,7 +9880,9 @@ class IHost(Interface):
             Given @c name does not correspond to any host floppy drive.
         
         """
-        assert name is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         drive =\
             self._call_method('findHostFloppyDrive',
                      in_p=[name])
@@ -9239,7 +9902,9 @@ class IHost(Interface):
             Found host network interface object.
 
         """
-        assert name is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         network_interface =\
             self._call_method('findHostNetworkInterfaceByName',
                      in_p=[name])
@@ -9259,7 +9924,9 @@ class IHost(Interface):
             Found host network interface object.
 
         """
-        assert id_p is str
+        assert isinstance(id_p, str), \
+                "id_p is not an instance of str"
+        
         network_interface =\
             self._call_method('findHostNetworkInterfaceById',
                      in_p=[id_p])
@@ -9275,7 +9942,9 @@ class IHost(Interface):
             Found host network interface objects.
 
         """
-        assert type_p is HostNetworkInterfaceType
+        assert isinstance(type_p, HostNetworkInterfaceType), \
+                "type_p is not an instance of HostNetworkInterfaceType"
+        
         network_interfaces =\
             self._call_method('findHostNetworkInterfacesOfType',
                      in_p=[type_p])
@@ -9298,7 +9967,9 @@ class IHost(Interface):
             Given @c id does not correspond to any USB device.
         
         """
-        assert id_p is str
+        assert isinstance(id_p, str), \
+                "id_p is not an instance of str"
+        
         device =\
             self._call_method('findUSBDeviceById',
                      in_p=[id_p])
@@ -9322,7 +9993,9 @@ class IHost(Interface):
             Given @c name does not correspond to any USB device.
         
         """
-        assert name is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         device =\
             self._call_method('findUSBDeviceByAddress',
                      in_p=[name])
@@ -9474,7 +10147,8 @@ class ISystemProperties(Interface):
 
     @default_machine_folder.setter
     def default_machine_folder(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('defaultMachineFolder', value)
 
     @property
@@ -9541,7 +10215,8 @@ class ISystemProperties(Interface):
 
     @default_hard_disk_format.setter
     def default_hard_disk_format(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('defaultHardDiskFormat', value)
 
     @property
@@ -9556,7 +10231,8 @@ class ISystemProperties(Interface):
 
     @free_disk_space_warning.setter
     def free_disk_space_warning(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('freeDiskSpaceWarning', value)
 
     @property
@@ -9570,7 +10246,8 @@ class ISystemProperties(Interface):
 
     @free_disk_space_percent_warning.setter
     def free_disk_space_percent_warning(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('freeDiskSpacePercentWarning', value)
 
     @property
@@ -9585,7 +10262,8 @@ class ISystemProperties(Interface):
 
     @free_disk_space_error.setter
     def free_disk_space_error(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('freeDiskSpaceError', value)
 
     @property
@@ -9599,7 +10277,8 @@ class ISystemProperties(Interface):
 
     @free_disk_space_percent_error.setter
     def free_disk_space_percent_error(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('freeDiskSpacePercentError', value)
 
     @property
@@ -9628,7 +10307,8 @@ class ISystemProperties(Interface):
 
     @vrde_auth_library.setter
     def vrde_auth_library(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('VRDEAuthLibrary', value)
 
     @property
@@ -9662,7 +10342,8 @@ class ISystemProperties(Interface):
 
     @web_service_auth_library.setter
     def web_service_auth_library(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('webServiceAuthLibrary', value)
 
     @property
@@ -9683,7 +10364,8 @@ class ISystemProperties(Interface):
 
     @default_vrde_ext_pack.setter
     def default_vrde_ext_pack(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('defaultVRDEExtPack', value)
 
     @property
@@ -9696,7 +10378,8 @@ class ISystemProperties(Interface):
 
     @log_history_count.setter
     def log_history_count(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('logHistoryCount', value)
 
     @property
@@ -9719,7 +10402,8 @@ class ISystemProperties(Interface):
 
     @autostart_database_path.setter
     def autostart_database_path(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('autostartDatabasePath', value)
 
     @property
@@ -9733,7 +10417,8 @@ class ISystemProperties(Interface):
 
     @default_additions_iso.setter
     def default_additions_iso(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('defaultAdditionsISO', value)
 
     @property
@@ -9755,7 +10440,8 @@ class ISystemProperties(Interface):
 
     @default_frontend.setter
     def default_frontend(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('defaultFrontend', value)
 
     def get_max_network_adapters(self, chipset):
@@ -9769,7 +10455,9 @@ class ISystemProperties(Interface):
             The maximum total number of network adapters allowed.
 
         """
-        assert chipset is ChipsetType
+        assert isinstance(chipset, ChipsetType), \
+                "chipset is not an instance of ChipsetType"
+        
         max_network_adapters =\
             self._call_method('getMaxNetworkAdapters',
                      in_p=[chipset])
@@ -9790,8 +10478,12 @@ class ISystemProperties(Interface):
           particular chipset and attachment type.
 
         """
-        assert chipset is ChipsetType
-        assert type_p is NetworkAttachmentType
+        assert isinstance(chipset, ChipsetType), \
+                "chipset is not an instance of ChipsetType"
+        
+        assert isinstance(type_p, NetworkAttachmentType), \
+                "type_p is not an instance of NetworkAttachmentType"
+        
         max_network_adapters =\
             self._call_method('getMaxNetworkAdaptersOfType',
                      in_p=[chipset, type_p])
@@ -9809,7 +10501,9 @@ class ISystemProperties(Interface):
         storage bus.
 
         """
-        assert bus is StorageBus
+        assert isinstance(bus, StorageBus), \
+                "bus is not an instance of StorageBus"
+        
         max_devices_per_port =\
             self._call_method('getMaxDevicesPerPortForStorageBus',
                      in_p=[bus])
@@ -9825,7 +10519,9 @@ class ISystemProperties(Interface):
             The minimum number of ports for the given storage bus.
 
         """
-        assert bus is StorageBus
+        assert isinstance(bus, StorageBus), \
+                "bus is not an instance of StorageBus"
+        
         min_port_count =\
             self._call_method('getMinPortCountForStorageBus',
                      in_p=[bus])
@@ -9841,7 +10537,9 @@ class ISystemProperties(Interface):
             The maximum number of ports for the given storage bus.
 
         """
-        assert bus is StorageBus
+        assert isinstance(bus, StorageBus), \
+                "bus is not an instance of StorageBus"
+        
         max_port_count =\
             self._call_method('getMaxPortCountForStorageBus',
                      in_p=[bus])
@@ -9863,8 +10561,12 @@ class ISystemProperties(Interface):
             The maximum number of instances for the given storage bus.
 
         """
-        assert chipset is ChipsetType
-        assert bus is StorageBus
+        assert isinstance(chipset, ChipsetType), \
+                "chipset is not an instance of ChipsetType"
+        
+        assert isinstance(bus, StorageBus), \
+                "bus is not an instance of StorageBus"
+        
         max_instances =\
             self._call_method('getMaxInstancesOfStorageBus',
                      in_p=[chipset, bus])
@@ -9882,7 +10584,9 @@ class ISystemProperties(Interface):
             The list of all supported device types for the given storage bus.
 
         """
-        assert bus is StorageBus
+        assert isinstance(bus, StorageBus), \
+                "bus is not an instance of StorageBus"
+        
         device_types =\
             self._call_method('getDeviceTypesForStorageBus',
                      in_p=[bus])
@@ -9899,7 +10603,9 @@ class ISystemProperties(Interface):
             Returned flag indicating the default value
 
         """
-        assert controller_type is StorageControllerType
+        assert isinstance(controller_type, StorageControllerType), \
+                "controller_type is not an instance of StorageControllerType"
+        
         enabled =\
             self._call_method('getDefaultIoCacheSettingForStorageController',
                      in_p=[controller_type])
@@ -10246,7 +10952,8 @@ class IGuestSession(Interface):
 
     @timeout.setter
     def timeout(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('timeout', value)
 
     @property
@@ -10267,7 +10974,8 @@ class IGuestSession(Interface):
 
     @environment.setter
     def environment(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('environment', value)
 
     @property
@@ -10329,9 +11037,15 @@ class IGuestSession(Interface):
             Error starting the copy operation.
         
         """
-        assert source is str
-        assert dest is str
-        assert flags is CopyFileFlag
+        assert isinstance(source, str), \
+                "source is not an instance of str"
+        
+        assert isinstance(dest, str), \
+                "dest is not an instance of str"
+        
+        assert isinstance(flags, CopyFileFlag), \
+                "flags is not an instance of CopyFileFlag"
+        
         progress =\
             self._call_method('copyFrom',
                      in_p=[source, dest, flags])
@@ -10356,9 +11070,15 @@ class IGuestSession(Interface):
             Error starting the copy operation.
         
         """
-        assert source is str
-        assert dest is str
-        assert flags is CopyFileFlag
+        assert isinstance(source, str), \
+                "source is not an instance of str"
+        
+        assert isinstance(dest, str), \
+                "dest is not an instance of str"
+        
+        assert isinstance(flags, CopyFileFlag), \
+                "flags is not an instance of CopyFileFlag"
+        
         progress =\
             self._call_method('copyTo',
                      in_p=[source, dest, flags])
@@ -10380,9 +11100,15 @@ class IGuestSession(Interface):
             Error while creating the directory.
         
         """
-        assert path is str
-        assert mode is int
-        assert flags is DirectoryCreateFlag
+        assert isinstance(path, str), \
+                "path is not an instance of str"
+        
+        assert isinstance(mode, int), \
+                "mode is not an instance of int"
+        
+        assert isinstance(flags, DirectoryCreateFlag), \
+                "flags is not an instance of DirectoryCreateFlag"
+        
         self._call_method('directoryCreate',
                      in_p=[path, mode, flags])
         
@@ -10427,10 +11153,18 @@ class IGuestSession(Interface):
           option was requested.
         
         """
-        assert template_name is str
-        assert mode is int
-        assert path is str
-        assert secure is bool
+        assert isinstance(template_name, str), \
+                "template_name is not an instance of str"
+        
+        assert isinstance(mode, int), \
+                "mode is not an instance of int"
+        
+        assert isinstance(path, str), \
+                "path is not an instance of str"
+        
+        assert isinstance(secure, bool), \
+                "secure is not an instance of bool"
+        
         directory =\
             self._call_method('directoryCreateTemp',
                      in_p=[template_name, mode, path, secure])
@@ -10449,7 +11183,9 @@ class IGuestSession(Interface):
             Error while checking existence of the directory specified.
         
         """
-        assert path is str
+        assert isinstance(path, str), \
+                "path is not an instance of str"
+        
         exists =\
             self._call_method('directoryExists',
                      in_p=[path])
@@ -10478,9 +11214,15 @@ class IGuestSession(Interface):
             Error while opening the directory.
         
         """
-        assert path is str
-        assert filter_p is str
-        assert flags is DirectoryOpenFlag
+        assert isinstance(path, str), \
+                "path is not an instance of str"
+        
+        assert isinstance(filter_p, str), \
+                "filter_p is not an instance of str"
+        
+        assert isinstance(flags, DirectoryOpenFlag), \
+                "flags is not an instance of DirectoryOpenFlag"
+        
         directory =\
             self._call_method('directoryOpen',
                      in_p=[path, filter_p, flags])
@@ -10502,7 +11244,9 @@ class IGuestSession(Interface):
             Error querying information.
         
         """
-        assert path is str
+        assert isinstance(path, str), \
+                "path is not an instance of str"
+        
         info =\
             self._call_method('directoryQueryInfo',
                      in_p=[path])
@@ -10518,7 +11262,9 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        assert path is str
+        assert isinstance(path, str), \
+                "path is not an instance of str"
+        
         self._call_method('directoryRemove',
                      in_p=[path])
         
@@ -10538,8 +11284,12 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        assert path is str
-        assert flags is DirectoryRemoveRecFlag
+        assert isinstance(path, str), \
+                "path is not an instance of str"
+        
+        assert isinstance(flags, DirectoryRemoveRecFlag), \
+                "flags is not an instance of DirectoryRemoveRecFlag"
+        
         progress =\
             self._call_method('directoryRemoveRecursive',
                      in_p=[path, flags])
@@ -10561,9 +11311,15 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        assert source is str
-        assert dest is str
-        assert flags is PathRenameFlag
+        assert isinstance(source, str), \
+                "source is not an instance of str"
+        
+        assert isinstance(dest, str), \
+                "dest is not an instance of str"
+        
+        assert isinstance(flags, PathRenameFlag), \
+                "flags is not an instance of PathRenameFlag"
+        
         self._call_method('directoryRename',
                      in_p=[source, dest, flags])
         
@@ -10580,8 +11336,12 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        assert path is str
-        assert acl is str
+        assert isinstance(path, str), \
+                "path is not an instance of str"
+        
+        assert isinstance(acl, str), \
+                "acl is not an instance of str"
+        
         self._call_method('directorySetACL',
                      in_p=[path, acl])
         
@@ -10608,7 +11368,9 @@ class IGuestSession(Interface):
             Error while getting the value of the session environment variable.
         
         """
-        assert name is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         value =\
             self._call_method('environmentGet',
                      in_p=[name])
@@ -10627,8 +11389,12 @@ class IGuestSession(Interface):
             Error while setting the session environment variable.
         
         """
-        assert name is str
-        assert value is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(value, str), \
+                "value is not an instance of str"
+        
         self._call_method('environmentSet',
                      in_p=[name, value])
         
@@ -10642,7 +11408,9 @@ class IGuestSession(Interface):
             Error while unsetting the session environment variable.
         
         """
-        assert name is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         self._call_method('environmentUnset',
                      in_p=[name])
         
@@ -10687,10 +11455,18 @@ class IGuestSession(Interface):
           option was requested.
         
         """
-        assert template_name is str
-        assert mode is int
-        assert path is str
-        assert secure is bool
+        assert isinstance(template_name, str), \
+                "template_name is not an instance of str"
+        
+        assert isinstance(mode, int), \
+                "mode is not an instance of int"
+        
+        assert isinstance(path, str), \
+                "path is not an instance of str"
+        
+        assert isinstance(secure, bool), \
+                "secure is not an instance of bool"
+        
         file_p =\
             self._call_method('fileCreateTemp',
                      in_p=[template_name, mode, path, secure])
@@ -10709,7 +11485,9 @@ class IGuestSession(Interface):
             Error while checking existence of the file specified.
         
         """
-        assert path is str
+        assert isinstance(path, str), \
+                "path is not an instance of str"
+        
         exists =\
             self._call_method('fileExists',
                      in_p=[path])
@@ -10728,7 +11506,9 @@ class IGuestSession(Interface):
             Error while removing the file.
         
         """
-        assert path is str
+        assert isinstance(path, str), \
+                "path is not an instance of str"
+        
         self._call_method('fileRemove',
                      in_p=[path])
         
@@ -10761,11 +11541,21 @@ class IGuestSession(Interface):
             Error while opening the file.
         
         """
-        assert path is str
-        assert open_mode is str
-        assert disposition is str
-        assert creation_mode is int
-        assert offset is int
+        assert isinstance(path, str), \
+                "path is not an instance of str"
+        
+        assert isinstance(open_mode, str), \
+                "open_mode is not an instance of str"
+        
+        assert isinstance(disposition, str), \
+                "disposition is not an instance of str"
+        
+        assert isinstance(creation_mode, int), \
+                "creation_mode is not an instance of int"
+        
+        assert isinstance(offset, int), \
+                "offset is not an instance of int"
+        
         file_p =\
             self._call_method('fileOpen',
                      in_p=[path, open_mode, disposition, creation_mode, offset])
@@ -10787,7 +11577,9 @@ class IGuestSession(Interface):
             Error querying information.
         
         """
-        assert path is str
+        assert isinstance(path, str), \
+                "path is not an instance of str"
+        
         info =\
             self._call_method('fileQueryInfo',
                      in_p=[path])
@@ -10809,7 +11601,9 @@ class IGuestSession(Interface):
             Error querying file size.
         
         """
-        assert path is str
+        assert isinstance(path, str), \
+                "path is not an instance of str"
+        
         size =\
             self._call_method('fileQuerySize',
                      in_p=[path])
@@ -10831,9 +11625,15 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        assert source is str
-        assert dest is str
-        assert flags is PathRenameFlag
+        assert isinstance(source, str), \
+                "source is not an instance of str"
+        
+        assert isinstance(dest, str), \
+                "dest is not an instance of str"
+        
+        assert isinstance(flags, PathRenameFlag), \
+                "flags is not an instance of PathRenameFlag"
+        
         self._call_method('fileRename',
                      in_p=[source, dest, flags])
         
@@ -10850,8 +11650,12 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        assert file_p is str
-        assert acl is str
+        assert isinstance(file_p, str), \
+                "file_p is not an instance of str"
+        
+        assert isinstance(acl, str), \
+                "acl is not an instance of str"
+        
         self._call_method('fileSetACL',
                      in_p=[file_p, acl])
         
@@ -10909,11 +11713,21 @@ class IGuestSession(Interface):
             Error creating guest process.
         
         """
-        assert command is str
-        assert arguments is str
-        assert environment is str
-        assert flags is ProcessCreateFlag
-        assert timeout_ms is int
+        assert isinstance(command, str), \
+                "command is not an instance of str"
+        
+        assert isinstance(arguments, str), \
+                "arguments is not an instance of str"
+        
+        assert isinstance(environment, str), \
+                "environment is not an instance of str"
+        
+        assert isinstance(flags, ProcessCreateFlag), \
+                "flags is not an instance of ProcessCreateFlag"
+        
+        assert isinstance(timeout_ms, int), \
+                "timeout_ms is not an instance of int"
+        
         guest_process =\
             self._call_method('processCreate',
                      in_p=[command, arguments, environment, flags, timeout_ms])
@@ -10963,13 +11777,27 @@ class IGuestSession(Interface):
             Guest process object of the newly created process.
 
         """
-        assert command is str
-        assert arguments is str
-        assert environment is str
-        assert flags is ProcessCreateFlag
-        assert timeout_ms is int
-        assert priority is ProcessPriority
-        assert affinity is int
+        assert isinstance(command, str), \
+                "command is not an instance of str"
+        
+        assert isinstance(arguments, str), \
+                "arguments is not an instance of str"
+        
+        assert isinstance(environment, str), \
+                "environment is not an instance of str"
+        
+        assert isinstance(flags, ProcessCreateFlag), \
+                "flags is not an instance of ProcessCreateFlag"
+        
+        assert isinstance(timeout_ms, int), \
+                "timeout_ms is not an instance of int"
+        
+        assert isinstance(priority, ProcessPriority), \
+                "priority is not an instance of ProcessPriority"
+        
+        assert isinstance(affinity, int), \
+                "affinity is not an instance of int"
+        
         guest_process =\
             self._call_method('processCreateEx',
                      in_p=[command, arguments, environment, flags, timeout_ms, priority, affinity])
@@ -10985,7 +11813,9 @@ class IGuestSession(Interface):
             Guest process of specified process ID (PID).
 
         """
-        assert pid is int
+        assert isinstance(pid, int), \
+                "pid is not an instance of int"
+        
         guest_process =\
             self._call_method('processGet',
                      in_p=[pid])
@@ -11008,9 +11838,15 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        assert source is str
-        assert target is str
-        assert type_p is SymlinkType
+        assert isinstance(source, str), \
+                "source is not an instance of str"
+        
+        assert isinstance(target, str), \
+                "target is not an instance of str"
+        
+        assert isinstance(type_p, SymlinkType), \
+                "type_p is not an instance of SymlinkType"
+        
         self._call_method('symlinkCreate',
                      in_p=[source, target, type_p])
         
@@ -11027,7 +11863,9 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        assert symlink is str
+        assert isinstance(symlink, str), \
+                "symlink is not an instance of str"
+        
         exists =\
             self._call_method('symlinkExists',
                      in_p=[symlink])
@@ -11049,8 +11887,12 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        assert symlink is str
-        assert flags is SymlinkReadFlag
+        assert isinstance(symlink, str), \
+                "symlink is not an instance of str"
+        
+        assert isinstance(flags, SymlinkReadFlag), \
+                "flags is not an instance of SymlinkReadFlag"
+        
         target =\
             self._call_method('symlinkRead',
                      in_p=[symlink, flags])
@@ -11066,7 +11908,9 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        assert path is str
+        assert isinstance(path, str), \
+                "path is not an instance of str"
+        
         self._call_method('symlinkRemoveDirectory',
                      in_p=[path])
         
@@ -11080,7 +11924,9 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        assert file_p is str
+        assert isinstance(file_p, str), \
+                "file_p is not an instance of str"
+        
         self._call_method('symlinkRemoveFile',
                      in_p=[file_p])
         
@@ -11100,8 +11946,12 @@ class IGuestSession(Interface):
           see <link to="GuestSessionWaitResult"/> for more information.
 
         """
-        assert wait_for is int
-        assert timeout_ms is int
+        assert isinstance(wait_for, int), \
+                "wait_for is not an instance of int"
+        
+        assert isinstance(timeout_ms, int), \
+                "timeout_ms is not an instance of int"
+        
         reason =\
             self._call_method('waitFor',
                      in_p=[wait_for, timeout_ms])
@@ -11124,8 +11974,12 @@ class IGuestSession(Interface):
           see <link to="GuestSessionWaitResult"/> for more information.
 
         """
-        assert wait_for is GuestSessionWaitForFlag
-        assert timeout_ms is int
+        assert isinstance(wait_for, GuestSessionWaitForFlag), \
+                "wait_for is not an instance of GuestSessionWaitForFlag"
+        
+        assert isinstance(timeout_ms, int), \
+                "timeout_ms is not an instance of int"
+        
         reason =\
             self._call_method('waitForArray',
                      in_p=[wait_for, timeout_ms])
@@ -11221,8 +12075,12 @@ class IProcess(Interface):
           see <link to="ProcessWaitResult"/> for more information.
 
         """
-        assert wait_for is int
-        assert timeout_ms is int
+        assert isinstance(wait_for, int), \
+                "wait_for is not an instance of int"
+        
+        assert isinstance(timeout_ms, int), \
+                "timeout_ms is not an instance of int"
+        
         reason =\
             self._call_method('waitFor',
                      in_p=[wait_for, timeout_ms])
@@ -11245,8 +12103,12 @@ class IProcess(Interface):
           see <link to="ProcessWaitResult"/> for more information.
 
         """
-        assert wait_for is ProcessWaitForFlag
-        assert timeout_ms is int
+        assert isinstance(wait_for, ProcessWaitForFlag), \
+                "wait_for is not an instance of ProcessWaitForFlag"
+        
+        assert isinstance(timeout_ms, int), \
+                "timeout_ms is not an instance of int"
+        
         reason =\
             self._call_method('waitForArray',
                      in_p=[wait_for, timeout_ms])
@@ -11269,9 +12131,15 @@ class IProcess(Interface):
             Array of data read.
 
         """
-        assert handle is int
-        assert to_read is int
-        assert timeout_ms is int
+        assert isinstance(handle, int), \
+                "handle is not an instance of int"
+        
+        assert isinstance(to_read, int), \
+                "to_read is not an instance of int"
+        
+        assert isinstance(timeout_ms, int), \
+                "timeout_ms is not an instance of int"
+        
         data =\
             self._call_method('read',
                      in_p=[handle, to_read, timeout_ms])
@@ -11298,10 +12166,18 @@ class IProcess(Interface):
             How much bytes were written.
 
         """
-        assert handle is int
-        assert flags is int
-        assert data is str
-        assert timeout_ms is int
+        assert isinstance(handle, int), \
+                "handle is not an instance of int"
+        
+        assert isinstance(flags, int), \
+                "flags is not an instance of int"
+        
+        assert isinstance(data, str), \
+                "data is not an instance of str"
+        
+        assert isinstance(timeout_ms, int), \
+                "timeout_ms is not an instance of int"
+        
         written =\
             self._call_method('write',
                      in_p=[handle, flags, data, timeout_ms])
@@ -11329,10 +12205,18 @@ class IProcess(Interface):
             How much bytes were written.
 
         """
-        assert handle is int
-        assert flags is ProcessInputFlag
-        assert data is str
-        assert timeout_ms is int
+        assert isinstance(handle, int), \
+                "handle is not an instance of int"
+        
+        assert isinstance(flags, ProcessInputFlag), \
+                "flags is not an instance of ProcessInputFlag"
+        
+        assert isinstance(data, str), \
+                "data is not an instance of str"
+        
+        assert isinstance(timeout_ms, int), \
+                "timeout_ms is not an instance of int"
+        
         written =\
             self._call_method('writeArray',
                      in_p=[handle, flags, data, timeout_ms])
@@ -11519,8 +12403,12 @@ class IFile(Interface):
             The method is not implemented yet.
         
         """
-        assert to_read is int
-        assert timeout_ms is int
+        assert isinstance(to_read, int), \
+                "to_read is not an instance of int"
+        
+        assert isinstance(timeout_ms, int), \
+                "timeout_ms is not an instance of int"
+        
         data =\
             self._call_method('read',
                      in_p=[to_read, timeout_ms])
@@ -11546,9 +12434,15 @@ class IFile(Interface):
             The method is not implemented yet.
         
         """
-        assert offset is int
-        assert to_read is int
-        assert timeout_ms is int
+        assert isinstance(offset, int), \
+                "offset is not an instance of int"
+        
+        assert isinstance(to_read, int), \
+                "to_read is not an instance of int"
+        
+        assert isinstance(timeout_ms, int), \
+                "timeout_ms is not an instance of int"
+        
         data =\
             self._call_method('readAt',
                      in_p=[offset, to_read, timeout_ms])
@@ -11567,8 +12461,12 @@ class IFile(Interface):
             The method is not implemented yet.
         
         """
-        assert offset is int
-        assert whence is FileSeekType
+        assert isinstance(offset, int), \
+                "offset is not an instance of int"
+        
+        assert isinstance(whence, FileSeekType), \
+                "whence is not an instance of FileSeekType"
+        
         self._call_method('seek',
                      in_p=[offset, whence])
         
@@ -11582,7 +12480,9 @@ class IFile(Interface):
             The method is not implemented yet.
         
         """
-        assert acl is str
+        assert isinstance(acl, str), \
+                "acl is not an instance of str"
+        
         self._call_method('setACL',
                      in_p=[acl])
         
@@ -11601,8 +12501,12 @@ class IFile(Interface):
             How much bytes were written.
 
         """
-        assert data is str
-        assert timeout_ms is int
+        assert isinstance(data, str), \
+                "data is not an instance of str"
+        
+        assert isinstance(timeout_ms, int), \
+                "timeout_ms is not an instance of int"
+        
         written =\
             self._call_method('write',
                      in_p=[data, timeout_ms])
@@ -11629,9 +12533,15 @@ class IFile(Interface):
             The method is not implemented yet.
         
         """
-        assert offset is int
-        assert data is str
-        assert timeout_ms is int
+        assert isinstance(offset, int), \
+                "offset is not an instance of int"
+        
+        assert isinstance(data, str), \
+                "data is not an instance of str"
+        
+        assert isinstance(timeout_ms, int), \
+                "timeout_ms is not an instance of int"
+        
         written =\
             self._call_method('writeAt',
                      in_p=[offset, data, timeout_ms])
@@ -11901,7 +12811,8 @@ class IGuest(Interface):
 
     @memory_balloon_size.setter
     def memory_balloon_size(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('memoryBalloonSize', value)
 
     @property
@@ -11914,7 +12825,8 @@ class IGuest(Interface):
 
     @statistics_update_interval.setter
     def statistics_update_interval(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('statisticsUpdateInterval', value)
 
     def internal_get_statistics(self):
@@ -11977,7 +12889,9 @@ class IGuest(Interface):
             The current (latest) facility status.
 
         """
-        assert facility is AdditionsFacilityType
+        assert isinstance(facility, AdditionsFacilityType), \
+                "facility is not an instance of AdditionsFacilityType"
+        
         (timestamp, status) =\
             self._call_method('getFacilityStatus',
                      in_p=[facility])
@@ -11996,7 +12910,9 @@ class IGuest(Interface):
             Wrong status level specified.
         
         """
-        assert level is AdditionsRunLevelType
+        assert isinstance(level, AdditionsRunLevelType), \
+                "level is not an instance of AdditionsRunLevelType"
+        
         active =\
             self._call_method('getAdditionsStatus',
                      in_p=[level])
@@ -12027,10 +12943,18 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        assert user_name is str
-        assert password is str
-        assert domain is str
-        assert allow_interactive_logon is bool
+        assert isinstance(user_name, str), \
+                "user_name is not an instance of str"
+        
+        assert isinstance(password, str), \
+                "password is not an instance of str"
+        
+        assert isinstance(domain, str), \
+                "domain is not an instance of str"
+        
+        assert isinstance(allow_interactive_logon, bool), \
+                "allow_interactive_logon is not an instance of bool"
+        
         self._call_method('setCredentials',
                      in_p=[user_name, password, domain, allow_interactive_logon])
         
@@ -12064,12 +12988,24 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        assert screen_id is int
-        assert y is int
-        assert x is int
-        assert default_action is DragAndDropAction
-        assert allowed_actions is DragAndDropAction
-        assert formats is str
+        assert isinstance(screen_id, int), \
+                "screen_id is not an instance of int"
+        
+        assert isinstance(y, int), \
+                "y is not an instance of int"
+        
+        assert isinstance(x, int), \
+                "x is not an instance of int"
+        
+        assert isinstance(default_action, DragAndDropAction), \
+                "default_action is not an instance of DragAndDropAction"
+        
+        assert isinstance(allowed_actions, DragAndDropAction), \
+                "allowed_actions is not an instance of DragAndDropAction"
+        
+        assert isinstance(formats, str), \
+                "formats is not an instance of str"
+        
         result_action =\
             self._call_method('dragHGEnter',
                      in_p=[screen_id, y, x, default_action, allowed_actions, formats])
@@ -12105,12 +13041,24 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        assert screen_id is int
-        assert x is int
-        assert y is int
-        assert default_action is DragAndDropAction
-        assert allowed_actions is DragAndDropAction
-        assert formats is str
+        assert isinstance(screen_id, int), \
+                "screen_id is not an instance of int"
+        
+        assert isinstance(x, int), \
+                "x is not an instance of int"
+        
+        assert isinstance(y, int), \
+                "y is not an instance of int"
+        
+        assert isinstance(default_action, DragAndDropAction), \
+                "default_action is not an instance of DragAndDropAction"
+        
+        assert isinstance(allowed_actions, DragAndDropAction), \
+                "allowed_actions is not an instance of DragAndDropAction"
+        
+        assert isinstance(formats, str), \
+                "formats is not an instance of str"
+        
         result_action =\
             self._call_method('dragHGMove',
                      in_p=[screen_id, x, y, default_action, allowed_actions, formats])
@@ -12128,7 +13076,9 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        assert screen_id is int
+        assert isinstance(screen_id, int), \
+                "screen_id is not an instance of int"
+        
         self._call_method('dragHGLeave',
                      in_p=[screen_id])
         
@@ -12165,12 +13115,24 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        assert screen_id is int
-        assert x is int
-        assert y is int
-        assert default_action is DragAndDropAction
-        assert allowed_actions is DragAndDropAction
-        assert formats is str
+        assert isinstance(screen_id, int), \
+                "screen_id is not an instance of int"
+        
+        assert isinstance(x, int), \
+                "x is not an instance of int"
+        
+        assert isinstance(y, int), \
+                "y is not an instance of int"
+        
+        assert isinstance(default_action, DragAndDropAction), \
+                "default_action is not an instance of DragAndDropAction"
+        
+        assert isinstance(allowed_actions, DragAndDropAction), \
+                "allowed_actions is not an instance of DragAndDropAction"
+        
+        assert isinstance(formats, str), \
+                "formats is not an instance of str"
+        
         (format_p, result_action) =\
             self._call_method('dragHGDrop',
                      in_p=[screen_id, x, y, default_action, allowed_actions, formats])
@@ -12197,9 +13159,15 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        assert screen_id is int
-        assert format_p is str
-        assert data is str
+        assert isinstance(screen_id, int), \
+                "screen_id is not an instance of int"
+        
+        assert isinstance(format_p, str), \
+                "format_p is not an instance of str"
+        
+        assert isinstance(data, str), \
+                "data is not an instance of str"
+        
         progress =\
             self._call_method('dragHGPutData',
                      in_p=[screen_id, format_p, data])
@@ -12228,7 +13196,9 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        assert screen_id is int
+        assert isinstance(screen_id, int), \
+                "screen_id is not an instance of int"
+        
         (formats, allowed_actions, default_action) =\
             self._call_method('dragGHPending',
                      in_p=[screen_id])
@@ -12252,8 +13222,12 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        assert format_p is str
-        assert action is DragAndDropAction
+        assert isinstance(format_p, str), \
+                "format_p is not an instance of str"
+        
+        assert isinstance(action, DragAndDropAction), \
+                "action is not an instance of DragAndDropAction"
+        
         progress =\
             self._call_method('dragGHDropped',
                      in_p=[format_p, action])
@@ -12323,10 +13297,18 @@ class IGuest(Interface):
             The newly created session object.
 
         """
-        assert user is str
-        assert password is str
-        assert domain is str
-        assert session_name is str
+        assert isinstance(user, str), \
+                "user is not an instance of str"
+        
+        assert isinstance(password, str), \
+                "password is not an instance of str"
+        
+        assert isinstance(domain, str), \
+                "domain is not an instance of str"
+        
+        assert isinstance(session_name, str), \
+                "session_name is not an instance of str"
+        
         guest_session =\
             self._call_method('createSession',
                      in_p=[user, password, domain, session_name])
@@ -12343,7 +13325,9 @@ class IGuest(Interface):
             Array with all guest sessions found matching the name specified.
 
         """
-        assert session_name is str
+        assert isinstance(session_name, str), \
+                "session_name is not an instance of str"
+        
         sessions =\
             self._call_method('findSession',
                      in_p=[session_name])
@@ -12381,8 +13365,12 @@ class IGuest(Interface):
             Error while updating.
         
         """
-        assert source is str
-        assert flags is AdditionsUpdateFlag
+        assert isinstance(source, str), \
+                "source is not an instance of str"
+        
+        assert isinstance(flags, AdditionsUpdateFlag), \
+                "flags is not an instance of AdditionsUpdateFlag"
+        
         progress =\
             self._call_method('updateGuestAdditions',
                      in_p=[source, flags])
@@ -12577,7 +13565,8 @@ class IProgress(Interface):
 
     @timeout.setter
     def timeout(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('timeout', value)
 
     def set_current_operation_progress(self, percent):
@@ -12586,7 +13575,9 @@ class IProgress(Interface):
         in percent of type int
 
         """
-        assert percent is int
+        assert isinstance(percent, int), \
+                "percent is not an instance of int"
+        
         self._call_method('setCurrentOperationProgress',
                      in_p=[percent])
         
@@ -12598,8 +13589,12 @@ class IProgress(Interface):
         in next_operations_weight of type int
 
         """
-        assert next_operation_description is str
-        assert next_operations_weight is int
+        assert isinstance(next_operation_description, str), \
+                "next_operation_description is not an instance of str"
+        
+        assert isinstance(next_operations_weight, int), \
+                "next_operations_weight is not an instance of int"
+        
         self._call_method('setNextOperation',
                      in_p=[next_operation_description, next_operations_weight])
         
@@ -12622,7 +13617,9 @@ class IProgress(Interface):
             Failed to wait for task completion.
         
         """
-        assert timeout is int
+        assert isinstance(timeout, int), \
+                "timeout is not an instance of int"
+        
         self._call_method('waitForCompletion',
                      in_p=[timeout])
         
@@ -12643,8 +13640,12 @@ class IProgress(Interface):
             Failed to wait for operation completion.
         
         """
-        assert operation is int
-        assert timeout is int
+        assert isinstance(operation, int), \
+                "operation is not an instance of int"
+        
+        assert isinstance(timeout, int), \
+                "timeout is not an instance of int"
+        
         self._call_method('waitForOperationCompletion',
                      in_p=[operation, timeout])
         
@@ -12671,7 +13672,9 @@ class IProgress(Interface):
             The progress object of the asynchrony process.
 
         """
-        assert p_progress_async is IProgress
+        assert isinstance(p_progress_async, IProgress), \
+                "p_progress_async is not an instance of IProgress"
+        
         self._call_method('waitForAsyncProgressCompletion',
                      in_p=[p_progress_async])
         
@@ -12792,7 +13795,8 @@ class ISnapshot(Interface):
 
     @name.setter
     def name(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('name', value)
 
     @property
@@ -12807,7 +13811,8 @@ class ISnapshot(Interface):
 
     @description.setter
     def description(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('description', value)
 
     @property
@@ -13342,7 +14347,8 @@ class IMedium(Interface):
 
     @description.setter
     def description(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('description', value)
 
     @property
@@ -13398,7 +14404,8 @@ class IMedium(Interface):
 
     @location.setter
     def location(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('location', value)
 
     @property
@@ -13516,7 +14523,8 @@ class IMedium(Interface):
 
     @type_p.setter
     def type_p(self, value):
-        assert type(value) is MediumType
+        assert isinstance(value, MediumType), \
+                "value is not an instance of MediumType"
         return self._set_attr('type', value)
 
     @property
@@ -13633,7 +14641,8 @@ class IMedium(Interface):
 
     @auto_reset.setter
     def auto_reset(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('autoReset', value)
 
     @property
@@ -13696,10 +14705,18 @@ class IMedium(Interface):
             Medium is not a hard disk medium.
         
         """
-        assert set_image_id is bool
-        assert image_id is str
-        assert set_parent_id is bool
-        assert parent_id is str
+        assert isinstance(set_image_id, bool), \
+                "set_image_id is not an instance of bool"
+        
+        assert isinstance(image_id, str), \
+                "image_id is not an instance of str"
+        
+        assert isinstance(set_parent_id, bool), \
+                "set_parent_id is not an instance of bool"
+        
+        assert isinstance(parent_id, str), \
+                "parent_id is not an instance of str"
+        
         self._call_method('setIds',
                      in_p=[set_image_id, image_id, set_parent_id, parent_id])
         
@@ -13762,7 +14779,9 @@ class IMedium(Interface):
             Array of snapshot UUIDs of the given machine using this medium.
 
         """
-        assert machine_id is str
+        assert isinstance(machine_id, str), \
+                "machine_id is not an instance of str"
+        
         snapshot_ids =\
             self._call_method('getSnapshotIds',
                      in_p=[machine_id])
@@ -13969,7 +14988,9 @@ class IMedium(Interface):
             @a name is @c null or empty.
         
         """
-        assert name is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         value =\
             self._call_method('getProperty',
                      in_p=[name])
@@ -13999,8 +15020,12 @@ class IMedium(Interface):
             @a name is @c null or empty.
         
         """
-        assert name is str
-        assert value is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(value, str), \
+                "value is not an instance of str"
+        
         self._call_method('setProperty',
                      in_p=[name, value])
         
@@ -14035,7 +15060,9 @@ class IMedium(Interface):
             Values of returned properties.
 
         """
-        assert names is str
+        assert isinstance(names, str), \
+                "names is not an instance of str"
+        
         (return_names, return_values) =\
             self._call_method('getProperties',
                      in_p=[names])
@@ -14071,8 +15098,12 @@ class IMedium(Interface):
             Values of properties to set.
 
         """
-        assert names is str
-        assert values is str
+        assert isinstance(names, str), \
+                "names is not an instance of str"
+        
+        assert isinstance(values, str), \
+                "values is not an instance of str"
+        
         self._call_method('setProperties',
                      in_p=[names, values])
         
@@ -14105,8 +15136,12 @@ class IMedium(Interface):
             The variant of storage creation operation is not supported. See
         
         """
-        assert logical_size is int
-        assert variant is MediumVariant
+        assert isinstance(logical_size, int), \
+                "logical_size is not an instance of int"
+        
+        assert isinstance(variant, MediumVariant), \
+                "variant is not an instance of MediumVariant"
+        
         progress =\
             self._call_method('createBaseStorage',
                      in_p=[logical_size, variant])
@@ -14191,8 +15226,12 @@ class IMedium(Interface):
             Medium not in @c NotCreated state.
         
         """
-        assert target is IMedium
-        assert variant is MediumVariant
+        assert isinstance(target, IMedium), \
+                "target is not an instance of IMedium"
+        
+        assert isinstance(variant, MediumVariant), \
+                "variant is not an instance of MediumVariant"
+        
         progress =\
             self._call_method('createDiffStorage',
                      in_p=[target, variant])
@@ -14274,7 +15313,9 @@ class IMedium(Interface):
             Progress object to track the operation completion.
 
         """
-        assert target is IMedium
+        assert isinstance(target, IMedium), \
+                "target is not an instance of IMedium"
+        
         progress =\
             self._call_method('mergeTo',
                      in_p=[target])
@@ -14326,9 +15367,15 @@ class IMedium(Interface):
             The specified cloning variant is not supported at the moment.
         
         """
-        assert target is IMedium
-        assert variant is MediumVariant
-        assert parent is IMedium
+        assert isinstance(target, IMedium), \
+                "target is not an instance of IMedium"
+        
+        assert isinstance(variant, MediumVariant), \
+                "variant is not an instance of MediumVariant"
+        
+        assert isinstance(parent, IMedium), \
+                "parent is not an instance of IMedium"
+        
         progress =\
             self._call_method('cloneTo',
                      in_p=[target, variant, parent])
@@ -14376,8 +15423,12 @@ class IMedium(Interface):
             The specified cloning variant is not supported at the moment.
         
         """
-        assert target is IMedium
-        assert variant is MediumVariant
+        assert isinstance(target, IMedium), \
+                "target is not an instance of IMedium"
+        
+        assert isinstance(variant, MediumVariant), \
+                "variant is not an instance of MediumVariant"
+        
         progress =\
             self._call_method('cloneToBase',
                      in_p=[target, variant])
@@ -14438,7 +15489,9 @@ class IMedium(Interface):
             Medium format does not support resizing.
         
         """
-        assert logical_size is int
+        assert isinstance(logical_size, int), \
+                "logical_size is not an instance of int"
+        
         progress =\
             self._call_method('resize',
                      in_p=[logical_size])
@@ -14611,7 +15664,9 @@ class IKeyboard(Interface):
             Could not send scan code to virtual keyboard.
         
         """
-        assert scancode is int
+        assert isinstance(scancode, int), \
+                "scancode is not an instance of int"
+        
         self._call_method('putScancode',
                      in_p=[scancode])
         
@@ -14626,7 +15681,9 @@ class IKeyboard(Interface):
             Could not send all scan codes to virtual keyboard.
         
         """
-        assert scancodes is int
+        assert isinstance(scancodes, int), \
+                "scancodes is not an instance of int"
+        
         codes_stored =\
             self._call_method('putScancodes',
                      in_p=[scancodes])
@@ -14748,11 +15805,21 @@ class IMouse(Interface):
             Could not send mouse event to virtual mouse.
         
         """
-        assert dx is int
-        assert dy is int
-        assert dz is int
-        assert dw is int
-        assert button_state is int
+        assert isinstance(dx, int), \
+                "dx is not an instance of int"
+        
+        assert isinstance(dy, int), \
+                "dy is not an instance of int"
+        
+        assert isinstance(dz, int), \
+                "dz is not an instance of int"
+        
+        assert isinstance(dw, int), \
+                "dw is not an instance of int"
+        
+        assert isinstance(button_state, int), \
+                "button_state is not an instance of int"
+        
         self._call_method('putMouseEvent',
                      in_p=[dx, dy, dz, dw, button_state])
         
@@ -14805,11 +15872,21 @@ class IMouse(Interface):
             Could not send mouse event to virtual mouse.
         
         """
-        assert x is int
-        assert y is int
-        assert dz is int
-        assert dw is int
-        assert button_state is int
+        assert isinstance(x, int), \
+                "x is not an instance of int"
+        
+        assert isinstance(y, int), \
+                "y is not an instance of int"
+        
+        assert isinstance(dz, int), \
+                "dz is not an instance of int"
+        
+        assert isinstance(dw, int), \
+                "dw is not an instance of int"
+        
+        assert isinstance(button_state, int), \
+                "button_state is not an instance of int"
+        
         self._call_method('putMouseEventAbsolute',
                      in_p=[x, y, dz, dw, button_state])
         
@@ -14959,10 +16036,18 @@ class IFramebuffer(Interface):
         in height of type int
 
         """
-        assert x is int
-        assert y is int
-        assert width is int
-        assert height is int
+        assert isinstance(x, int), \
+                "x is not an instance of int"
+        
+        assert isinstance(y, int), \
+                "y is not an instance of int"
+        
+        assert isinstance(width, int), \
+                "width is not an instance of int"
+        
+        assert isinstance(height, int), \
+                "height is not an instance of int"
+        
         self._call_method('notifyUpdate',
                      in_p=[x, y, width, height])
         
@@ -15072,13 +16157,27 @@ class IFramebuffer(Interface):
           <link to="IDisplay::resizeCompleted"/>.
 
         """
-        assert screen_id is int
-        assert pixel_format is int
-        assert vram is str
-        assert bits_per_pixel is int
-        assert bytes_per_line is int
-        assert width is int
-        assert height is int
+        assert isinstance(screen_id, int), \
+                "screen_id is not an instance of int"
+        
+        assert isinstance(pixel_format, int), \
+                "pixel_format is not an instance of int"
+        
+        assert isinstance(vram, str), \
+                "vram is not an instance of str"
+        
+        assert isinstance(bits_per_pixel, int), \
+                "bits_per_pixel is not an instance of int"
+        
+        assert isinstance(bytes_per_line, int), \
+                "bytes_per_line is not an instance of int"
+        
+        assert isinstance(width, int), \
+                "width is not an instance of int"
+        
+        assert isinstance(height, int), \
+                "height is not an instance of int"
+        
         finished =\
             self._call_method('requestResize',
                      in_p=[screen_id, pixel_format, vram, bits_per_pixel, bytes_per_line, width, height])
@@ -15102,9 +16201,15 @@ class IFramebuffer(Interface):
         return supported of type bool
 
         """
-        assert width is int
-        assert height is int
-        assert bpp is int
+        assert isinstance(width, int), \
+                "width is not an instance of int"
+        
+        assert isinstance(height, int), \
+                "height is not an instance of int"
+        
+        assert isinstance(bpp, int), \
+                "bpp is not an instance of int"
+        
         supported =\
             self._call_method('videoModeSupported',
                      in_p=[width, height, bpp])
@@ -15140,8 +16245,12 @@ class IFramebuffer(Interface):
             Number of elements copied to the @a rectangles array.
 
         """
-        assert rectangles is str
-        assert count is int
+        assert isinstance(rectangles, str), \
+                "rectangles is not an instance of str"
+        
+        assert isinstance(count, int), \
+                "count is not an instance of int"
+        
         count_copied =\
             self._call_method('getVisibleRegion',
                      in_p=[rectangles, count])
@@ -15173,8 +16282,12 @@ class IFramebuffer(Interface):
             Number of @c RTRECT elements in the @a rectangles array.
 
         """
-        assert rectangles is str
-        assert count is int
+        assert isinstance(rectangles, str), \
+                "rectangles is not an instance of str"
+        
+        assert isinstance(count, int), \
+                "count is not an instance of int"
+        
         self._call_method('setVisibleRegion',
                      in_p=[rectangles, count])
         
@@ -15191,7 +16304,9 @@ class IFramebuffer(Interface):
             Pointer to VBOXVHWACMD containing the command to execute.
 
         """
-        assert command is str
+        assert isinstance(command, str), \
+                "command is not an instance of str"
+        
         self._call_method('processVHWACommand',
                      in_p=[command])
         
@@ -15205,8 +16320,12 @@ class IFramebuffer(Interface):
             Reserved for future use, must be NULL.
 
         """
-        assert type_p is int
-        assert reserved is str
+        assert isinstance(type_p, int), \
+                "type_p is not an instance of int"
+        
+        assert isinstance(reserved, str), \
+                "reserved is not an instance of str"
+        
         self._call_method('notify3DEvent',
                      in_p=[type_p, reserved])
         
@@ -15251,7 +16370,8 @@ class IFramebufferOverlay(IFramebuffer):
 
     @visible.setter
     def visible(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('visible', value)
 
     @property
@@ -15265,7 +16385,8 @@ class IFramebufferOverlay(IFramebuffer):
 
     @alpha.setter
     def alpha(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('alpha', value)
 
     def move(self, x, y):
@@ -15276,8 +16397,12 @@ class IFramebufferOverlay(IFramebuffer):
         in y of type int
 
         """
-        assert x is int
-        assert y is int
+        assert isinstance(x, int), \
+                "x is not an instance of int"
+        
+        assert isinstance(y, int), \
+                "y is not an instance of int"
+        
         self._call_method('move',
                      in_p=[x, y])
         
@@ -15309,7 +16434,9 @@ class IDisplay(Interface):
         out bits_per_pixel of type int
 
         """
-        assert screen_id is int
+        assert isinstance(screen_id, int), \
+                "screen_id is not an instance of int"
+        
         (width, height, bits_per_pixel) =\
             self._call_method('getScreenResolution',
                      in_p=[screen_id])
@@ -15323,8 +16450,12 @@ class IDisplay(Interface):
         in framebuffer of type IFramebuffer
 
         """
-        assert screen_id is int
-        assert framebuffer is IFramebuffer
+        assert isinstance(screen_id, int), \
+                "screen_id is not an instance of int"
+        
+        assert isinstance(framebuffer, IFramebuffer), \
+                "framebuffer is not an instance of IFramebuffer"
+        
         self._call_method('setFramebuffer',
                      in_p=[screen_id, framebuffer])
         
@@ -15340,7 +16471,9 @@ class IDisplay(Interface):
         out y_origin of type int
 
         """
-        assert screen_id is int
+        assert isinstance(screen_id, int), \
+                "screen_id is not an instance of int"
+        
         (framebuffer, x_origin, y_origin) =\
             self._call_method('getFramebuffer',
                      in_p=[screen_id])
@@ -15391,14 +16524,30 @@ class IDisplay(Interface):
             The @a display is not associated with any monitor.
         
         """
-        assert display is int
-        assert enabled is bool
-        assert change_origin is bool
-        assert origin_x is int
-        assert origin_y is int
-        assert width is int
-        assert height is int
-        assert bits_per_pixel is int
+        assert isinstance(display, int), \
+                "display is not an instance of int"
+        
+        assert isinstance(enabled, bool), \
+                "enabled is not an instance of bool"
+        
+        assert isinstance(change_origin, bool), \
+                "change_origin is not an instance of bool"
+        
+        assert isinstance(origin_x, int), \
+                "origin_x is not an instance of int"
+        
+        assert isinstance(origin_y, int), \
+                "origin_y is not an instance of int"
+        
+        assert isinstance(width, int), \
+                "width is not an instance of int"
+        
+        assert isinstance(height, int), \
+                "height is not an instance of int"
+        
+        assert isinstance(bits_per_pixel, int), \
+                "bits_per_pixel is not an instance of int"
+        
         self._call_method('setVideoModeHint',
                      in_p=[display, enabled, change_origin, origin_x, origin_y, width, height, bits_per_pixel])
         
@@ -15412,7 +16561,9 @@ class IDisplay(Interface):
         in enabled of type bool
 
         """
-        assert enabled is bool
+        assert isinstance(enabled, bool), \
+                "enabled is not an instance of bool"
+        
         self._call_method('setSeamlessMode',
                      in_p=[enabled])
         
@@ -15442,10 +16593,18 @@ class IDisplay(Interface):
             Could not take a screenshot.
         
         """
-        assert screen_id is int
-        assert address is str
-        assert width is int
-        assert height is int
+        assert isinstance(screen_id, int), \
+                "screen_id is not an instance of int"
+        
+        assert isinstance(address, str), \
+                "address is not an instance of str"
+        
+        assert isinstance(width, int), \
+                "width is not an instance of int"
+        
+        assert isinstance(height, int), \
+                "height is not an instance of int"
+        
         self._call_method('takeScreenShot',
                      in_p=[screen_id, address, width, height])
         
@@ -15477,9 +16636,15 @@ class IDisplay(Interface):
             Could not take a screenshot.
         
         """
-        assert screen_id is int
-        assert width is int
-        assert height is int
+        assert isinstance(screen_id, int), \
+                "screen_id is not an instance of int"
+        
+        assert isinstance(width, int), \
+                "width is not an instance of int"
+        
+        assert isinstance(height, int), \
+                "height is not an instance of int"
+        
         screen_data =\
             self._call_method('takeScreenShotToArray',
                      in_p=[screen_id, width, height])
@@ -15508,9 +16673,15 @@ class IDisplay(Interface):
             Could not take a screenshot.
         
         """
-        assert screen_id is int
-        assert width is int
-        assert height is int
+        assert isinstance(screen_id, int), \
+                "screen_id is not an instance of int"
+        
+        assert isinstance(width, int), \
+                "width is not an instance of int"
+        
+        assert isinstance(height, int), \
+                "height is not an instance of int"
+        
         screen_data =\
             self._call_method('takeScreenShotPNGToArray',
                      in_p=[screen_id, width, height])
@@ -15523,7 +16694,9 @@ class IDisplay(Interface):
             The screens to start/continue capturing.
 
         """
-        assert screens is bool
+        assert isinstance(screens, bool), \
+                "screens is not an instance of bool"
+        
         self._call_method('enableVideoCapture',
                      in_p=[screens])
         
@@ -15534,7 +16707,9 @@ class IDisplay(Interface):
             The screens to stop capturing.
 
         """
-        assert screens is bool
+        assert isinstance(screens, bool), \
+                "screens is not an instance of bool"
+        
         self._call_method('disableVideoCapture',
                      in_p=[screens])
         
@@ -15567,12 +16742,24 @@ class IDisplay(Interface):
             Could not draw to screen.
         
         """
-        assert screen_id is int
-        assert address is str
-        assert x is int
-        assert y is int
-        assert width is int
-        assert height is int
+        assert isinstance(screen_id, int), \
+                "screen_id is not an instance of int"
+        
+        assert isinstance(address, str), \
+                "address is not an instance of str"
+        
+        assert isinstance(x, int), \
+                "x is not an instance of int"
+        
+        assert isinstance(y, int), \
+                "y is not an instance of int"
+        
+        assert isinstance(width, int), \
+                "width is not an instance of int"
+        
+        assert isinstance(height, int), \
+                "height is not an instance of int"
+        
         self._call_method('drawToScreen',
                      in_p=[screen_id, address, x, y, width, height])
         
@@ -15595,7 +16782,9 @@ class IDisplay(Interface):
             Operation only valid for external frame buffers.
         
         """
-        assert screen_id is int
+        assert isinstance(screen_id, int), \
+                "screen_id is not an instance of int"
+        
         self._call_method('resizeCompleted',
                      in_p=[screen_id])
         
@@ -15606,7 +16795,9 @@ class IDisplay(Interface):
             Pointer to VBOXVHWACMD containing the completed command.
 
         """
-        assert command is str
+        assert isinstance(command, str), \
+                "command is not an instance of str"
+        
         self._call_method('completeVHWACommand',
                      in_p=[command])
         
@@ -15632,11 +16823,21 @@ class IDisplay(Interface):
             The specified viewport data is invalid.
         
         """
-        assert screen_id is int
-        assert x is int
-        assert y is int
-        assert width is int
-        assert height is int
+        assert isinstance(screen_id, int), \
+                "screen_id is not an instance of int"
+        
+        assert isinstance(x, int), \
+                "x is not an instance of int"
+        
+        assert isinstance(y, int), \
+                "y is not an instance of int"
+        
+        assert isinstance(width, int), \
+                "width is not an instance of int"
+        
+        assert isinstance(height, int), \
+                "height is not an instance of int"
+        
         self._call_method('viewportChanged',
                      in_p=[screen_id, x, y, width, height])
         
@@ -15668,7 +16869,8 @@ class INetworkAdapter(Interface):
 
     @adapter_type.setter
     def adapter_type(self, value):
-        assert type(value) is NetworkAdapterType
+        assert isinstance(value, NetworkAdapterType), \
+                "value is not an instance of NetworkAdapterType"
         return self._set_attr('adapterType', value)
 
     @property
@@ -15694,7 +16896,8 @@ class INetworkAdapter(Interface):
 
     @enabled.setter
     def enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('enabled', value)
 
     @property
@@ -15708,7 +16911,8 @@ class INetworkAdapter(Interface):
 
     @mac_address.setter
     def mac_address(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('MACAddress', value)
 
     @property
@@ -15721,7 +16925,8 @@ class INetworkAdapter(Interface):
 
     @attachment_type.setter
     def attachment_type(self, value):
-        assert type(value) is NetworkAttachmentType
+        assert isinstance(value, NetworkAttachmentType), \
+                "value is not an instance of NetworkAttachmentType"
         return self._set_attr('attachmentType', value)
 
     @property
@@ -15734,7 +16939,8 @@ class INetworkAdapter(Interface):
 
     @bridged_interface.setter
     def bridged_interface(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('bridgedInterface', value)
 
     @property
@@ -15747,7 +16953,8 @@ class INetworkAdapter(Interface):
 
     @host_only_interface.setter
     def host_only_interface(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('hostOnlyInterface', value)
 
     @property
@@ -15760,7 +16967,8 @@ class INetworkAdapter(Interface):
 
     @internal_network.setter
     def internal_network(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('internalNetwork', value)
 
     @property
@@ -15773,7 +16981,8 @@ class INetworkAdapter(Interface):
 
     @nat_network.setter
     def nat_network(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('NATNetwork', value)
 
     @property
@@ -15786,7 +16995,8 @@ class INetworkAdapter(Interface):
 
     @generic_driver.setter
     def generic_driver(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('genericDriver', value)
 
     @property
@@ -15800,7 +17010,8 @@ class INetworkAdapter(Interface):
 
     @cable_connected.setter
     def cable_connected(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('cableConnected', value)
 
     @property
@@ -15813,7 +17024,8 @@ class INetworkAdapter(Interface):
 
     @line_speed.setter
     def line_speed(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('lineSpeed', value)
 
     @property
@@ -15827,7 +17039,8 @@ class INetworkAdapter(Interface):
 
     @promisc_mode_policy.setter
     def promisc_mode_policy(self, value):
-        assert type(value) is NetworkAdapterPromiscModePolicy
+        assert isinstance(value, NetworkAdapterPromiscModePolicy), \
+                "value is not an instance of NetworkAdapterPromiscModePolicy"
         return self._set_attr('promiscModePolicy', value)
 
     @property
@@ -15841,7 +17054,8 @@ class INetworkAdapter(Interface):
 
     @trace_enabled.setter
     def trace_enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('traceEnabled', value)
 
     @property
@@ -15855,7 +17069,8 @@ class INetworkAdapter(Interface):
 
     @trace_file.setter
     def trace_file(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('traceFile', value)
 
     @property
@@ -15879,7 +17094,8 @@ class INetworkAdapter(Interface):
 
     @boot_priority.setter
     def boot_priority(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('bootPriority', value)
 
     @property
@@ -15892,7 +17108,8 @@ class INetworkAdapter(Interface):
 
     @bandwidth_group.setter
     def bandwidth_group(self, value):
-        assert type(value) is IBandwidthGroup
+        assert isinstance(value, IBandwidthGroup), \
+                "value is not an instance of IBandwidthGroup"
         return self._set_attr('bandwidthGroup', value)
 
     def get_property(self, key):
@@ -15911,7 +17128,9 @@ class INetworkAdapter(Interface):
             @a name is @c null or empty.
         
         """
-        assert key is str
+        assert isinstance(key, str), \
+                "key is not an instance of str"
+        
         value =\
             self._call_method('getProperty',
                      in_p=[key])
@@ -15933,8 +17152,12 @@ class INetworkAdapter(Interface):
             @a name is @c null or empty.
         
         """
-        assert key is str
-        assert value is str
+        assert isinstance(key, str), \
+                "key is not an instance of str"
+        
+        assert isinstance(value, str), \
+                "value is not an instance of str"
+        
         self._call_method('setProperty',
                      in_p=[key, value])
         
@@ -15963,7 +17186,9 @@ class INetworkAdapter(Interface):
             Values of returned properties.
 
         """
-        assert names is str
+        assert isinstance(names, str), \
+                "names is not an instance of str"
+        
         (return_names, return_values) =\
             self._call_method('getProperties',
                      in_p=[names])
@@ -16018,7 +17243,8 @@ class ISerialPort(Interface):
 
     @enabled.setter
     def enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('enabled', value)
 
     @property
@@ -16031,7 +17257,8 @@ class ISerialPort(Interface):
 
     @io_base.setter
     def io_base(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('IOBase', value)
 
     @property
@@ -16044,7 +17271,8 @@ class ISerialPort(Interface):
 
     @irq.setter
     def irq(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('IRQ', value)
 
     @property
@@ -16060,7 +17288,8 @@ class ISerialPort(Interface):
 
     @host_mode.setter
     def host_mode(self, value):
-        assert type(value) is PortMode
+        assert isinstance(value, PortMode), \
+                "value is not an instance of PortMode"
         return self._set_attr('hostMode', value)
 
     @property
@@ -16075,7 +17304,8 @@ class ISerialPort(Interface):
 
     @server.setter
     def server(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('server', value)
 
     @property
@@ -16092,7 +17322,8 @@ class ISerialPort(Interface):
 
     @path.setter
     def path(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('path', value)
 
 
@@ -16135,7 +17366,8 @@ class IParallelPort(Interface):
 
     @enabled.setter
     def enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('enabled', value)
 
     @property
@@ -16148,7 +17380,8 @@ class IParallelPort(Interface):
 
     @io_base.setter
     def io_base(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('IOBase', value)
 
     @property
@@ -16161,7 +17394,8 @@ class IParallelPort(Interface):
 
     @irq.setter
     def irq(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('IRQ', value)
 
     @property
@@ -16176,7 +17410,8 @@ class IParallelPort(Interface):
 
     @path.setter
     def path(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('path', value)
 
 
@@ -16201,8 +17436,12 @@ class IMachineDebugger(Interface):
             Reserved for future compression method indicator.
 
         """
-        assert filename is str
-        assert compression is str
+        assert isinstance(filename, str), \
+                "filename is not an instance of str"
+        
+        assert isinstance(compression, str), \
+                "compression is not an instance of str"
+        
         self._call_method('dumpGuestCore',
                      in_p=[filename, compression])
         
@@ -16219,8 +17458,12 @@ class IMachineDebugger(Interface):
             Reserved for future compression method indicator.
 
         """
-        assert filename is str
-        assert compression is str
+        assert isinstance(filename, str), \
+                "filename is not an instance of str"
+        
+        assert isinstance(compression, str), \
+                "compression is not an instance of str"
+        
         self._call_method('dumpHostProcessCore',
                      in_p=[filename, compression])
         
@@ -16240,8 +17483,12 @@ class IMachineDebugger(Interface):
             The into string.
 
         """
-        assert name is str
-        assert args is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(args, str), \
+                "args is not an instance of str"
+        
         info =\
             self._call_method('info',
                      in_p=[name, args])
@@ -16261,7 +17508,9 @@ class IMachineDebugger(Interface):
           release logger, prefix the string with "release:".
 
         """
-        assert settings is str
+        assert isinstance(settings, str), \
+                "settings is not an instance of str"
+        
         self._call_method('modifyLogGroups',
                      in_p=[settings])
         
@@ -16273,7 +17522,9 @@ class IMachineDebugger(Interface):
           release logger, prefix the string with "release:".
 
         """
-        assert settings is str
+        assert isinstance(settings, str), \
+                "settings is not an instance of str"
+        
         self._call_method('modifyLogFlags',
                      in_p=[settings])
         
@@ -16285,7 +17536,9 @@ class IMachineDebugger(Interface):
           release logger, prefix the string with "release:".
 
         """
-        assert settings is str
+        assert isinstance(settings, str), \
+                "settings is not an instance of str"
+        
         self._call_method('modifyLogDestinations',
                      in_p=[settings])
         
@@ -16305,8 +17558,12 @@ class IMachineDebugger(Interface):
             The bytes read.
 
         """
-        assert address is int
-        assert size is int
+        assert isinstance(address, int), \
+                "address is not an instance of int"
+        
+        assert isinstance(size, int), \
+                "size is not an instance of int"
+        
         bytes_p =\
             self._call_method('readPhysicalMemory',
                      in_p=[address, size])
@@ -16328,9 +17585,15 @@ class IMachineDebugger(Interface):
             The bytes to write.
 
         """
-        assert address is int
-        assert size is int
-        assert bytes_p is str
+        assert isinstance(address, int), \
+                "address is not an instance of int"
+        
+        assert isinstance(size, int), \
+                "size is not an instance of int"
+        
+        assert isinstance(bytes_p, str), \
+                "bytes_p is not an instance of str"
+        
         self._call_method('writePhysicalMemory',
                      in_p=[address, size, bytes_p])
         
@@ -16353,9 +17616,15 @@ class IMachineDebugger(Interface):
             The bytes read.
 
         """
-        assert cpu_id is int
-        assert address is int
-        assert size is int
+        assert isinstance(cpu_id, int), \
+                "cpu_id is not an instance of int"
+        
+        assert isinstance(address, int), \
+                "address is not an instance of int"
+        
+        assert isinstance(size, int), \
+                "size is not an instance of int"
+        
         bytes_p =\
             self._call_method('readVirtualMemory',
                      in_p=[cpu_id, address, size])
@@ -16380,10 +17649,18 @@ class IMachineDebugger(Interface):
             The bytes to write.
 
         """
-        assert cpu_id is int
-        assert address is int
-        assert size is int
-        assert bytes_p is str
+        assert isinstance(cpu_id, int), \
+                "cpu_id is not an instance of int"
+        
+        assert isinstance(address, int), \
+                "address is not an instance of int"
+        
+        assert isinstance(size, int), \
+                "size is not an instance of int"
+        
+        assert isinstance(bytes_p, str), \
+                "bytes_p is not an instance of str"
+        
         self._call_method('writeVirtualMemory',
                      in_p=[cpu_id, address, size, bytes_p])
         
@@ -16418,8 +17695,12 @@ class IMachineDebugger(Interface):
           but other format may be used for floating point registers (TBD).
 
         """
-        assert cpu_id is int
-        assert name is str
+        assert isinstance(cpu_id, int), \
+                "cpu_id is not an instance of int"
+        
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         value =\
             self._call_method('getRegister',
                      in_p=[cpu_id, name])
@@ -16442,7 +17723,9 @@ class IMachineDebugger(Interface):
           register was returned by <link to="IMachineDebugger::getRegister"/>.
 
         """
-        assert cpu_id is int
+        assert isinstance(cpu_id, int), \
+                "cpu_id is not an instance of int"
+        
         (names, values) =\
             self._call_method('getRegisters',
                      in_p=[cpu_id])
@@ -16466,9 +17749,15 @@ class IMachineDebugger(Interface):
           the getters.
 
         """
-        assert cpu_id is int
-        assert name is str
-        assert value is str
+        assert isinstance(cpu_id, int), \
+                "cpu_id is not an instance of int"
+        
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(value, str), \
+                "value is not an instance of str"
+        
         self._call_method('setRegister',
                      in_p=[cpu_id, name, value])
         
@@ -16490,9 +17779,15 @@ class IMachineDebugger(Interface):
           guidelines.
 
         """
-        assert cpu_id is int
-        assert names is str
-        assert values is str
+        assert isinstance(cpu_id, int), \
+                "cpu_id is not an instance of int"
+        
+        assert isinstance(names, str), \
+                "names is not an instance of str"
+        
+        assert isinstance(values, str), \
+                "values is not an instance of str"
+        
         self._call_method('setRegisters',
                      in_p=[cpu_id, names, values])
         
@@ -16509,7 +17804,9 @@ class IMachineDebugger(Interface):
             String containing the formatted stack dump.
 
         """
-        assert cpu_id is int
+        assert isinstance(cpu_id, int), \
+                "cpu_id is not an instance of int"
+        
         stack =\
             self._call_method('dumpGuestStack',
                      in_p=[cpu_id])
@@ -16522,7 +17819,9 @@ class IMachineDebugger(Interface):
             The selection pattern. A bit similar to filename globbing.
 
         """
-        assert pattern is str
+        assert isinstance(pattern, str), \
+                "pattern is not an instance of str"
+        
         self._call_method('resetStats',
                      in_p=[pattern])
         
@@ -16533,7 +17832,9 @@ class IMachineDebugger(Interface):
             The selection pattern. A bit similar to filename globbing.
 
         """
-        assert pattern is str
+        assert isinstance(pattern, str), \
+                "pattern is not an instance of str"
+        
         self._call_method('dumpStats',
                      in_p=[pattern])
         
@@ -16550,8 +17851,12 @@ class IMachineDebugger(Interface):
             The XML document containing the statistics.
 
         """
-        assert pattern is str
-        assert with_descriptions is bool
+        assert isinstance(pattern, str), \
+                "pattern is not an instance of str"
+        
+        assert isinstance(with_descriptions, bool), \
+                "with_descriptions is not an instance of bool"
+        
         stats =\
             self._call_method('getStats',
                      in_p=[pattern, with_descriptions])
@@ -16567,7 +17872,8 @@ class IMachineDebugger(Interface):
 
     @single_step.setter
     def single_step(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('singleStep', value)
 
     @property
@@ -16580,7 +17886,8 @@ class IMachineDebugger(Interface):
 
     @recompile_user.setter
     def recompile_user(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('recompileUser', value)
 
     @property
@@ -16593,7 +17900,8 @@ class IMachineDebugger(Interface):
 
     @recompile_supervisor.setter
     def recompile_supervisor(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('recompileSupervisor', value)
 
     @property
@@ -16606,7 +17914,8 @@ class IMachineDebugger(Interface):
 
     @patm_enabled.setter
     def patm_enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('PATMEnabled', value)
 
     @property
@@ -16619,7 +17928,8 @@ class IMachineDebugger(Interface):
 
     @csam_enabled.setter
     def csam_enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('CSAMEnabled', value)
 
     @property
@@ -16632,7 +17942,8 @@ class IMachineDebugger(Interface):
 
     @log_enabled.setter
     def log_enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('logEnabled', value)
 
     @property
@@ -16761,7 +18072,8 @@ class IMachineDebugger(Interface):
 
     @virtual_time_rate.setter
     def virtual_time_rate(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('virtualTimeRate', value)
 
     @property
@@ -16798,7 +18110,8 @@ class IUSBController(Interface):
 
     @enabled.setter
     def enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('enabled', value)
 
     @property
@@ -16814,7 +18127,8 @@ class IUSBController(Interface):
 
     @enabled_ehci.setter
     def enabled_ehci(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('enabledEHCI', value)
 
     @property
@@ -16885,7 +18199,9 @@ class IUSBController(Interface):
             The virtual machine is not mutable.
         
         """
-        assert name is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         filter_p =\
             self._call_method('createDeviceFilter',
                      in_p=[name])
@@ -16925,8 +18241,12 @@ class IUSBController(Interface):
             USB device filter already in list.
         
         """
-        assert position is int
-        assert filter_p is IUSBDeviceFilter
+        assert isinstance(position, int), \
+                "position is not an instance of int"
+        
+        assert isinstance(filter_p, IUSBDeviceFilter), \
+                "filter_p is not an instance of IUSBDeviceFilter"
+        
         self._call_method('insertDeviceFilter',
                      in_p=[position, filter_p])
         
@@ -16953,7 +18273,9 @@ class IUSBController(Interface):
             USB device filter list empty or invalid @a position.
         
         """
-        assert position is int
+        assert isinstance(position, int), \
+                "position is not an instance of int"
+        
         filter_p =\
             self._call_method('removeDeviceFilter',
                      in_p=[position])
@@ -17160,7 +18482,8 @@ class IUSBDeviceFilter(Interface):
 
     @name.setter
     def name(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('name', value)
 
     @property
@@ -17173,7 +18496,8 @@ class IUSBDeviceFilter(Interface):
 
     @active.setter
     def active(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('active', value)
 
     @property
@@ -17189,7 +18513,8 @@ class IUSBDeviceFilter(Interface):
 
     @vendor_id.setter
     def vendor_id(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('vendorId', value)
 
     @property
@@ -17205,7 +18530,8 @@ class IUSBDeviceFilter(Interface):
 
     @product_id.setter
     def product_id(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('productId', value)
 
     @property
@@ -17227,7 +18553,8 @@ class IUSBDeviceFilter(Interface):
 
     @revision.setter
     def revision(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('revision', value)
 
     @property
@@ -17240,7 +18567,8 @@ class IUSBDeviceFilter(Interface):
 
     @manufacturer.setter
     def manufacturer(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('manufacturer', value)
 
     @property
@@ -17253,7 +18581,8 @@ class IUSBDeviceFilter(Interface):
 
     @product.setter
     def product(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('product', value)
 
     @property
@@ -17266,7 +18595,8 @@ class IUSBDeviceFilter(Interface):
 
     @serial_number.setter
     def serial_number(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('serialNumber', value)
 
     @property
@@ -17279,7 +18609,8 @@ class IUSBDeviceFilter(Interface):
 
     @port.setter
     def port(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('port', value)
 
     @property
@@ -17295,7 +18626,8 @@ class IUSBDeviceFilter(Interface):
 
     @remote.setter
     def remote(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('remote', value)
 
     @property
@@ -17312,7 +18644,8 @@ class IUSBDeviceFilter(Interface):
 
     @masked_interfaces.setter
     def masked_interfaces(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('maskedInterfaces', value)
 
 
@@ -17372,7 +18705,8 @@ class IHostUSBDeviceFilter(IUSBDeviceFilter):
 
     @action.setter
     def action(self, value):
-        assert type(value) is USBDeviceFilterAction
+        assert isinstance(value, USBDeviceFilterAction), \
+                "value is not an instance of USBDeviceFilterAction"
         return self._set_attr('action', value)
 
 
@@ -17397,7 +18731,8 @@ class IAudioAdapter(Interface):
 
     @enabled.setter
     def enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('enabled', value)
 
     @property
@@ -17410,7 +18745,8 @@ class IAudioAdapter(Interface):
 
     @audio_controller.setter
     def audio_controller(self, value):
-        assert type(value) is AudioControllerType
+        assert isinstance(value, AudioControllerType), \
+                "value is not an instance of AudioControllerType"
         return self._set_attr('audioController', value)
 
     @property
@@ -17424,7 +18760,8 @@ class IAudioAdapter(Interface):
 
     @audio_driver.setter
     def audio_driver(self, value):
-        assert type(value) is AudioDriverType
+        assert isinstance(value, AudioDriverType), \
+                "value is not an instance of AudioDriverType"
         return self._set_attr('audioDriver', value)
 
 
@@ -17445,7 +18782,8 @@ class IVRDEServer(Interface):
 
     @enabled.setter
     def enabled(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('enabled', value)
 
     @property
@@ -17458,7 +18796,8 @@ class IVRDEServer(Interface):
 
     @auth_type.setter
     def auth_type(self, value):
-        assert type(value) is AuthType
+        assert isinstance(value, AuthType), \
+                "value is not an instance of AuthType"
         return self._set_attr('authType', value)
 
     @property
@@ -17471,7 +18810,8 @@ class IVRDEServer(Interface):
 
     @auth_timeout.setter
     def auth_timeout(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('authTimeout', value)
 
     @property
@@ -17485,7 +18825,8 @@ class IVRDEServer(Interface):
 
     @allow_multi_connection.setter
     def allow_multi_connection(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('allowMultiConnection', value)
 
     @property
@@ -17500,7 +18841,8 @@ class IVRDEServer(Interface):
 
     @reuse_single_connection.setter
     def reuse_single_connection(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('reuseSingleConnection', value)
 
     @property
@@ -17514,7 +18856,8 @@ class IVRDEServer(Interface):
 
     @vrde_ext_pack.setter
     def vrde_ext_pack(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('VRDEExtPack', value)
 
     @property
@@ -17528,7 +18871,8 @@ class IVRDEServer(Interface):
 
     @auth_library.setter
     def auth_library(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('authLibrary', value)
 
     @property
@@ -17552,8 +18896,12 @@ class IVRDEServer(Interface):
             Value to assign to the key.
 
         """
-        assert key is str
-        assert value is str
+        assert isinstance(key, str), \
+                "key is not an instance of str"
+        
+        assert isinstance(value, str), \
+                "value is not an instance of str"
+        
         self._call_method('setVRDEProperty',
                      in_p=[key, value])
         
@@ -17570,7 +18918,9 @@ class IVRDEServer(Interface):
             Value of the requested key.
 
         """
-        assert key is str
+        assert isinstance(key, str), \
+                "key is not an instance of str"
+        
         value =\
             self._call_method('getVRDEProperty',
                      in_p=[key])
@@ -17739,8 +19089,12 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        assert machine is IMachine
-        assert lock_type is LockType
+        assert isinstance(machine, IMachine), \
+                "machine is not an instance of IMachine"
+        
+        assert isinstance(lock_type, LockType), \
+                "lock_type is not an instance of LockType"
+        
         self._call_method('assignMachine',
                      in_p=[machine, lock_type])
         
@@ -17756,8 +19110,12 @@ class IInternalSessionControl(Interface):
             Session state prevents operation.
         
         """
-        assert machine is IMachine
-        assert console is IConsole
+        assert isinstance(machine, IMachine), \
+                "machine is not an instance of IMachine"
+        
+        assert isinstance(console, IConsole), \
+                "console is not an instance of IConsole"
+        
         self._call_method('assignRemoteMachine',
                      in_p=[machine, console])
         
@@ -17775,7 +19133,9 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        assert machine_state is MachineState
+        assert isinstance(machine_state, MachineState), \
+                "machine_state is not an instance of MachineState"
+        
         self._call_method('updateMachineState',
                      in_p=[machine_state])
         
@@ -17805,8 +19165,12 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        assert network_adapter is INetworkAdapter
-        assert change_adapter is bool
+        assert isinstance(network_adapter, INetworkAdapter), \
+                "network_adapter is not an instance of INetworkAdapter"
+        
+        assert isinstance(change_adapter, bool), \
+                "change_adapter is not an instance of bool"
+        
         self._call_method('onNetworkAdapterChange',
                      in_p=[network_adapter, change_adapter])
         
@@ -17823,7 +19187,9 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        assert serial_port is ISerialPort
+        assert isinstance(serial_port, ISerialPort), \
+                "serial_port is not an instance of ISerialPort"
+        
         self._call_method('onSerialPortChange',
                      in_p=[serial_port])
         
@@ -17840,7 +19206,9 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        assert parallel_port is IParallelPort
+        assert isinstance(parallel_port, IParallelPort), \
+                "parallel_port is not an instance of IParallelPort"
+        
         self._call_method('onParallelPortChange',
                      in_p=[parallel_port])
         
@@ -17874,8 +19242,12 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        assert medium_attachment is IMediumAttachment
-        assert force is bool
+        assert isinstance(medium_attachment, IMediumAttachment), \
+                "medium_attachment is not an instance of IMediumAttachment"
+        
+        assert isinstance(force, bool), \
+                "force is not an instance of bool"
+        
         self._call_method('onMediumChange',
                      in_p=[medium_attachment, force])
         
@@ -17900,9 +19272,15 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        assert medium_attachment is IMediumAttachment
-        assert remove is bool
-        assert silent is bool
+        assert isinstance(medium_attachment, IMediumAttachment), \
+                "medium_attachment is not an instance of IMediumAttachment"
+        
+        assert isinstance(remove, bool), \
+                "remove is not an instance of bool"
+        
+        assert isinstance(silent, bool), \
+                "silent is not an instance of bool"
+        
         self._call_method('onStorageDeviceChange',
                      in_p=[medium_attachment, remove, silent])
         
@@ -17913,7 +19291,9 @@ class IInternalSessionControl(Interface):
             The new shared clipboard mode.
 
         """
-        assert clipboard_mode is ClipboardMode
+        assert isinstance(clipboard_mode, ClipboardMode), \
+                "clipboard_mode is not an instance of ClipboardMode"
+        
         self._call_method('onClipboardModeChange',
                      in_p=[clipboard_mode])
         
@@ -17924,7 +19304,9 @@ class IInternalSessionControl(Interface):
             The new mode for drag'n'drop.
 
         """
-        assert drag_and_drop_mode is DragAndDropMode
+        assert isinstance(drag_and_drop_mode, DragAndDropMode), \
+                "drag_and_drop_mode is not an instance of DragAndDropMode"
+        
         self._call_method('onDragAndDropModeChange',
                      in_p=[drag_and_drop_mode])
         
@@ -17938,8 +19320,12 @@ class IInternalSessionControl(Interface):
             Flag whether the CPU was added or removed
 
         """
-        assert cpu is int
-        assert add is bool
+        assert isinstance(cpu, int), \
+                "cpu is not an instance of int"
+        
+        assert isinstance(add, bool), \
+                "add is not an instance of bool"
+        
         self._call_method('onCPUChange',
                      in_p=[cpu, add])
         
@@ -17950,7 +19336,9 @@ class IInternalSessionControl(Interface):
             The new CPU execution cap value. (1-100)
 
         """
-        assert execution_cap is int
+        assert isinstance(execution_cap, int), \
+                "execution_cap is not an instance of int"
+        
         self._call_method('onCPUExecutionCapChange',
                      in_p=[execution_cap])
         
@@ -17968,7 +19356,9 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        assert restart is bool
+        assert isinstance(restart, bool), \
+                "restart is not an instance of bool"
+        
         self._call_method('onVRDEServerChange',
                      in_p=[restart])
         
@@ -18003,7 +19393,9 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        assert global_p is bool
+        assert isinstance(global_p, bool), \
+                "global_p is not an instance of bool"
+        
         self._call_method('onSharedFolderChange',
                      in_p=[global_p])
         
@@ -18027,9 +19419,15 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        assert device is IUSBDevice
-        assert error is IVirtualBoxErrorInfo
-        assert masked_interfaces is int
+        assert isinstance(device, IUSBDevice), \
+                "device is not an instance of IUSBDevice"
+        
+        assert isinstance(error, IVirtualBoxErrorInfo), \
+                "error is not an instance of IVirtualBoxErrorInfo"
+        
+        assert isinstance(masked_interfaces, int), \
+                "masked_interfaces is not an instance of int"
+        
         self._call_method('onUSBDeviceAttach',
                      in_p=[device, error, masked_interfaces])
         
@@ -18051,8 +19449,12 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        assert id_p is str
-        assert error is IVirtualBoxErrorInfo
+        assert isinstance(id_p, str), \
+                "id_p is not an instance of str"
+        
+        assert isinstance(error, IVirtualBoxErrorInfo), \
+                "error is not an instance of IVirtualBoxErrorInfo"
+        
         self._call_method('onUSBDeviceDetach',
                      in_p=[id_p, error])
         
@@ -18073,7 +19475,9 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        assert check is bool
+        assert isinstance(check, bool), \
+                "check is not an instance of bool"
+        
         (can_show, win_id) =\
             self._call_method('onShowWindow',
                      in_p=[check])
@@ -18086,7 +19490,9 @@ class IInternalSessionControl(Interface):
             The bandwidth group which changed.
 
         """
-        assert bandwidth_group is IBandwidthGroup
+        assert isinstance(bandwidth_group, IBandwidthGroup), \
+                "bandwidth_group is not an instance of IBandwidthGroup"
+        
         self._call_method('onBandwidthGroupChange',
                      in_p=[bandwidth_group])
         
@@ -18116,10 +19522,18 @@ class IInternalSessionControl(Interface):
             Session type is not direct.
         
         """
-        assert name is str
-        assert value is str
-        assert flags is str
-        assert is_setter is bool
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(value, str), \
+                "value is not an instance of str"
+        
+        assert isinstance(flags, str), \
+                "flags is not an instance of str"
+        
+        assert isinstance(is_setter, bool), \
+                "is_setter is not an instance of bool"
+        
         (ret_value, ret_timestamp, ret_flags) =\
             self._call_method('accessGuestProperty',
                      in_p=[name, value, flags, is_setter])
@@ -18156,7 +19570,9 @@ class IInternalSessionControl(Interface):
             Session type is not direct.
         
         """
-        assert patterns is str
+        assert isinstance(patterns, str), \
+                "patterns is not an instance of str"
+        
         (keys, values, timestamps, flags) =\
             self._call_method('enumerateGuestProperties',
                      in_p=[patterns])
@@ -18203,15 +19619,33 @@ class IInternalSessionControl(Interface):
             Session type is not direct.
         
         """
-        assert medium_attachment is IMediumAttachment
-        assert source_idx is int
-        assert target_idx is int
-        assert source is IMedium
-        assert target is IMedium
-        assert merge_forward is bool
-        assert parent_for_target is IMedium
-        assert children_to_reparent is IMedium
-        assert progress is IProgress
+        assert isinstance(medium_attachment, IMediumAttachment), \
+                "medium_attachment is not an instance of IMediumAttachment"
+        
+        assert isinstance(source_idx, int), \
+                "source_idx is not an instance of int"
+        
+        assert isinstance(target_idx, int), \
+                "target_idx is not an instance of int"
+        
+        assert isinstance(source, IMedium), \
+                "source is not an instance of IMedium"
+        
+        assert isinstance(target, IMedium), \
+                "target is not an instance of IMedium"
+        
+        assert isinstance(merge_forward, bool), \
+                "merge_forward is not an instance of bool"
+        
+        assert isinstance(parent_for_target, IMedium), \
+                "parent_for_target is not an instance of IMedium"
+        
+        assert isinstance(children_to_reparent, IMedium), \
+                "children_to_reparent is not an instance of IMedium"
+        
+        assert isinstance(progress, IProgress), \
+                "progress is not an instance of IProgress"
+        
         self._call_method('onlineMergeMedium',
                      in_p=[medium_attachment, source_idx, target_idx, source, target, merge_forward, parent_for_target, children_to_reparent, progress])
         
@@ -18228,7 +19662,9 @@ class IInternalSessionControl(Interface):
             Session type is not direct.
         
         """
-        assert enable is bool
+        assert isinstance(enable, bool), \
+                "enable is not an instance of bool"
+        
         self._call_method('enableVMMStatistics',
                      in_p=[enable])
         
@@ -18419,7 +19855,8 @@ class IStorageController(Interface):
 
     @instance.setter
     def instance(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('instance', value)
 
     @property
@@ -18435,7 +19872,8 @@ class IStorageController(Interface):
 
     @port_count.setter
     def port_count(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('portCount', value)
 
     @property
@@ -18463,7 +19901,8 @@ class IStorageController(Interface):
 
     @controller_type.setter
     def controller_type(self, value):
-        assert type(value) is StorageControllerType
+        assert isinstance(value, StorageControllerType), \
+                "value is not an instance of StorageControllerType"
         return self._set_attr('controllerType', value)
 
     @property
@@ -18485,7 +19924,8 @@ class IStorageController(Interface):
 
     @use_host_io_cache.setter
     def use_host_io_cache(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('useHostIOCache', value)
 
     @property
@@ -18709,8 +20149,12 @@ class IPerformanceCollector(Interface):
             Array of returned metric parameters.
 
         """
-        assert metric_names is str
-        assert objects is Interface
+        assert isinstance(metric_names, str), \
+                "metric_names is not an instance of str"
+        
+        assert isinstance(objects, Interface), \
+                "objects is not an instance of Interface"
+        
         metrics =\
             self._call_method('getMetrics',
                      in_p=[metric_names, objects])
@@ -18746,10 +20190,18 @@ class IPerformanceCollector(Interface):
             Array of metrics that have been modified by the call to this method.
 
         """
-        assert metric_names is str
-        assert objects is Interface
-        assert period is int
-        assert count is int
+        assert isinstance(metric_names, str), \
+                "metric_names is not an instance of str"
+        
+        assert isinstance(objects, Interface), \
+                "objects is not an instance of Interface"
+        
+        assert isinstance(period, int), \
+                "period is not an instance of int"
+        
+        assert isinstance(count, int), \
+                "count is not an instance of int"
+        
         affected_metrics =\
             self._call_method('setupMetrics',
                      in_p=[metric_names, objects, period, count])
@@ -18777,8 +20229,12 @@ class IPerformanceCollector(Interface):
             Array of metrics that have been modified by the call to this method.
 
         """
-        assert metric_names is str
-        assert objects is Interface
+        assert isinstance(metric_names, str), \
+                "metric_names is not an instance of str"
+        
+        assert isinstance(objects, Interface), \
+                "objects is not an instance of Interface"
+        
         affected_metrics =\
             self._call_method('enableMetrics',
                      in_p=[metric_names, objects])
@@ -18806,8 +20262,12 @@ class IPerformanceCollector(Interface):
             Array of metrics that have been modified by the call to this method.
 
         """
-        assert metric_names is str
-        assert objects is Interface
+        assert isinstance(metric_names, str), \
+                "metric_names is not an instance of str"
+        
+        assert isinstance(objects, Interface), \
+                "objects is not an instance of Interface"
+        
         affected_metrics =\
             self._call_method('disableMetrics',
                      in_p=[metric_names, objects])
@@ -18887,8 +20347,12 @@ class IPerformanceCollector(Interface):
           each metric.
 
         """
-        assert metric_names is str
-        assert objects is Interface
+        assert isinstance(metric_names, str), \
+                "metric_names is not an instance of str"
+        
+        assert isinstance(objects, Interface), \
+                "objects is not an instance of Interface"
+        
         (return_metric_names, return_objects, return_units, return_scales, return_sequence_numbers, return_data_indices, return_data_lengths, return_data) =\
             self._call_method('queryMetricsData',
                      in_p=[metric_names, objects])
@@ -18915,7 +20379,8 @@ class INATEngine(Interface):
 
     @network.setter
     def network(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('network', value)
 
     @property
@@ -18929,7 +20394,8 @@ class INATEngine(Interface):
 
     @host_ip.setter
     def host_ip(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('hostIP', value)
 
     @property
@@ -18943,7 +20409,8 @@ class INATEngine(Interface):
 
     @tftp_prefix.setter
     def tftp_prefix(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('TFTPPrefix', value)
 
     @property
@@ -18957,7 +20424,8 @@ class INATEngine(Interface):
 
     @tftp_boot_file.setter
     def tftp_boot_file(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('TFTPBootFile', value)
 
     @property
@@ -18972,7 +20440,8 @@ class INATEngine(Interface):
 
     @tftp_next_server.setter
     def tftp_next_server(self, value):
-        assert type(value) is str
+        assert isinstance(value, str), \
+                "value is not an instance of str"
         return self._set_attr('TFTPNextServer', value)
 
     @property
@@ -18985,7 +20454,8 @@ class INATEngine(Interface):
 
     @alias_mode.setter
     def alias_mode(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('aliasMode', value)
 
     @property
@@ -18998,7 +20468,8 @@ class INATEngine(Interface):
 
     @dns_pass_domain.setter
     def dns_pass_domain(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('DNSPassDomain', value)
 
     @property
@@ -19012,7 +20483,8 @@ class INATEngine(Interface):
 
     @dns_proxy.setter
     def dns_proxy(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('DNSProxy', value)
 
     @property
@@ -19026,7 +20498,8 @@ class INATEngine(Interface):
 
     @dns_use_host_resolver.setter
     def dns_use_host_resolver(self, value):
-        assert type(value) is bool
+        assert isinstance(value, bool), \
+                "value is not an instance of bool"
         return self._set_attr('DNSUseHostResolver', value)
 
     @property
@@ -19059,11 +20532,21 @@ class INATEngine(Interface):
           establishing a new TCP connection.
 
         """
-        assert mtu is int
-        assert sock_snd is int
-        assert sock_rcv is int
-        assert tcp_wnd_snd is int
-        assert tcp_wnd_rcv is int
+        assert isinstance(mtu, int), \
+                "mtu is not an instance of int"
+        
+        assert isinstance(sock_snd, int), \
+                "sock_snd is not an instance of int"
+        
+        assert isinstance(sock_rcv, int), \
+                "sock_rcv is not an instance of int"
+        
+        assert isinstance(tcp_wnd_snd, int), \
+                "tcp_wnd_snd is not an instance of int"
+        
+        assert isinstance(tcp_wnd_rcv, int), \
+                "tcp_wnd_rcv is not an instance of int"
+        
         self._call_method('setNetworkSettings',
                      in_p=[mtu, sock_snd, sock_rcv, tcp_wnd_snd, tcp_wnd_rcv])
         
@@ -19112,12 +20595,24 @@ class INATEngine(Interface):
             The port number to forward.
 
         """
-        assert name is str
-        assert proto is NATProtocol
-        assert host_ip is str
-        assert host_port is int
-        assert guest_ip is str
-        assert guest_port is int
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(proto, NATProtocol), \
+                "proto is not an instance of NATProtocol"
+        
+        assert isinstance(host_ip, str), \
+                "host_ip is not an instance of str"
+        
+        assert isinstance(host_port, int), \
+                "host_port is not an instance of int"
+        
+        assert isinstance(guest_ip, str), \
+                "guest_ip is not an instance of str"
+        
+        assert isinstance(guest_port, int), \
+                "guest_port is not an instance of int"
+        
         self._call_method('addRedirect',
                      in_p=[name, proto, host_ip, host_port, guest_ip, guest_port])
         
@@ -19128,7 +20623,9 @@ class INATEngine(Interface):
             The name of the rule to delete.
 
         """
-        assert name is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         self._call_method('removeRedirect',
                      in_p=[name])
         
@@ -19308,9 +20805,15 @@ class IExtPackBase(Interface):
             The license text.
 
         """
-        assert preferred_locale is str
-        assert preferred_language is str
-        assert format_p is str
+        assert isinstance(preferred_locale, str), \
+                "preferred_locale is not an instance of str"
+        
+        assert isinstance(preferred_language, str), \
+                "preferred_language is not an instance of str"
+        
+        assert isinstance(format_p, str), \
+                "format_p is not an instance of str"
+        
         license_text =\
             self._call_method('queryLicense',
                      in_p=[preferred_locale, preferred_language, format_p])
@@ -19337,7 +20840,9 @@ class IExtPack(IExtPackBase):
             The queried interface.
 
         """
-        assert obj_uuid is str
+        assert isinstance(obj_uuid, str), \
+                "obj_uuid is not an instance of str"
+        
         return_interface =\
             self._call_method('queryObject',
                      in_p=[obj_uuid])
@@ -19375,8 +20880,12 @@ class IExtPackFile(IExtPackBase):
             Progress object for the operation.
 
         """
-        assert replace is bool
-        assert display_info is str
+        assert isinstance(replace, bool), \
+                "replace is not an instance of bool"
+        
+        assert isinstance(display_info, str), \
+                "display_info is not an instance of str"
+        
         progess =\
             self._call_method('install',
                      in_p=[replace, display_info])
@@ -19414,7 +20923,9 @@ class IExtPackManager(Interface):
             No extension pack matching @a name was found.
         
         """
-        assert name is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         return_data =\
             self._call_method('find',
                      in_p=[name])
@@ -19432,7 +20943,9 @@ class IExtPackManager(Interface):
             The interface of the extension pack file object.
 
         """
-        assert path is str
+        assert isinstance(path, str), \
+                "path is not an instance of str"
+        
         file_p =\
             self._call_method('openExtPackFile',
                      in_p=[path])
@@ -19455,9 +20968,15 @@ class IExtPackManager(Interface):
             Progress object for the operation.
 
         """
-        assert name is str
-        assert forced_removal is bool
-        assert display_info is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(forced_removal, bool), \
+                "forced_removal is not an instance of bool"
+        
+        assert isinstance(display_info, str), \
+                "display_info is not an instance of str"
+        
         progess =\
             self._call_method('uninstall',
                      in_p=[name, forced_removal, display_info])
@@ -19482,7 +21001,9 @@ class IExtPackManager(Interface):
             Array containing the plug-in modules (full paths).
 
         """
-        assert frontend_name is str
+        assert isinstance(frontend_name, str), \
+                "frontend_name is not an instance of str"
+        
         plug_in_modules =\
             self._call_method('queryAllPlugInsForFrontend',
                      in_p=[frontend_name])
@@ -19498,7 +21019,9 @@ class IExtPackManager(Interface):
             Is the given extension pack loaded and usable.
 
         """
-        assert name is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         usable =\
             self._call_method('isExtPackUsable',
                      in_p=[name])
@@ -19547,7 +21070,8 @@ class IBandwidthGroup(Interface):
 
     @max_bytes_per_sec.setter
     def max_bytes_per_sec(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('maxBytesPerSec', value)
 
 
@@ -19581,9 +21105,15 @@ class IBandwidthControl(Interface):
           entities attached to this group during one second.
 
         """
-        assert name is str
-        assert type_p is BandwidthGroupType
-        assert max_bytes_per_sec is int
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
+        assert isinstance(type_p, BandwidthGroupType), \
+                "type_p is not an instance of BandwidthGroupType"
+        
+        assert isinstance(max_bytes_per_sec, int), \
+                "max_bytes_per_sec is not an instance of int"
+        
         self._call_method('createBandwidthGroup',
                      in_p=[name, type_p, max_bytes_per_sec])
         
@@ -19594,7 +21124,9 @@ class IBandwidthControl(Interface):
             Name of the bandwidth group to delete.
 
         """
-        assert name is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         self._call_method('deleteBandwidthGroup',
                      in_p=[name])
         
@@ -19608,7 +21140,9 @@ class IBandwidthControl(Interface):
             Where to store the bandwidth group on success.
 
         """
-        assert name is str
+        assert isinstance(name, str), \
+                "name is not an instance of str"
+        
         bandwidth_group =\
             self._call_method('getBandwidthGroup',
                      in_p=[name])
@@ -19672,7 +21206,9 @@ class IVirtualBoxClient(Interface):
             The machine object to check.
 
         """
-        assert machine is IMachine
+        assert isinstance(machine, IMachine), \
+                "machine is not an instance of IMachine"
+        
         self._call_method('checkMachineError',
                      in_p=[machine])
         
@@ -19712,7 +21248,9 @@ class IEventSource(Interface):
             Event source aggregating passed sources.
 
         """
-        assert subordinates is IEventSource
+        assert isinstance(subordinates, IEventSource), \
+                "subordinates is not an instance of IEventSource"
+        
         result =\
             self._call_method('createAggregator',
                      in_p=[subordinates])
@@ -19746,9 +21284,15 @@ class IEventSource(Interface):
           external code must call <link to="#eventProcessed"/>.
 
         """
-        assert listener is IEventListener
-        assert interesting is VBoxEventType
-        assert active is bool
+        assert isinstance(listener, IEventListener), \
+                "listener is not an instance of IEventListener"
+        
+        assert isinstance(interesting, VBoxEventType), \
+                "interesting is not an instance of VBoxEventType"
+        
+        assert isinstance(active, bool), \
+                "active is not an instance of bool"
+        
         self._call_method('registerListener',
                      in_p=[listener, interesting, active])
         
@@ -19760,7 +21304,9 @@ class IEventSource(Interface):
             Listener to unregister.
 
         """
-        assert listener is IEventListener
+        assert isinstance(listener, IEventListener), \
+                "listener is not an instance of IEventListener"
+        
         self._call_method('unregisterListener',
                      in_p=[listener])
         
@@ -19778,8 +21324,12 @@ class IEventSource(Interface):
             true if an event was delivered to all targets, or is non-waitable.
 
         """
-        assert event is IEvent
-        assert timeout is int
+        assert isinstance(event, IEvent), \
+                "event is not an instance of IEvent"
+        
+        assert isinstance(timeout, int), \
+                "timeout is not an instance of int"
+        
         result =\
             self._call_method('fireEvent',
                      in_p=[event, timeout])
@@ -19804,8 +21354,12 @@ class IEventSource(Interface):
             Listener is not registered, or autounregistered.
         
         """
-        assert listener is IEventListener
-        assert timeout is int
+        assert isinstance(listener, IEventListener), \
+                "listener is not an instance of IEventListener"
+        
+        assert isinstance(timeout, int), \
+                "timeout is not an instance of int"
+        
         event =\
             self._call_method('getEvent',
                      in_p=[listener, timeout])
@@ -19823,8 +21377,12 @@ class IEventSource(Interface):
             Which event.
 
         """
-        assert listener is IEventListener
-        assert event is IEvent
+        assert isinstance(listener, IEventListener), \
+                "listener is not an instance of IEventListener"
+        
+        assert isinstance(event, IEvent), \
+                "event is not an instance of IEvent"
+        
         self._call_method('eventProcessed',
                      in_p=[listener, event])
         
@@ -19850,7 +21408,9 @@ class IEventListener(Interface):
             Event available.
 
         """
-        assert event is IEvent
+        assert isinstance(event, IEvent), \
+                "event is not an instance of IEvent"
+        
         self._call_method('handleEvent',
                      in_p=[event])
         
@@ -19980,7 +21540,9 @@ class IEvent(Interface):
             If this event was processed before timeout.
 
         """
-        assert timeout is int
+        assert isinstance(timeout, int), \
+                "timeout is not an instance of int"
+        
         result =\
             self._call_method('waitProcessed',
                      in_p=[timeout])
@@ -21191,7 +22753,9 @@ class IVetoEvent(IEvent):
             Reason for veto, could be null or empty string.
 
         """
-        assert reason is str
+        assert isinstance(reason, str), \
+                "reason is not an instance of str"
+        
         self._call_method('addVeto',
                      in_p=[reason])
         
@@ -21313,7 +22877,8 @@ class IShowWindowEvent(IEvent):
 
     @win_id.setter
     def win_id(self, value):
-        assert type(value) is int
+        assert isinstance(value, int), \
+                "value is not an instance of int"
         return self._set_attr('winId', value)
 
 

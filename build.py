@@ -302,7 +302,8 @@ ATTR_GET = '''\
 ATTR_SET = '''\
     @%(pname)s.setter
     def %(pname)s(self, value):
-        assert type(value) is %(ntype)s
+        assert isinstance(value, %(ntype)s), \\
+                "value is not an instance of %(ntype)s"
         return self._set_attr('%(name)s', value)
 '''
 
@@ -365,7 +366,9 @@ METHOD_DOC_RAISES = '''\
         '''
 
 METHOD_ASSERT_IN = '''\
-        assert %(invar)s is %(invartype)s'''
+        assert isinstance(%(invar)s, %(invartype)s), \\
+                "%(invar)s is not an instance of %(invartype)s"
+        '''
 
 METHOD_CALL = '''\
         %(outvars)sself._call_method('%(name)s'%(in_p)s)'''
