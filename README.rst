@@ -23,13 +23,31 @@ Simply run the following::
 Example::
 
     > ipython
-    import virtualbox
-    vbox = virtualbox.VirtualBox()
-    session = virtualbox.Session()
-    vm = vbox.find_machine('test_vm')
-    progress = vm.launch_vm_process(session, 'headless', '')
-    session.console ...
-    #WIN WIN
+    In [1]: import virtualbox
+
+    In [2]: vbox = virtualbox.VirtualBox()
+
+    In [3]: session = virtualbox.Session()
+
+    In [4]: vm = vbox.find_machine('test_vm')
+
+    In [5]: progress = vm.launch_vm_process(session, 'headless', '')
+
+    In [6]: h, w, d = session.console.display.get_screen_resolution(0)
+
+    In [7]: png = session.console.display.take_screen_shot_png_to_array(0, h, w)
+
+    In [8]: with open('screenshot.png', 'wb') as f:
+      ....:     f.write(png)
+
+    In [9]: print(session.state)
+    Locked
+
+    In [10]: session.state
+    Out[10]: SessionState(2)
+    
+    In [11]: session.console.power_down()
+
 
 Issues
 ======
