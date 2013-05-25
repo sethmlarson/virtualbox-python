@@ -23,7 +23,7 @@ class TestVBox(unittest.TestCase):
         vbox.get_extra_data_keys()
 
     def test_method_in_safearray(self):
-        vbox = virtualbox.VirthalBox()
+        vbox = virtualbox.VirtualBox()
         vbox.get_machine_states(vbox.machines)
 
 

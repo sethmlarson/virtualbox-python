@@ -133,16 +133,21 @@ class Interface(object):
         else:
             self._i = interface
 
-    def _change_to_realtype(self, value):
-        if isinstance(value, Interface):
-            return value._i
-        elif isinstance(value, Enum):
-            return int(value)
+    def _cast_to_valuetype(self, value):
+        def cast_to_valuetype(value):
+            if isinstance(value, Interface):
+                return value._i
+            elif isinstance(value, Enum):
+                return int(value)
+            else:
+                return value
+        if isinstance(value, list):
+            return [cast_to_valuetype(a) for a in value]
         else:
-            return value
+            return cast_to_valuetype(value)
 
     def _set_attr(self, name, value):
-        setattr(self._i, name, self._change_to_realtype(value))
+        setattr(self._i, name, self._cast_to_valuetype(value))
 
     def _get_attr(self, name):
         return getattr(self._i, name)
@@ -150,7 +155,7 @@ class Interface(object):
     def _call_method(self, name, in_p=[]):
         global vbox_error
         m = getattr(self._i, name)
-        in_params = [self._change_to_realtype(p) for p in in_p]
+        in_params = [self._cast_to_valuetype(p) for p in in_p]
         try:
             ret = m(*in_params)
         except Exception as exc:
@@ -2264,8 +2269,8 @@ class IVirtualBox(Interface):
                 "settings_file is not an instance of str"
         assert isinstance(name, str), \
                 "name is not an instance of str"
-        assert isinstance(groups, str), \
-                "groups is not an instance of str"
+        assert isinstance(groups, list), \
+                "groups is not an instance of list"
         assert isinstance(os_type_id, str), \
                 "os_type_id is not an instance of str"
         assert isinstance(flags, str), \
@@ -2361,8 +2366,8 @@ class IVirtualBox(Interface):
             All machines which matched.
 
         """
-        assert isinstance(groups, str), \
-                "groups is not an instance of str"
+        assert isinstance(groups, list), \
+                "groups is not an instance of list"
         machines = self._call_method('getMachinesByGroups',
                      in_p=[groups])
         machines = [IMachine(a) for a in machines]
@@ -2378,8 +2383,8 @@ class IVirtualBox(Interface):
             Machine states, corresponding to the machines.
 
         """
-        assert isinstance(machines, IMachine), \
-                "machines is not an instance of IMachine"
+        assert isinstance(machines, list), \
+                "machines is not an instance of list"
         states = self._call_method('getMachineStates',
                      in_p=[machines])
         states = [MachineState(a) for a in states]
@@ -2966,8 +2971,8 @@ class IVFSExplorer(Interface):
             The names which exist.
 
         """
-        assert isinstance(names, str), \
-                "names is not an instance of str"
+        assert isinstance(names, list), \
+                "names is not an instance of list"
         exists = self._call_method('exists',
                      in_p=[names])
         exists = [str(a) for a in exists]
@@ -2983,8 +2988,8 @@ class IVFSExplorer(Interface):
             Progress object to track the operation completion.
 
         """
-        assert isinstance(names, str), \
-                "names is not an instance of str"
+        assert isinstance(names, list), \
+                "names is not an instance of list"
         progress = self._call_method('remove',
                      in_p=[names])
         progress = IProgress(progress)
@@ -3202,8 +3207,8 @@ class IAppliance(Interface):
             Progress object to track the operation completion.
 
         """
-        assert isinstance(options, ImportOptions), \
-                "options is not an instance of ImportOptions"
+        assert isinstance(options, list), \
+                "options is not an instance of list"
         progress = self._call_method('importMachines',
                      in_p=[options])
         progress = IProgress(progress)
@@ -3515,12 +3520,12 @@ class IVirtualSystemDescription(Interface):
             <desc/>
 
         """
-        assert isinstance(enabled, bool), \
-                "enabled is not an instance of bool"
-        assert isinstance(v_box_values, str), \
-                "v_box_values is not an instance of str"
-        assert isinstance(extra_config_values, str), \
-                "extra_config_values is not an instance of str"
+        assert isinstance(enabled, list), \
+                "enabled is not an instance of list"
+        assert isinstance(v_box_values, list), \
+                "v_box_values is not an instance of list"
+        assert isinstance(extra_config_values, list), \
+                "extra_config_values is not an instance of list"
         self._call_method('setFinalValues',
                      in_p=[enabled, v_box_values, extra_config_values])
         
@@ -3973,8 +3978,8 @@ class IInternalMachineControl(Interface):
                 "merge_forward is not an instance of bool"
         assert isinstance(parent_for_target, IMedium), \
                 "parent_for_target is not an instance of IMedium"
-        assert isinstance(children_to_reparent, IMedium), \
-                "children_to_reparent is not an instance of IMedium"
+        assert isinstance(children_to_reparent, list), \
+                "children_to_reparent is not an instance of list"
         self._call_method('finishOnlineMergeMedium',
                      in_p=[medium_attachment, source, target, merge_forward, parent_for_target, children_to_reparent])
         
@@ -7395,8 +7400,8 @@ class IMachine(Interface):
             Could not delete the settings file.
         
         """
-        assert isinstance(media, IMedium), \
-                "media is not an instance of IMedium"
+        assert isinstance(media, list), \
+                "media is not an instance of list"
         progress = self._call_method('deleteConfig',
                      in_p=[media])
         progress = IProgress(progress)
@@ -8036,8 +8041,8 @@ class IMachine(Interface):
                 "target is not an instance of IMachine"
         assert isinstance(mode, CloneMode), \
                 "mode is not an instance of CloneMode"
-        assert isinstance(options, CloneOptions), \
-                "options is not an instance of CloneOptions"
+        assert isinstance(options, list), \
+                "options is not an instance of list"
         progress = self._call_method('cloneTo',
                      in_p=[target, mode, options])
         progress = IProgress(progress)
@@ -10838,8 +10843,8 @@ class IGuestSession(Interface):
                 "source is not an instance of str"
         assert isinstance(dest, str), \
                 "dest is not an instance of str"
-        assert isinstance(flags, CopyFileFlag), \
-                "flags is not an instance of CopyFileFlag"
+        assert isinstance(flags, list), \
+                "flags is not an instance of list"
         progress = self._call_method('copyFrom',
                      in_p=[source, dest, flags])
         progress = IProgress(progress)
@@ -10868,8 +10873,8 @@ class IGuestSession(Interface):
                 "source is not an instance of str"
         assert isinstance(dest, str), \
                 "dest is not an instance of str"
-        assert isinstance(flags, CopyFileFlag), \
-                "flags is not an instance of CopyFileFlag"
+        assert isinstance(flags, list), \
+                "flags is not an instance of list"
         progress = self._call_method('copyTo',
                      in_p=[source, dest, flags])
         progress = IProgress(progress)
@@ -10895,8 +10900,8 @@ class IGuestSession(Interface):
                 "path is not an instance of str"
         assert isinstance(mode, int), \
                 "mode is not an instance of int"
-        assert isinstance(flags, DirectoryCreateFlag), \
-                "flags is not an instance of DirectoryCreateFlag"
+        assert isinstance(flags, list), \
+                "flags is not an instance of list"
         self._call_method('directoryCreate',
                      in_p=[path, mode, flags])
         
@@ -11001,8 +11006,8 @@ class IGuestSession(Interface):
                 "path is not an instance of str"
         assert isinstance(filter_p, str), \
                 "filter_p is not an instance of str"
-        assert isinstance(flags, DirectoryOpenFlag), \
-                "flags is not an instance of DirectoryOpenFlag"
+        assert isinstance(flags, list), \
+                "flags is not an instance of list"
         directory = self._call_method('directoryOpen',
                      in_p=[path, filter_p, flags])
         directory = IGuestDirectory(directory)
@@ -11064,8 +11069,8 @@ class IGuestSession(Interface):
         """
         assert isinstance(path, str), \
                 "path is not an instance of str"
-        assert isinstance(flags, DirectoryRemoveRecFlag), \
-                "flags is not an instance of DirectoryRemoveRecFlag"
+        assert isinstance(flags, list), \
+                "flags is not an instance of list"
         progress = self._call_method('directoryRemoveRecursive',
                      in_p=[path, flags])
         progress = IProgress(progress)
@@ -11091,8 +11096,8 @@ class IGuestSession(Interface):
                 "source is not an instance of str"
         assert isinstance(dest, str), \
                 "dest is not an instance of str"
-        assert isinstance(flags, PathRenameFlag), \
-                "flags is not an instance of PathRenameFlag"
+        assert isinstance(flags, list), \
+                "flags is not an instance of list"
         self._call_method('directoryRename',
                      in_p=[source, dest, flags])
         
@@ -11383,8 +11388,8 @@ class IGuestSession(Interface):
                 "source is not an instance of str"
         assert isinstance(dest, str), \
                 "dest is not an instance of str"
-        assert isinstance(flags, PathRenameFlag), \
-                "flags is not an instance of PathRenameFlag"
+        assert isinstance(flags, list), \
+                "flags is not an instance of list"
         self._call_method('fileRename',
                      in_p=[source, dest, flags])
         
@@ -11464,12 +11469,12 @@ class IGuestSession(Interface):
         """
         assert isinstance(command, str), \
                 "command is not an instance of str"
-        assert isinstance(arguments, str), \
-                "arguments is not an instance of str"
-        assert isinstance(environment, str), \
-                "environment is not an instance of str"
-        assert isinstance(flags, ProcessCreateFlag), \
-                "flags is not an instance of ProcessCreateFlag"
+        assert isinstance(arguments, list), \
+                "arguments is not an instance of list"
+        assert isinstance(environment, list), \
+                "environment is not an instance of list"
+        assert isinstance(flags, list), \
+                "flags is not an instance of list"
         assert isinstance(timeout_ms, int), \
                 "timeout_ms is not an instance of int"
         guest_process = self._call_method('processCreate',
@@ -11523,18 +11528,18 @@ class IGuestSession(Interface):
         """
         assert isinstance(command, str), \
                 "command is not an instance of str"
-        assert isinstance(arguments, str), \
-                "arguments is not an instance of str"
-        assert isinstance(environment, str), \
-                "environment is not an instance of str"
-        assert isinstance(flags, ProcessCreateFlag), \
-                "flags is not an instance of ProcessCreateFlag"
+        assert isinstance(arguments, list), \
+                "arguments is not an instance of list"
+        assert isinstance(environment, list), \
+                "environment is not an instance of list"
+        assert isinstance(flags, list), \
+                "flags is not an instance of list"
         assert isinstance(timeout_ms, int), \
                 "timeout_ms is not an instance of int"
         assert isinstance(priority, ProcessPriority), \
                 "priority is not an instance of ProcessPriority"
-        assert isinstance(affinity, int), \
-                "affinity is not an instance of int"
+        assert isinstance(affinity, list), \
+                "affinity is not an instance of list"
         guest_process = self._call_method('processCreateEx',
                      in_p=[command, arguments, environment, flags, timeout_ms, priority, affinity])
         guest_process = IGuestProcess(guest_process)
@@ -11621,8 +11626,8 @@ class IGuestSession(Interface):
         """
         assert isinstance(symlink, str), \
                 "symlink is not an instance of str"
-        assert isinstance(flags, SymlinkReadFlag), \
-                "flags is not an instance of SymlinkReadFlag"
+        assert isinstance(flags, list), \
+                "flags is not an instance of list"
         target = self._call_method('symlinkRead',
                      in_p=[symlink, flags])
         target = str(target)
@@ -11700,8 +11705,8 @@ class IGuestSession(Interface):
           see <link to="GuestSessionWaitResult"/> for more information.
 
         """
-        assert isinstance(wait_for, GuestSessionWaitForFlag), \
-                "wait_for is not an instance of GuestSessionWaitForFlag"
+        assert isinstance(wait_for, list), \
+                "wait_for is not an instance of list"
         assert isinstance(timeout_ms, int), \
                 "timeout_ms is not an instance of int"
         reason = self._call_method('waitForArray',
@@ -11825,8 +11830,8 @@ class IProcess(Interface):
           see <link to="ProcessWaitResult"/> for more information.
 
         """
-        assert isinstance(wait_for, ProcessWaitForFlag), \
-                "wait_for is not an instance of ProcessWaitForFlag"
+        assert isinstance(wait_for, list), \
+                "wait_for is not an instance of list"
         assert isinstance(timeout_ms, int), \
                 "timeout_ms is not an instance of int"
         reason = self._call_method('waitForArray',
@@ -11887,8 +11892,8 @@ class IProcess(Interface):
                 "handle is not an instance of int"
         assert isinstance(flags, int), \
                 "flags is not an instance of int"
-        assert isinstance(data, str), \
-                "data is not an instance of str"
+        assert isinstance(data, list), \
+                "data is not an instance of list"
         assert isinstance(timeout_ms, int), \
                 "timeout_ms is not an instance of int"
         written = self._call_method('write',
@@ -11920,10 +11925,10 @@ class IProcess(Interface):
         """
         assert isinstance(handle, int), \
                 "handle is not an instance of int"
-        assert isinstance(flags, ProcessInputFlag), \
-                "flags is not an instance of ProcessInputFlag"
-        assert isinstance(data, str), \
-                "data is not an instance of str"
+        assert isinstance(flags, list), \
+                "flags is not an instance of list"
+        assert isinstance(data, list), \
+                "data is not an instance of list"
         assert isinstance(timeout_ms, int), \
                 "timeout_ms is not an instance of int"
         written = self._call_method('writeArray',
@@ -12202,8 +12207,8 @@ class IFile(Interface):
             How much bytes were written.
 
         """
-        assert isinstance(data, str), \
-                "data is not an instance of str"
+        assert isinstance(data, list), \
+                "data is not an instance of list"
         assert isinstance(timeout_ms, int), \
                 "timeout_ms is not an instance of int"
         written = self._call_method('write',
@@ -12234,8 +12239,8 @@ class IFile(Interface):
         """
         assert isinstance(offset, int), \
                 "offset is not an instance of int"
-        assert isinstance(data, str), \
-                "data is not an instance of str"
+        assert isinstance(data, list), \
+                "data is not an instance of list"
         assert isinstance(timeout_ms, int), \
                 "timeout_ms is not an instance of int"
         written = self._call_method('writeAt',
@@ -12699,10 +12704,10 @@ class IGuest(Interface):
                 "x is not an instance of int"
         assert isinstance(default_action, DragAndDropAction), \
                 "default_action is not an instance of DragAndDropAction"
-        assert isinstance(allowed_actions, DragAndDropAction), \
-                "allowed_actions is not an instance of DragAndDropAction"
-        assert isinstance(formats, str), \
-                "formats is not an instance of str"
+        assert isinstance(allowed_actions, list), \
+                "allowed_actions is not an instance of list"
+        assert isinstance(formats, list), \
+                "formats is not an instance of list"
         result_action = self._call_method('dragHGEnter',
                      in_p=[screen_id, y, x, default_action, allowed_actions, formats])
         result_action = DragAndDropAction(result_action)
@@ -12746,10 +12751,10 @@ class IGuest(Interface):
                 "y is not an instance of int"
         assert isinstance(default_action, DragAndDropAction), \
                 "default_action is not an instance of DragAndDropAction"
-        assert isinstance(allowed_actions, DragAndDropAction), \
-                "allowed_actions is not an instance of DragAndDropAction"
-        assert isinstance(formats, str), \
-                "formats is not an instance of str"
+        assert isinstance(allowed_actions, list), \
+                "allowed_actions is not an instance of list"
+        assert isinstance(formats, list), \
+                "formats is not an instance of list"
         result_action = self._call_method('dragHGMove',
                      in_p=[screen_id, x, y, default_action, allowed_actions, formats])
         result_action = DragAndDropAction(result_action)
@@ -12813,10 +12818,10 @@ class IGuest(Interface):
                 "y is not an instance of int"
         assert isinstance(default_action, DragAndDropAction), \
                 "default_action is not an instance of DragAndDropAction"
-        assert isinstance(allowed_actions, DragAndDropAction), \
-                "allowed_actions is not an instance of DragAndDropAction"
-        assert isinstance(formats, str), \
-                "formats is not an instance of str"
+        assert isinstance(allowed_actions, list), \
+                "allowed_actions is not an instance of list"
+        assert isinstance(formats, list), \
+                "formats is not an instance of list"
         (format_p, result_action) = self._call_method('dragHGDrop',
                      in_p=[screen_id, x, y, default_action, allowed_actions, formats])
         format_p = str(format_p)
@@ -12848,8 +12853,8 @@ class IGuest(Interface):
                 "screen_id is not an instance of int"
         assert isinstance(format_p, str), \
                 "format_p is not an instance of str"
-        assert isinstance(data, str), \
-                "data is not an instance of str"
+        assert isinstance(data, list), \
+                "data is not an instance of list"
         progress = self._call_method('dragHGPutData',
                      in_p=[screen_id, format_p, data])
         progress = IProgress(progress)
@@ -13043,8 +13048,8 @@ class IGuest(Interface):
         """
         assert isinstance(source, str), \
                 "source is not an instance of str"
-        assert isinstance(flags, AdditionsUpdateFlag), \
-                "flags is not an instance of AdditionsUpdateFlag"
+        assert isinstance(flags, list), \
+                "flags is not an instance of list"
         progress = self._call_method('updateGuestAdditions',
                      in_p=[source, flags])
         progress = IProgress(progress)
@@ -14757,10 +14762,10 @@ class IMedium(Interface):
             Values of properties to set.
 
         """
-        assert isinstance(names, str), \
-                "names is not an instance of str"
-        assert isinstance(values, str), \
-                "values is not an instance of str"
+        assert isinstance(names, list), \
+                "names is not an instance of list"
+        assert isinstance(values, list), \
+                "values is not an instance of list"
         self._call_method('setProperties',
                      in_p=[names, values])
         
@@ -14795,8 +14800,8 @@ class IMedium(Interface):
         """
         assert isinstance(logical_size, int), \
                 "logical_size is not an instance of int"
-        assert isinstance(variant, MediumVariant), \
-                "variant is not an instance of MediumVariant"
+        assert isinstance(variant, list), \
+                "variant is not an instance of list"
         progress = self._call_method('createBaseStorage',
                      in_p=[logical_size, variant])
         progress = IProgress(progress)
@@ -14883,8 +14888,8 @@ class IMedium(Interface):
         """
         assert isinstance(target, IMedium), \
                 "target is not an instance of IMedium"
-        assert isinstance(variant, MediumVariant), \
-                "variant is not an instance of MediumVariant"
+        assert isinstance(variant, list), \
+                "variant is not an instance of list"
         progress = self._call_method('createDiffStorage',
                      in_p=[target, variant])
         progress = IProgress(progress)
@@ -15021,8 +15026,8 @@ class IMedium(Interface):
         """
         assert isinstance(target, IMedium), \
                 "target is not an instance of IMedium"
-        assert isinstance(variant, MediumVariant), \
-                "variant is not an instance of MediumVariant"
+        assert isinstance(variant, list), \
+                "variant is not an instance of list"
         assert isinstance(parent, IMedium), \
                 "parent is not an instance of IMedium"
         progress = self._call_method('cloneTo',
@@ -15074,8 +15079,8 @@ class IMedium(Interface):
         """
         assert isinstance(target, IMedium), \
                 "target is not an instance of IMedium"
-        assert isinstance(variant, MediumVariant), \
-                "variant is not an instance of MediumVariant"
+        assert isinstance(variant, list), \
+                "variant is not an instance of list"
         progress = self._call_method('cloneToBase',
                      in_p=[target, variant])
         progress = IProgress(progress)
@@ -15331,8 +15336,8 @@ class IKeyboard(Interface):
             Could not send all scan codes to virtual keyboard.
         
         """
-        assert isinstance(scancodes, int), \
-                "scancodes is not an instance of int"
+        assert isinstance(scancodes, list), \
+                "scancodes is not an instance of list"
         codes_stored = self._call_method('putScancodes',
                      in_p=[scancodes])
         codes_stored = int(codes_stored)
@@ -16291,8 +16296,8 @@ class IDisplay(Interface):
             The screens to start/continue capturing.
 
         """
-        assert isinstance(screens, bool), \
-                "screens is not an instance of bool"
+        assert isinstance(screens, list), \
+                "screens is not an instance of list"
         self._call_method('enableVideoCapture',
                      in_p=[screens])
         
@@ -16303,8 +16308,8 @@ class IDisplay(Interface):
             The screens to stop capturing.
 
         """
-        assert isinstance(screens, bool), \
-                "screens is not an instance of bool"
+        assert isinstance(screens, list), \
+                "screens is not an instance of list"
         self._call_method('disableVideoCapture',
                      in_p=[screens])
         
@@ -17157,8 +17162,8 @@ class IMachineDebugger(Interface):
                 "address is not an instance of int"
         assert isinstance(size, int), \
                 "size is not an instance of int"
-        assert isinstance(bytes_p, str), \
-                "bytes_p is not an instance of str"
+        assert isinstance(bytes_p, list), \
+                "bytes_p is not an instance of list"
         self._call_method('writePhysicalMemory',
                      in_p=[address, size, bytes_p])
         
@@ -17217,8 +17222,8 @@ class IMachineDebugger(Interface):
                 "address is not an instance of int"
         assert isinstance(size, int), \
                 "size is not an instance of int"
-        assert isinstance(bytes_p, str), \
-                "bytes_p is not an instance of str"
+        assert isinstance(bytes_p, list), \
+                "bytes_p is not an instance of list"
         self._call_method('writeVirtualMemory',
                      in_p=[cpu_id, address, size, bytes_p])
         
@@ -17334,10 +17339,10 @@ class IMachineDebugger(Interface):
         """
         assert isinstance(cpu_id, int), \
                 "cpu_id is not an instance of int"
-        assert isinstance(names, str), \
-                "names is not an instance of str"
-        assert isinstance(values, str), \
-                "values is not an instance of str"
+        assert isinstance(names, list), \
+                "names is not an instance of list"
+        assert isinstance(values, list), \
+                "values is not an instance of list"
         self._call_method('setRegisters',
                      in_p=[cpu_id, names, values])
         
@@ -19144,8 +19149,8 @@ class IInternalSessionControl(Interface):
                 "merge_forward is not an instance of bool"
         assert isinstance(parent_for_target, IMedium), \
                 "parent_for_target is not an instance of IMedium"
-        assert isinstance(children_to_reparent, IMedium), \
-                "children_to_reparent is not an instance of IMedium"
+        assert isinstance(children_to_reparent, list), \
+                "children_to_reparent is not an instance of list"
         assert isinstance(progress, IProgress), \
                 "progress is not an instance of IProgress"
         self._call_method('onlineMergeMedium',
@@ -19650,10 +19655,10 @@ class IPerformanceCollector(Interface):
             Array of returned metric parameters.
 
         """
-        assert isinstance(metric_names, str), \
-                "metric_names is not an instance of str"
-        assert isinstance(objects, Interface), \
-                "objects is not an instance of Interface"
+        assert isinstance(metric_names, list), \
+                "metric_names is not an instance of list"
+        assert isinstance(objects, list), \
+                "objects is not an instance of list"
         metrics = self._call_method('getMetrics',
                      in_p=[metric_names, objects])
         metrics = [IPerformanceMetric(a) for a in metrics]
@@ -19689,10 +19694,10 @@ class IPerformanceCollector(Interface):
             Array of metrics that have been modified by the call to this method.
 
         """
-        assert isinstance(metric_names, str), \
-                "metric_names is not an instance of str"
-        assert isinstance(objects, Interface), \
-                "objects is not an instance of Interface"
+        assert isinstance(metric_names, list), \
+                "metric_names is not an instance of list"
+        assert isinstance(objects, list), \
+                "objects is not an instance of list"
         assert isinstance(period, int), \
                 "period is not an instance of int"
         assert isinstance(count, int), \
@@ -19724,10 +19729,10 @@ class IPerformanceCollector(Interface):
             Array of metrics that have been modified by the call to this method.
 
         """
-        assert isinstance(metric_names, str), \
-                "metric_names is not an instance of str"
-        assert isinstance(objects, Interface), \
-                "objects is not an instance of Interface"
+        assert isinstance(metric_names, list), \
+                "metric_names is not an instance of list"
+        assert isinstance(objects, list), \
+                "objects is not an instance of list"
         affected_metrics = self._call_method('enableMetrics',
                      in_p=[metric_names, objects])
         affected_metrics = [IPerformanceMetric(a) for a in affected_metrics]
@@ -19755,10 +19760,10 @@ class IPerformanceCollector(Interface):
             Array of metrics that have been modified by the call to this method.
 
         """
-        assert isinstance(metric_names, str), \
-                "metric_names is not an instance of str"
-        assert isinstance(objects, Interface), \
-                "objects is not an instance of Interface"
+        assert isinstance(metric_names, list), \
+                "metric_names is not an instance of list"
+        assert isinstance(objects, list), \
+                "objects is not an instance of list"
         affected_metrics = self._call_method('disableMetrics',
                      in_p=[metric_names, objects])
         affected_metrics = [IPerformanceMetric(a) for a in affected_metrics]
@@ -19838,10 +19843,10 @@ class IPerformanceCollector(Interface):
           each metric.
 
         """
-        assert isinstance(metric_names, str), \
-                "metric_names is not an instance of str"
-        assert isinstance(objects, Interface), \
-                "objects is not an instance of Interface"
+        assert isinstance(metric_names, list), \
+                "metric_names is not an instance of list"
+        assert isinstance(objects, list), \
+                "objects is not an instance of list"
         (return_metric_names, return_objects, return_units, return_scales, return_sequence_numbers, return_data_indices, return_data_lengths, return_data) = self._call_method('queryMetricsData',
                      in_p=[metric_names, objects])
         return_metric_names = [str(a) for a in return_metric_names]
@@ -20717,8 +20722,8 @@ class IEventSource(Interface):
             Event source aggregating passed sources.
 
         """
-        assert isinstance(subordinates, IEventSource), \
-                "subordinates is not an instance of IEventSource"
+        assert isinstance(subordinates, list), \
+                "subordinates is not an instance of list"
         result = self._call_method('createAggregator',
                      in_p=[subordinates])
         result = IEventSource(result)
@@ -20754,8 +20759,8 @@ class IEventSource(Interface):
         """
         assert isinstance(listener, IEventListener), \
                 "listener is not an instance of IEventListener"
-        assert isinstance(interesting, VBoxEventType), \
-                "interesting is not an instance of VBoxEventType"
+        assert isinstance(interesting, list), \
+                "interesting is not an instance of list"
         assert isinstance(active, bool), \
                 "active is not an instance of bool"
         self._call_method('registerListener',

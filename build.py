@@ -100,16 +100,21 @@ class Interface(object):
         else:
             self._i = interface
 
-    def _change_to_realtype(self, value):
-        if isinstance(value, Interface):
-            return value._i
-        elif isinstance(value, Enum):
-            return int(value)
+    def _cast_to_valuetype(self, value):
+        def cast_to_valuetype(value):
+            if isinstance(value, Interface):
+                return value._i
+            elif isinstance(value, Enum):
+                return int(value)
+            else:
+                return value
+        if isinstance(value, list):
+            return [cast_to_valuetype(a) for a in value]
         else:
-            return value
+            return cast_to_valuetype(value)
 
     def _set_attr(self, name, value):
-        setattr(self._i, name, self._change_to_realtype(value))
+        setattr(self._i, name, self._cast_to_valuetype(value))
 
     def _get_attr(self, name):
         return getattr(self._i, name)
@@ -117,7 +122,7 @@ class Interface(object):
     def _call_method(self, name, in_p=[]):
         global vbox_error
         m = getattr(self._i, name)
-        in_params = [self._change_to_realtype(p) for p in in_p]
+        in_params = [self._cast_to_valuetype(p) for p in in_p]
         try:
             ret = m(*in_params)
         except Exception as exc:
@@ -466,8 +471,12 @@ def process_interface_method(node):
         name = pythonic_name(n)
         atype = type_to_name(t)
         if io == 'in':
+            if array:
+                invartype = 'list'
+            else:
+                invartype = atype
             func.append(METHOD_ASSERT_IN % dict(invar=name,
-                                                invartype=atype))
+                                                invartype=invartype))
         elif io == 'out':
             outvars.append(name)
             out_p.append((name, atype, array))
