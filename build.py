@@ -384,12 +384,12 @@ METHOD_DOC_RAISES = '''\
 
 METHOD_ASSERT_IN = '''\
         if not isinstance(%(invar)s, %(invartype)s):
-            raise TypeError("%(invar)s is not an instance of %(invartype)s")'''
+            raise TypeError("%(invar)s can only be an instance of type %(invartype)s")'''
 
 METHOD_ASSERT_ARRAY_IN = '''\
         for a in %(invar)s:
             if not isinstance(a, %(invartype)s):
-                raise TypeError("array can only contain %(invartype)s objects")'''
+                raise TypeError("array can only contain objects of type %(invartype)s")'''
             
 METHOD_CALL = '''\
         %(outvars)sself._call_method('%(name)s'%(in_p)s)'''
