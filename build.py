@@ -152,7 +152,7 @@ vbox_error = {}
 remove = ['desc', 'pre', 'tt', 'ul', 'li', 'note', 'b', 'ol', 'i', 'h3',
            'tr', 'td', 'table', 'see']
 
-def get_doc(node, tabs=2):
+def get_doc(node):
     docnode = node.getElementsByTagName('desc')
     if docnode:
         xml = docnode[0].toxml()
@@ -164,7 +164,6 @@ def get_doc(node, tabs=2):
         return html.strip()
     else:
         return ''
-
 
 
 ###########################################################
@@ -521,7 +520,14 @@ def main(virtualbox_xidl):
     xidl = open(virtualbox_xidl, 'rb').read()
         
     xml = minidom.parseString(xidl)
+    
+    # Get the idl description
+    idl = xml.getElementsByTagName('idl')
+    assert len(idl) == 1
+    idl = idl[0]
+    lib_doc = '''\n__doc__ = """\\\n%s\n"""''' %get_doc(idl)
 
+    # Process the library
     library = xml.getElementsByTagName('library')
     assert len(library) == 1
     library = library[0]
@@ -548,6 +554,7 @@ def main(virtualbox_xidl):
 
     code = []
     code.append(LIB_IMPORTS)
+    code.append(lib_doc)
     code.append(lib_meta)
     code.append(LIB_DEFINES)
     code.extend(source['result'])

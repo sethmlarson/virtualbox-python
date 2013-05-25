@@ -2,6 +2,9 @@ import vboxapi
 from virtualbox import library
 
 
+__doc__ = library.__doc__
+
+
 manager = vboxapi.VirtualBoxManager(None, None)
 
 

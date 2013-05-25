@@ -14,6 +14,63 @@ except:
     import builtin
 
 
+
+__doc__ = """\
+Welcome to the VirtualBox Main API documentation. This documentation
+  describes the so-called VirtualBox Main API which comprises all public
+  COM interfaces and components provided by the VirtualBox server and by the
+  VirtualBox client library.
+
+  VirtualBox employs a client-server design, meaning that whenever any part of
+  VirtualBox is running -- be it the Qt GUI, the VBoxManage command-line
+  interface or any virtual machine --, a dedicated server process named
+  VBoxSVC runs in the background. This allows multiple processes working with
+  VirtualBox to cooperate without conflicts. These processes communicate to each
+  other using inter-process communication facilities provided by the COM
+  implementation of the host computer.
+
+  On Windows platforms, the VirtualBox Main API uses Microsoft COM, a native COM
+  implementation. On all other platforms, Mozilla XPCOM, an open-source COM
+  implementation, is used.
+
+  All the parts that a typical VirtualBox user interacts with (the Qt GUI
+  and the VBoxManage command-line interface) are technically
+  front-ends to the Main API and only use the interfaces that are documented
+  in this Main API documentation. This ensures that, with any given release
+  version of VirtualBox, all capabilities of the product that could be useful
+  to an external client program are always exposed by way of this API.
+
+  The VirtualBox Main API (also called the VirtualBox COM library)
+  contains two public component classes:
+  %VirtualBox.VirtualBox and %VirtualBox.Session, which
+  implement IVirtualBox and ISession interfaces respectively. These two classes
+  are of supreme importance and will be needed in order for any front-end
+  program to do anything useful. It is recommended to read the documentation of
+  the mentioned interfaces first.
+
+  The %VirtualBox.VirtualBox class is a singleton. This means that
+  there can be only one object of this class on the local machine at any given
+  time. This object is a parent of many other objects in the VirtualBox COM
+  library and lives in the VBoxSVC process. In fact, when you create an instance
+  of the VirtualBox.VirtualBox, the COM subsystem checks if the VBoxSVC
+  process is already running, starts it if not, and returns you a reference to
+  the VirtualBox object created in this process. When the last reference
+  to this object is released, the VBoxSVC process ends (with a 5 second delay to
+  protect from too frequent restarts).
+
+  The %VirtualBox.Session class is a regular component. You can create
+  as many Session objects as you need but all of them will live in a
+  process which issues the object instantiation call. Session objects
+  represent virtual machine sessions which are used to configure virtual
+  machines and control their execution.
+
+  The naming of methods and attributes is very clearly defined: they all start
+  with a lowercase letter (except if they start with an acronym), and are using
+  CamelCase style otherwise. This naming only applies to the IDL description,
+  and is modified by the various language bindings (some convert the first
+  character to upper case, some not). See the SDK reference for more details
+  about how to call a method or attribute from a specific programming language.
+"""
 lib_version = 1.3
 lib_app_uuid = '819B4D85-9CEE-493C-B6FC-64FFE759B3C9'
 lib_uuid = 'd7569351-1750-46f0-936e-bd127d5bc264'
