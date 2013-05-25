@@ -5,7 +5,7 @@ What's in pyvbox:
 
 * A complete implementation of the VirtualBox Main API
 * Create a VirtualBox instance and seamlessly explorer the potential of
-  the VirtualBox's amazing Main API 
+  VirtualBox's amazing Main API 
 * Pythonic functions and names.
 * Introspection, documentation strings, getters and setters...
 
