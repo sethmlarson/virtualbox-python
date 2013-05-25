@@ -518,7 +518,7 @@ def main(virtualbox_xidl):
     print("   version    : %s" % version) 
     print("   line count : %s" % code.count("\n"))
     with open('virtualbox/library.py', 'wb') as f:
-        f.write("\n".join(code))
+        f.write(code)
 
 
 if __name__ == '__main__':
