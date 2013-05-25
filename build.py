@@ -106,13 +106,13 @@ class Interface(object):
         else:
             return value
 
-    def set_attr(self, name, value):
+    def _set_attr(self, name, value):
         setattr(self._i, name, self._change_to_realtype(value))
 
-    def get_attr(self, name, atype):
-        return atype(getattr(self._i, name))
+    def _get_attr(self, name):
+        return getattr(self._i, name)
 
-    def call_method(self, name, in_p=[], out_p={}, rettype=None):
+    def _call_method(self, name, in_p=[]):
         global vbox_error
         m = getattr(self._i, name)
         in_params = [self._change_to_realtype(p) for p in in_p]
@@ -128,9 +128,7 @@ class Interface(object):
                 errobj = VBoxError()
             errobj.msg = getattr(exc, 'msg', exc.message)
             raise errobj
-        if rettype is not None:
-            return rettype(ret)
-
+        return ret
 
 class VBoxError(Exception): 
     """Generic VBoxError"""
@@ -298,12 +296,14 @@ ATTR_GET = '''\
     @property
     def %(pname)s(self):
         """%(doc_action)s %(ntype)s value for '%(name)s'%(doc)s"""
-        return self.get_attr('%(name)s', %(ntype)s)
+        value = self._get_attr('%(name)s')
+        return %(ntype)s(value)
 '''
 ATTR_SET = '''\
     @%(pname)s.setter
     def %(pname)s(self, value):
-        return self.set_attr('%(name)s', value)
+        assert type(value) is %(ntype)s
+        return self._set_attr('%(name)s', value)
 '''
 
 known_types = {'wstring':'str',
@@ -316,6 +316,7 @@ known_types = {'wstring':'str',
                'unsigned long':'int',
                'unsigned short':'int',
                '$unknown':'Interface'}
+
 
 def type_to_name(t):
     if t in known_types:
@@ -351,7 +352,7 @@ def process_interface_attribute(node):
 
 
 METHOD_FUNC = '''\
-    def %(pname)s(self%(inparams)s%(outparams)s):
+    def %(pname)s(self%(inparams)s):
         """%(doc)s
         """'''
 
@@ -362,10 +363,18 @@ METHOD_DOC_PARAM = '''\
 METHOD_DOC_RAISES = '''\
         raises %(name)s%(doc)s
         '''
-METHOD_BODY = '''\
-        %(retname)sself.call_method('%(name)s'%(inparams)s%(outparams)s%(rettype)s)%(retname_res)s
-        '''
 
+METHOD_ASSERT_IN = '''\
+        assert %(invar)s is %(invartype)s'''
+
+METHOD_CALL = '''\
+        %(outvars)sself._call_method('%(name)s'%(in_p)s)'''
+
+METHOD_OUT_CONV = '''\
+        %(name)s = %(atype)s(%(name)s)'''
+
+METHOD_RETURN = '''\
+        %(retcmd)s'''
 
 def process_interface_method(node):
     def process_result(c):
@@ -430,36 +439,60 @@ def process_interface_method(node):
     else:
         inparams = ''
 
-    if [io for _, io, _, _ in params if io == 'out']:
-        outparams = ', out_p={}'
-    else:
-        outparams=''
     func = []
     func.append(METHOD_FUNC % dict(pname=pythonic_name(method_name),
                                 doc=doc,
-                                inparams=inparams,
-                                outparams=outparams))
+                                inparams=inparams))
 
-    #function body
+    # prep METOD_CALL vars and insert ASSERT IN 
+    outvars = []
+    out_p = []
+    for n, io, d, t in params:
+        name = pythonic_name(n)
+        atype = type_to_name(t)
+        if io == 'in':
+            func.append(METHOD_ASSERT_IN % dict(invar=name,
+                                                invartype=atype))
+        elif io == 'out':
+            outvars.append(name)
+            out_p.append((name, atype))
+    
+    if ret_param is not None:
+        n, _, t = ret_param
+        name = pythonic_name(n)
+        atype = type_to_name(t)
+        outvars.append(name)
+        out_p.append((name, atype))
+
     if inparams_raw:
-        inparams = ",\n%sin_p=[%s]" % (" " * 21, inparams_raw)
-
-    if outparams:
-        outparams = ',\n%sout_p=out_p' % (" " * 21)
-
-    if ret_param is None:
-        retname = '' 
-        rettype = ''
-        retname_res = ''
+        in_p = ",\n%sin_p=[%s]" % (" " * 21, inparams_raw)
     else:
-        retname_raw, _, rettype = ret_param
-        retname = "%s = " % pythonic_name(retname_raw)
-        rettype = ",\n%srettype=%s" % (" " * 21, type_to_name(rettype))
-        retname_res = "\n        return %s" % pythonic_name(retname_raw)
-    func.append(METHOD_BODY % dict(inparams=inparams, name=method_name, 
-                        retname=retname, outparams=outparams, rettype=rettype,
-                        retname_res=retname_res))
+        in_p = ''
 
+    if outvars:
+        if len(outvars) > 1:
+            retvars = "(%s)" % (", ".join(outvars))
+        else:
+            retvars = outvars[0]
+        outvars = "%s =\\\n%s" % (retvars, " " * 12)
+    else:
+        outvars = ''
+
+    func.append(METHOD_CALL % dict(outvars=outvars, name=method_name,
+        in_p=in_p))
+
+    # build retcmd
+    if out_p:
+        retcmd = ["%s(%s)" % (atype, name) for name, atype in out_p]
+        retcmd = ", ".join(retcmd)
+        if len(out_p) > 1:
+            retcmd = "(%s)" % retcmd 
+        retcmd = "return %s\n" % retcmd
+    else:
+        retcmd = ''
+    
+    func.append(METHOD_RETURN % dict(retcmd=retcmd))
+        
     return func
 
 

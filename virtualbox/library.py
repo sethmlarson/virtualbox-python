@@ -82,13 +82,13 @@ class Interface(object):
         else:
             return value
 
-    def set_attr(self, name, value):
+    def _set_attr(self, name, value):
         setattr(self._i, name, self._change_to_realtype(value))
 
-    def get_attr(self, name, atype):
-        return atype(getattr(self._i, name))
+    def _get_attr(self, name):
+        return getattr(self._i, name)
 
-    def call_method(self, name, in_p=[], out_p={}, rettype=None):
+    def _call_method(self, name, in_p=[]):
         global vbox_error
         m = getattr(self._i, name)
         in_params = [self._change_to_realtype(p) for p in in_p]
@@ -104,9 +104,7 @@ class Interface(object):
                 errobj = VBoxError()
             errobj.msg = getattr(exc, 'msg', exc.message)
             raise errobj
-        if rettype is not None:
-            return rettype(ret)
-
+        return ret
 
 class VBoxError(Exception): 
     """Generic VBoxError"""
@@ -1383,7 +1381,8 @@ class IVirtualBoxErrorInfo(Interface):
           In MS COM, there is no equivalent.
           In XPCOM, it is the same as nsIException::result.
         """
-        return self.get_attr('resultCode', int)
+        value = self._get_attr('resultCode')
+        return int(value)
 
     @property
     def result_detail(self):
@@ -1391,7 +1390,8 @@ class IVirtualBoxErrorInfo(Interface):
         Optional result data of this error. This will vary depending on the
         actual error usage. By default this attribute is not being used.
         """
-        return self.get_attr('resultDetail', int)
+        value = self._get_attr('resultDetail')
+        return int(value)
 
     @property
     def interface_id(self):
@@ -1402,7 +1402,8 @@ class IVirtualBoxErrorInfo(Interface):
           data type.
           In XPCOM, there is no equivalent.
         """
-        return self.get_attr('interfaceID', str)
+        value = self._get_attr('interfaceID')
+        return str(value)
 
     @property
     def component(self):
@@ -1412,7 +1413,8 @@ class IVirtualBoxErrorInfo(Interface):
           In MS COM, it is the same as IErrorInfo::GetSource.
           In XPCOM, there is no equivalent.
         """
-        return self.get_attr('component', str)
+        value = self._get_attr('component')
+        return str(value)
 
     @property
     def text(self):
@@ -1422,7 +1424,8 @@ class IVirtualBoxErrorInfo(Interface):
           In MS COM, it is the same as IErrorInfo::GetDescription.
           In XPCOM, it is the same as nsIException::message.
         """
-        return self.get_attr('text', str)
+        value = self._get_attr('text')
+        return str(value)
 
     @property
     def next_p(self):
@@ -1432,7 +1435,8 @@ class IVirtualBoxErrorInfo(Interface):
           In MS COM, there is no equivalent.
           In XPCOM, it is the same as nsIException::inner.
         """
-        return self.get_attr('next', IVirtualBoxErrorInfo)
+        value = self._get_attr('next')
+        return IVirtualBoxErrorInfo(value)
 
 
 class INATNetwork(Interface):
@@ -1453,20 +1457,24 @@ class INATNetwork(Interface):
         port-forwanding rules. so perhaps we should support only single instance of NAT
         network.
         """
-        return self.get_attr('NetworkName', str)
+        value = self._get_attr('NetworkName')
+        return str(value)
 
     @network_name.setter
     def network_name(self, value):
-        return self.set_attr('NetworkName', value)
+        assert type(value) is str
+        return self._set_attr('NetworkName', value)
 
     @property
     def enabled(self):
         """Get or set bool value for 'enabled'"""
-        return self.get_attr('enabled', bool)
+        value = self._get_attr('enabled')
+        return bool(value)
 
     @enabled.setter
     def enabled(self, value):
-        return self.set_attr('enabled', value)
+        assert type(value) is bool
+        return self._set_attr('enabled', value)
 
     @property
     def network(self):
@@ -1476,11 +1484,13 @@ class INATNetwork(Interface):
         Note: if there're defined IPv4 port-forward rules update of network
         will be ignored (because new assignment could break existing rules).
         """
-        return self.get_attr('network', str)
+        value = self._get_attr('network')
+        return str(value)
 
     @network.setter
     def network(self, value):
-        return self.set_attr('network', value)
+        assert type(value) is str
+        return self._set_attr('network', value)
 
     @property
     def gateway(self):
@@ -1488,52 +1498,62 @@ class INATNetwork(Interface):
         This attribute is read-only. It's recalculated on changing
         network attribute (low address of network + 1).
         """
-        return self.get_attr('gateway', str)
+        value = self._get_attr('gateway')
+        return str(value)
 
     @property
     def i_pv6_enabled(self):
         """Get or set bool value for 'IPv6Enabled'
         This attribute define whether gateway will support IPv6 or not.
         """
-        return self.get_attr('IPv6Enabled', bool)
+        value = self._get_attr('IPv6Enabled')
+        return bool(value)
 
     @i_pv6_enabled.setter
     def i_pv6_enabled(self, value):
-        return self.set_attr('IPv6Enabled', value)
+        assert type(value) is bool
+        return self._set_attr('IPv6Enabled', value)
 
     @property
     def i_pv6_prefix(self):
         """Get or set str value for 'IPv6Prefix'
         This a CIDR IPv6 defining prefix for link-local addresses autoconfiguration     within network. Note: ignored if attribute ipv6enabled is false.
         """
-        return self.get_attr('IPv6Prefix', str)
+        value = self._get_attr('IPv6Prefix')
+        return str(value)
 
     @i_pv6_prefix.setter
     def i_pv6_prefix(self, value):
-        return self.set_attr('IPv6Prefix', value)
+        assert type(value) is str
+        return self._set_attr('IPv6Prefix', value)
 
     @property
     def advertise_default_i_pv6_route_enabled(self):
         """Get or set bool value for 'advertiseDefaultIPv6RouteEnabled'"""
-        return self.get_attr('advertiseDefaultIPv6RouteEnabled', bool)
+        value = self._get_attr('advertiseDefaultIPv6RouteEnabled')
+        return bool(value)
 
     @advertise_default_i_pv6_route_enabled.setter
     def advertise_default_i_pv6_route_enabled(self, value):
-        return self.set_attr('advertiseDefaultIPv6RouteEnabled', value)
+        assert type(value) is bool
+        return self._set_attr('advertiseDefaultIPv6RouteEnabled', value)
 
     @property
     def need_dhcp_server(self):
         """Get or set bool value for 'needDhcpServer'"""
-        return self.get_attr('needDhcpServer', bool)
+        value = self._get_attr('needDhcpServer')
+        return bool(value)
 
     @need_dhcp_server.setter
     def need_dhcp_server(self, value):
-        return self.set_attr('needDhcpServer', value)
+        assert type(value) is bool
+        return self._set_attr('needDhcpServer', value)
 
     @property
     def event_source(self):
         """Get IEventSource value for 'eventSource'"""
-        return self.get_attr('eventSource', IEventSource)
+        value = self._get_attr('eventSource')
+        return IEventSource(value)
 
     @property
     def port_forward_rules4(self):
@@ -1542,7 +1562,8 @@ class INATNetwork(Interface):
       in the following format:
       "name:protocolid:[host ip]:host port:[guest ip]:guest port".
         """
-        return self.get_attr('portForwardRules4', str)
+        value = self._get_attr('portForwardRules4')
+        return str(value)
 
     @property
     def port_forward_rules6(self):
@@ -1550,7 +1571,8 @@ class INATNetwork(Interface):
         Array of NAT port-forwarding rules in string representation, in the
       following format: "name:protocolid:[host ip]:host port:[guest ip]:guest port".
         """
-        return self.get_attr('portForwardRules6', str)
+        value = self._get_attr('portForwardRules6')
+        return str(value)
 
     def add_port_forward_rule(self, is_ipv6, rule_name, proto, host_ip, host_port, guest_ip, guest_port):
         """Protocol handled with the rule.
@@ -1578,7 +1600,14 @@ class INATNetwork(Interface):
             The port number to forward.
 
         """
-        self.call_method('addPortForwardRule',
+        assert is_ipv6 is bool
+        assert rule_name is str
+        assert proto is NATProtocol
+        assert host_ip is str
+        assert host_port is int
+        assert guest_ip is str
+        assert guest_port is int
+        self._call_method('addPortForwardRule',
                      in_p=[is_ipv6, rule_name, proto, host_ip, host_port, guest_ip, guest_port])
         
     def remove_port_forward_rule(self, i_sipv6, rule_name):
@@ -1589,7 +1618,9 @@ class INATNetwork(Interface):
         in rule_name of type str
 
         """
-        self.call_method('removePortForwardRule',
+        assert i_sipv6 is bool
+        assert rule_name is str
+        self._call_method('removePortForwardRule',
                      in_p=[i_sipv6, rule_name])
         
     def start(self, trunk_type):
@@ -1599,14 +1630,15 @@ class INATNetwork(Interface):
             Type of internal network trunk.
 
         """
-        self.call_method('start',
+        assert trunk_type is str
+        self._call_method('start',
                      in_p=[trunk_type])
         
     def stop(self):
         """
 
         """
-        self.call_method('stop')
+        self._call_method('stop')
         
 
 class IDHCPServer(Interface):
@@ -1624,46 +1656,53 @@ class IDHCPServer(Interface):
         """Get or set bool value for 'enabled'
         specifies if the DHCP server is enabled
         """
-        return self.get_attr('enabled', bool)
+        value = self._get_attr('enabled')
+        return bool(value)
 
     @enabled.setter
     def enabled(self, value):
-        return self.set_attr('enabled', value)
+        assert type(value) is bool
+        return self._set_attr('enabled', value)
 
     @property
     def ip_address(self):
         """Get str value for 'IPAddress'
         specifies server IP
         """
-        return self.get_attr('IPAddress', str)
+        value = self._get_attr('IPAddress')
+        return str(value)
 
     @property
     def network_mask(self):
         """Get str value for 'networkMask'
         specifies server network mask
         """
-        return self.get_attr('networkMask', str)
+        value = self._get_attr('networkMask')
+        return str(value)
 
     @property
     def network_name(self):
         """Get str value for 'networkName'
         specifies internal network name the server is used for
         """
-        return self.get_attr('networkName', str)
+        value = self._get_attr('networkName')
+        return str(value)
 
     @property
     def lower_ip(self):
         """Get str value for 'lowerIP'
         specifies from IP address in server address range
         """
-        return self.get_attr('lowerIP', str)
+        value = self._get_attr('lowerIP')
+        return str(value)
 
     @property
     def upper_ip(self):
         """Get str value for 'upperIP'
         specifies to IP address in server address range
         """
-        return self.get_attr('upperIP', str)
+        value = self._get_attr('upperIP')
+        return str(value)
 
     def set_configuration(self, ip_address, network_mask, from_ip_address, to_ip_address):
         """configures the server
@@ -1684,7 +1723,11 @@ class IDHCPServer(Interface):
             invalid configuration supplied
         
         """
-        self.call_method('setConfiguration',
+        assert ip_address is str
+        assert network_mask is str
+        assert from_ip_address is str
+        assert to_ip_address is str
+        self._call_method('setConfiguration',
                      in_p=[ip_address, network_mask, from_ip_address, to_ip_address])
         
     def start(self, network_name, trunk_name, trunk_type):
@@ -1703,7 +1746,10 @@ class IDHCPServer(Interface):
             Failed to start the process.
         
         """
-        self.call_method('start',
+        assert network_name is str
+        assert trunk_name is str
+        assert trunk_type is str
+        self._call_method('start',
                      in_p=[network_name, trunk_name, trunk_type])
         
     def stop(self):
@@ -1713,7 +1759,7 @@ class IDHCPServer(Interface):
             Failed to stop the process.
         
         """
-        self.call_method('stop')
+        self._call_method('stop')
         
 
 class IVirtualBox(Interface):
@@ -1746,7 +1792,8 @@ class IVirtualBox(Interface):
         publisher tag, at the end. The publisher tag starts with an underscore
         just like the prerelease build type tag.
         """
-        return self.get_attr('version', str)
+        value = self._get_attr('version')
+        return str(value)
 
     @property
     def version_normalized(self):
@@ -1755,14 +1802,16 @@ class IVirtualBox(Interface):
         without the publisher information (but still with other tags).
         See <link to="#version"/>.
         """
-        return self.get_attr('versionNormalized', str)
+        value = self._get_attr('versionNormalized')
+        return str(value)
 
     @property
     def revision(self):
         """Get int value for 'revision'
         The internal build revision number of the product.
         """
-        return self.get_attr('revision', int)
+        value = self._get_attr('revision')
+        return int(value)
 
     @property
     def package_type(self):
@@ -1773,7 +1822,8 @@ class IVirtualBox(Interface):
         is either GENERIC, UBUNTU_606, UBUNTU_710, or something like
         this.
         """
-        return self.get_attr('packageType', str)
+        value = self._get_attr('packageType')
+        return str(value)
 
     @property
     def api_version(self):
@@ -1786,7 +1836,8 @@ class IVirtualBox(Interface):
         guarantee that this version is identical to the first two integer
         numbers of the package version.
         """
-        return self.get_attr('APIVersion', str)
+        value = self._get_attr('APIVersion')
+        return str(value)
 
     @property
     def home_folder(self):
@@ -1803,7 +1854,8 @@ class IVirtualBox(Interface):
         places where relative paths are allowed (unless otherwise
         expressly indicated).
         """
-        return self.get_attr('homeFolder', str)
+        value = self._get_attr('homeFolder')
+        return str(value)
 
     @property
     def settings_file_path(self):
@@ -1812,28 +1864,32 @@ class IVirtualBox(Interface):
         The value of this property corresponds to the value of
         <link to="#homeFolder"/> plus /VirtualBox.xml.
         """
-        return self.get_attr('settingsFilePath', str)
+        value = self._get_attr('settingsFilePath')
+        return str(value)
 
     @property
     def host(self):
         """Get IHost value for 'host'
         Associated host object.
         """
-        return self.get_attr('host', IHost)
+        value = self._get_attr('host')
+        return IHost(value)
 
     @property
     def system_properties(self):
         """Get ISystemProperties value for 'systemProperties'
         Associated system information object.
         """
-        return self.get_attr('systemProperties', ISystemProperties)
+        value = self._get_attr('systemProperties')
+        return ISystemProperties(value)
 
     @property
     def machines(self):
         """Get IMachine value for 'machines'
         Array of machine objects registered within this VirtualBox instance.
         """
-        return self.get_attr('machines', IMachine)
+        value = self._get_attr('machines')
+        return IMachine(value)
 
     @property
     def machine_groups(self):
@@ -1844,7 +1900,8 @@ class IVirtualBox(Interface):
         in the group hierarchy (i.e. "/", "/group/subgroup"
         is a valid result).
         """
-        return self.get_attr('machineGroups', str)
+        value = self._get_attr('machineGroups')
+        return str(value)
 
     @property
     def hard_disks(self):
@@ -1855,31 +1912,36 @@ class IVirtualBox(Interface):
         media of the given base medium can be enumerated using
         <link to="IMedium::children"/>.
         """
-        return self.get_attr('hardDisks', IMedium)
+        value = self._get_attr('hardDisks')
+        return IMedium(value)
 
     @property
     def dvd_images(self):
         """Get IMedium value for 'DVDImages'
         Array of CD/DVD image objects currently in use by this VirtualBox instance.
         """
-        return self.get_attr('DVDImages', IMedium)
+        value = self._get_attr('DVDImages')
+        return IMedium(value)
 
     @property
     def floppy_images(self):
         """Get IMedium value for 'floppyImages'
         Array of floppy image objects currently in use by this VirtualBox instance.
         """
-        return self.get_attr('floppyImages', IMedium)
+        value = self._get_attr('floppyImages')
+        return IMedium(value)
 
     @property
     def progress_operations(self):
         """Get IProgress value for 'progressOperations'"""
-        return self.get_attr('progressOperations', IProgress)
+        value = self._get_attr('progressOperations')
+        return IProgress(value)
 
     @property
     def guest_os_types(self):
         """Get IGuestOSType value for 'guestOSTypes'"""
-        return self.get_attr('guestOSTypes', IGuestOSType)
+        value = self._get_attr('guestOSTypes')
+        return IGuestOSType(value)
 
     @property
     def shared_folders(self):
@@ -1895,54 +1957,62 @@ class IVirtualBox(Interface):
           In the current version of the product, global shared folders are not
           implemented and therefore this collection is always empty.
         """
-        return self.get_attr('sharedFolders', ISharedFolder)
+        value = self._get_attr('sharedFolders')
+        return ISharedFolder(value)
 
     @property
     def performance_collector(self):
         """Get IPerformanceCollector value for 'performanceCollector'
         Associated performance collector object.
         """
-        return self.get_attr('performanceCollector', IPerformanceCollector)
+        value = self._get_attr('performanceCollector')
+        return IPerformanceCollector(value)
 
     @property
     def dhcp_servers(self):
         """Get IDHCPServer value for 'DHCPServers'
         DHCP servers.
         """
-        return self.get_attr('DHCPServers', IDHCPServer)
+        value = self._get_attr('DHCPServers')
+        return IDHCPServer(value)
 
     @property
     def nat_networks(self):
         """Get INATNetwork value for 'NATNetworks'"""
-        return self.get_attr('NATNetworks', INATNetwork)
+        value = self._get_attr('NATNetworks')
+        return INATNetwork(value)
 
     @property
     def event_source(self):
         """Get IEventSource value for 'eventSource'
         Event source for VirtualBox events.
         """
-        return self.get_attr('eventSource', IEventSource)
+        value = self._get_attr('eventSource')
+        return IEventSource(value)
 
     @property
     def extension_pack_manager(self):
         """Get IExtPackManager value for 'extensionPackManager'
         The extension pack manager.
         """
-        return self.get_attr('extensionPackManager', IExtPackManager)
+        value = self._get_attr('extensionPackManager')
+        return IExtPackManager(value)
 
     @property
     def internal_networks(self):
         """Get str value for 'internalNetworks'
         Names of all internal networks.
         """
-        return self.get_attr('internalNetworks', str)
+        value = self._get_attr('internalNetworks')
+        return str(value)
 
     @property
     def generic_network_drivers(self):
         """Get str value for 'genericNetworkDrivers'
         Names of all generic network drivers.
         """
-        return self.get_attr('genericNetworkDrivers', str)
+        value = self._get_attr('genericNetworkDrivers')
+        return str(value)
 
     def compose_machine_filename(self, name, group, create_flags, base_folder):
         """Returns a recommended full path of the settings file name for a new virtual
@@ -1999,11 +2069,15 @@ class IVirtualBox(Interface):
             Fully qualified path where the machine would be created.
 
         """
-        file_p = self.call_method('composeMachineFilename',
-                     in_p=[name, group, create_flags, base_folder],
-                     rettype=str)
-        return file_p
-        
+        assert name is str
+        assert group is str
+        assert create_flags is str
+        assert base_folder is str
+        file_p =\
+            self._call_method('composeMachineFilename',
+                     in_p=[name, group, create_flags, base_folder])
+        return str(file_p)
+
     def create_machine(self, settings_file, name, groups, os_type_id, flags):
         """Creates a new virtual machine by creating a machine settings file at
         the given location.
@@ -2097,11 +2171,16 @@ class IVirtualBox(Interface):
             @a name is empty or @c null.
         
         """
-        machine = self.call_method('createMachine',
-                     in_p=[settings_file, name, groups, os_type_id, flags],
-                     rettype=IMachine)
-        return machine
-        
+        assert settings_file is str
+        assert name is str
+        assert groups is str
+        assert os_type_id is str
+        assert flags is str
+        machine =\
+            self._call_method('createMachine',
+                     in_p=[settings_file, name, groups, os_type_id, flags])
+        return IMachine(machine)
+
     def open_machine(self, settings_file):
         """Opens a virtual machine from the existing settings file.
         The opened machine remains unregistered until you call
@@ -2121,11 +2200,12 @@ class IVirtualBox(Interface):
             Settings file name invalid, not found or sharing violation.
         
         """
-        machine = self.call_method('openMachine',
-                     in_p=[settings_file],
-                     rettype=IMachine)
-        return machine
-        
+        assert settings_file is str
+        machine =\
+            self._call_method('openMachine',
+                     in_p=[settings_file])
+        return IMachine(machine)
+
     def register_machine(self, machine):
         """Registers the machine previously created using
         <link to="#createMachine"/> or opened using
@@ -2146,7 +2226,8 @@ class IVirtualBox(Interface):
             Virtual machine was not created within this VirtualBox instance.
         
         """
-        self.call_method('registerMachine',
+        assert machine is IMachine
+        self._call_method('registerMachine',
                      in_p=[machine])
         
     def find_machine(self, name_or_id):
@@ -2165,11 +2246,12 @@ class IVirtualBox(Interface):
             Could not find registered machine matching @a nameOrId.
         
         """
-        machine = self.call_method('findMachine',
-                     in_p=[name_or_id],
-                     rettype=IMachine)
-        return machine
-        
+        assert name_or_id is str
+        machine =\
+            self._call_method('findMachine',
+                     in_p=[name_or_id])
+        return IMachine(machine)
+
     def get_machines_by_groups(self, groups):
         """Gets all machine references which are in one of the specified groups.
 
@@ -2182,11 +2264,12 @@ class IVirtualBox(Interface):
             All machines which matched.
 
         """
-        machines = self.call_method('getMachinesByGroups',
-                     in_p=[groups],
-                     rettype=IMachine)
-        return machines
-        
+        assert groups is str
+        machines =\
+            self._call_method('getMachinesByGroups',
+                     in_p=[groups])
+        return IMachine(machines)
+
     def get_machine_states(self, machines):
         """Gets the state of several machines in a single operation.
 
@@ -2197,11 +2280,12 @@ class IVirtualBox(Interface):
             Machine states, corresponding to the machines.
 
         """
-        states = self.call_method('getMachineStates',
-                     in_p=[machines],
-                     rettype=MachineState)
-        return states
-        
+        assert machines is IMachine
+        states =\
+            self._call_method('getMachineStates',
+                     in_p=[machines])
+        return MachineState(states)
+
     def create_appliance(self):
         """Creates a new appliance object, which represents an appliance in the Open Virtual Machine
         Format (OVF). This can then be used to import an OVF appliance into VirtualBox or to export
@@ -2211,10 +2295,10 @@ class IVirtualBox(Interface):
             New appliance.
 
         """
-        appliance = self.call_method('createAppliance',
-                     rettype=IAppliance)
-        return appliance
-        
+        appliance =\
+            self._call_method('createAppliance')
+        return IAppliance(appliance)
+
     def create_hard_disk(self, format_p, location):
         """Creates a new base medium object that will use the given storage
         format and location for medium data.
@@ -2262,11 +2346,13 @@ class IVirtualBox(Interface):
             @a location is a not valid file name (for file-based formats only).
         
         """
-        medium = self.call_method('createHardDisk',
-                     in_p=[format_p, location],
-                     rettype=IMedium)
-        return medium
-        
+        assert format_p is str
+        assert location is str
+        medium =\
+            self._call_method('createHardDisk',
+                     in_p=[format_p, location])
+        return IMedium(medium)
+
     def open_medium(self, location, device_type, access_mode, force_new_uuid):
         """Finds existing media or opens a medium from an existing storage location.
 
@@ -2356,11 +2442,15 @@ class IVirtualBox(Interface):
             Medium has already been added to a media registry.
         
         """
-        medium = self.call_method('openMedium',
-                     in_p=[location, device_type, access_mode, force_new_uuid],
-                     rettype=IMedium)
-        return medium
-        
+        assert location is str
+        assert device_type is DeviceType
+        assert access_mode is AccessMode
+        assert force_new_uuid is bool
+        medium =\
+            self._call_method('openMedium',
+                     in_p=[location, device_type, access_mode, force_new_uuid])
+        return IMedium(medium)
+
     def get_guest_os_type(self, id_p):
         """Returns an object describing the specified guest OS type.
 
@@ -2385,11 +2475,12 @@ class IVirtualBox(Interface):
             @a id is not a valid Guest OS type.
         
         """
-        type_p = self.call_method('getGuestOSType',
-                     in_p=[id_p],
-                     rettype=IGuestOSType)
-        return type_p
-        
+        assert id_p is str
+        type_p =\
+            self._call_method('getGuestOSType',
+                     in_p=[id_p])
+        return IGuestOSType(type_p)
+
     def create_shared_folder(self, name, host_path, writable, automount):
         """Creates a new global shared folder by associating the given logical
         name with the given host path, adds it to the collection of shared
@@ -2413,7 +2504,11 @@ class IVirtualBox(Interface):
           or not.
 
         """
-        self.call_method('createSharedFolder',
+        assert name is str
+        assert host_path is str
+        assert writable is bool
+        assert automount is bool
+        self._call_method('createSharedFolder',
                      in_p=[name, host_path, writable, automount])
         
     def remove_shared_folder(self, name):
@@ -2428,7 +2523,8 @@ class IVirtualBox(Interface):
             Logical name of the shared folder to remove.
 
         """
-        self.call_method('removeSharedFolder',
+        assert name is str
+        self._call_method('removeSharedFolder',
                      in_p=[name])
         
     def get_extra_data_keys(self):
@@ -2439,10 +2535,10 @@ class IVirtualBox(Interface):
             Array of extra data keys.
 
         """
-        keys = self.call_method('getExtraDataKeys',
-                     rettype=str)
-        return keys
-        
+        keys =\
+            self._call_method('getExtraDataKeys')
+        return str(keys)
+
     def get_extra_data(self, key):
         """Returns associated global extra data.
 
@@ -2462,11 +2558,12 @@ class IVirtualBox(Interface):
             Could not parse the settings file.
         
         """
-        value = self.call_method('getExtraData',
-                     in_p=[key],
-                     rettype=str)
-        return value
-        
+        assert key is str
+        value =\
+            self._call_method('getExtraData',
+                     in_p=[key])
+        return str(value)
+
     def set_extra_data(self, key, value):
         """Sets associated global extra data.
 
@@ -2502,7 +2599,9 @@ class IVirtualBox(Interface):
             Modification request refused.
         
         """
-        self.call_method('setExtraData',
+        assert key is str
+        assert value is str
+        self._call_method('setExtraData',
                      in_p=[key, value])
         
     def set_settings_secret(self, password):
@@ -2516,7 +2615,8 @@ class IVirtualBox(Interface):
             Virtual machine is not mutable.
         
         """
-        self.call_method('setSettingsSecret',
+        assert password is str
+        self._call_method('setSettingsSecret',
                      in_p=[password])
         
     def create_dhcp_server(self, name):
@@ -2532,11 +2632,12 @@ class IVirtualBox(Interface):
             Host network interface @a name already exists.
         
         """
-        server = self.call_method('createDHCPServer',
-                     in_p=[name],
-                     rettype=IDHCPServer)
-        return server
-        
+        assert name is str
+        server =\
+            self._call_method('createDHCPServer',
+                     in_p=[name])
+        return IDHCPServer(server)
+
     def find_dhcp_server_by_network_name(self, name):
         """Searches a DHCP server settings to be used for the given internal network name
 
@@ -2550,11 +2651,12 @@ class IVirtualBox(Interface):
             Host network interface @a name already exists.
         
         """
-        server = self.call_method('findDHCPServerByNetworkName',
-                     in_p=[name],
-                     rettype=IDHCPServer)
-        return server
-        
+        assert name is str
+        server =\
+            self._call_method('findDHCPServerByNetworkName',
+                     in_p=[name])
+        return IDHCPServer(server)
+
     def remove_dhcp_server(self, server):
         """Removes the DHCP server settings
 
@@ -2565,7 +2667,8 @@ class IVirtualBox(Interface):
             Host network interface @a name already exists.
         
         """
-        self.call_method('removeDHCPServer',
+        assert server is IDHCPServer
+        self._call_method('removeDHCPServer',
                      in_p=[server])
         
     def create_nat_network(self, network_name):
@@ -2576,11 +2679,12 @@ class IVirtualBox(Interface):
         return network of type INATNetwork
 
         """
-        network = self.call_method('createNATNetwork',
-                     in_p=[network_name],
-                     rettype=INATNetwork)
-        return network
-        
+        assert network_name is str
+        network =\
+            self._call_method('createNATNetwork',
+                     in_p=[network_name])
+        return INATNetwork(network)
+
     def find_nat_network_by_name(self, network_name):
         """
 
@@ -2589,21 +2693,23 @@ class IVirtualBox(Interface):
         return network of type INATNetwork
 
         """
-        network = self.call_method('findNATNetworkByName',
-                     in_p=[network_name],
-                     rettype=INATNetwork)
-        return network
-        
+        assert network_name is str
+        network =\
+            self._call_method('findNATNetworkByName',
+                     in_p=[network_name])
+        return INATNetwork(network)
+
     def remove_nat_network(self, network):
         """
 
         in network of type INATNetwork
 
         """
-        self.call_method('removeNATNetwork',
+        assert network is INATNetwork
+        self._call_method('removeNATNetwork',
                      in_p=[network])
         
-    def check_firmware_present(self, firmware_type, version, out_p={}):
+    def check_firmware_present(self, firmware_type, version):
         """Check if this VirtualBox installation has a firmware
         of the given type available, either system-wide or per-user.
         Optionally, this may return a hint where this firmware can be
@@ -2625,12 +2731,13 @@ class IVirtualBox(Interface):
             If firmware of this type and version is available.
 
         """
-        result = self.call_method('checkFirmwarePresent',
-                     in_p=[firmware_type, version],
-                     out_p=out_p,
-                     rettype=bool)
-        return result
-        
+        assert firmware_type is FirmwareType
+        assert version is str
+        (url, file_p, result) =\
+            self._call_method('checkFirmwarePresent',
+                     in_p=[firmware_type, version])
+        return (str(url), str(file_p), bool(result))
+
 
 class IVFSExplorer(Interface):
     """
@@ -2647,14 +2754,16 @@ class IVFSExplorer(Interface):
         """Get str value for 'path'
         Returns the current path in the virtual file system.
         """
-        return self.get_attr('path', str)
+        value = self._get_attr('path')
+        return str(value)
 
     @property
     def type_p(self):
         """Get VFSType value for 'type'
         Returns the file system type which is currently in use.
         """
-        return self.get_attr('type', VFSType)
+        value = self._get_attr('type')
+        return VFSType(value)
 
     def update(self):
         """Updates the internal list of files/directories from the
@@ -2665,10 +2774,10 @@ class IVFSExplorer(Interface):
             Progress object to track the operation completion.
 
         """
-        progress = self.call_method('update',
-                     rettype=IProgress)
-        return progress
-        
+        progress =\
+            self._call_method('update')
+        return IProgress(progress)
+
     def cd(self, dir_p):
         """Change the current directory level.
 
@@ -2679,11 +2788,12 @@ class IVFSExplorer(Interface):
             Progress object to track the operation completion.
 
         """
-        progress = self.call_method('cd',
-                     in_p=[dir_p],
-                     rettype=IProgress)
-        return progress
-        
+        assert dir_p is str
+        progress =\
+            self._call_method('cd',
+                     in_p=[dir_p])
+        return IProgress(progress)
+
     def cd_up(self):
         """Go one directory upwards from the current directory level.
 
@@ -2691,11 +2801,11 @@ class IVFSExplorer(Interface):
             Progress object to track the operation completion.
 
         """
-        progress = self.call_method('cdUp',
-                     rettype=IProgress)
-        return progress
-        
-    def entry_list(self, out_p={}):
+        progress =\
+            self._call_method('cdUp')
+        return IProgress(progress)
+
+    def entry_list(self):
         """Returns a list of files/directories after a call to <link to="#update"/>. The user is responsible for keeping this internal
       list up do date.
 
@@ -2712,9 +2822,10 @@ class IVFSExplorer(Interface):
             The list of file modes (in octal form) for the entries.
 
         """
-        self.call_method('entryList',
-                     out_p=out_p)
-        
+        (names, types, sizes, modes) =\
+            self._call_method('entryList')
+        return (str(names), int(types), int(sizes), int(modes))
+
     def exists(self, names):
         """Checks if the given file list exists in the current directory
       level.
@@ -2726,11 +2837,12 @@ class IVFSExplorer(Interface):
             The names which exist.
 
         """
-        exists = self.call_method('exists',
-                     in_p=[names],
-                     rettype=str)
-        return exists
-        
+        assert names is str
+        exists =\
+            self._call_method('exists',
+                     in_p=[names])
+        return str(exists)
+
     def remove(self, names):
         """Deletes the given files in the current directory level.
 
@@ -2741,11 +2853,12 @@ class IVFSExplorer(Interface):
             Progress object to track the operation completion.
 
         """
-        progress = self.call_method('remove',
-                     in_p=[names],
-                     rettype=IProgress)
-        return progress
-        
+        assert names is str
+        progress =\
+            self._call_method('remove',
+                     in_p=[names])
+        return IProgress(progress)
+
 
 class IAppliance(Interface):
     """
@@ -2832,7 +2945,8 @@ class IAppliance(Interface):
           <link to="#write"/> (for export).
           This attribute is empty until one of these methods has been called.
         """
-        return self.get_attr('path', str)
+        value = self._get_attr('path')
+        return str(value)
 
     @property
     def disks(self):
@@ -2871,7 +2985,8 @@ class IAppliance(Interface):
 
             Compression (optional string equalling "gzip" if the image is gzip-compressed)
         """
-        return self.get_attr('disks', str)
+        value = self._get_attr('disks')
+        return str(value)
 
     @property
     def virtual_system_descriptions(self):
@@ -2881,7 +2996,8 @@ class IAppliance(Interface):
       This array is empty until either <link to="#interpret"/> (for import) or <link to="IMachine::exportTo"/>
       (for export) has been called.
         """
-        return self.get_attr('virtualSystemDescriptions', IVirtualSystemDescription)
+        value = self._get_attr('virtualSystemDescriptions')
+        return IVirtualSystemDescription(value)
 
     @property
     def machines(self):
@@ -2890,7 +3006,8 @@ class IAppliance(Interface):
         relevant for the import case, and will only contain data after a call to <link to="#importMachines"/>
         succeeded.
         """
-        return self.get_attr('machines', str)
+        value = self._get_attr('machines')
+        return str(value)
 
     def read(self, file_p):
         """Reads an OVF file into the appliance object.
@@ -2907,11 +3024,12 @@ class IAppliance(Interface):
             Progress object to track the operation completion.
 
         """
-        progress = self.call_method('read',
-                     in_p=[file_p],
-                     rettype=IProgress)
-        return progress
-        
+        assert file_p is str
+        progress =\
+            self._call_method('read',
+                     in_p=[file_p])
+        return IProgress(progress)
+
     def interpret(self):
         """Interprets the OVF data that was read when the appliance was constructed. After
         calling this method, one can inspect the
@@ -2927,7 +3045,7 @@ class IAppliance(Interface):
         errors.
 
         """
-        self.call_method('interpret')
+        self._call_method('interpret')
         
     def import_machines(self, options):
         """Imports the appliance into VirtualBox by creating instances of <link to="IMachine"/>
@@ -2952,11 +3070,12 @@ class IAppliance(Interface):
             Progress object to track the operation completion.
 
         """
-        progress = self.call_method('importMachines',
-                     in_p=[options],
-                     rettype=IProgress)
-        return progress
-        
+        assert options is ImportOptions
+        progress =\
+            self._call_method('importMachines',
+                     in_p=[options])
+        return IProgress(progress)
+
     def create_vfs_explorer(self, uri):
         """Returns a <link to="IVFSExplorer"/> object for the given URI.
 
@@ -2967,11 +3086,12 @@ class IAppliance(Interface):
             <desc/>
 
         """
-        explorer = self.call_method('createVFSExplorer',
-                     in_p=[uri],
-                     rettype=IVFSExplorer)
-        return explorer
-        
+        assert uri is str
+        explorer =\
+            self._call_method('createVFSExplorer',
+                     in_p=[uri])
+        return IVFSExplorer(explorer)
+
     def write(self, format_p, manifest, path):
         """Writes the contents of the appliance exports into a new OVF file.
 
@@ -2998,11 +3118,14 @@ class IAppliance(Interface):
             Progress object to track the operation completion.
 
         """
-        progress = self.call_method('write',
-                     in_p=[format_p, manifest, path],
-                     rettype=IProgress)
-        return progress
-        
+        assert format_p is str
+        assert manifest is bool
+        assert path is str
+        progress =\
+            self._call_method('write',
+                     in_p=[format_p, manifest, path])
+        return IProgress(progress)
+
     def get_warnings(self):
         """Returns textual warnings which occurred during execution of <link to="#interpret"/>.
 
@@ -3010,10 +3133,10 @@ class IAppliance(Interface):
             <desc/>
 
         """
-        warnings = self.call_method('getWarnings',
-                     rettype=str)
-        return warnings
-        
+        warnings =\
+            self._call_method('getWarnings')
+        return str(warnings)
+
 
 class IVirtualSystemDescription(Interface):
     """
@@ -3032,9 +3155,10 @@ class IVirtualSystemDescription(Interface):
         """Get int value for 'count'
         Return the number of virtual system description entries.
         """
-        return self.get_attr('count', int)
+        value = self._get_attr('count')
+        return int(value)
 
-    def get_description(self, out_p={}):
+    def get_description(self):
         """Returns information about the virtual system as arrays of instruction items. In each array, the
       items with the same indices correspond and jointly represent an import instruction for VirtualBox.
 
@@ -3161,10 +3285,11 @@ class IVirtualSystemDescription(Interface):
             <desc/>
 
         """
-        self.call_method('getDescription',
-                     out_p=out_p)
-        
-    def get_description_by_type(self, type_p, out_p={}):
+        (types, refs, ovf_values, v_box_values, extra_config_values) =\
+            self._call_method('getDescription')
+        return (VirtualSystemDescriptionType(types), str(refs), str(ovf_values), str(v_box_values), str(extra_config_values))
+
+    def get_description_by_type(self, type_p):
         """This is the same as <link to="#getDescription"/> except that you can specify which types
       should be returned.
 
@@ -3187,10 +3312,12 @@ class IVirtualSystemDescription(Interface):
             <desc/>
 
         """
-        self.call_method('getDescriptionByType',
-                     in_p=[type_p],
-                     out_p=out_p)
-        
+        assert type_p is VirtualSystemDescriptionType
+        (types, refs, ovf_values, v_box_values, extra_config_values) =\
+            self._call_method('getDescriptionByType',
+                     in_p=[type_p])
+        return (VirtualSystemDescriptionType(types), str(refs), str(ovf_values), str(v_box_values), str(extra_config_values))
+
     def get_values_by_type(self, type_p, which):
         """This is the same as <link to="#getDescriptionByType"/> except that you can specify which
       value types should be returned. See <link to="VirtualSystemDescriptionValueType"/> for possible
@@ -3206,11 +3333,13 @@ class IVirtualSystemDescription(Interface):
             <desc/>
 
         """
-        values = self.call_method('getValuesByType',
-                     in_p=[type_p, which],
-                     rettype=str)
-        return values
-        
+        assert type_p is VirtualSystemDescriptionType
+        assert which is VirtualSystemDescriptionValueType
+        values =\
+            self._call_method('getValuesByType',
+                     in_p=[type_p, which])
+        return str(values)
+
     def set_final_values(self, enabled, v_box_values, extra_config_values):
         """This method allows the appliance's user to change the configuration for the virtual
         system descriptions. For each array item returned from <link to="#getDescription"/>,
@@ -3238,7 +3367,10 @@ class IVirtualSystemDescription(Interface):
             <desc/>
 
         """
-        self.call_method('setFinalValues',
+        assert enabled is bool
+        assert v_box_values is str
+        assert extra_config_values is str
+        self._call_method('setFinalValues',
                      in_p=[enabled, v_box_values, extra_config_values])
         
     def add_description(self, type_p, v_box_value, extra_config_value):
@@ -3257,7 +3389,10 @@ class IVirtualSystemDescription(Interface):
             <desc/>
 
         """
-        self.call_method('addDescription',
+        assert type_p is VirtualSystemDescriptionType
+        assert v_box_value is str
+        assert extra_config_value is str
+        self._call_method('addDescription',
                      in_p=[type_p, v_box_value, extra_config_value])
         
 
@@ -3276,7 +3411,8 @@ class IInternalMachineControl(Interface):
         in remove of type bool
 
         """
-        self.call_method('setRemoveSavedStateFile',
+        assert remove is bool
+        self._call_method('setRemoveSavedStateFile',
                      in_p=[remove])
         
     def update_state(self, state):
@@ -3289,7 +3425,8 @@ class IInternalMachineControl(Interface):
         in state of type MachineState
 
         """
-        self.call_method('updateState',
+        assert state is MachineState
+        self._call_method('updateState',
                      in_p=[state])
         
     def get_ipc_id(self):
@@ -3298,10 +3435,10 @@ class IInternalMachineControl(Interface):
         return id_p of type str
 
         """
-        id_p = self.call_method('getIPCId',
-                     rettype=str)
-        return id_p
-        
+        id_p =\
+            self._call_method('getIPCId')
+        return str(id_p)
+
     def begin_power_up(self, progress):
         """Tells VBoxSVC that <link to="IConsole::powerUp"/> is under ways and
         gives it the progress object that should be part of any pending
@@ -3314,7 +3451,8 @@ class IInternalMachineControl(Interface):
         in progress of type IProgress
 
         """
-        self.call_method('beginPowerUp',
+        assert progress is IProgress
+        self._call_method('beginPowerUp',
                      in_p=[progress])
         
     def end_power_up(self, result):
@@ -3327,10 +3465,11 @@ class IInternalMachineControl(Interface):
         in result of type int
 
         """
-        self.call_method('endPowerUp',
+        assert result is int
+        self._call_method('endPowerUp',
                      in_p=[result])
         
-    def begin_powering_down(self, out_p={}):
+    def begin_powering_down(self):
         """Called by the VM process to inform the server it wants to
         stop the VM execution and power down.
 
@@ -3339,9 +3478,10 @@ class IInternalMachineControl(Interface):
           the VM is powered down.
 
         """
-        self.call_method('beginPoweringDown',
-                     out_p=out_p)
-        
+        progress =\
+            self._call_method('beginPoweringDown')
+        return IProgress(progress)
+
     def end_powering_down(self, result, err_msg):
         """Called by the VM process to inform the server that powering
         down previously requested by #beginPoweringDown is either
@@ -3360,10 +3500,12 @@ class IInternalMachineControl(Interface):
             Could not parse the settings file.
         
         """
-        self.call_method('endPoweringDown',
+        assert result is int
+        assert err_msg is str
+        self._call_method('endPoweringDown',
                      in_p=[result, err_msg])
         
-    def run_usb_device_filters(self, device, out_p={}):
+    def run_usb_device_filters(self, device):
         """Asks the server to run USB devices filters of the associated
         machine against the given USB device and tell if there is
         a match.
@@ -3379,10 +3521,12 @@ class IInternalMachineControl(Interface):
         out masked_interfaces of type int
 
         """
-        self.call_method('runUSBDeviceFilters',
-                     in_p=[device],
-                     out_p=out_p)
-        
+        assert device is IUSBDevice
+        (matched, masked_interfaces) =\
+            self._call_method('runUSBDeviceFilters',
+                     in_p=[device])
+        return (bool(matched), int(masked_interfaces))
+
     def capture_usb_device(self, id_p):
         """Requests a capture of the given host USB device.
         When the request is completed, the VM process will
@@ -3392,7 +3536,8 @@ class IInternalMachineControl(Interface):
         in id_p of type str
 
         """
-        self.call_method('captureUSBDevice',
+        assert id_p is str
+        self._call_method('captureUSBDevice',
                      in_p=[id_p])
         
     def detach_usb_device(self, id_p, done):
@@ -3411,7 +3556,9 @@ class IInternalMachineControl(Interface):
         in done of type bool
 
         """
-        self.call_method('detachUSBDevice',
+        assert id_p is str
+        assert done is bool
+        self._call_method('detachUSBDevice',
                      in_p=[id_p, done])
         
     def auto_capture_usb_devices(self):
@@ -3421,7 +3568,7 @@ class IInternalMachineControl(Interface):
         notification per every captured device.
 
         """
-        self.call_method('autoCaptureUSBDevices')
+        self._call_method('autoCaptureUSBDevices')
         
     def detach_all_usb_devices(self, done):
         """Notification that a VM that is being powered down. The done
@@ -3437,7 +3584,8 @@ class IInternalMachineControl(Interface):
         in done of type bool
 
         """
-        self.call_method('detachAllUSBDevices',
+        assert done is bool
+        self._call_method('detachAllUSBDevices',
                      in_p=[done])
         
     def on_session_end(self, session):
@@ -3453,12 +3601,13 @@ class IInternalMachineControl(Interface):
           Returned only when this session is a direct one.
 
         """
-        progress = self.call_method('onSessionEnd',
-                     in_p=[session],
-                     rettype=IProgress)
-        return progress
-        
-    def begin_saving_state(self, out_p={}):
+        assert session is ISession
+        progress =\
+            self._call_method('onSessionEnd',
+                     in_p=[session])
+        return IProgress(progress)
+
+    def begin_saving_state(self):
         """Called by the VM process to inform the server it wants to
         save the current state and stop the VM execution.
 
@@ -3470,9 +3619,10 @@ class IInternalMachineControl(Interface):
             File path the VM process must save the execution state to.
 
         """
-        self.call_method('beginSavingState',
-                     out_p=out_p)
-        
+        (progress, state_file_path) =\
+            self._call_method('beginSavingState')
+        return (IProgress(progress), str(state_file_path))
+
     def end_saving_state(self, result, err_msg):
         """Called by the VM process to inform the server that saving
         the state previously requested by #beginSavingState is either
@@ -3491,7 +3641,9 @@ class IInternalMachineControl(Interface):
             Could not parse the settings file.
         
         """
-        self.call_method('endSavingState',
+        assert result is int
+        assert err_msg is str
+        self._call_method('endSavingState',
                      in_p=[result, err_msg])
         
     def adopt_saved_state(self, saved_state_file):
@@ -3504,10 +3656,11 @@ class IInternalMachineControl(Interface):
             Invalid saved state file path.
         
         """
-        self.call_method('adoptSavedState',
+        assert saved_state_file is str
+        self._call_method('adoptSavedState',
                      in_p=[saved_state_file])
         
-    def begin_taking_snapshot(self, initiator, name, description, console_progress, f_taking_snapshot_online, out_p={}):
+    def begin_taking_snapshot(self, initiator, name, description, console_progress, f_taking_snapshot_online):
         """Called from the VM process to request from the server to perform the
         server-side actions of creating a snapshot (creating differencing images
         and the snapshot object).
@@ -3544,10 +3697,16 @@ class IInternalMachineControl(Interface):
             Could not parse the settings file.
         
         """
-        self.call_method('beginTakingSnapshot',
-                     in_p=[initiator, name, description, console_progress, f_taking_snapshot_online],
-                     out_p=out_p)
-        
+        assert initiator is IConsole
+        assert name is str
+        assert description is str
+        assert console_progress is IProgress
+        assert f_taking_snapshot_online is bool
+        state_file_path =\
+            self._call_method('beginTakingSnapshot',
+                     in_p=[initiator, name, description, console_progress, f_taking_snapshot_online])
+        return str(state_file_path)
+
     def end_taking_snapshot(self, success):
         """Called by the VM process to inform the server that the snapshot
         previously requested by #beginTakingSnapshot is either
@@ -3557,10 +3716,11 @@ class IInternalMachineControl(Interface):
             @c true to indicate success and @c false otherwise
 
         """
-        self.call_method('endTakingSnapshot',
+        assert success is bool
+        self._call_method('endTakingSnapshot',
                      in_p=[success])
         
-    def delete_snapshot(self, initiator, start_id, end_id, delete_all_children, out_p={}):
+    def delete_snapshot(self, initiator, start_id, end_id, delete_all_children):
         """Gets called by <link to="IConsole::deleteSnapshot"/>,
         <link to="IConsole::deleteSnapshotAndAllChildren"/> and
         <link to="IConsole::deleteSnapshotRange"/>.
@@ -3589,12 +3749,15 @@ class IInternalMachineControl(Interface):
           not meet the linearity condition.
         
         """
-        progress = self.call_method('deleteSnapshot',
-                     in_p=[initiator, start_id, end_id, delete_all_children],
-                     out_p=out_p,
-                     rettype=IProgress)
-        return progress
-        
+        assert initiator is IConsole
+        assert start_id is str
+        assert end_id is str
+        assert delete_all_children is bool
+        (machine_state, progress) =\
+            self._call_method('deleteSnapshot',
+                     in_p=[initiator, start_id, end_id, delete_all_children])
+        return (MachineState(machine_state), IProgress(progress))
+
     def finish_online_merge_medium(self, medium_attachment, source, target, merge_forward, parent_for_target, children_to_reparent):
         """Gets called by <link to="IInternalSessionControl::onlineMergeMedium"/>.
 
@@ -3618,10 +3781,16 @@ class IInternalMachineControl(Interface):
         updated.
 
         """
-        self.call_method('finishOnlineMergeMedium',
+        assert medium_attachment is IMediumAttachment
+        assert source is IMedium
+        assert target is IMedium
+        assert merge_forward is bool
+        assert parent_for_target is IMedium
+        assert children_to_reparent is IMedium
+        self._call_method('finishOnlineMergeMedium',
                      in_p=[medium_attachment, source, target, merge_forward, parent_for_target, children_to_reparent])
         
-    def restore_snapshot(self, initiator, snapshot, out_p={}):
+    def restore_snapshot(self, initiator, snapshot):
         """Gets called by <link to="IConsole::restoreSnapshot"/>.
 
         in initiator of type IConsole
@@ -3637,13 +3806,14 @@ class IInternalMachineControl(Interface):
             Progress object to track the operation completion.
 
         """
-        progress = self.call_method('restoreSnapshot',
-                     in_p=[initiator, snapshot],
-                     out_p=out_p,
-                     rettype=IProgress)
-        return progress
-        
-    def pull_guest_properties(self, out_p={}):
+        assert initiator is IConsole
+        assert snapshot is ISnapshot
+        (machine_state, progress) =\
+            self._call_method('restoreSnapshot',
+                     in_p=[initiator, snapshot])
+        return (MachineState(machine_state), IProgress(progress))
+
+    def pull_guest_properties(self):
         """Get the list of the guest properties matching a set of patterns along
         with their values, time stamps and flags and give responsibility for
         managing properties to the console.
@@ -3664,9 +3834,10 @@ class IInternalMachineControl(Interface):
           corresponding entries in the @a name array.
 
         """
-        self.call_method('pullGuestProperties',
-                     out_p=out_p)
-        
+        (names, values, timestamps, flags) =\
+            self._call_method('pullGuestProperties')
+        return (str(names), str(values), int(timestamps), str(flags))
+
     def push_guest_property(self, name, value, timestamp, flags):
         """Update a single guest property in IMachine.
 
@@ -3683,7 +3854,11 @@ class IInternalMachineControl(Interface):
             The flags of the property.
 
         """
-        self.call_method('pushGuestProperty',
+        assert name is str
+        assert value is str
+        assert timestamp is int
+        assert flags is str
+        self._call_method('pushGuestProperty',
                      in_p=[name, value, timestamp, flags])
         
     def lock_media(self):
@@ -3696,7 +3871,7 @@ class IInternalMachineControl(Interface):
         the machine is powered off or crashed.
 
         """
-        self.call_method('lockMedia')
+        self._call_method('lockMedia')
         
     def unlock_media(self):
         """Unlocks all media previously locked using
@@ -3706,7 +3881,7 @@ class IInternalMachineControl(Interface):
         possible to teleport between processes on the same machine.
 
         """
-        self.call_method('unlockMedia')
+        self._call_method('unlockMedia')
         
     def eject_medium(self, attachment):
         """Tells VBoxSVC that the guest has ejected the medium associated with
@@ -3720,11 +3895,12 @@ class IInternalMachineControl(Interface):
           result in the creation of a new instance.
 
         """
-        new_attachment = self.call_method('ejectMedium',
-                     in_p=[attachment],
-                     rettype=IMediumAttachment)
-        return new_attachment
-        
+        assert attachment is IMediumAttachment
+        new_attachment =\
+            self._call_method('ejectMedium',
+                     in_p=[attachment])
+        return IMediumAttachment(new_attachment)
+
     def report_vm_statistics(self, valid_stats, cpu_user, cpu_kernel, cpu_idle, mem_total, mem_free, mem_balloon, mem_shared, mem_cache, paged_total, mem_alloc_total, mem_free_total, mem_balloon_total, mem_shared_total, vm_net_rx, vm_net_tx):
         """Passes statistics collected by VM (including guest statistics) to VBoxSVC.
 
@@ -3778,7 +3954,23 @@ class IInternalMachineControl(Interface):
             Network transmit rate for VM.
 
         """
-        self.call_method('reportVmStatistics',
+        assert valid_stats is int
+        assert cpu_user is int
+        assert cpu_kernel is int
+        assert cpu_idle is int
+        assert mem_total is int
+        assert mem_free is int
+        assert mem_balloon is int
+        assert mem_shared is int
+        assert mem_cache is int
+        assert paged_total is int
+        assert mem_alloc_total is int
+        assert mem_free_total is int
+        assert mem_balloon_total is int
+        assert mem_shared_total is int
+        assert vm_net_rx is int
+        assert vm_net_tx is int
+        self._call_method('reportVmStatistics',
                      in_p=[valid_stats, cpu_user, cpu_kernel, cpu_idle, mem_total, mem_free, mem_balloon, mem_shared, mem_cache, paged_total, mem_alloc_total, mem_free_total, mem_balloon_total, mem_shared_total, vm_net_rx, vm_net_tx])
         
 
@@ -3795,33 +3987,39 @@ class IBIOSSettings(Interface):
         """Get or set bool value for 'logoFadeIn'
         Fade in flag for BIOS logo animation.
         """
-        return self.get_attr('logoFadeIn', bool)
+        value = self._get_attr('logoFadeIn')
+        return bool(value)
 
     @logo_fade_in.setter
     def logo_fade_in(self, value):
-        return self.set_attr('logoFadeIn', value)
+        assert type(value) is bool
+        return self._set_attr('logoFadeIn', value)
 
     @property
     def logo_fade_out(self):
         """Get or set bool value for 'logoFadeOut'
         Fade out flag for BIOS logo animation.
         """
-        return self.get_attr('logoFadeOut', bool)
+        value = self._get_attr('logoFadeOut')
+        return bool(value)
 
     @logo_fade_out.setter
     def logo_fade_out(self, value):
-        return self.set_attr('logoFadeOut', value)
+        assert type(value) is bool
+        return self._set_attr('logoFadeOut', value)
 
     @property
     def logo_display_time(self):
         """Get or set int value for 'logoDisplayTime'
         BIOS logo display time in milliseconds (0 = default).
         """
-        return self.get_attr('logoDisplayTime', int)
+        value = self._get_attr('logoDisplayTime')
+        return int(value)
 
     @logo_display_time.setter
     def logo_display_time(self, value):
-        return self.set_attr('logoDisplayTime', value)
+        assert type(value) is int
+        return self._set_attr('logoDisplayTime', value)
 
     @property
     def logo_image_path(self):
@@ -3829,33 +4027,39 @@ class IBIOSSettings(Interface):
         Local file system path for external BIOS splash image. Empty string
         means the default image is shown on boot.
         """
-        return self.get_attr('logoImagePath', str)
+        value = self._get_attr('logoImagePath')
+        return str(value)
 
     @logo_image_path.setter
     def logo_image_path(self, value):
-        return self.set_attr('logoImagePath', value)
+        assert type(value) is str
+        return self._set_attr('logoImagePath', value)
 
     @property
     def boot_menu_mode(self):
         """Get or set BIOSBootMenuMode value for 'bootMenuMode'
         Mode of the BIOS boot device menu.
         """
-        return self.get_attr('bootMenuMode', BIOSBootMenuMode)
+        value = self._get_attr('bootMenuMode')
+        return BIOSBootMenuMode(value)
 
     @boot_menu_mode.setter
     def boot_menu_mode(self, value):
-        return self.set_attr('bootMenuMode', value)
+        assert type(value) is BIOSBootMenuMode
+        return self._set_attr('bootMenuMode', value)
 
     @property
     def acpi_enabled(self):
         """Get or set bool value for 'ACPIEnabled'
         ACPI support flag.
         """
-        return self.get_attr('ACPIEnabled', bool)
+        value = self._get_attr('ACPIEnabled')
+        return bool(value)
 
     @acpi_enabled.setter
     def acpi_enabled(self, value):
-        return self.set_attr('ACPIEnabled', value)
+        assert type(value) is bool
+        return self._set_attr('ACPIEnabled', value)
 
     @property
     def ioapic_enabled(self):
@@ -3863,11 +4067,13 @@ class IBIOSSettings(Interface):
         IO APIC support flag. If set, VirtualBox will provide an IO APIC
         and support IRQs above 15.
         """
-        return self.get_attr('IOAPICEnabled', bool)
+        value = self._get_attr('IOAPICEnabled')
+        return bool(value)
 
     @ioapic_enabled.setter
     def ioapic_enabled(self, value):
-        return self.set_attr('IOAPICEnabled', value)
+        assert type(value) is bool
+        return self._set_attr('IOAPICEnabled', value)
 
     @property
     def time_offset(self):
@@ -3878,11 +4084,13 @@ class IBIOSSettings(Interface):
         it is not an absolute value but a relative one. Guest Additions
         time synchronization honors this offset.
         """
-        return self.get_attr('timeOffset', int)
+        value = self._get_attr('timeOffset')
+        return int(value)
 
     @time_offset.setter
     def time_offset(self, value):
-        return self.set_attr('timeOffset', value)
+        assert type(value) is int
+        return self._set_attr('timeOffset', value)
 
     @property
     def pxe_debug_enabled(self):
@@ -3890,11 +4098,13 @@ class IBIOSSettings(Interface):
         PXE debug logging flag. If set, VirtualBox will write extensive
         PXE trace information to the release log.
         """
-        return self.get_attr('PXEDebugEnabled', bool)
+        value = self._get_attr('PXEDebugEnabled')
+        return bool(value)
 
     @pxe_debug_enabled.setter
     def pxe_debug_enabled(self, value):
-        return self.set_attr('PXEDebugEnabled', value)
+        assert type(value) is bool
+        return self._set_attr('PXEDebugEnabled', value)
 
 
 class IPCIAddress(Interface):
@@ -3909,33 +4119,39 @@ class IPCIAddress(Interface):
         """Get or set int value for 'bus'
         Bus number.
         """
-        return self.get_attr('bus', int)
+        value = self._get_attr('bus')
+        return int(value)
 
     @bus.setter
     def bus(self, value):
-        return self.set_attr('bus', value)
+        assert type(value) is int
+        return self._set_attr('bus', value)
 
     @property
     def device(self):
         """Get or set int value for 'device'
         Device number.
         """
-        return self.get_attr('device', int)
+        value = self._get_attr('device')
+        return int(value)
 
     @device.setter
     def device(self, value):
-        return self.set_attr('device', value)
+        assert type(value) is int
+        return self._set_attr('device', value)
 
     @property
     def dev_function(self):
         """Get or set int value for 'devFunction'
         Device function number.
         """
-        return self.get_attr('devFunction', int)
+        value = self._get_attr('devFunction')
+        return int(value)
 
     @dev_function.setter
     def dev_function(self, value):
-        return self.set_attr('devFunction', value)
+        assert type(value) is int
+        return self._set_attr('devFunction', value)
 
     def as_long(self):
         """Convert PCI address into long.
@@ -3943,17 +4159,18 @@ class IPCIAddress(Interface):
         return result of type int
 
         """
-        result = self.call_method('asLong',
-                     rettype=int)
-        return result
-        
+        result =\
+            self._call_method('asLong')
+        return int(result)
+
     def from_long(self, number):
         """Make PCI address from long.
 
         in number of type int
 
         """
-        self.call_method('fromLong',
+        assert number is int
+        self._call_method('fromLong',
                      in_p=[number])
         
 
@@ -3969,28 +4186,32 @@ class IPCIDeviceAttachment(Interface):
         """Get str value for 'name'
         Device name.
         """
-        return self.get_attr('name', str)
+        value = self._get_attr('name')
+        return str(value)
 
     @property
     def is_physical_device(self):
         """Get bool value for 'isPhysicalDevice'
         If this is physical or virtual device.
         """
-        return self.get_attr('isPhysicalDevice', bool)
+        value = self._get_attr('isPhysicalDevice')
+        return bool(value)
 
     @property
     def host_address(self):
         """Get int value for 'hostAddress'
         Address of device on the host, applicable only to host devices.
         """
-        return self.get_attr('hostAddress', int)
+        value = self._get_attr('hostAddress')
+        return int(value)
 
     @property
     def guest_address(self):
         """Get int value for 'guestAddress'
         Address of device on the guest.
         """
-        return self.get_attr('guestAddress', int)
+        value = self._get_attr('guestAddress')
+        return int(value)
 
 
 class IMachine(Interface):
@@ -4037,7 +4258,8 @@ class IMachine(Interface):
         """Get IVirtualBox value for 'parent'
         Associated parent object.
         """
-        return self.get_attr('parent', IVirtualBox)
+        value = self._get_attr('parent')
+        return IVirtualBox(value)
 
     @property
     def accessible(self):
@@ -4081,7 +4303,8 @@ class IMachine(Interface):
           server is restarted). This limitation may be removed in
           future releases.
         """
-        return self.get_attr('accessible', bool)
+        value = self._get_attr('accessible')
+        return bool(value)
 
     @property
     def access_error(self):
@@ -4094,7 +4317,8 @@ class IMachine(Interface):
         machine is currently inaccessible). Otherwise, a @c null
         IVirtualBoxErrorInfo object will be returned.
         """
-        return self.get_attr('accessError', IVirtualBoxErrorInfo)
+        value = self._get_attr('accessError')
+        return IVirtualBoxErrorInfo(value)
 
     @property
     def name(self):
@@ -4135,11 +4359,13 @@ class IMachine(Interface):
         file is recommended, but not enforced. (Previous versions always
         used a generic ".xml" extension.)
         """
-        return self.get_attr('name', str)
+        value = self._get_attr('name')
+        return str(value)
 
     @name.setter
     def name(self, value):
-        return self.set_attr('name', value)
+        assert type(value) is str
+        return self._set_attr('name', value)
 
     @property
     def description(self):
@@ -4151,18 +4377,21 @@ class IMachine(Interface):
         configuration of the virtual machine in detail (i.e. network
         settings, versions of the installed software and so on).
         """
-        return self.get_attr('description', str)
+        value = self._get_attr('description')
+        return str(value)
 
     @description.setter
     def description(self, value):
-        return self.set_attr('description', value)
+        assert type(value) is str
+        return self._set_attr('description', value)
 
     @property
     def id_p(self):
         """Get str value for 'id'
         UUID of the virtual machine.
         """
-        return self.get_attr('id', str)
+        value = self._get_attr('id')
+        return str(value)
 
     @property
     def groups(self):
@@ -4174,11 +4403,13 @@ class IMachine(Interface):
         hierarchy (i.e. "/group",
         "/group/subgroup/subsubgroup" is a valid result).
         """
-        return self.get_attr('groups', str)
+        value = self._get_attr('groups')
+        return str(value)
 
     @groups.setter
     def groups(self, value):
-        return self.set_attr('groups', value)
+        assert type(value) is str
+        return self._set_attr('groups', value)
 
     @property
     def os_type_id(self):
@@ -4192,22 +4423,26 @@ class IMachine(Interface):
           <link to="IGuest::OSTypeId"/> if Guest Additions are
           installed to the guest OS.
         """
-        return self.get_attr('OSTypeId', str)
+        value = self._get_attr('OSTypeId')
+        return str(value)
 
     @os_type_id.setter
     def os_type_id(self, value):
-        return self.set_attr('OSTypeId', value)
+        assert type(value) is str
+        return self._set_attr('OSTypeId', value)
 
     @property
     def hardware_version(self):
         """Get or set str value for 'hardwareVersion'
         Hardware version identifier. Internal use only for now.
         """
-        return self.get_attr('hardwareVersion', str)
+        value = self._get_attr('hardwareVersion')
+        return str(value)
 
     @hardware_version.setter
     def hardware_version(self, value):
-        return self.set_attr('hardwareVersion', value)
+        assert type(value) is str
+        return self._set_attr('hardwareVersion', value)
 
     @property
     def hardware_uuid(self):
@@ -4218,22 +4453,26 @@ class IMachine(Interface):
         VM. The latter is because the guest shouldn't notice that it was
         cloned or teleported.
         """
-        return self.get_attr('hardwareUUID', str)
+        value = self._get_attr('hardwareUUID')
+        return str(value)
 
     @hardware_uuid.setter
     def hardware_uuid(self, value):
-        return self.set_attr('hardwareUUID', value)
+        assert type(value) is str
+        return self._set_attr('hardwareUUID', value)
 
     @property
     def cpu_count(self):
         """Get or set int value for 'CPUCount'
         Number of virtual CPUs in the VM.
         """
-        return self.get_attr('CPUCount', int)
+        value = self._get_attr('CPUCount')
+        return int(value)
 
     @cpu_count.setter
     def cpu_count(self, value):
-        return self.set_attr('CPUCount', value)
+        assert type(value) is int
+        return self._set_attr('CPUCount', value)
 
     @property
     def cpu_hot_plug_enabled(self):
@@ -4241,11 +4480,13 @@ class IMachine(Interface):
         This setting determines whether VirtualBox allows CPU
         hotplugging for this machine.
         """
-        return self.get_attr('CPUHotPlugEnabled', bool)
+        value = self._get_attr('CPUHotPlugEnabled')
+        return bool(value)
 
     @cpu_hot_plug_enabled.setter
     def cpu_hot_plug_enabled(self, value):
-        return self.set_attr('CPUHotPlugEnabled', value)
+        assert type(value) is bool
+        return self._set_attr('CPUHotPlugEnabled', value)
 
     @property
     def cpu_execution_cap(self):
@@ -4254,33 +4495,39 @@ class IMachine(Interface):
         is percentage of host CPU cycles per second. The valid range
         is 1 - 100. 100 (the default) implies no limit.
         """
-        return self.get_attr('CPUExecutionCap', int)
+        value = self._get_attr('CPUExecutionCap')
+        return int(value)
 
     @cpu_execution_cap.setter
     def cpu_execution_cap(self, value):
-        return self.set_attr('CPUExecutionCap', value)
+        assert type(value) is int
+        return self._set_attr('CPUExecutionCap', value)
 
     @property
     def memory_size(self):
         """Get or set int value for 'memorySize'
         System memory size in megabytes.
         """
-        return self.get_attr('memorySize', int)
+        value = self._get_attr('memorySize')
+        return int(value)
 
     @memory_size.setter
     def memory_size(self, value):
-        return self.set_attr('memorySize', value)
+        assert type(value) is int
+        return self._set_attr('memorySize', value)
 
     @property
     def memory_balloon_size(self):
         """Get or set int value for 'memoryBalloonSize'
         Memory balloon size in megabytes.
         """
-        return self.get_attr('memoryBalloonSize', int)
+        value = self._get_attr('memoryBalloonSize')
+        return int(value)
 
     @memory_balloon_size.setter
     def memory_balloon_size(self, value):
-        return self.set_attr('memoryBalloonSize', value)
+        assert type(value) is int
+        return self._set_attr('memoryBalloonSize', value)
 
     @property
     def page_fusion_enabled(self):
@@ -4288,33 +4535,39 @@ class IMachine(Interface):
         This setting determines whether VirtualBox allows page
         fusion for this machine (64-bit hosts only).
         """
-        return self.get_attr('pageFusionEnabled', bool)
+        value = self._get_attr('pageFusionEnabled')
+        return bool(value)
 
     @page_fusion_enabled.setter
     def page_fusion_enabled(self, value):
-        return self.set_attr('pageFusionEnabled', value)
+        assert type(value) is bool
+        return self._set_attr('pageFusionEnabled', value)
 
     @property
     def graphics_controller_type(self):
         """Get or set GraphicsControllerType value for 'graphicsControllerType'
         Graphics controller type.
         """
-        return self.get_attr('graphicsControllerType', GraphicsControllerType)
+        value = self._get_attr('graphicsControllerType')
+        return GraphicsControllerType(value)
 
     @graphics_controller_type.setter
     def graphics_controller_type(self, value):
-        return self.set_attr('graphicsControllerType', value)
+        assert type(value) is GraphicsControllerType
+        return self._set_attr('graphicsControllerType', value)
 
     @property
     def vram_size(self):
         """Get or set int value for 'VRAMSize'
         Video memory size in megabytes.
         """
-        return self.get_attr('VRAMSize', int)
+        value = self._get_attr('VRAMSize')
+        return int(value)
 
     @vram_size.setter
     def vram_size(self, value):
-        return self.set_attr('VRAMSize', value)
+        assert type(value) is int
+        return self._set_attr('VRAMSize', value)
 
     @property
     def accelerate3_d_enabled(self):
@@ -4322,11 +4575,13 @@ class IMachine(Interface):
         This setting determines whether VirtualBox allows this machine to make
         use of the 3D graphics support available on the host.
         """
-        return self.get_attr('accelerate3DEnabled', bool)
+        value = self._get_attr('accelerate3DEnabled')
+        return bool(value)
 
     @accelerate3_d_enabled.setter
     def accelerate3_d_enabled(self, value):
-        return self.set_attr('accelerate3DEnabled', value)
+        assert type(value) is bool
+        return self._set_attr('accelerate3DEnabled', value)
 
     @property
     def accelerate2_d_video_enabled(self):
@@ -4334,11 +4589,13 @@ class IMachine(Interface):
         This setting determines whether VirtualBox allows this machine to make
         use of the 2D video acceleration support available on the host.
         """
-        return self.get_attr('accelerate2DVideoEnabled', bool)
+        value = self._get_attr('accelerate2DVideoEnabled')
+        return bool(value)
 
     @accelerate2_d_video_enabled.setter
     def accelerate2_d_video_enabled(self, value):
-        return self.set_attr('accelerate2DVideoEnabled', value)
+        assert type(value) is bool
+        return self._set_attr('accelerate2DVideoEnabled', value)
 
     @property
     def monitor_count(self):
@@ -4348,11 +4605,13 @@ class IMachine(Interface):
           Only effective on Windows XP and later guests with
           Guest Additions installed.
         """
-        return self.get_attr('monitorCount', int)
+        value = self._get_attr('monitorCount')
+        return int(value)
 
     @monitor_count.setter
     def monitor_count(self, value):
-        return self.set_attr('monitorCount', value)
+        assert type(value) is int
+        return self._set_attr('monitorCount', value)
 
     @property
     def video_capture_enabled(self):
@@ -4360,11 +4619,13 @@ class IMachine(Interface):
         This setting determines whether VirtualBox uses video recording to
         record VM session.
         """
-        return self.get_attr('VideoCaptureEnabled', bool)
+        value = self._get_attr('VideoCaptureEnabled')
+        return bool(value)
 
     @video_capture_enabled.setter
     def video_capture_enabled(self, value):
-        return self.set_attr('VideoCaptureEnabled', value)
+        assert type(value) is bool
+        return self._set_attr('VideoCaptureEnabled', value)
 
     @property
     def video_capture_screens(self):
@@ -4372,11 +4633,13 @@ class IMachine(Interface):
         This setting determines for which screens video recording is
         enabled.
         """
-        return self.get_attr('VideoCaptureScreens', bool)
+        value = self._get_attr('VideoCaptureScreens')
+        return bool(value)
 
     @video_capture_screens.setter
     def video_capture_screens(self, value):
-        return self.set_attr('VideoCaptureScreens', value)
+        assert type(value) is bool
+        return self._set_attr('VideoCaptureScreens', value)
 
     @property
     def video_capture_file(self):
@@ -4384,33 +4647,39 @@ class IMachine(Interface):
         This setting determines the filename VirtualBox uses to save
         the recorded content.
         """
-        return self.get_attr('VideoCaptureFile', str)
+        value = self._get_attr('VideoCaptureFile')
+        return str(value)
 
     @video_capture_file.setter
     def video_capture_file(self, value):
-        return self.set_attr('VideoCaptureFile', value)
+        assert type(value) is str
+        return self._set_attr('VideoCaptureFile', value)
 
     @property
     def video_capture_width(self):
         """Get or set int value for 'VideoCaptureWidth'
         This setting determines the horizontal resolution of the recorded video.
         """
-        return self.get_attr('VideoCaptureWidth', int)
+        value = self._get_attr('VideoCaptureWidth')
+        return int(value)
 
     @video_capture_width.setter
     def video_capture_width(self, value):
-        return self.set_attr('VideoCaptureWidth', value)
+        assert type(value) is int
+        return self._set_attr('VideoCaptureWidth', value)
 
     @property
     def video_capture_height(self):
         """Get or set int value for 'VideoCaptureHeight'
         This setting determines the vertical resolution of the recorded video.
         """
-        return self.get_attr('VideoCaptureHeight', int)
+        value = self._get_attr('VideoCaptureHeight')
+        return int(value)
 
     @video_capture_height.setter
     def video_capture_height(self, value):
-        return self.set_attr('VideoCaptureHeight', value)
+        assert type(value) is int
+        return self._set_attr('VideoCaptureHeight', value)
 
     @property
     def video_capture_rate(self):
@@ -4419,11 +4688,13 @@ class IMachine(Interface):
         Increasing this value makes the video look better for the
         cost of an increased file size.
         """
-        return self.get_attr('VideoCaptureRate', int)
+        value = self._get_attr('VideoCaptureRate')
+        return int(value)
 
     @video_capture_rate.setter
     def video_capture_rate(self, value):
-        return self.set_attr('VideoCaptureRate', value)
+        assert type(value) is int
+        return self._set_attr('VideoCaptureRate', value)
 
     @property
     def video_capture_fps(self):
@@ -4433,18 +4704,21 @@ class IMachine(Interface):
         value increses the number of skipped frames but reduces the
         file size.
         """
-        return self.get_attr('VideoCaptureFps', int)
+        value = self._get_attr('VideoCaptureFps')
+        return int(value)
 
     @video_capture_fps.setter
     def video_capture_fps(self, value):
-        return self.set_attr('VideoCaptureFps', value)
+        assert type(value) is int
+        return self._set_attr('VideoCaptureFps', value)
 
     @property
     def bios_settings(self):
         """Get IBIOSSettings value for 'BIOSSettings'
         Object containing all BIOS settings.
         """
-        return self.get_attr('BIOSSettings', IBIOSSettings)
+        value = self._get_attr('BIOSSettings')
+        return IBIOSSettings(value)
 
     @property
     def firmware_type(self):
@@ -4452,11 +4726,13 @@ class IMachine(Interface):
         Type of firmware (such as legacy BIOS or EFI), used for initial
         bootstrap in this VM.
         """
-        return self.get_attr('firmwareType', FirmwareType)
+        value = self._get_attr('firmwareType')
+        return FirmwareType(value)
 
     @firmware_type.setter
     def firmware_type(self, value):
-        return self.set_attr('firmwareType', value)
+        assert type(value) is FirmwareType
+        return self._set_attr('firmwareType', value)
 
     @property
     def pointing_hid_type(self):
@@ -4465,11 +4741,13 @@ class IMachine(Interface):
         The default is typically "PS2Mouse" but can vary depending on the
         requirements of the guest operating system.
         """
-        return self.get_attr('pointingHIDType', PointingHIDType)
+        value = self._get_attr('pointingHIDType')
+        return PointingHIDType(value)
 
     @pointing_hid_type.setter
     def pointing_hid_type(self, value):
-        return self.set_attr('pointingHIDType', value)
+        assert type(value) is PointingHIDType
+        return self._set_attr('pointingHIDType', value)
 
     @property
     def keyboard_hid_type(self):
@@ -4478,11 +4756,13 @@ class IMachine(Interface):
         The default is typically "PS2Keyboard" but can vary depending on the
         requirements of the guest operating system.
         """
-        return self.get_attr('keyboardHIDType', KeyboardHIDType)
+        value = self._get_attr('keyboardHIDType')
+        return KeyboardHIDType(value)
 
     @keyboard_hid_type.setter
     def keyboard_hid_type(self, value):
-        return self.set_attr('keyboardHIDType', value)
+        assert type(value) is KeyboardHIDType
+        return self._set_attr('keyboardHIDType', value)
 
     @property
     def hpet_enabled(self):
@@ -4492,22 +4772,26 @@ class IMachine(Interface):
         with additional time source, or if guest requires HPET to function correctly.
         Default is false.
         """
-        return self.get_attr('HPETEnabled', bool)
+        value = self._get_attr('HPETEnabled')
+        return bool(value)
 
     @hpet_enabled.setter
     def hpet_enabled(self, value):
-        return self.set_attr('HPETEnabled', value)
+        assert type(value) is bool
+        return self._set_attr('HPETEnabled', value)
 
     @property
     def chipset_type(self):
         """Get or set ChipsetType value for 'chipsetType'
         Chipset type used in this VM.
         """
-        return self.get_attr('chipsetType', ChipsetType)
+        value = self._get_attr('chipsetType')
+        return ChipsetType(value)
 
     @chipset_type.setter
     def chipset_type(self, value):
-        return self.set_attr('chipsetType', value)
+        assert type(value) is ChipsetType
+        return self._set_attr('chipsetType', value)
 
     @property
     def snapshot_folder(self):
@@ -4541,43 +4825,51 @@ class IMachine(Interface):
           The specified path may not exist, it will be created
           when necessary.
         """
-        return self.get_attr('snapshotFolder', str)
+        value = self._get_attr('snapshotFolder')
+        return str(value)
 
     @snapshot_folder.setter
     def snapshot_folder(self, value):
-        return self.set_attr('snapshotFolder', value)
+        assert type(value) is str
+        return self._set_attr('snapshotFolder', value)
 
     @property
     def vrde_server(self):
         """Get IVRDEServer value for 'VRDEServer'
         VirtualBox Remote Desktop Extension (VRDE) server object.
         """
-        return self.get_attr('VRDEServer', IVRDEServer)
+        value = self._get_attr('VRDEServer')
+        return IVRDEServer(value)
 
     @property
     def emulated_usb_webcamera_enabled(self):
         """Get or set bool value for 'emulatedUSBWebcameraEnabled'"""
-        return self.get_attr('emulatedUSBWebcameraEnabled', bool)
+        value = self._get_attr('emulatedUSBWebcameraEnabled')
+        return bool(value)
 
     @emulated_usb_webcamera_enabled.setter
     def emulated_usb_webcamera_enabled(self, value):
-        return self.set_attr('emulatedUSBWebcameraEnabled', value)
+        assert type(value) is bool
+        return self._set_attr('emulatedUSBWebcameraEnabled', value)
 
     @property
     def emulated_usb_card_reader_enabled(self):
         """Get or set bool value for 'emulatedUSBCardReaderEnabled'"""
-        return self.get_attr('emulatedUSBCardReaderEnabled', bool)
+        value = self._get_attr('emulatedUSBCardReaderEnabled')
+        return bool(value)
 
     @emulated_usb_card_reader_enabled.setter
     def emulated_usb_card_reader_enabled(self, value):
-        return self.set_attr('emulatedUSBCardReaderEnabled', value)
+        assert type(value) is bool
+        return self._set_attr('emulatedUSBCardReaderEnabled', value)
 
     @property
     def medium_attachments(self):
         """Get IMediumAttachment value for 'mediumAttachments'
         Array of media attached to this machine.
         """
-        return self.get_attr('mediumAttachments', IMediumAttachment)
+        value = self._get_attr('mediumAttachments')
+        return IMediumAttachment(value)
 
     @property
     def usb_controller(self):
@@ -4588,28 +4880,32 @@ class IMachine(Interface):
           If USB functionality is not available in the given edition of
           VirtualBox, this method will set the result code to @c E_NOTIMPL.
         """
-        return self.get_attr('USBController', IUSBController)
+        value = self._get_attr('USBController')
+        return IUSBController(value)
 
     @property
     def audio_adapter(self):
         """Get IAudioAdapter value for 'audioAdapter'
         Associated audio adapter, always present.
         """
-        return self.get_attr('audioAdapter', IAudioAdapter)
+        value = self._get_attr('audioAdapter')
+        return IAudioAdapter(value)
 
     @property
     def storage_controllers(self):
         """Get IStorageController value for 'storageControllers'
         Array of storage controllers attached to this machine.
         """
-        return self.get_attr('storageControllers', IStorageController)
+        value = self._get_attr('storageControllers')
+        return IStorageController(value)
 
     @property
     def settings_file_path(self):
         """Get str value for 'settingsFilePath'
         Full name of the file containing machine settings data.
         """
-        return self.get_attr('settingsFilePath', str)
+        value = self._get_attr('settingsFilePath')
+        return str(value)
 
     @property
     def settings_modified(self):
@@ -4632,14 +4928,16 @@ class IMachine(Interface):
           changed after the creation or not). For opened machines
           the value is set to @c false (and then follows to normal rules).
         """
-        return self.get_attr('settingsModified', bool)
+        value = self._get_attr('settingsModified')
+        return bool(value)
 
     @property
     def session_state(self):
         """Get SessionState value for 'sessionState'
         Current session state for this machine.
         """
-        return self.get_attr('sessionState', SessionState)
+        value = self._get_attr('sessionState')
+        return SessionState(value)
 
     @property
     def session_type(self):
@@ -4653,7 +4951,8 @@ class IMachine(Interface):
         <link to="#sessionState"/> is SessionClosed, the value of this
         attribute is an empty string.
         """
-        return self.get_attr('sessionType', str)
+        value = self._get_attr('sessionType')
+        return str(value)
 
     @property
     def session_pid(self):
@@ -4664,14 +4963,16 @@ class IMachine(Interface):
         value is only valid if <link to="#sessionState"/> is Locked or
         Unlocking by the time this property is read.
         """
-        return self.get_attr('sessionPID', int)
+        value = self._get_attr('sessionPID')
+        return int(value)
 
     @property
     def state(self):
         """Get MachineState value for 'state'
         Current execution state of this machine.
         """
-        return self.get_attr('state', MachineState)
+        value = self._get_attr('state')
+        return MachineState(value)
 
     @property
     def last_state_change(self):
@@ -4679,7 +4980,8 @@ class IMachine(Interface):
         Time stamp of the last execution state change,
         in milliseconds since 1970-01-01 UTC.
         """
-        return self.get_attr('lastStateChange', int)
+        value = self._get_attr('lastStateChange')
+        return int(value)
 
     @property
     def state_file_path(self):
@@ -4690,7 +4992,8 @@ class IMachine(Interface):
           When the machine is not in the Saved state, this attribute is
           an empty string.
         """
-        return self.get_attr('stateFilePath', str)
+        value = self._get_attr('stateFilePath')
+        return str(value)
 
     @property
     def log_folder(self):
@@ -4701,7 +5004,8 @@ class IMachine(Interface):
         named VBox.log.1 and so on (up to VBox.log.3
         in the current version).
         """
-        return self.get_attr('logFolder', str)
+        value = self._get_attr('logFolder')
+        return str(value)
 
     @property
     def current_snapshot(self):
@@ -4713,7 +5017,8 @@ class IMachine(Interface):
         or <link to="IConsole::restoreSnapshot"/>, depending on which
         was called last. See <link to="ISnapshot"/> for details.
         """
-        return self.get_attr('currentSnapshot', ISnapshot)
+        value = self._get_attr('currentSnapshot')
+        return ISnapshot(value)
 
     @property
     def snapshot_count(self):
@@ -4721,7 +5026,8 @@ class IMachine(Interface):
         Number of snapshots taken on this machine. Zero means the
         machine doesn't have any snapshots.
         """
-        return self.get_attr('snapshotCount', int)
+        value = self._get_attr('snapshotCount')
+        return int(value)
 
     @property
     def current_state_modified(self):
@@ -4754,7 +5060,8 @@ class IMachine(Interface):
           For machines that don't have snapshots, this property is
           always @c false.
         """
-        return self.get_attr('currentStateModified', bool)
+        value = self._get_attr('currentStateModified')
+        return bool(value)
 
     @property
     def shared_folders(self):
@@ -4767,7 +5074,8 @@ class IMachine(Interface):
         <link to="#createSharedFolder"/>. Existing shared folders can be
         removed using <link to="#removeSharedFolder"/>.
         """
-        return self.get_attr('sharedFolders', ISharedFolder)
+        value = self._get_attr('sharedFolders')
+        return ISharedFolder(value)
 
     @property
     def clipboard_mode(self):
@@ -4775,22 +5083,26 @@ class IMachine(Interface):
         Synchronization mode between the host OS clipboard
         and the guest OS clipboard.
         """
-        return self.get_attr('clipboardMode', ClipboardMode)
+        value = self._get_attr('clipboardMode')
+        return ClipboardMode(value)
 
     @clipboard_mode.setter
     def clipboard_mode(self, value):
-        return self.set_attr('clipboardMode', value)
+        assert type(value) is ClipboardMode
+        return self._set_attr('clipboardMode', value)
 
     @property
     def drag_and_drop_mode(self):
         """Get or set DragAndDropMode value for 'dragAndDropMode'
         Which mode is allowed for drag'n'drop.
         """
-        return self.get_attr('dragAndDropMode', DragAndDropMode)
+        value = self._get_attr('dragAndDropMode')
+        return DragAndDropMode(value)
 
     @drag_and_drop_mode.setter
     def drag_and_drop_mode(self, value):
-        return self.set_attr('dragAndDropMode', value)
+        assert type(value) is DragAndDropMode
+        return self._set_attr('dragAndDropMode', value)
 
     @property
     def guest_property_notification_patterns(self):
@@ -4799,11 +5111,13 @@ class IMachine(Interface):
         properties whose name matches one of the patterns will generate an
         <link to="IGuestPropertyChangedEvent"/> signal.
         """
-        return self.get_attr('guestPropertyNotificationPatterns', str)
+        value = self._get_attr('guestPropertyNotificationPatterns')
+        return str(value)
 
     @guest_property_notification_patterns.setter
     def guest_property_notification_patterns(self, value):
-        return self.set_attr('guestPropertyNotificationPatterns', value)
+        assert type(value) is str
+        return self._set_attr('guestPropertyNotificationPatterns', value)
 
     @property
     def teleporter_enabled(self):
@@ -4815,11 +5129,13 @@ class IMachine(Interface):
         <!-- This property is automatically set to @a false when the VM is powered
         on. (bird: This doesn't work yet ) -->
         """
-        return self.get_attr('teleporterEnabled', bool)
+        value = self._get_attr('teleporterEnabled')
+        return bool(value)
 
     @teleporter_enabled.setter
     def teleporter_enabled(self, value):
-        return self.set_attr('teleporterEnabled', value)
+        assert type(value) is bool
+        return self._set_attr('teleporterEnabled', value)
 
     @property
     def teleporter_port(self):
@@ -4831,11 +5147,13 @@ class IMachine(Interface):
         value can be read from this property while the machine is waiting for
         incoming teleportations.
         """
-        return self.get_attr('teleporterPort', int)
+        value = self._get_attr('teleporterPort')
+        return int(value)
 
     @teleporter_port.setter
     def teleporter_port(self, value):
-        return self.set_attr('teleporterPort', value)
+        assert type(value) is int
+        return self._set_attr('teleporterPort', value)
 
     @property
     def teleporter_address(self):
@@ -4843,11 +5161,13 @@ class IMachine(Interface):
         The address the target teleporter will listen on. If set to an empty
         string, it will listen on all addresses.
         """
-        return self.get_attr('teleporterAddress', str)
+        value = self._get_attr('teleporterAddress')
+        return str(value)
 
     @teleporter_address.setter
     def teleporter_address(self, value):
-        return self.set_attr('teleporterAddress', value)
+        assert type(value) is str
+        return self._set_attr('teleporterAddress', value)
 
     @property
     def teleporter_password(self):
@@ -4859,11 +5179,13 @@ class IMachine(Interface):
         Note that you SET a plain text password while reading back a HASHED
         password. Setting a hashed password is currently not supported.
         """
-        return self.get_attr('teleporterPassword', str)
+        value = self._get_attr('teleporterPassword')
+        return str(value)
 
     @teleporter_password.setter
     def teleporter_password(self, value):
-        return self.set_attr('teleporterPassword', value)
+        assert type(value) is str
+        return self._set_attr('teleporterPassword', value)
 
     @property
     def fault_tolerance_state(self):
@@ -4872,11 +5194,13 @@ class IMachine(Interface):
         This property can be changed at any time. If you change it for a running
         VM, then the fault tolerance address and port must be set beforehand.
         """
-        return self.get_attr('faultToleranceState', FaultToleranceState)
+        value = self._get_attr('faultToleranceState')
+        return FaultToleranceState(value)
 
     @fault_tolerance_state.setter
     def fault_tolerance_state(self, value):
-        return self.set_attr('faultToleranceState', value)
+        assert type(value) is FaultToleranceState
+        return self._set_attr('faultToleranceState', value)
 
     @property
     def fault_tolerance_port(self):
@@ -4884,22 +5208,26 @@ class IMachine(Interface):
         The TCP port the fault tolerance source or target will use for
         communication.
         """
-        return self.get_attr('faultTolerancePort', int)
+        value = self._get_attr('faultTolerancePort')
+        return int(value)
 
     @fault_tolerance_port.setter
     def fault_tolerance_port(self, value):
-        return self.set_attr('faultTolerancePort', value)
+        assert type(value) is int
+        return self._set_attr('faultTolerancePort', value)
 
     @property
     def fault_tolerance_address(self):
         """Get or set str value for 'faultToleranceAddress'
         The address the fault tolerance source or target.
         """
-        return self.get_attr('faultToleranceAddress', str)
+        value = self._get_attr('faultToleranceAddress')
+        return str(value)
 
     @fault_tolerance_address.setter
     def fault_tolerance_address(self, value):
-        return self.set_attr('faultToleranceAddress', value)
+        assert type(value) is str
+        return self._set_attr('faultToleranceAddress', value)
 
     @property
     def fault_tolerance_password(self):
@@ -4908,22 +5236,26 @@ class IMachine(Interface):
         very basic measure to prevent simple hacks and operators accidentally
         choosing the wrong standby VM.
         """
-        return self.get_attr('faultTolerancePassword', str)
+        value = self._get_attr('faultTolerancePassword')
+        return str(value)
 
     @fault_tolerance_password.setter
     def fault_tolerance_password(self, value):
-        return self.set_attr('faultTolerancePassword', value)
+        assert type(value) is str
+        return self._set_attr('faultTolerancePassword', value)
 
     @property
     def fault_tolerance_sync_interval(self):
         """Get or set int value for 'faultToleranceSyncInterval'
         The interval in ms used for syncing the state between source and target.
         """
-        return self.get_attr('faultToleranceSyncInterval', int)
+        value = self._get_attr('faultToleranceSyncInterval')
+        return int(value)
 
     @fault_tolerance_sync_interval.setter
     def fault_tolerance_sync_interval(self, value):
-        return self.set_attr('faultToleranceSyncInterval', value)
+        assert type(value) is int
+        return self._set_attr('faultToleranceSyncInterval', value)
 
     @property
     def rtc_use_utc(self):
@@ -4932,11 +5264,13 @@ class IMachine(Interface):
         in UTC time, otherwise in local time. Especially Unix guests prefer
         the time in UTC.
         """
-        return self.get_attr('RTCUseUTC', bool)
+        value = self._get_attr('RTCUseUTC')
+        return bool(value)
 
     @rtc_use_utc.setter
     def rtc_use_utc(self, value):
-        return self.set_attr('RTCUseUTC', value)
+        assert type(value) is bool
+        return self._set_attr('RTCUseUTC', value)
 
     @property
     def io_cache_enabled(self):
@@ -4944,22 +5278,26 @@ class IMachine(Interface):
         When set to @a true, the builtin I/O cache of the virtual machine
         will be enabled.
         """
-        return self.get_attr('IOCacheEnabled', bool)
+        value = self._get_attr('IOCacheEnabled')
+        return bool(value)
 
     @io_cache_enabled.setter
     def io_cache_enabled(self, value):
-        return self.set_attr('IOCacheEnabled', value)
+        assert type(value) is bool
+        return self._set_attr('IOCacheEnabled', value)
 
     @property
     def io_cache_size(self):
         """Get or set int value for 'IOCacheSize'
         Maximum size of the I/O cache in MB.
         """
-        return self.get_attr('IOCacheSize', int)
+        value = self._get_attr('IOCacheSize')
+        return int(value)
 
     @io_cache_size.setter
     def io_cache_size(self, value):
-        return self.set_attr('IOCacheSize', value)
+        assert type(value) is int
+        return self._set_attr('IOCacheSize', value)
 
     @property
     def pci_device_assignments(self):
@@ -4971,14 +5309,16 @@ class IMachine(Interface):
         virtual hardware config. Usually, this list keeps host's physical
         devices assigned to the particular machine.
         """
-        return self.get_attr('PCIDeviceAssignments', IPCIDeviceAttachment)
+        value = self._get_attr('PCIDeviceAssignments')
+        return IPCIDeviceAttachment(value)
 
     @property
     def bandwidth_control(self):
         """Get IBandwidthControl value for 'bandwidthControl'
         Bandwidth control manager.
         """
-        return self.get_attr('bandwidthControl', IBandwidthControl)
+        value = self._get_attr('bandwidthControl')
+        return IBandwidthControl(value)
 
     @property
     def tracing_enabled(self):
@@ -4988,11 +5328,13 @@ class IMachine(Interface):
         enabled and there may be some extra overhead from tracepoints that are
         always enabled.
         """
-        return self.get_attr('tracingEnabled', bool)
+        value = self._get_attr('tracingEnabled')
+        return bool(value)
 
     @tracing_enabled.setter
     def tracing_enabled(self, value):
-        return self.set_attr('tracingEnabled', value)
+        assert type(value) is bool
+        return self._set_attr('tracingEnabled', value)
 
     @property
     def tracing_config(self):
@@ -5008,11 +5350,13 @@ class IMachine(Interface):
         effect of the same config may differ between Solaris and Windows for
         example.
         """
-        return self.get_attr('tracingConfig', str)
+        value = self._get_attr('tracingConfig')
+        return str(value)
 
     @tracing_config.setter
     def tracing_config(self, value):
-        return self.set_attr('tracingConfig', value)
+        assert type(value) is str
+        return self._set_attr('tracingConfig', value)
 
     @property
     def allow_tracing_to_access_vm(self):
@@ -5026,44 +5370,52 @@ class IMachine(Interface):
         business accessing the VMCPU or VM structures, and are therefore unable
         to get any pointers to these.
         """
-        return self.get_attr('allowTracingToAccessVM', bool)
+        value = self._get_attr('allowTracingToAccessVM')
+        return bool(value)
 
     @allow_tracing_to_access_vm.setter
     def allow_tracing_to_access_vm(self, value):
-        return self.set_attr('allowTracingToAccessVM', value)
+        assert type(value) is bool
+        return self._set_attr('allowTracingToAccessVM', value)
 
     @property
     def autostart_enabled(self):
         """Get or set bool value for 'autostartEnabled'
         Enables autostart of the VM during system boot.
         """
-        return self.get_attr('autostartEnabled', bool)
+        value = self._get_attr('autostartEnabled')
+        return bool(value)
 
     @autostart_enabled.setter
     def autostart_enabled(self, value):
-        return self.set_attr('autostartEnabled', value)
+        assert type(value) is bool
+        return self._set_attr('autostartEnabled', value)
 
     @property
     def autostart_delay(self):
         """Get or set int value for 'autostartDelay'
         Number of seconds to wait until the VM should be started during system boot.
         """
-        return self.get_attr('autostartDelay', int)
+        value = self._get_attr('autostartDelay')
+        return int(value)
 
     @autostart_delay.setter
     def autostart_delay(self, value):
-        return self.set_attr('autostartDelay', value)
+        assert type(value) is int
+        return self._set_attr('autostartDelay', value)
 
     @property
     def autostop_type(self):
         """Get or set AutostopType value for 'autostopType'
         Action type to do when the system is shutting down.
         """
-        return self.get_attr('autostopType', AutostopType)
+        value = self._get_attr('autostopType')
+        return AutostopType(value)
 
     @autostop_type.setter
     def autostop_type(self, value):
-        return self.set_attr('autostopType', value)
+        assert type(value) is AutostopType
+        return self._set_attr('autostopType', value)
 
     @property
     def default_frontend(self):
@@ -5080,11 +5432,13 @@ class IMachine(Interface):
         overridden by a frontend type passed to
         <link to="IMachine::launchVMProcess"/>.
         """
-        return self.get_attr('defaultFrontend', str)
+        value = self._get_attr('defaultFrontend')
+        return str(value)
 
     @default_frontend.setter
     def default_frontend(self, value):
-        return self.set_attr('defaultFrontend', value)
+        assert type(value) is str
+        return self._set_attr('defaultFrontend', value)
 
     def lock_machine(self, session, lock_type):
         """Locks the machine for the given session to enable the caller
@@ -5177,7 +5531,9 @@ class IMachine(Interface):
             Failed to assign machine to session.
         
         """
-        self.call_method('lockMachine',
+        assert session is ISession
+        assert lock_type is LockType
+        self._call_method('lockMachine',
                      in_p=[session, lock_type])
         
     def launch_vm_process(self, session, type_p, environment):
@@ -5286,11 +5642,14 @@ class IMachine(Interface):
             Failed to assign machine to session.
         
         """
-        progress = self.call_method('launchVMProcess',
-                     in_p=[session, type_p, environment],
-                     rettype=IProgress)
-        return progress
-        
+        assert session is ISession
+        assert type_p is str
+        assert environment is str
+        progress =\
+            self._call_method('launchVMProcess',
+                     in_p=[session, type_p, environment])
+        return IProgress(progress)
+
     def set_boot_order(self, position, device):
         """Puts the given device to the specified position in
         the boot order.
@@ -5315,7 +5674,9 @@ class IMachine(Interface):
             Booting from USB @a device currently not supported.
         
         """
-        self.call_method('setBootOrder',
+        assert position is int
+        assert device is DeviceType
+        self._call_method('setBootOrder',
                      in_p=[position, device])
         
     def get_boot_order(self, position):
@@ -5344,11 +5705,12 @@ class IMachine(Interface):
             Boot @a position out of range.
         
         """
-        device = self.call_method('getBootOrder',
-                     in_p=[position],
-                     rettype=DeviceType)
-        return device
-        
+        assert position is int
+        device =\
+            self._call_method('getBootOrder',
+                     in_p=[position])
+        return DeviceType(device)
+
     def attach_device(self, name, controller_port, device, type_p, medium):
         """Attaches a device and optionally mounts a medium to the given storage
         controller (<link to="IStorageController"/>, identified by @a name),
@@ -5437,7 +5799,12 @@ class IMachine(Interface):
             A medium is already attached to this or another virtual machine.
         
         """
-        self.call_method('attachDevice',
+        assert name is str
+        assert controller_port is int
+        assert device is int
+        assert type_p is DeviceType
+        assert medium is IMedium
+        self._call_method('attachDevice',
                      in_p=[name, controller_port, device, type_p, medium])
         
     def attach_device_without_medium(self, name, controller_port, device, type_p):
@@ -5521,7 +5888,11 @@ class IMachine(Interface):
             A medium is already attached to this or another virtual machine.
         
         """
-        self.call_method('attachDeviceWithoutMedium',
+        assert name is str
+        assert controller_port is int
+        assert device is int
+        assert type_p is DeviceType
+        self._call_method('attachDeviceWithoutMedium',
                      in_p=[name, controller_port, device, type_p])
         
     def detach_device(self, name, controller_port, device):
@@ -5564,7 +5935,10 @@ class IMachine(Interface):
           created differencing media, should not happen).
         
         """
-        self.call_method('detachDevice',
+        assert name is str
+        assert controller_port is int
+        assert device is int
+        self._call_method('detachDevice',
                      in_p=[name, controller_port, device])
         
     def passthrough_device(self, name, controller_port, device, passthrough):
@@ -5599,7 +5973,11 @@ class IMachine(Interface):
             Invalid machine state.
         
         """
-        self.call_method('passthroughDevice',
+        assert name is str
+        assert controller_port is int
+        assert device is int
+        assert passthrough is bool
+        self._call_method('passthroughDevice',
                      in_p=[name, controller_port, device, passthrough])
         
     def temporary_eject_device(self, name, controller_port, device, temporary_eject):
@@ -5634,7 +6012,11 @@ class IMachine(Interface):
             Invalid machine state.
         
         """
-        self.call_method('temporaryEjectDevice',
+        assert name is str
+        assert controller_port is int
+        assert device is int
+        assert temporary_eject is bool
+        self._call_method('temporaryEjectDevice',
                      in_p=[name, controller_port, device, temporary_eject])
         
     def non_rotational_device(self, name, controller_port, device, non_rotational):
@@ -5672,7 +6054,11 @@ class IMachine(Interface):
             Invalid machine state.
         
         """
-        self.call_method('nonRotationalDevice',
+        assert name is str
+        assert controller_port is int
+        assert device is int
+        assert non_rotational is bool
+        self._call_method('nonRotationalDevice',
                      in_p=[name, controller_port, device, non_rotational])
         
     def set_auto_discard_for_device(self, name, controller_port, device, discard):
@@ -5710,7 +6096,11 @@ class IMachine(Interface):
             Invalid machine state.
         
         """
-        self.call_method('setAutoDiscardForDevice',
+        assert name is str
+        assert controller_port is int
+        assert device is int
+        assert discard is bool
+        self._call_method('setAutoDiscardForDevice',
                      in_p=[name, controller_port, device, discard])
         
     def set_bandwidth_group_for_device(self, name, controller_port, device, bandwidth_group):
@@ -5743,7 +6133,11 @@ class IMachine(Interface):
             Invalid machine state.
         
         """
-        self.call_method('setBandwidthGroupForDevice',
+        assert name is str
+        assert controller_port is int
+        assert device is int
+        assert bandwidth_group is IBandwidthGroup
+        self._call_method('setBandwidthGroupForDevice',
                      in_p=[name, controller_port, device, bandwidth_group])
         
     def set_no_bandwidth_group_for_device(self, name, controller_port, device):
@@ -5772,7 +6166,10 @@ class IMachine(Interface):
             Invalid machine state.
         
         """
-        self.call_method('setNoBandwidthGroupForDevice',
+        assert name is str
+        assert controller_port is int
+        assert device is int
+        self._call_method('setNoBandwidthGroupForDevice',
                      in_p=[name, controller_port, device])
         
     def unmount_medium(self, name, controller_port, device, force):
@@ -5823,7 +6220,11 @@ class IMachine(Interface):
             Medium not attached to specified port, device, controller.
         
         """
-        self.call_method('unmountMedium',
+        assert name is str
+        assert controller_port is int
+        assert device is int
+        assert force is bool
+        self._call_method('unmountMedium',
                      in_p=[name, controller_port, device, force])
         
     def mount_medium(self, name, controller_port, device, medium, force):
@@ -5876,7 +6277,12 @@ class IMachine(Interface):
             Medium already attached to this or another virtual machine.
         
         """
-        self.call_method('mountMedium',
+        assert name is str
+        assert controller_port is int
+        assert device is int
+        assert medium is IMedium
+        assert force is bool
+        self._call_method('mountMedium',
                      in_p=[name, controller_port, device, medium, force])
         
     def get_medium(self, name, controller_port, device):
@@ -5905,11 +6311,14 @@ class IMachine(Interface):
             No medium attached to given slot/bus.
         
         """
-        medium = self.call_method('getMedium',
-                     in_p=[name, controller_port, device],
-                     rettype=IMedium)
-        return medium
-        
+        assert name is str
+        assert controller_port is int
+        assert device is int
+        medium =\
+            self._call_method('getMedium',
+                     in_p=[name, controller_port, device])
+        return IMedium(medium)
+
     def get_medium_attachments_of_controller(self, name):
         """Returns an array of medium attachments which are attached to the
         the controller with the given name.
@@ -5922,11 +6331,12 @@ class IMachine(Interface):
             A storage controller with given name doesn't exist.
         
         """
-        medium_attachments = self.call_method('getMediumAttachmentsOfController',
-                     in_p=[name],
-                     rettype=IMediumAttachment)
-        return medium_attachments
-        
+        assert name is str
+        medium_attachments =\
+            self._call_method('getMediumAttachmentsOfController',
+                     in_p=[name])
+        return IMediumAttachment(medium_attachments)
+
     def get_medium_attachment(self, name, controller_port, device):
         """Returns a medium attachment which corresponds to the controller with
         the given name, on the given port and device slot.
@@ -5943,11 +6353,14 @@ class IMachine(Interface):
             No attachment exists for the given controller/port/device combination.
         
         """
-        attachment = self.call_method('getMediumAttachment',
-                     in_p=[name, controller_port, device],
-                     rettype=IMediumAttachment)
-        return attachment
-        
+        assert name is str
+        assert controller_port is int
+        assert device is int
+        attachment =\
+            self._call_method('getMediumAttachment',
+                     in_p=[name, controller_port, device])
+        return IMediumAttachment(attachment)
+
     def attach_host_pci_device(self, host_address, desired_guest_address, try_to_unbind):
         """Attaches host PCI device with the given (host) PCI address to the
         PCI bus of the virtual machine. Please note, that this operation
@@ -5977,7 +6390,10 @@ class IMachine(Interface):
             Hardware or host OS doesn't allow PCI device passthrought.
         
         """
-        self.call_method('attachHostPCIDevice',
+        assert host_address is int
+        assert desired_guest_address is int
+        assert try_to_unbind is bool
+        self._call_method('attachHostPCIDevice',
                      in_p=[host_address, desired_guest_address, try_to_unbind])
         
     def detach_host_pci_device(self, host_address):
@@ -6004,7 +6420,8 @@ class IMachine(Interface):
             Hardware or host OS doesn't allow PCI device passthrought.
         
         """
-        self.call_method('detachHostPCIDevice',
+        assert host_address is int
+        self._call_method('detachHostPCIDevice',
                      in_p=[host_address])
         
     def get_network_adapter(self, slot):
@@ -6022,11 +6439,12 @@ class IMachine(Interface):
             Invalid @a slot number.
         
         """
-        adapter = self.call_method('getNetworkAdapter',
-                     in_p=[slot],
-                     rettype=INetworkAdapter)
-        return adapter
-        
+        assert slot is int
+        adapter =\
+            self._call_method('getNetworkAdapter',
+                     in_p=[slot])
+        return INetworkAdapter(adapter)
+
     def add_storage_controller(self, name, connection_type):
         """Adds a new storage controller (SCSI, SAS or SATA controller) to the
         machine and returns it as an instance of
@@ -6054,11 +6472,13 @@ class IMachine(Interface):
             Invalid @a controllerType.
         
         """
-        controller = self.call_method('addStorageController',
-                     in_p=[name, connection_type],
-                     rettype=IStorageController)
-        return controller
-        
+        assert name is str
+        assert connection_type is StorageBus
+        controller =\
+            self._call_method('addStorageController',
+                     in_p=[name, connection_type])
+        return IStorageController(controller)
+
     def get_storage_controller_by_name(self, name):
         """Returns a storage controller with the given name.
 
@@ -6070,11 +6490,12 @@ class IMachine(Interface):
             A storage controller with given name doesn't exist.
         
         """
-        storage_controller = self.call_method('getStorageControllerByName',
-                     in_p=[name],
-                     rettype=IStorageController)
-        return storage_controller
-        
+        assert name is str
+        storage_controller =\
+            self._call_method('getStorageControllerByName',
+                     in_p=[name])
+        return IStorageController(storage_controller)
+
     def get_storage_controller_by_instance(self, instance):
         """Returns a storage controller with the given instance number.
 
@@ -6086,11 +6507,12 @@ class IMachine(Interface):
             A storage controller with given instance number doesn't exist.
         
         """
-        storage_controller = self.call_method('getStorageControllerByInstance',
-                     in_p=[instance],
-                     rettype=IStorageController)
-        return storage_controller
-        
+        assert instance is int
+        storage_controller =\
+            self._call_method('getStorageControllerByInstance',
+                     in_p=[instance])
+        return IStorageController(storage_controller)
+
     def remove_storage_controller(self, name):
         """Removes a storage controller from the machine with all devices attached to it.
 
@@ -6104,7 +6526,8 @@ class IMachine(Interface):
           created differencing media, should not happen).
         
         """
-        self.call_method('removeStorageController',
+        assert name is str
+        self._call_method('removeStorageController',
                      in_p=[name])
         
     def set_storage_controller_bootable(self, name, bootable):
@@ -6121,7 +6544,9 @@ class IMachine(Interface):
             Another storage controller is marked as bootable already.
         
         """
-        self.call_method('setStorageControllerBootable',
+        assert name is str
+        assert bootable is bool
+        self._call_method('setStorageControllerBootable',
                      in_p=[name, bootable])
         
     def get_serial_port(self, slot):
@@ -6139,11 +6564,12 @@ class IMachine(Interface):
             Invalid @a slot number.
         
         """
-        port = self.call_method('getSerialPort',
-                     in_p=[slot],
-                     rettype=ISerialPort)
-        return port
-        
+        assert slot is int
+        port =\
+            self._call_method('getSerialPort',
+                     in_p=[slot])
+        return ISerialPort(port)
+
     def get_parallel_port(self, slot):
         """Returns the parallel port associated with the given slot.
         Slots are numbered sequentially, starting with zero. The total
@@ -6159,11 +6585,12 @@ class IMachine(Interface):
             Invalid @a slot number.
         
         """
-        port = self.call_method('getParallelPort',
-                     in_p=[slot],
-                     rettype=IParallelPort)
-        return port
-        
+        assert slot is int
+        port =\
+            self._call_method('getParallelPort',
+                     in_p=[slot])
+        return IParallelPort(port)
+
     def get_extra_data_keys(self):
         """Returns an array representing the machine-specific extra data keys
             which currently have values defined.
@@ -6172,10 +6599,10 @@ class IMachine(Interface):
             Array of extra data keys.
 
         """
-        keys = self.call_method('getExtraDataKeys',
-                     rettype=str)
-        return keys
-        
+        keys =\
+            self._call_method('getExtraDataKeys')
+        return str(keys)
+
     def get_extra_data(self, key):
         """Returns associated machine-specific extra data.
 
@@ -6195,11 +6622,12 @@ class IMachine(Interface):
             Could not parse the settings file.
         
         """
-        value = self.call_method('getExtraData',
-                     in_p=[key],
-                     rettype=str)
-        return value
-        
+        assert key is str
+        value =\
+            self._call_method('getExtraData',
+                     in_p=[key])
+        return str(value)
+
     def set_extra_data(self, key, value):
         """Sets associated machine-specific extra data.
 
@@ -6237,7 +6665,9 @@ class IMachine(Interface):
             Could not parse the settings file.
         
         """
-        self.call_method('setExtraData',
+        assert key is str
+        assert value is str
+        self._call_method('setExtraData',
                      in_p=[key, value])
         
     def get_cpu_property(self, property_p):
@@ -6253,11 +6683,12 @@ class IMachine(Interface):
             Invalid property.
         
         """
-        value = self.call_method('getCPUProperty',
-                     in_p=[property_p],
-                     rettype=bool)
-        return value
-        
+        assert property_p is CPUPropertyType
+        value =\
+            self._call_method('getCPUProperty',
+                     in_p=[property_p])
+        return bool(value)
+
     def set_cpu_property(self, property_p, value):
         """Sets the virtual CPU boolean value of the specified property.
 
@@ -6271,10 +6702,12 @@ class IMachine(Interface):
             Invalid property.
         
         """
-        self.call_method('setCPUProperty',
+        assert property_p is CPUPropertyType
+        assert value is bool
+        self._call_method('setCPUProperty',
                      in_p=[property_p, value])
         
-    def get_cpuid_leaf(self, id_p, out_p={}):
+    def get_cpuid_leaf(self, id_p):
         """Returns the virtual CPU cpuid information for the specified leaf.
 
         Currently supported index values for cpuid:
@@ -6303,10 +6736,12 @@ class IMachine(Interface):
             Invalid id.
         
         """
-        self.call_method('getCPUIDLeaf',
-                     in_p=[id_p],
-                     out_p=out_p)
-        
+        assert id_p is int
+        (val_eax, val_ebx, val_ecx, val_edx) =\
+            self._call_method('getCPUIDLeaf',
+                     in_p=[id_p])
+        return (int(val_eax), int(val_ebx), int(val_ecx), int(val_edx))
+
     def set_cpuid_leaf(self, id_p, val_eax, val_ebx, val_ecx, val_edx):
         """Sets the virtual CPU cpuid information for the specified leaf. Note that these values
         are not passed unmodified. VirtualBox clears features that it doesn't support.
@@ -6340,7 +6775,12 @@ class IMachine(Interface):
             Invalid id.
         
         """
-        self.call_method('setCPUIDLeaf',
+        assert id_p is int
+        assert val_eax is int
+        assert val_ebx is int
+        assert val_ecx is int
+        assert val_edx is int
+        self._call_method('setCPUIDLeaf',
                      in_p=[id_p, val_eax, val_ebx, val_ecx, val_edx])
         
     def remove_cpuid_leaf(self, id_p):
@@ -6353,14 +6793,15 @@ class IMachine(Interface):
             Invalid id.
         
         """
-        self.call_method('removeCPUIDLeaf',
+        assert id_p is int
+        self._call_method('removeCPUIDLeaf',
                      in_p=[id_p])
         
     def remove_all_cpuid_leaves(self):
         """Removes all the virtual CPU cpuid leaves
 
         """
-        self.call_method('removeAllCPUIDLeaves')
+        self._call_method('removeAllCPUIDLeaves')
         
     def get_hw_virt_ex_property(self, property_p):
         """Returns the value of the specified hardware virtualization boolean property.
@@ -6375,11 +6816,12 @@ class IMachine(Interface):
             Invalid property.
         
         """
-        value = self.call_method('getHWVirtExProperty',
-                     in_p=[property_p],
-                     rettype=bool)
-        return value
-        
+        assert property_p is HWVirtExPropertyType
+        value =\
+            self._call_method('getHWVirtExProperty',
+                     in_p=[property_p])
+        return bool(value)
+
     def set_hw_virt_ex_property(self, property_p, value):
         """Sets a new value for the specified hardware virtualization boolean property.
 
@@ -6393,7 +6835,9 @@ class IMachine(Interface):
             Invalid property.
         
         """
-        self.call_method('setHWVirtExProperty',
+        assert property_p is HWVirtExPropertyType
+        assert value is bool
+        self._call_method('setHWVirtExProperty',
                      in_p=[property_p, value])
         
     def save_settings(self):
@@ -6425,7 +6869,7 @@ class IMachine(Interface):
             Modification request refused.
         
         """
-        self.call_method('saveSettings')
+        self._call_method('saveSettings')
         
     def discard_settings(self):
         """Discards any changes to the machine settings made since the session
@@ -6443,7 +6887,7 @@ class IMachine(Interface):
             Virtual machine is not mutable.
         
         """
-        self.call_method('discardSettings')
+        self._call_method('discardSettings')
         
     def unregister(self, cleanup_mode):
         """Unregisters a machine previously registered with
@@ -6523,11 +6967,12 @@ class IMachine(Interface):
             Machine is currently locked for a session.
         
         """
-        media = self.call_method('unregister',
-                     in_p=[cleanup_mode],
-                     rettype=IMedium)
-        return media
-        
+        assert cleanup_mode is CleanupMode
+        media =\
+            self._call_method('unregister',
+                     in_p=[cleanup_mode])
+        return IMedium(media)
+
     def delete_config(self, media):
         """Deletes the files associated with this machine from disk. If medium objects are passed
         in with the @a aMedia argument, they are closed and, if closing was successful, their
@@ -6575,11 +7020,12 @@ class IMachine(Interface):
             Could not delete the settings file.
         
         """
-        progress = self.call_method('deleteConfig',
-                     in_p=[media],
-                     rettype=IProgress)
-        return progress
-        
+        assert media is IMedium
+        progress =\
+            self._call_method('deleteConfig',
+                     in_p=[media])
+        return IProgress(progress)
+
     def export_to(self, appliance, location):
         """Exports the machine to an OVF appliance. See <link to="IAppliance"/> for the
             steps required to export VirtualBox machines to OVF.
@@ -6594,11 +7040,13 @@ class IMachine(Interface):
             VirtualSystemDescription object which is created for this machine.
 
         """
-        description = self.call_method('exportTo',
-                     in_p=[appliance, location],
-                     rettype=IVirtualSystemDescription)
-        return description
-        
+        assert appliance is IAppliance
+        assert location is str
+        description =\
+            self._call_method('exportTo',
+                     in_p=[appliance, location])
+        return IVirtualSystemDescription(description)
+
     def find_snapshot(self, name_or_id):
         """Returns a snapshot of this machine with the given name or UUID.
 
@@ -6618,11 +7066,12 @@ class IMachine(Interface):
             Virtual machine has no snapshots or snapshot not found.
         
         """
-        snapshot = self.call_method('findSnapshot',
-                     in_p=[name_or_id],
-                     rettype=ISnapshot)
-        return snapshot
-        
+        assert name_or_id is str
+        snapshot =\
+            self._call_method('findSnapshot',
+                     in_p=[name_or_id])
+        return ISnapshot(snapshot)
+
     def create_shared_folder(self, name, host_path, writable, automount):
         """Creates a new permanent shared folder by associating the given logical
         name with the given host path, adds it to the collection of shared
@@ -6649,7 +7098,11 @@ class IMachine(Interface):
             Shared folder @a hostPath not accessible.
         
         """
-        self.call_method('createSharedFolder',
+        assert name is str
+        assert host_path is str
+        assert writable is bool
+        assert automount is bool
+        self._call_method('createSharedFolder',
                      in_p=[name, host_path, writable, automount])
         
     def remove_shared_folder(self, name):
@@ -6667,7 +7120,8 @@ class IMachine(Interface):
             Shared folder @a name does not exist.
         
         """
-        self.call_method('removeSharedFolder',
+        assert name is str
+        self._call_method('removeSharedFolder',
                      in_p=[name])
         
     def can_show_console_window(self):
@@ -6685,10 +7139,10 @@ class IMachine(Interface):
             Machine session is not open.
         
         """
-        can_show = self.call_method('canShowConsoleWindow',
-                     rettype=bool)
-        return can_show
-        
+        can_show =\
+            self._call_method('canShowConsoleWindow')
+        return bool(can_show)
+
     def show_console_window(self):
         """Activates the console window and brings it to foreground on
         the desktop of the host PC. Many modern window managers on
@@ -6715,11 +7169,11 @@ class IMachine(Interface):
             Machine session is not open.
         
         """
-        win_id = self.call_method('showConsoleWindow',
-                     rettype=int)
-        return win_id
-        
-    def get_guest_property(self, name, out_p={}):
+        win_id =\
+            self._call_method('showConsoleWindow')
+        return int(win_id)
+
+    def get_guest_property(self, name):
         """Reads an entry from the machine's guest property store.
 
         in name of type str
@@ -6741,10 +7195,12 @@ class IMachine(Interface):
             Machine session is not open.
         
         """
-        self.call_method('getGuestProperty',
-                     in_p=[name],
-                     out_p=out_p)
-        
+        assert name is str
+        (value, timestamp, flags) =\
+            self._call_method('getGuestProperty',
+                     in_p=[name])
+        return (str(value), int(timestamp), str(flags))
+
     def get_guest_property_value(self, property_p):
         """Reads a value from the machine's guest property store.
 
@@ -6759,11 +7215,12 @@ class IMachine(Interface):
             Machine session is not open.
         
         """
-        value = self.call_method('getGuestPropertyValue',
-                     in_p=[property_p],
-                     rettype=str)
-        return value
-        
+        assert property_p is str
+        value =\
+            self._call_method('getGuestPropertyValue',
+                     in_p=[property_p])
+        return str(value)
+
     def get_guest_property_timestamp(self, property_p):
         """Reads a property timestamp from the machine's guest property store.
 
@@ -6778,11 +7235,12 @@ class IMachine(Interface):
             Machine session is not open.
         
         """
-        value = self.call_method('getGuestPropertyTimestamp',
-                     in_p=[property_p],
-                     rettype=int)
-        return value
-        
+        assert property_p is str
+        value =\
+            self._call_method('getGuestPropertyTimestamp',
+                     in_p=[property_p])
+        return int(value)
+
     def set_guest_property(self, property_p, value, flags):
         """Sets, changes or deletes an entry in the machine's guest property
         store.
@@ -6813,7 +7271,10 @@ class IMachine(Interface):
             Cannot set transient property when machine not running.
         
         """
-        self.call_method('setGuestProperty',
+        assert property_p is str
+        assert value is str
+        assert flags is str
+        self._call_method('setGuestProperty',
                      in_p=[property_p, value, flags])
         
     def set_guest_property_value(self, property_p, value):
@@ -6839,7 +7300,9 @@ class IMachine(Interface):
             Cannot set transient property when machine not running.
         
         """
-        self.call_method('setGuestPropertyValue',
+        assert property_p is str
+        assert value is str
+        self._call_method('setGuestPropertyValue',
                      in_p=[property_p, value])
         
     def delete_guest_property(self, name):
@@ -6852,10 +7315,11 @@ class IMachine(Interface):
             Machine session is not open.
         
         """
-        self.call_method('deleteGuestProperty',
+        assert name is str
+        self._call_method('deleteGuestProperty',
                      in_p=[name])
         
-    def enumerate_guest_properties(self, patterns, out_p={}):
+    def enumerate_guest_properties(self, patterns):
         """Return a list of the guest properties matching a set of patterns along
         with their values, time stamps and flags.
 
@@ -6879,11 +7343,13 @@ class IMachine(Interface):
           corresponding entries in the @a name array.
 
         """
-        self.call_method('enumerateGuestProperties',
-                     in_p=[patterns],
-                     out_p=out_p)
-        
-    def query_saved_guest_screen_info(self, screen_id, out_p={}):
+        assert patterns is str
+        (names, values, timestamps, flags) =\
+            self._call_method('enumerateGuestProperties',
+                     in_p=[patterns])
+        return (str(names), str(values), int(timestamps), str(flags))
+
+    def query_saved_guest_screen_info(self, screen_id):
         """Returns the guest dimensions from the saved state.
 
         in screen_id of type int
@@ -6905,11 +7371,13 @@ class IMachine(Interface):
             Whether the monitor is enabled in the guest.
 
         """
-        self.call_method('querySavedGuestScreenInfo',
-                     in_p=[screen_id],
-                     out_p=out_p)
-        
-    def query_saved_thumbnail_size(self, screen_id, out_p={}):
+        assert screen_id is int
+        (origin_x, origin_y, width, height, enabled) =\
+            self._call_method('querySavedGuestScreenInfo',
+                     in_p=[screen_id])
+        return (int(origin_x), int(origin_y), int(width), int(height), bool(enabled))
+
+    def query_saved_thumbnail_size(self, screen_id):
         """Returns size in bytes and dimensions in pixels of a saved thumbnail bitmap from saved state.
 
         in screen_id of type int
@@ -6925,11 +7393,13 @@ class IMachine(Interface):
             Bitmap height.
 
         """
-        self.call_method('querySavedThumbnailSize',
-                     in_p=[screen_id],
-                     out_p=out_p)
-        
-    def read_saved_thumbnail_to_array(self, screen_id, bgr, out_p={}):
+        assert screen_id is int
+        (size, width, height) =\
+            self._call_method('querySavedThumbnailSize',
+                     in_p=[screen_id])
+        return (int(size), int(width), int(height))
+
+    def read_saved_thumbnail_to_array(self, screen_id, bgr):
         """Thumbnail is retrieved to an array of bytes in uncompressed 32-bit BGRA or RGBA format.
 
         in screen_id of type int
@@ -6949,13 +7419,14 @@ class IMachine(Interface):
             Array with resulting bitmap data.
 
         """
-        data = self.call_method('readSavedThumbnailToArray',
-                     in_p=[screen_id, bgr],
-                     out_p=out_p,
-                     rettype=str)
-        return data
-        
-    def read_saved_thumbnail_png_to_array(self, screen_id, out_p={}):
+        assert screen_id is int
+        assert bgr is bool
+        (width, height, data) =\
+            self._call_method('readSavedThumbnailToArray',
+                     in_p=[screen_id, bgr])
+        return (int(width), int(height), str(data))
+
+    def read_saved_thumbnail_png_to_array(self, screen_id):
         """Thumbnail in PNG format is retrieved to an array of bytes.
 
         in screen_id of type int
@@ -6971,13 +7442,13 @@ class IMachine(Interface):
             Array with resulting PNG data.
 
         """
-        data = self.call_method('readSavedThumbnailPNGToArray',
-                     in_p=[screen_id],
-                     out_p=out_p,
-                     rettype=str)
-        return data
-        
-    def query_saved_screenshot_png_size(self, screen_id, out_p={}):
+        assert screen_id is int
+        (width, height, data) =\
+            self._call_method('readSavedThumbnailPNGToArray',
+                     in_p=[screen_id])
+        return (int(width), int(height), str(data))
+
+    def query_saved_screenshot_png_size(self, screen_id):
         """Returns size in bytes and dimensions of a saved PNG image of screenshot from saved state.
 
         in screen_id of type int
@@ -6993,11 +7464,13 @@ class IMachine(Interface):
             Image height.
 
         """
-        self.call_method('querySavedScreenshotPNGSize',
-                     in_p=[screen_id],
-                     out_p=out_p)
-        
-    def read_saved_screenshot_png_to_array(self, screen_id, out_p={}):
+        assert screen_id is int
+        (size, width, height) =\
+            self._call_method('querySavedScreenshotPNGSize',
+                     in_p=[screen_id])
+        return (int(size), int(width), int(height))
+
+    def read_saved_screenshot_png_to_array(self, screen_id):
         """Screenshot in PNG format is retrieved to an array of bytes.
 
         in screen_id of type int
@@ -7013,12 +7486,12 @@ class IMachine(Interface):
             Array with resulting PNG data.
 
         """
-        data = self.call_method('readSavedScreenshotPNGToArray',
-                     in_p=[screen_id],
-                     out_p=out_p,
-                     rettype=str)
-        return data
-        
+        assert screen_id is int
+        (width, height, data) =\
+            self._call_method('readSavedScreenshotPNGToArray',
+                     in_p=[screen_id])
+        return (int(width), int(height), str(data))
+
     def hot_plug_cpu(self, cpu):
         """Plugs a CPU into the machine.
 
@@ -7026,7 +7499,8 @@ class IMachine(Interface):
             The CPU id to insert.
 
         """
-        self.call_method('hotPlugCPU',
+        assert cpu is int
+        self._call_method('hotPlugCPU',
                      in_p=[cpu])
         
     def hot_unplug_cpu(self, cpu):
@@ -7036,7 +7510,8 @@ class IMachine(Interface):
             The CPU id to remove.
 
         """
-        self.call_method('hotUnplugCPU',
+        assert cpu is int
+        self._call_method('hotUnplugCPU',
                      in_p=[cpu])
         
     def get_cpu_status(self, cpu):
@@ -7049,11 +7524,12 @@ class IMachine(Interface):
             Status of the CPU.
 
         """
-        attached = self.call_method('getCPUStatus',
-                     in_p=[cpu],
-                     rettype=bool)
-        return attached
-        
+        assert cpu is int
+        attached =\
+            self._call_method('getCPUStatus',
+                     in_p=[cpu])
+        return bool(attached)
+
     def query_log_filename(self, idx):
         """Queries for the VM log file name of an given index. Returns an empty
         string if a log file with that index doesn't exists.
@@ -7065,11 +7541,12 @@ class IMachine(Interface):
             On return the full path to the log file or an empty string on error.
 
         """
-        filename = self.call_method('queryLogFilename',
-                     in_p=[idx],
-                     rettype=str)
-        return filename
-        
+        assert idx is int
+        filename =\
+            self._call_method('queryLogFilename',
+                     in_p=[idx])
+        return str(filename)
+
     def read_log(self, idx, offset, size):
         """Reads the VM log file. The chunk size is limited, so even if you
         ask for a big piece there might be less data returned.
@@ -7090,11 +7567,14 @@ class IMachine(Interface):
           the system the server is running on.
 
         """
-        data = self.call_method('readLog',
-                     in_p=[idx, offset, size],
-                     rettype=str)
-        return data
-        
+        assert idx is int
+        assert offset is int
+        assert size is int
+        data =\
+            self._call_method('readLog',
+                     in_p=[idx, offset, size])
+        return str(data)
+
     def clone_to(self, target, mode, options):
         """Creates a clone of this machine, either as a full clone (which means
         creating independent copies of the hard disk media, save states and so
@@ -7125,11 +7605,14 @@ class IMachine(Interface):
             @a target is @c null.
         
         """
-        progress = self.call_method('cloneTo',
-                     in_p=[target, mode, options],
-                     rettype=IProgress)
-        return progress
-        
+        assert target is IMachine
+        assert mode is CloneMode
+        assert options is CloneOptions
+        progress =\
+            self._call_method('cloneTo',
+                     in_p=[target, mode, options])
+        return IProgress(progress)
+
 
 class IVRDEServerInfo(Interface):
     """
@@ -7144,7 +7627,8 @@ class IVRDEServerInfo(Interface):
         """Get bool value for 'active'
         Whether the remote desktop connection is active.
         """
-        return self.get_attr('active', bool)
+        value = self._get_attr('active')
+        return bool(value)
 
     @property
     def port(self):
@@ -7154,21 +7638,24 @@ class IVRDEServerInfo(Interface):
         ports to bind to. If this property is equal to -1, then the VRDE
         server has not yet been started.
         """
-        return self.get_attr('port', int)
+        value = self._get_attr('port')
+        return int(value)
 
     @property
     def number_of_clients(self):
         """Get int value for 'numberOfClients'
         How many times a client connected.
         """
-        return self.get_attr('numberOfClients', int)
+        value = self._get_attr('numberOfClients')
+        return int(value)
 
     @property
     def begin_time(self):
         """Get int value for 'beginTime'
         When the last connection was established, in milliseconds since 1970-01-01 UTC.
         """
-        return self.get_attr('beginTime', int)
+        value = self._get_attr('beginTime')
+        return int(value)
 
     @property
     def end_time(self):
@@ -7176,70 +7663,80 @@ class IVRDEServerInfo(Interface):
         When the last connection was terminated or the current time, if
         connection is still active, in milliseconds since 1970-01-01 UTC.
         """
-        return self.get_attr('endTime', int)
+        value = self._get_attr('endTime')
+        return int(value)
 
     @property
     def bytes_sent(self):
         """Get int value for 'bytesSent'
         How many bytes were sent in last or current, if still active, connection.
         """
-        return self.get_attr('bytesSent', int)
+        value = self._get_attr('bytesSent')
+        return int(value)
 
     @property
     def bytes_sent_total(self):
         """Get int value for 'bytesSentTotal'
         How many bytes were sent in all connections.
         """
-        return self.get_attr('bytesSentTotal', int)
+        value = self._get_attr('bytesSentTotal')
+        return int(value)
 
     @property
     def bytes_received(self):
         """Get int value for 'bytesReceived'
         How many bytes were received in last or current, if still active, connection.
         """
-        return self.get_attr('bytesReceived', int)
+        value = self._get_attr('bytesReceived')
+        return int(value)
 
     @property
     def bytes_received_total(self):
         """Get int value for 'bytesReceivedTotal'
         How many bytes were received in all connections.
         """
-        return self.get_attr('bytesReceivedTotal', int)
+        value = self._get_attr('bytesReceivedTotal')
+        return int(value)
 
     @property
     def user(self):
         """Get str value for 'user'
         Login user name supplied by the client.
         """
-        return self.get_attr('user', str)
+        value = self._get_attr('user')
+        return str(value)
 
     @property
     def domain(self):
         """Get str value for 'domain'
         Login domain name supplied by the client.
         """
-        return self.get_attr('domain', str)
+        value = self._get_attr('domain')
+        return str(value)
 
     @property
     def client_name(self):
         """Get str value for 'clientName'
         The client name supplied by the client.
         """
-        return self.get_attr('clientName', str)
+        value = self._get_attr('clientName')
+        return str(value)
 
     @property
     def client_ip(self):
         """Get str value for 'clientIP'
         The IP address of the client.
         """
-        return self.get_attr('clientIP', str)
+        value = self._get_attr('clientIP')
+        return str(value)
 
     @property
     def client_version(self):
         """Get int value for 'clientVersion'
         The client software version number.
         """
-        return self.get_attr('clientVersion', int)
+        value = self._get_attr('clientVersion')
+        return int(value)
 
     @property
     def encryption_style(self):
@@ -7248,7 +7745,8 @@ class IVRDEServerInfo(Interface):
         Values: 0 - RDP4 public key exchange scheme.
         1 - X509 certificates were sent to client.
         """
-        return self.get_attr('encryptionStyle', int)
+        value = self._get_attr('encryptionStyle')
+        return int(value)
 
 
 class IConsole(Interface):
@@ -7280,7 +7778,8 @@ class IConsole(Interface):
           <link to="ISession::machine"/> of the corresponding session
           object.
         """
-        return self.get_attr('machine', IMachine)
+        value = self._get_attr('machine')
+        return IMachine(value)
 
     @property
     def state(self):
@@ -7293,14 +7792,16 @@ class IConsole(Interface):
           preferable way of querying the VM state, because no IPC
           calls are made.
         """
-        return self.get_attr('state', MachineState)
+        value = self._get_attr('state')
+        return MachineState(value)
 
     @property
     def guest(self):
         """Get IGuest value for 'guest'
         Guest object.
         """
-        return self.get_attr('guest', IGuest)
+        value = self._get_attr('guest')
+        return IGuest(value)
 
     @property
     def keyboard(self):
@@ -7310,7 +7811,8 @@ class IConsole(Interface):
           If the machine is not running, any attempt to use
           the returned object will result in an error.
         """
-        return self.get_attr('keyboard', IKeyboard)
+        value = self._get_attr('keyboard')
+        return IKeyboard(value)
 
     @property
     def mouse(self):
@@ -7320,7 +7822,8 @@ class IConsole(Interface):
           If the machine is not running, any attempt to use
           the returned object will result in an error.
         """
-        return self.get_attr('mouse', IMouse)
+        value = self._get_attr('mouse')
+        return IMouse(value)
 
     @property
     def display(self):
@@ -7330,14 +7833,16 @@ class IConsole(Interface):
           If the machine is not running, any attempt to use
           the returned object will result in an error.
         """
-        return self.get_attr('display', IDisplay)
+        value = self._get_attr('display')
+        return IDisplay(value)
 
     @property
     def debugger(self):
         """Get IMachineDebugger value for 'debugger'
         Debugging interface.
         """
-        return self.get_attr('debugger', IMachineDebugger)
+        value = self._get_attr('debugger')
+        return IMachineDebugger(value)
 
     @property
     def usb_devices(self):
@@ -7347,7 +7852,8 @@ class IConsole(Interface):
         
           The collection is empty if the machine is not running.
         """
-        return self.get_attr('USBDevices', IUSBDevice)
+        value = self._get_attr('USBDevices')
+        return IUSBDevice(value)
 
     @property
     def remote_usb_devices(self):
@@ -7356,7 +7862,8 @@ class IConsole(Interface):
         Once a new device is physically attached to the remote host computer,
         it appears in this list and remains there until detached.
         """
-        return self.get_attr('remoteUSBDevices', IHostUSBDevice)
+        value = self._get_attr('remoteUSBDevices')
+        return IHostUSBDevice(value)
 
     @property
     def shared_folders(self):
@@ -7373,28 +7880,32 @@ class IConsole(Interface):
         <link to="#createSharedFolder"/>. Existing shared folders can be
         removed using <link to="#removeSharedFolder"/>.
         """
-        return self.get_attr('sharedFolders', ISharedFolder)
+        value = self._get_attr('sharedFolders')
+        return ISharedFolder(value)
 
     @property
     def vrde_server_info(self):
         """Get IVRDEServerInfo value for 'VRDEServerInfo'
         Interface that provides information on Remote Desktop Extension (VRDE) connection.
         """
-        return self.get_attr('VRDEServerInfo', IVRDEServerInfo)
+        value = self._get_attr('VRDEServerInfo')
+        return IVRDEServerInfo(value)
 
     @property
     def event_source(self):
         """Get IEventSource value for 'eventSource'
         Event source for console events.
         """
-        return self.get_attr('eventSource', IEventSource)
+        value = self._get_attr('eventSource')
+        return IEventSource(value)
 
     @property
     def attached_pci_devices(self):
         """Get IPCIDeviceAttachment value for 'attachedPCIDevices'
         Array of PCI devices attached to this machine.
         """
-        return self.get_attr('attachedPCIDevices', IPCIDeviceAttachment)
+        value = self._get_attr('attachedPCIDevices')
+        return IPCIDeviceAttachment(value)
 
     @property
     def use_host_clipboard(self):
@@ -7404,11 +7915,13 @@ class IConsole(Interface):
         setting may not affect existing guest clipboard connections which
         are already connected to the host clipboard.
         """
-        return self.get_attr('useHostClipboard', bool)
+        value = self._get_attr('useHostClipboard')
+        return bool(value)
 
     @use_host_clipboard.setter
     def use_host_clipboard(self, value):
-        return self.set_attr('useHostClipboard', value)
+        assert type(value) is bool
+        return self._set_attr('useHostClipboard', value)
 
     def power_up(self):
         """Starts the virtual machine execution using the current machine
@@ -7459,10 +7972,10 @@ class IConsole(Interface):
             Invalid saved state file.
         
         """
-        progress = self.call_method('powerUp',
-                     rettype=IProgress)
-        return progress
-        
+        progress =\
+            self._call_method('powerUp')
+        return IProgress(progress)
+
     def power_up_paused(self):
         """Identical to powerUp except that the VM will enter the
         <link to="MachineState_Paused"/> state, instead of
@@ -7483,10 +7996,10 @@ class IConsole(Interface):
             Invalid saved state file.
         
         """
-        progress = self.call_method('powerUpPaused',
-                     rettype=IProgress)
-        return progress
-        
+        progress =\
+            self._call_method('powerUpPaused')
+        return IProgress(progress)
+
     def power_down(self):
         """Initiates the power down procedure to stop the virtual machine
         execution.
@@ -7502,10 +8015,10 @@ class IConsole(Interface):
             Virtual machine must be Running, Paused or Stuck to be powered down.
         
         """
-        progress = self.call_method('powerDown',
-                     rettype=IProgress)
-        return progress
-        
+        progress =\
+            self._call_method('powerDown')
+        return IProgress(progress)
+
     def reset(self):
         """Resets the virtual machine.
 
@@ -7516,7 +8029,7 @@ class IConsole(Interface):
             Virtual machine error in reset operation.
         
         """
-        self.call_method('reset')
+        self._call_method('reset')
         
     def pause(self):
         """Pauses the virtual machine execution.
@@ -7528,7 +8041,7 @@ class IConsole(Interface):
             Virtual machine error in suspend operation.
         
         """
-        self.call_method('pause')
+        self._call_method('pause')
         
     def resume(self):
         """Resumes the virtual machine execution.
@@ -7540,7 +8053,7 @@ class IConsole(Interface):
             Virtual machine error in resume operation.
         
         """
-        self.call_method('resume')
+        self._call_method('resume')
         
     def power_button(self):
         """Sends the ACPI power button event to the guest.
@@ -7552,7 +8065,7 @@ class IConsole(Interface):
             Controlled power off failed.
         
         """
-        self.call_method('powerButton')
+        self._call_method('powerButton')
         
     def sleep_button(self):
         """Sends the ACPI sleep button event to the guest.
@@ -7564,7 +8077,7 @@ class IConsole(Interface):
             Sending sleep button event failed.
         
         """
-        self.call_method('sleepButton')
+        self._call_method('sleepButton')
         
     def get_power_button_handled(self):
         """Checks if the last power button event was handled by guest.
@@ -7575,10 +8088,10 @@ class IConsole(Interface):
             Checking if the event was handled by the guest OS failed.
         
         """
-        handled = self.call_method('getPowerButtonHandled',
-                     rettype=bool)
-        return handled
-        
+        handled =\
+            self._call_method('getPowerButtonHandled')
+        return bool(handled)
+
     def get_guest_entered_acpi_mode(self):
         """Checks if the guest entered the ACPI mode G0 (working) or
         G1 (sleeping). If this method returns @c false, the guest will
@@ -7590,10 +8103,10 @@ class IConsole(Interface):
             Virtual machine not in Running state.
         
         """
-        entered = self.call_method('getGuestEnteredACPIMode',
-                     rettype=bool)
-        return entered
-        
+        entered =\
+            self._call_method('getGuestEnteredACPIMode')
+        return bool(entered)
+
     def save_state(self):
         """Saves the current execution state of a running virtual machine
         and stops its execution.
@@ -7637,10 +8150,10 @@ class IConsole(Interface):
             Failed to create directory for saved state file.
         
         """
-        progress = self.call_method('saveState',
-                     rettype=IProgress)
-        return progress
-        
+        progress =\
+            self._call_method('saveState')
+        return IProgress(progress)
+
     def adopt_saved_state(self, saved_state_file):
         """Associates the given saved state file to the virtual machine.
 
@@ -7667,7 +8180,8 @@ class IConsole(Interface):
             Virtual machine state neither PoweredOff nor Aborted.
         
         """
-        self.call_method('adoptSavedState',
+        assert saved_state_file is str
+        self._call_method('adoptSavedState',
                      in_p=[saved_state_file])
         
     def discard_saved_state(self, f_remove_file):
@@ -7694,7 +8208,8 @@ class IConsole(Interface):
             Virtual machine not in state Saved.
         
         """
-        self.call_method('discardSavedState',
+        assert f_remove_file is bool
+        self._call_method('discardSavedState',
                      in_p=[f_remove_file])
         
     def get_device_activity(self, type_p):
@@ -7708,11 +8223,12 @@ class IConsole(Interface):
             Invalid device type.
         
         """
-        activity = self.call_method('getDeviceActivity',
-                     in_p=[type_p],
-                     rettype=DeviceActivity)
-        return activity
-        
+        assert type_p is DeviceType
+        activity =\
+            self._call_method('getDeviceActivity',
+                     in_p=[type_p])
+        return DeviceActivity(activity)
+
     def attach_usb_device(self, id_p):
         """Attaches a host USB device with the given UUID to the
         USB controller of the virtual machine.
@@ -7740,7 +8256,8 @@ class IConsole(Interface):
             Virtual machine does not have a USB controller.
         
         """
-        self.call_method('attachUSBDevice',
+        assert id_p is str
+        self._call_method('attachUSBDevice',
                      in_p=[id_p])
         
     def detach_usb_device(self, id_p):
@@ -7768,11 +8285,12 @@ class IConsole(Interface):
             USB device not attached to this virtual machine.
         
         """
-        device = self.call_method('detachUSBDevice',
-                     in_p=[id_p],
-                     rettype=IUSBDevice)
-        return device
-        
+        assert id_p is str
+        device =\
+            self._call_method('detachUSBDevice',
+                     in_p=[id_p])
+        return IUSBDevice(device)
+
     def find_usb_device_by_address(self, name):
         """Searches for a USB device with the given host address.
 
@@ -7791,11 +8309,12 @@ class IConsole(Interface):
             Given @c name does not correspond to any USB device.
         
         """
-        device = self.call_method('findUSBDeviceByAddress',
-                     in_p=[name],
-                     rettype=IUSBDevice)
-        return device
-        
+        assert name is str
+        device =\
+            self._call_method('findUSBDeviceByAddress',
+                     in_p=[name])
+        return IUSBDevice(device)
+
     def find_usb_device_by_id(self, id_p):
         """Searches for a USB device with the given UUID.
 
@@ -7813,11 +8332,12 @@ class IConsole(Interface):
             Given @c id does not correspond to any USB device.
         
         """
-        device = self.call_method('findUSBDeviceById',
-                     in_p=[id_p],
-                     rettype=IUSBDevice)
-        return device
-        
+        assert id_p is str
+        device =\
+            self._call_method('findUSBDeviceById',
+                     in_p=[id_p])
+        return IUSBDevice(device)
+
     def create_shared_folder(self, name, host_path, writable, automount):
         """Creates a transient new shared folder by associating the given logical
         name with the given host path, adds it to the collection of shared
@@ -7844,7 +8364,11 @@ class IConsole(Interface):
             Shared folder already exists or not accessible.
         
         """
-        self.call_method('createSharedFolder',
+        assert name is str
+        assert host_path is str
+        assert writable is bool
+        assert automount is bool
+        self._call_method('createSharedFolder',
                      in_p=[name, host_path, writable, automount])
         
     def remove_shared_folder(self, name):
@@ -7862,7 +8386,8 @@ class IConsole(Interface):
             Shared folder does not exists.
         
         """
-        self.call_method('removeSharedFolder',
+        assert name is str
+        self._call_method('removeSharedFolder',
                      in_p=[name])
         
     def take_snapshot(self, name, description):
@@ -7898,11 +8423,13 @@ class IConsole(Interface):
             Virtual machine currently changing state.
         
         """
-        progress = self.call_method('takeSnapshot',
-                     in_p=[name, description],
-                     rettype=IProgress)
-        return progress
-        
+        assert name is str
+        assert description is str
+        progress =\
+            self._call_method('takeSnapshot',
+                     in_p=[name, description])
+        return IProgress(progress)
+
     def delete_snapshot(self, id_p):
         """Starts deleting the specified snapshot asynchronously.
         See <link to="ISnapshot"/> for an introduction to snapshots.
@@ -7971,11 +8498,12 @@ class IConsole(Interface):
           text explains the reason for the failure.
         
         """
-        progress = self.call_method('deleteSnapshot',
-                     in_p=[id_p],
-                     rettype=IProgress)
-        return progress
-        
+        assert id_p is str
+        progress =\
+            self._call_method('deleteSnapshot',
+                     in_p=[id_p])
+        return IProgress(progress)
+
     def delete_snapshot_and_all_children(self, id_p):
         """Starts deleting the specified snapshot and all its children
         asynchronously. See <link to="ISnapshot"/> for an introduction to
@@ -8006,11 +8534,12 @@ class IConsole(Interface):
             The method is not implemented yet.
         
         """
-        progress = self.call_method('deleteSnapshotAndAllChildren',
-                     in_p=[id_p],
-                     rettype=IProgress)
-        return progress
-        
+        assert id_p is str
+        progress =\
+            self._call_method('deleteSnapshotAndAllChildren',
+                     in_p=[id_p])
+        return IProgress(progress)
+
     def delete_snapshot_range(self, start_id, end_id):
         """Starts deleting the specified snapshot range. This is limited to
         linear snapshot lists, which means there may not be any other child
@@ -8046,11 +8575,13 @@ class IConsole(Interface):
             The method is not implemented yet.
         
         """
-        progress = self.call_method('deleteSnapshotRange',
-                     in_p=[start_id, end_id],
-                     rettype=IProgress)
-        return progress
-        
+        assert start_id is str
+        assert end_id is str
+        progress =\
+            self._call_method('deleteSnapshotRange',
+                     in_p=[start_id, end_id])
+        return IProgress(progress)
+
     def restore_snapshot(self, snapshot):
         """Starts resetting the machine's current state to the state contained
         in the given snapshot, asynchronously. All current settings of the
@@ -8086,11 +8617,12 @@ class IConsole(Interface):
             Virtual machine is running.
         
         """
-        progress = self.call_method('restoreSnapshot',
-                     in_p=[snapshot],
-                     rettype=IProgress)
-        return progress
-        
+        assert snapshot is ISnapshot
+        progress =\
+            self._call_method('restoreSnapshot',
+                     in_p=[snapshot])
+        return IProgress(progress)
+
     def teleport(self, hostname, tcpport, password, max_downtime):
         """Teleport the VM to a different host machine or process.
 
@@ -8124,11 +8656,15 @@ class IConsole(Interface):
             Virtual machine not running or paused.
         
         """
-        progress = self.call_method('teleport',
-                     in_p=[hostname, tcpport, password, max_downtime],
-                     rettype=IProgress)
-        return progress
-        
+        assert hostname is str
+        assert tcpport is int
+        assert password is str
+        assert max_downtime is int
+        progress =\
+            self._call_method('teleport',
+                     in_p=[hostname, tcpport, password, max_downtime])
+        return IProgress(progress)
+
 
 class IHostNetworkInterface(Interface):
     """
@@ -8145,91 +8681,104 @@ class IHostNetworkInterface(Interface):
         """Get str value for 'name'
         Returns the host network interface name.
         """
-        return self.get_attr('name', str)
+        value = self._get_attr('name')
+        return str(value)
 
     @property
     def id_p(self):
         """Get str value for 'id'
         Returns the interface UUID.
         """
-        return self.get_attr('id', str)
+        value = self._get_attr('id')
+        return str(value)
 
     @property
     def network_name(self):
         """Get str value for 'networkName'
         Returns the name of a virtual network the interface gets attached to.
         """
-        return self.get_attr('networkName', str)
+        value = self._get_attr('networkName')
+        return str(value)
 
     @property
     def dhcp_enabled(self):
         """Get bool value for 'DHCPEnabled'
         Specifies whether the DHCP is enabled for the interface.
         """
-        return self.get_attr('DHCPEnabled', bool)
+        value = self._get_attr('DHCPEnabled')
+        return bool(value)
 
     @property
     def ip_address(self):
         """Get str value for 'IPAddress'
         Returns the IP V4 address of the interface.
         """
-        return self.get_attr('IPAddress', str)
+        value = self._get_attr('IPAddress')
+        return str(value)
 
     @property
     def network_mask(self):
         """Get str value for 'networkMask'
         Returns the network mask of the interface.
         """
-        return self.get_attr('networkMask', str)
+        value = self._get_attr('networkMask')
+        return str(value)
 
     @property
     def ipv6_supported(self):
         """Get bool value for 'IPV6Supported'
         Specifies whether the IP V6 is supported/enabled for the interface.
         """
-        return self.get_attr('IPV6Supported', bool)
+        value = self._get_attr('IPV6Supported')
+        return bool(value)
 
     @property
     def ipv6_address(self):
         """Get str value for 'IPV6Address'
         Returns the IP V6 address of the interface.
         """
-        return self.get_attr('IPV6Address', str)
+        value = self._get_attr('IPV6Address')
+        return str(value)
 
     @property
     def ipv6_network_mask_prefix_length(self):
         """Get int value for 'IPV6NetworkMaskPrefixLength'
         Returns the length IP V6 network mask prefix of the interface.
         """
-        return self.get_attr('IPV6NetworkMaskPrefixLength', int)
+        value = self._get_attr('IPV6NetworkMaskPrefixLength')
+        return int(value)
 
     @property
     def hardware_address(self):
         """Get str value for 'hardwareAddress'
         Returns the hardware address. For Ethernet it is MAC address.
         """
-        return self.get_attr('hardwareAddress', str)
+        value = self._get_attr('hardwareAddress')
+        return str(value)
 
     @property
     def medium_type(self):
         """Get HostNetworkInterfaceMediumType value for 'mediumType'
         Type of protocol encapsulation used.
         """
-        return self.get_attr('mediumType', HostNetworkInterfaceMediumType)
+        value = self._get_attr('mediumType')
+        return HostNetworkInterfaceMediumType(value)
 
     @property
     def status(self):
         """Get HostNetworkInterfaceStatus value for 'status'
         Status of the interface.
         """
-        return self.get_attr('status', HostNetworkInterfaceStatus)
+        value = self._get_attr('status')
+        return HostNetworkInterfaceStatus(value)
 
     @property
     def interface_type(self):
         """Get HostNetworkInterfaceType value for 'interfaceType'
         specifies the host interface type.
         """
-        return self.get_attr('interfaceType', HostNetworkInterfaceType)
+        value = self._get_attr('interfaceType')
+        return HostNetworkInterfaceType(value)
 
     def enable_static_ip_config(self, ip_address, network_mask):
         """sets and enables the static IP V4 configuration for the given interface.
@@ -8241,7 +8790,9 @@ class IHostNetworkInterface(Interface):
             network mask.
 
         """
-        self.call_method('enableStaticIPConfig',
+        assert ip_address is str
+        assert network_mask is str
+        self._call_method('enableStaticIPConfig',
                      in_p=[ip_address, network_mask])
         
     def enable_static_ip_config_v6(self, ipv6_address, ipv6_network_mask_prefix_length):
@@ -8254,20 +8805,22 @@ class IHostNetworkInterface(Interface):
             network mask.
 
         """
-        self.call_method('enableStaticIPConfigV6',
+        assert ipv6_address is str
+        assert ipv6_network_mask_prefix_length is int
+        self._call_method('enableStaticIPConfigV6',
                      in_p=[ipv6_address, ipv6_network_mask_prefix_length])
         
     def enable_dynamic_ip_config(self):
         """enables the dynamic IP configuration.
 
         """
-        self.call_method('enableDynamicIPConfig')
+        self._call_method('enableDynamicIPConfig')
         
     def dhcp_rediscover(self):
         """refreshes the IP configuration for DHCP-enabled interface.
 
         """
-        self.call_method('DHCPRediscover')
+        self._call_method('DHCPRediscover')
         
 
 class IHost(Interface):
@@ -8290,14 +8843,16 @@ class IHost(Interface):
         """Get IMedium value for 'DVDDrives'
         List of DVD drives available on the host.
         """
-        return self.get_attr('DVDDrives', IMedium)
+        value = self._get_attr('DVDDrives')
+        return IMedium(value)
 
     @property
     def floppy_drives(self):
         """Get IMedium value for 'floppyDrives'
         List of floppy drives available on the host.
         """
-        return self.get_attr('floppyDrives', IMedium)
+        value = self._get_attr('floppyDrives')
+        return IMedium(value)
 
     @property
     def usb_devices(self):
@@ -8310,7 +8865,8 @@ class IHost(Interface):
           If USB functionality is not available in the given edition of
           VirtualBox, this method will set the result code to @c E_NOTIMPL.
         """
-        return self.get_attr('USBDevices', IHostUSBDevice)
+        value = self._get_attr('USBDevices')
+        return IHostUSBDevice(value)
 
     @property
     def usb_device_filters(self):
@@ -8334,35 +8890,40 @@ class IHost(Interface):
         <link to="IHostUSBDeviceFilter"/>,
           <link to="USBDeviceState"/>
         """
-        return self.get_attr('USBDeviceFilters', IHostUSBDeviceFilter)
+        value = self._get_attr('USBDeviceFilters')
+        return IHostUSBDeviceFilter(value)
 
     @property
     def network_interfaces(self):
         """Get IHostNetworkInterface value for 'networkInterfaces'
         List of host network interfaces currently defined on the host.
         """
-        return self.get_attr('networkInterfaces', IHostNetworkInterface)
+        value = self._get_attr('networkInterfaces')
+        return IHostNetworkInterface(value)
 
     @property
     def processor_count(self):
         """Get int value for 'processorCount'
         Number of (logical) CPUs installed in the host system.
         """
-        return self.get_attr('processorCount', int)
+        value = self._get_attr('processorCount')
+        return int(value)
 
     @property
     def processor_online_count(self):
         """Get int value for 'processorOnlineCount'
         Number of (logical) CPUs online in the host system.
         """
-        return self.get_attr('processorOnlineCount', int)
+        value = self._get_attr('processorOnlineCount')
+        return int(value)
 
     @property
     def processor_core_count(self):
         """Get int value for 'processorCoreCount'
         Number of physical processor cores installed in the host system.
         """
-        return self.get_attr('processorCoreCount', int)
+        value = self._get_attr('processorCoreCount')
+        return int(value)
 
     def get_processor_speed(self, cpu_id):
         """Query the (approximate) maximum speed of a specified host CPU in
@@ -8376,11 +8937,12 @@ class IHost(Interface):
           invalid.
 
         """
-        speed = self.call_method('getProcessorSpeed',
-                     in_p=[cpu_id],
-                     rettype=int)
-        return speed
-        
+        assert cpu_id is int
+        speed =\
+            self._call_method('getProcessorSpeed',
+                     in_p=[cpu_id])
+        return int(speed)
+
     def get_processor_feature(self, feature):
         """Query whether a CPU feature is supported or not.
 
@@ -8391,11 +8953,12 @@ class IHost(Interface):
             Feature is supported or not.
 
         """
-        supported = self.call_method('getProcessorFeature',
-                     in_p=[feature],
-                     rettype=bool)
-        return supported
-        
+        assert feature is ProcessorFeature
+        supported =\
+            self._call_method('getProcessorFeature',
+                     in_p=[feature])
+        return bool(supported)
+
     def get_processor_description(self, cpu_id):
         """Query the model string of a specified host CPU.
 
@@ -8410,12 +8973,13 @@ class IHost(Interface):
           @a cpuId is invalid.
 
         """
-        description = self.call_method('getProcessorDescription',
-                     in_p=[cpu_id],
-                     rettype=str)
-        return description
-        
-    def get_processor_cpuid_leaf(self, cpu_id, leaf, sub_leaf, out_p={}):
+        assert cpu_id is int
+        description =\
+            self._call_method('getProcessorDescription',
+                     in_p=[cpu_id])
+        return str(description)
+
+    def get_processor_cpuid_leaf(self, cpu_id, leaf, sub_leaf):
         """Returns the CPU cpuid information for the specified leaf.
 
         in cpu_id of type int
@@ -8445,53 +9009,63 @@ class IHost(Interface):
             CPUID leaf value for register edx.
 
         """
-        self.call_method('getProcessorCPUIDLeaf',
-                     in_p=[cpu_id, leaf, sub_leaf],
-                     out_p=out_p)
-        
+        assert cpu_id is int
+        assert leaf is int
+        assert sub_leaf is int
+        (val_eax, val_ebx, val_ecx, val_edx) =\
+            self._call_method('getProcessorCPUIDLeaf',
+                     in_p=[cpu_id, leaf, sub_leaf])
+        return (int(val_eax), int(val_ebx), int(val_ecx), int(val_edx))
+
     @property
     def memory_size(self):
         """Get int value for 'memorySize'
         Amount of system memory in megabytes installed in the host system.
         """
-        return self.get_attr('memorySize', int)
+        value = self._get_attr('memorySize')
+        return int(value)
 
     @property
     def memory_available(self):
         """Get int value for 'memoryAvailable'
         Available system memory in the host system.
         """
-        return self.get_attr('memoryAvailable', int)
+        value = self._get_attr('memoryAvailable')
+        return int(value)
 
     @property
     def operating_system(self):
         """Get str value for 'operatingSystem'
         Name of the host system's operating system.
         """
-        return self.get_attr('operatingSystem', str)
+        value = self._get_attr('operatingSystem')
+        return str(value)
 
     @property
     def os_version(self):
         """Get str value for 'OSVersion'
         Host operating system's version string.
         """
-        return self.get_attr('OSVersion', str)
+        value = self._get_attr('OSVersion')
+        return str(value)
 
     @property
     def utc_time(self):
         """Get int value for 'UTCTime'
         Returns the current host time in milliseconds since 1970-01-01 UTC.
         """
-        return self.get_attr('UTCTime', int)
+        value = self._get_attr('UTCTime')
+        return int(value)
 
     @property
     def acceleration3_d_available(self):
         """Get bool value for 'acceleration3DAvailable'
         Returns @c true when the host supports 3D hardware acceleration.
         """
-        return self.get_attr('acceleration3DAvailable', bool)
+        value = self._get_attr('acceleration3DAvailable')
+        return bool(value)
 
-    def create_host_only_network_interface(self, out_p={}):
+    def create_host_only_network_interface(self):
         """Creates a new adapter for Host Only Networking.
 
         out host_interface of type IHostNetworkInterface
@@ -8504,11 +9078,10 @@ class IHost(Interface):
             Host network interface @a name already exists.
         
         """
-        progress = self.call_method('createHostOnlyNetworkInterface',
-                     out_p=out_p,
-                     rettype=IProgress)
-        return progress
-        
+        (host_interface, progress) =\
+            self._call_method('createHostOnlyNetworkInterface')
+        return (IHostNetworkInterface(host_interface), IProgress(progress))
+
     def remove_host_only_network_interface(self, id_p):
         """Removes the given Host Only Networking interface.
 
@@ -8522,11 +9095,12 @@ class IHost(Interface):
             No host network interface matching @a id found.
         
         """
-        progress = self.call_method('removeHostOnlyNetworkInterface',
-                     in_p=[id_p],
-                     rettype=IProgress)
-        return progress
-        
+        assert id_p is str
+        progress =\
+            self._call_method('removeHostOnlyNetworkInterface',
+                     in_p=[id_p])
+        return IProgress(progress)
+
     def create_usb_device_filter(self, name):
         """Creates a new USB device filter. All attributes except
         the filter name are set to empty (any match),
@@ -8544,11 +9118,12 @@ class IHost(Interface):
             Created filter object.
 
         """
-        filter_p = self.call_method('createUSBDeviceFilter',
-                     in_p=[name],
-                     rettype=IHostUSBDeviceFilter)
-        return filter_p
-        
+        assert name is str
+        filter_p =\
+            self._call_method('createUSBDeviceFilter',
+                     in_p=[name])
+        return IHostUSBDeviceFilter(filter_p)
+
     def insert_usb_device_filter(self, position, filter_p):
         """Inserts the given USB device to the specified position
         in the list of filters.
@@ -8581,7 +9156,9 @@ class IHost(Interface):
             USB device filter already in list.
         
         """
-        self.call_method('insertUSBDeviceFilter',
+        assert position is int
+        assert filter_p is IHostUSBDeviceFilter
+        self._call_method('insertUSBDeviceFilter',
                      in_p=[position, filter_p])
         
     def remove_usb_device_filter(self, position):
@@ -8606,7 +9183,8 @@ class IHost(Interface):
             USB device filter list empty or invalid @a position.
         
         """
-        self.call_method('removeUSBDeviceFilter',
+        assert position is int
+        self._call_method('removeUSBDeviceFilter',
                      in_p=[position])
         
     def find_host_dvd_drive(self, name):
@@ -8622,11 +9200,12 @@ class IHost(Interface):
             Given @c name does not correspond to any host drive.
         
         """
-        drive = self.call_method('findHostDVDDrive',
-                     in_p=[name],
-                     rettype=IMedium)
-        return drive
-        
+        assert name is str
+        drive =\
+            self._call_method('findHostDVDDrive',
+                     in_p=[name])
+        return IMedium(drive)
+
     def find_host_floppy_drive(self, name):
         """Searches for a host floppy drive with the given @c name.
 
@@ -8640,11 +9219,12 @@ class IHost(Interface):
             Given @c name does not correspond to any host floppy drive.
         
         """
-        drive = self.call_method('findHostFloppyDrive',
-                     in_p=[name],
-                     rettype=IMedium)
-        return drive
-        
+        assert name is str
+        drive =\
+            self._call_method('findHostFloppyDrive',
+                     in_p=[name])
+        return IMedium(drive)
+
     def find_host_network_interface_by_name(self, name):
         """Searches through all host network interfaces for an interface with
         the given @c name.
@@ -8659,11 +9239,12 @@ class IHost(Interface):
             Found host network interface object.
 
         """
-        network_interface = self.call_method('findHostNetworkInterfaceByName',
-                     in_p=[name],
-                     rettype=IHostNetworkInterface)
-        return network_interface
-        
+        assert name is str
+        network_interface =\
+            self._call_method('findHostNetworkInterfaceByName',
+                     in_p=[name])
+        return IHostNetworkInterface(network_interface)
+
     def find_host_network_interface_by_id(self, id_p):
         """Searches through all host network interfaces for an interface with
         the given GUID.
@@ -8678,11 +9259,12 @@ class IHost(Interface):
             Found host network interface object.
 
         """
-        network_interface = self.call_method('findHostNetworkInterfaceById',
-                     in_p=[id_p],
-                     rettype=IHostNetworkInterface)
-        return network_interface
-        
+        assert id_p is str
+        network_interface =\
+            self._call_method('findHostNetworkInterfaceById',
+                     in_p=[id_p])
+        return IHostNetworkInterface(network_interface)
+
     def find_host_network_interfaces_of_type(self, type_p):
         """Searches through all host network interfaces and returns a list of interfaces of the specified type
 
@@ -8693,11 +9275,12 @@ class IHost(Interface):
             Found host network interface objects.
 
         """
-        network_interfaces = self.call_method('findHostNetworkInterfacesOfType',
-                     in_p=[type_p],
-                     rettype=IHostNetworkInterface)
-        return network_interfaces
-        
+        assert type_p is HostNetworkInterfaceType
+        network_interfaces =\
+            self._call_method('findHostNetworkInterfacesOfType',
+                     in_p=[type_p])
+        return IHostNetworkInterface(network_interfaces)
+
     def find_usb_device_by_id(self, id_p):
         """Searches for a USB device with the given UUID.
 
@@ -8715,11 +9298,12 @@ class IHost(Interface):
             Given @c id does not correspond to any USB device.
         
         """
-        device = self.call_method('findUSBDeviceById',
-                     in_p=[id_p],
-                     rettype=IHostUSBDevice)
-        return device
-        
+        assert id_p is str
+        device =\
+            self._call_method('findUSBDeviceById',
+                     in_p=[id_p])
+        return IHostUSBDevice(device)
+
     def find_usb_device_by_address(self, name):
         """Searches for a USB device with the given host address.
 
@@ -8738,11 +9322,12 @@ class IHost(Interface):
             Given @c name does not correspond to any USB device.
         
         """
-        device = self.call_method('findUSBDeviceByAddress',
-                     in_p=[name],
-                     rettype=IHostUSBDevice)
-        return device
-        
+        assert name is str
+        device =\
+            self._call_method('findUSBDeviceByAddress',
+                     in_p=[name])
+        return IHostUSBDevice(device)
+
     def generate_mac_address(self):
         """Generates a valid Ethernet MAC address, 12 hexadecimal characters.
 
@@ -8750,10 +9335,10 @@ class IHost(Interface):
             New Ethernet MAC address.
 
         """
-        address = self.call_method('generateMACAddress',
-                     rettype=str)
-        return address
-        
+        address =\
+            self._call_method('generateMACAddress')
+        return str(address)
+
 
 class ISystemProperties(Interface):
     """
@@ -8772,49 +9357,56 @@ class ISystemProperties(Interface):
         """Get int value for 'minGuestRAM'
         Minimum guest system memory in Megabytes.
         """
-        return self.get_attr('minGuestRAM', int)
+        value = self._get_attr('minGuestRAM')
+        return int(value)
 
     @property
     def max_guest_ram(self):
         """Get int value for 'maxGuestRAM'
         Maximum guest system memory in Megabytes.
         """
-        return self.get_attr('maxGuestRAM', int)
+        value = self._get_attr('maxGuestRAM')
+        return int(value)
 
     @property
     def min_guest_vram(self):
         """Get int value for 'minGuestVRAM'
         Minimum guest video memory in Megabytes.
         """
-        return self.get_attr('minGuestVRAM', int)
+        value = self._get_attr('minGuestVRAM')
+        return int(value)
 
     @property
     def max_guest_vram(self):
         """Get int value for 'maxGuestVRAM'
         Maximum guest video memory in Megabytes.
         """
-        return self.get_attr('maxGuestVRAM', int)
+        value = self._get_attr('maxGuestVRAM')
+        return int(value)
 
     @property
     def min_guest_cpu_count(self):
         """Get int value for 'minGuestCPUCount'
         Minimum CPU count.
         """
-        return self.get_attr('minGuestCPUCount', int)
+        value = self._get_attr('minGuestCPUCount')
+        return int(value)
 
     @property
     def max_guest_cpu_count(self):
         """Get int value for 'maxGuestCPUCount'
         Maximum CPU count.
         """
-        return self.get_attr('maxGuestCPUCount', int)
+        value = self._get_attr('maxGuestCPUCount')
+        return int(value)
 
     @property
     def max_guest_monitors(self):
         """Get int value for 'maxGuestMonitors'
         Maximum of monitors which could be connected.
         """
-        return self.get_attr('maxGuestMonitors', int)
+        value = self._get_attr('maxGuestMonitors')
+        return int(value)
 
     @property
     def info_vd_size(self):
@@ -8822,7 +9414,8 @@ class ISystemProperties(Interface):
         Maximum size of a virtual disk image in bytes. Informational value,
       does not reflect the limits of any virtual disk image format.
         """
-        return self.get_attr('infoVDSize', int)
+        value = self._get_attr('infoVDSize')
+        return int(value)
 
     @property
     def serial_port_count(self):
@@ -8830,7 +9423,8 @@ class ISystemProperties(Interface):
         Maximum number of serial ports associated with every
         <link to="IMachine"/> instance.
         """
-        return self.get_attr('serialPortCount', int)
+        value = self._get_attr('serialPortCount')
+        return int(value)
 
     @property
     def parallel_port_count(self):
@@ -8838,7 +9432,8 @@ class ISystemProperties(Interface):
         Maximum number of parallel ports associated with every
         <link to="IMachine"/> instance.
         """
-        return self.get_attr('parallelPortCount', int)
+        value = self._get_attr('parallelPortCount')
+        return int(value)
 
     @property
     def max_boot_position(self):
@@ -8848,7 +9443,8 @@ class ISystemProperties(Interface):
         possible to include all possible devices to the boot list.
         <link to="IMachine::setBootOrder"/>
         """
-        return self.get_attr('maxBootPosition', int)
+        value = self._get_attr('maxBootPosition')
+        return int(value)
 
     @property
     def default_machine_folder(self):
@@ -8873,11 +9469,13 @@ class ISystemProperties(Interface):
           <link to="IVirtualBox::createMachine"/>,
           <link to="IVirtualBox::openMachine"/>
         """
-        return self.get_attr('defaultMachineFolder', str)
+        value = self._get_attr('defaultMachineFolder')
+        return str(value)
 
     @default_machine_folder.setter
     def default_machine_folder(self, value):
-        return self.set_attr('defaultMachineFolder', value)
+        assert type(value) is str
+        return self._set_attr('defaultMachineFolder', value)
 
     @property
     def medium_formats(self):
@@ -8902,7 +9500,8 @@ class ISystemProperties(Interface):
 
         <link to="IMediumFormat"/>
         """
-        return self.get_attr('mediumFormats', IMediumFormat)
+        value = self._get_attr('mediumFormats')
+        return IMediumFormat(value)
 
     @property
     def default_hard_disk_format(self):
@@ -8937,11 +9536,13 @@ class ISystemProperties(Interface):
           <link to="IMediumFormat::id"/>,
           <link to="IVirtualBox::createHardDisk"/>
         """
-        return self.get_attr('defaultHardDiskFormat', str)
+        value = self._get_attr('defaultHardDiskFormat')
+        return str(value)
 
     @default_hard_disk_format.setter
     def default_hard_disk_format(self, value):
-        return self.set_attr('defaultHardDiskFormat', value)
+        assert type(value) is str
+        return self._set_attr('defaultHardDiskFormat', value)
 
     @property
     def free_disk_space_warning(self):
@@ -8950,11 +9551,13 @@ class ISystemProperties(Interface):
       intensive operation is expected to go below) the given size in
       bytes.
         """
-        return self.get_attr('freeDiskSpaceWarning', int)
+        value = self._get_attr('freeDiskSpaceWarning')
+        return int(value)
 
     @free_disk_space_warning.setter
     def free_disk_space_warning(self, value):
-        return self.set_attr('freeDiskSpaceWarning', value)
+        assert type(value) is int
+        return self._set_attr('freeDiskSpaceWarning', value)
 
     @property
     def free_disk_space_percent_warning(self):
@@ -8962,11 +9565,13 @@ class ISystemProperties(Interface):
         Issue a warning if the free disk space is below (or in some disk
       intensive operation is expected to go below) the given percentage.
         """
-        return self.get_attr('freeDiskSpacePercentWarning', int)
+        value = self._get_attr('freeDiskSpacePercentWarning')
+        return int(value)
 
     @free_disk_space_percent_warning.setter
     def free_disk_space_percent_warning(self, value):
-        return self.set_attr('freeDiskSpacePercentWarning', value)
+        assert type(value) is int
+        return self._set_attr('freeDiskSpacePercentWarning', value)
 
     @property
     def free_disk_space_error(self):
@@ -8975,11 +9580,13 @@ class ISystemProperties(Interface):
       intensive operation is expected to go below) the given size in
       bytes.
         """
-        return self.get_attr('freeDiskSpaceError', int)
+        value = self._get_attr('freeDiskSpaceError')
+        return int(value)
 
     @free_disk_space_error.setter
     def free_disk_space_error(self, value):
-        return self.set_attr('freeDiskSpaceError', value)
+        assert type(value) is int
+        return self._set_attr('freeDiskSpaceError', value)
 
     @property
     def free_disk_space_percent_error(self):
@@ -8987,11 +9594,13 @@ class ISystemProperties(Interface):
         Issue an error if the free disk space is below (or in some disk
       intensive operation is expected to go below) the given percentage.
         """
-        return self.get_attr('freeDiskSpacePercentError', int)
+        value = self._get_attr('freeDiskSpacePercentError')
+        return int(value)
 
     @free_disk_space_percent_error.setter
     def free_disk_space_percent_error(self, value):
-        return self.set_attr('freeDiskSpacePercentError', value)
+        assert type(value) is int
+        return self._set_attr('freeDiskSpacePercentError', value)
 
     @property
     def vrde_auth_library(self):
@@ -9014,11 +9623,13 @@ class ISystemProperties(Interface):
           Setting this property to @c null or empty string will restore the
           initial value.
         """
-        return self.get_attr('VRDEAuthLibrary', str)
+        value = self._get_attr('VRDEAuthLibrary')
+        return str(value)
 
     @vrde_auth_library.setter
     def vrde_auth_library(self, value):
-        return self.set_attr('VRDEAuthLibrary', value)
+        assert type(value) is str
+        return self._set_attr('VRDEAuthLibrary', value)
 
     @property
     def web_service_auth_library(self):
@@ -9046,11 +9657,13 @@ class ISystemProperties(Interface):
           Setting this property to @c null or empty string will restore the
           initial value.
         """
-        return self.get_attr('webServiceAuthLibrary', str)
+        value = self._get_attr('webServiceAuthLibrary')
+        return str(value)
 
     @web_service_auth_library.setter
     def web_service_auth_library(self, value):
-        return self.set_attr('webServiceAuthLibrary', value)
+        assert type(value) is str
+        return self._set_attr('webServiceAuthLibrary', value)
 
     @property
     def default_vrde_ext_pack(self):
@@ -9065,22 +9678,26 @@ class ISystemProperties(Interface):
         For details about VirtualBox Remote Desktop Extension and how to
         implement one, please refer to the VirtualBox SDK.
         """
-        return self.get_attr('defaultVRDEExtPack', str)
+        value = self._get_attr('defaultVRDEExtPack')
+        return str(value)
 
     @default_vrde_ext_pack.setter
     def default_vrde_ext_pack(self, value):
-        return self.set_attr('defaultVRDEExtPack', value)
+        assert type(value) is str
+        return self._set_attr('defaultVRDEExtPack', value)
 
     @property
     def log_history_count(self):
         """Get or set int value for 'logHistoryCount'
         This value specifies how many old release log files are kept.
         """
-        return self.get_attr('logHistoryCount', int)
+        value = self._get_attr('logHistoryCount')
+        return int(value)
 
     @log_history_count.setter
     def log_history_count(self, value):
-        return self.set_attr('logHistoryCount', value)
+        assert type(value) is int
+        return self._set_attr('logHistoryCount', value)
 
     @property
     def default_audio_driver(self):
@@ -9088,7 +9705,8 @@ class ISystemProperties(Interface):
         This value hold the default audio driver for the current
       system.
         """
-        return self.get_attr('defaultAudioDriver', AudioDriverType)
+        value = self._get_attr('defaultAudioDriver')
+        return AudioDriverType(value)
 
     @property
     def autostart_database_path(self):
@@ -9096,11 +9714,13 @@ class ISystemProperties(Interface):
         The path to the autostart database. Depending on the host this might
         be a filesystem path or something else.
         """
-        return self.get_attr('autostartDatabasePath', str)
+        value = self._get_attr('autostartDatabasePath')
+        return str(value)
 
     @autostart_database_path.setter
     def autostart_database_path(self, value):
-        return self.set_attr('autostartDatabasePath', value)
+        assert type(value) is str
+        return self._set_attr('autostartDatabasePath', value)
 
     @property
     def default_additions_iso(self):
@@ -9108,11 +9728,13 @@ class ISystemProperties(Interface):
         The path to the default Guest Additions ISO image. Can be empty if
         the location is not known in this installation.
         """
-        return self.get_attr('defaultAdditionsISO', str)
+        value = self._get_attr('defaultAdditionsISO')
+        return str(value)
 
     @default_additions_iso.setter
     def default_additions_iso(self, value):
-        return self.set_attr('defaultAdditionsISO', value)
+        assert type(value) is str
+        return self._set_attr('defaultAdditionsISO', value)
 
     @property
     def default_frontend(self):
@@ -9128,11 +9750,13 @@ class ISystemProperties(Interface):
         <link to="IMachine::defaultFrontend"/> or a frontend type
         passed to <link to="IMachine::launchVMProcess"/>.
         """
-        return self.get_attr('defaultFrontend', str)
+        value = self._get_attr('defaultFrontend')
+        return str(value)
 
     @default_frontend.setter
     def default_frontend(self, value):
-        return self.set_attr('defaultFrontend', value)
+        assert type(value) is str
+        return self._set_attr('defaultFrontend', value)
 
     def get_max_network_adapters(self, chipset):
         """Maximum total number of network adapters associated with every
@@ -9145,11 +9769,12 @@ class ISystemProperties(Interface):
             The maximum total number of network adapters allowed.
 
         """
-        max_network_adapters = self.call_method('getMaxNetworkAdapters',
-                     in_p=[chipset],
-                     rettype=int)
-        return max_network_adapters
-        
+        assert chipset is ChipsetType
+        max_network_adapters =\
+            self._call_method('getMaxNetworkAdapters',
+                     in_p=[chipset])
+        return int(max_network_adapters)
+
     def get_max_network_adapters_of_type(self, chipset, type_p):
         """Maximum number of network adapters of a given attachment type,
         associated with every <link to="IMachine"/> instance.
@@ -9165,11 +9790,13 @@ class ISystemProperties(Interface):
           particular chipset and attachment type.
 
         """
-        max_network_adapters = self.call_method('getMaxNetworkAdaptersOfType',
-                     in_p=[chipset, type_p],
-                     rettype=int)
-        return max_network_adapters
-        
+        assert chipset is ChipsetType
+        assert type_p is NetworkAttachmentType
+        max_network_adapters =\
+            self._call_method('getMaxNetworkAdaptersOfType',
+                     in_p=[chipset, type_p])
+        return int(max_network_adapters)
+
     def get_max_devices_per_port_for_storage_bus(self, bus):
         """Returns the maximum number of devices which can be attached to a port
       for the given storage bus.
@@ -9182,11 +9809,12 @@ class ISystemProperties(Interface):
         storage bus.
 
         """
-        max_devices_per_port = self.call_method('getMaxDevicesPerPortForStorageBus',
-                     in_p=[bus],
-                     rettype=int)
-        return max_devices_per_port
-        
+        assert bus is StorageBus
+        max_devices_per_port =\
+            self._call_method('getMaxDevicesPerPortForStorageBus',
+                     in_p=[bus])
+        return int(max_devices_per_port)
+
     def get_min_port_count_for_storage_bus(self, bus):
         """Returns the minimum number of ports the given storage bus supports.
 
@@ -9197,11 +9825,12 @@ class ISystemProperties(Interface):
             The minimum number of ports for the given storage bus.
 
         """
-        min_port_count = self.call_method('getMinPortCountForStorageBus',
-                     in_p=[bus],
-                     rettype=int)
-        return min_port_count
-        
+        assert bus is StorageBus
+        min_port_count =\
+            self._call_method('getMinPortCountForStorageBus',
+                     in_p=[bus])
+        return int(min_port_count)
+
     def get_max_port_count_for_storage_bus(self, bus):
         """Returns the maximum number of ports the given storage bus supports.
 
@@ -9212,11 +9841,12 @@ class ISystemProperties(Interface):
             The maximum number of ports for the given storage bus.
 
         """
-        max_port_count = self.call_method('getMaxPortCountForStorageBus',
-                     in_p=[bus],
-                     rettype=int)
-        return max_port_count
-        
+        assert bus is StorageBus
+        max_port_count =\
+            self._call_method('getMaxPortCountForStorageBus',
+                     in_p=[bus])
+        return int(max_port_count)
+
     def get_max_instances_of_storage_bus(self, chipset, bus):
         """Returns the maximum number of storage bus instances which
         can be configured for each VM. This corresponds to the number of
@@ -9233,11 +9863,13 @@ class ISystemProperties(Interface):
             The maximum number of instances for the given storage bus.
 
         """
-        max_instances = self.call_method('getMaxInstancesOfStorageBus',
-                     in_p=[chipset, bus],
-                     rettype=int)
-        return max_instances
-        
+        assert chipset is ChipsetType
+        assert bus is StorageBus
+        max_instances =\
+            self._call_method('getMaxInstancesOfStorageBus',
+                     in_p=[chipset, bus])
+        return int(max_instances)
+
     def get_device_types_for_storage_bus(self, bus):
         """Returns list of all the supported device types
         (<link to="DeviceType"/>) for the given type of storage
@@ -9250,11 +9882,12 @@ class ISystemProperties(Interface):
             The list of all supported device types for the given storage bus.
 
         """
-        device_types = self.call_method('getDeviceTypesForStorageBus',
-                     in_p=[bus],
-                     rettype=DeviceType)
-        return device_types
-        
+        assert bus is StorageBus
+        device_types =\
+            self._call_method('getDeviceTypesForStorageBus',
+                     in_p=[bus])
+        return DeviceType(device_types)
+
     def get_default_io_cache_setting_for_storage_controller(self, controller_type):
         """Returns the default I/O cache setting for the
         given storage controller
@@ -9266,11 +9899,12 @@ class ISystemProperties(Interface):
             Returned flag indicating the default value
 
         """
-        enabled = self.call_method('getDefaultIoCacheSettingForStorageController',
-                     in_p=[controller_type],
-                     rettype=bool)
-        return enabled
-        
+        assert controller_type is StorageControllerType
+        enabled =\
+            self._call_method('getDefaultIoCacheSettingForStorageController',
+                     in_p=[controller_type])
+        return bool(enabled)
+
 
 class IGuestOSType(Interface):
     """"""
@@ -9282,189 +9916,216 @@ class IGuestOSType(Interface):
         """Get str value for 'familyId'
         Guest OS family identifier string.
         """
-        return self.get_attr('familyId', str)
+        value = self._get_attr('familyId')
+        return str(value)
 
     @property
     def family_description(self):
         """Get str value for 'familyDescription'
         Human readable description of the guest OS family.
         """
-        return self.get_attr('familyDescription', str)
+        value = self._get_attr('familyDescription')
+        return str(value)
 
     @property
     def id_p(self):
         """Get str value for 'id'
         Guest OS identifier string.
         """
-        return self.get_attr('id', str)
+        value = self._get_attr('id')
+        return str(value)
 
     @property
     def description(self):
         """Get str value for 'description'
         Human readable description of the guest OS.
         """
-        return self.get_attr('description', str)
+        value = self._get_attr('description')
+        return str(value)
 
     @property
     def is64_bit(self):
         """Get bool value for 'is64Bit'
         Returns @c true if the given OS is 64-bit
         """
-        return self.get_attr('is64Bit', bool)
+        value = self._get_attr('is64Bit')
+        return bool(value)
 
     @property
     def recommended_ioapic(self):
         """Get bool value for 'recommendedIOAPIC'
         Returns @c true if IO APIC recommended for this OS type.
         """
-        return self.get_attr('recommendedIOAPIC', bool)
+        value = self._get_attr('recommendedIOAPIC')
+        return bool(value)
 
     @property
     def recommended_virt_ex(self):
         """Get bool value for 'recommendedVirtEx'
         Returns @c true if VT-x or AMD-V recommended for this OS type.
         """
-        return self.get_attr('recommendedVirtEx', bool)
+        value = self._get_attr('recommendedVirtEx')
+        return bool(value)
 
     @property
     def recommended_ram(self):
         """Get int value for 'recommendedRAM'
         Recommended RAM size in Megabytes.
         """
-        return self.get_attr('recommendedRAM', int)
+        value = self._get_attr('recommendedRAM')
+        return int(value)
 
     @property
     def recommended_vram(self):
         """Get int value for 'recommendedVRAM'
         Recommended video RAM size in Megabytes.
         """
-        return self.get_attr('recommendedVRAM', int)
+        value = self._get_attr('recommendedVRAM')
+        return int(value)
 
     @property
     def recommended2_d_video_acceleration(self):
         """Get bool value for 'recommended2DVideoAcceleration'
         Returns @c true if 2D video acceleration is recommended for this OS type.
         """
-        return self.get_attr('recommended2DVideoAcceleration', bool)
+        value = self._get_attr('recommended2DVideoAcceleration')
+        return bool(value)
 
     @property
     def recommended3_d_acceleration(self):
         """Get bool value for 'recommended3DAcceleration'
         Returns @c true if 3D acceleration is recommended for this OS type.
         """
-        return self.get_attr('recommended3DAcceleration', bool)
+        value = self._get_attr('recommended3DAcceleration')
+        return bool(value)
 
     @property
     def recommended_hdd(self):
         """Get int value for 'recommendedHDD'
         Recommended hard disk size in bytes.
         """
-        return self.get_attr('recommendedHDD', int)
+        value = self._get_attr('recommendedHDD')
+        return int(value)
 
     @property
     def adapter_type(self):
         """Get NetworkAdapterType value for 'adapterType'
         Returns recommended network adapter for this OS type.
         """
-        return self.get_attr('adapterType', NetworkAdapterType)
+        value = self._get_attr('adapterType')
+        return NetworkAdapterType(value)
 
     @property
     def recommended_pae(self):
         """Get bool value for 'recommendedPAE'
         Returns @c true if using PAE is recommended for this OS type.
         """
-        return self.get_attr('recommendedPAE', bool)
+        value = self._get_attr('recommendedPAE')
+        return bool(value)
 
     @property
     def recommended_dvd_storage_controller(self):
         """Get StorageControllerType value for 'recommendedDVDStorageController'
         Recommended storage controller type for DVD/CD drives.
         """
-        return self.get_attr('recommendedDVDStorageController', StorageControllerType)
+        value = self._get_attr('recommendedDVDStorageController')
+        return StorageControllerType(value)
 
     @property
     def recommended_dvd_storage_bus(self):
         """Get StorageBus value for 'recommendedDVDStorageBus'
         Recommended storage bus type for DVD/CD drives.
         """
-        return self.get_attr('recommendedDVDStorageBus', StorageBus)
+        value = self._get_attr('recommendedDVDStorageBus')
+        return StorageBus(value)
 
     @property
     def recommended_hd_storage_controller(self):
         """Get StorageControllerType value for 'recommendedHDStorageController'
         Recommended storage controller type for HD drives.
         """
-        return self.get_attr('recommendedHDStorageController', StorageControllerType)
+        value = self._get_attr('recommendedHDStorageController')
+        return StorageControllerType(value)
 
     @property
     def recommended_hd_storage_bus(self):
         """Get StorageBus value for 'recommendedHDStorageBus'
         Recommended storage bus type for HD drives.
         """
-        return self.get_attr('recommendedHDStorageBus', StorageBus)
+        value = self._get_attr('recommendedHDStorageBus')
+        return StorageBus(value)
 
     @property
     def recommended_firmware(self):
         """Get FirmwareType value for 'recommendedFirmware'
         Recommended firmware type.
         """
-        return self.get_attr('recommendedFirmware', FirmwareType)
+        value = self._get_attr('recommendedFirmware')
+        return FirmwareType(value)
 
     @property
     def recommended_usbhid(self):
         """Get bool value for 'recommendedUSBHID'
         Returns @c true if using USB Human Interface Devices, such as keyboard and mouse recommended.
         """
-        return self.get_attr('recommendedUSBHID', bool)
+        value = self._get_attr('recommendedUSBHID')
+        return bool(value)
 
     @property
     def recommended_hpet(self):
         """Get bool value for 'recommendedHPET'
         Returns @c true if using HPET is recommended for this OS type.
         """
-        return self.get_attr('recommendedHPET', bool)
+        value = self._get_attr('recommendedHPET')
+        return bool(value)
 
     @property
     def recommended_usb_tablet(self):
         """Get bool value for 'recommendedUSBTablet'
         Returns @c true if using a USB Tablet is recommended.
         """
-        return self.get_attr('recommendedUSBTablet', bool)
+        value = self._get_attr('recommendedUSBTablet')
+        return bool(value)
 
     @property
     def recommended_rtc_use_utc(self):
         """Get bool value for 'recommendedRTCUseUTC'
         Returns @c true if the RTC of this VM should be set to UTC
         """
-        return self.get_attr('recommendedRTCUseUTC', bool)
+        value = self._get_attr('recommendedRTCUseUTC')
+        return bool(value)
 
     @property
     def recommended_chipset(self):
         """Get ChipsetType value for 'recommendedChipset'
         Recommended chipset type.
         """
-        return self.get_attr('recommendedChipset', ChipsetType)
+        value = self._get_attr('recommendedChipset')
+        return ChipsetType(value)
 
     @property
     def recommended_audio_controller(self):
         """Get AudioControllerType value for 'recommendedAudioController'
         Recommended audio type.
         """
-        return self.get_attr('recommendedAudioController', AudioControllerType)
+        value = self._get_attr('recommendedAudioController')
+        return AudioControllerType(value)
 
     @property
     def recommended_floppy(self):
         """Get bool value for 'recommendedFloppy'
         Returns @c true a floppy drive is recommended for this OS type.
         """
-        return self.get_attr('recommendedFloppy', bool)
+        value = self._get_attr('recommendedFloppy')
+        return bool(value)
 
     @property
     def recommended_usb(self):
         """Get bool value for 'recommendedUSB'
         Returns @c true a USB controller is recommended for this OS type.
         """
-        return self.get_attr('recommendedUSB', bool)
+        value = self._get_attr('recommendedUSB')
+        return bool(value)
 
 
 class IAdditionsFacility(Interface):
@@ -9479,7 +10140,8 @@ class IAdditionsFacility(Interface):
         """Get AdditionsFacilityClass value for 'classType'
         The class this facility is part of.
         """
-        return self.get_attr('classType', AdditionsFacilityClass)
+        value = self._get_attr('classType')
+        return AdditionsFacilityClass(value)
 
     @property
     def last_updated(self):
@@ -9487,28 +10149,32 @@ class IAdditionsFacility(Interface):
         Time stamp of the last status update,
         in milliseconds since 1970-01-01 UTC.
         """
-        return self.get_attr('lastUpdated', int)
+        value = self._get_attr('lastUpdated')
+        return int(value)
 
     @property
     def name(self):
         """Get str value for 'name'
         The facility's friendly name.
         """
-        return self.get_attr('name', str)
+        value = self._get_attr('name')
+        return str(value)
 
     @property
     def status(self):
         """Get AdditionsFacilityStatus value for 'status'
         The current status.
         """
-        return self.get_attr('status', AdditionsFacilityStatus)
+        value = self._get_attr('status')
+        return AdditionsFacilityStatus(value)
 
     @property
     def type_p(self):
         """Get AdditionsFacilityType value for 'type'
         The facility's type ID.
         """
-        return self.get_attr('type', AdditionsFacilityType)
+        value = self._get_attr('type')
+        return AdditionsFacilityType(value)
 
 
 class IGuestSession(Interface):
@@ -9542,7 +10208,8 @@ class IGuestSession(Interface):
         Returns the user name used by this session to impersonate
         users on the guest.
         """
-        return self.get_attr('user', str)
+        value = self._get_attr('user')
+        return str(value)
 
     @property
     def domain(self):
@@ -9550,78 +10217,90 @@ class IGuestSession(Interface):
         Returns the domain name used by this session to impersonate
         users on the guest.
         """
-        return self.get_attr('domain', str)
+        value = self._get_attr('domain')
+        return str(value)
 
     @property
     def name(self):
         """Get str value for 'name'
         Returns the session's friendly name.
         """
-        return self.get_attr('name', str)
+        value = self._get_attr('name')
+        return str(value)
 
     @property
     def id_p(self):
         """Get int value for 'id'
         Returns the internal session ID.
         """
-        return self.get_attr('id', int)
+        value = self._get_attr('id')
+        return int(value)
 
     @property
     def timeout(self):
         """Get or set int value for 'timeout'
         Returns the session timeout (in ms).
         """
-        return self.get_attr('timeout', int)
+        value = self._get_attr('timeout')
+        return int(value)
 
     @timeout.setter
     def timeout(self, value):
-        return self.set_attr('timeout', value)
+        assert type(value) is int
+        return self._set_attr('timeout', value)
 
     @property
     def status(self):
         """Get GuestSessionStatus value for 'status'
         Returns the current session status.
         """
-        return self.get_attr('status', GuestSessionStatus)
+        value = self._get_attr('status')
+        return GuestSessionStatus(value)
 
     @property
     def environment(self):
         """Get or set str value for 'environment'
         Returns the current session environment.
         """
-        return self.get_attr('environment', str)
+        value = self._get_attr('environment')
+        return str(value)
 
     @environment.setter
     def environment(self, value):
-        return self.set_attr('environment', value)
+        assert type(value) is str
+        return self._set_attr('environment', value)
 
     @property
     def processes(self):
         """Get IGuestProcess value for 'processes'
         Returns all current guest processes.
         """
-        return self.get_attr('processes', IGuestProcess)
+        value = self._get_attr('processes')
+        return IGuestProcess(value)
 
     @property
     def directories(self):
         """Get IGuestDirectory value for 'directories'
         Returns all currently opened guest directories.
         """
-        return self.get_attr('directories', IGuestDirectory)
+        value = self._get_attr('directories')
+        return IGuestDirectory(value)
 
     @property
     def files(self):
         """Get IGuestFile value for 'files'
         Returns all currently opened guest files.
         """
-        return self.get_attr('files', IGuestFile)
+        value = self._get_attr('files')
+        return IGuestFile(value)
 
     @property
     def event_source(self):
         """Get IEventSource value for 'eventSource'
         Event source for guest session events.
         """
-        return self.get_attr('eventSource', IEventSource)
+        value = self._get_attr('eventSource')
+        return IEventSource(value)
 
     def close(self):
         """Closes this session. All opened guest directories, files and
@@ -9629,7 +10308,7 @@ class IGuestSession(Interface):
         uninitialized.
 
         """
-        self.call_method('close')
+        self._call_method('close')
         
     def copy_from(self, source, dest, flags):
         """Copies a file from guest to the host.
@@ -9650,11 +10329,14 @@ class IGuestSession(Interface):
             Error starting the copy operation.
         
         """
-        progress = self.call_method('copyFrom',
-                     in_p=[source, dest, flags],
-                     rettype=IProgress)
-        return progress
-        
+        assert source is str
+        assert dest is str
+        assert flags is CopyFileFlag
+        progress =\
+            self._call_method('copyFrom',
+                     in_p=[source, dest, flags])
+        return IProgress(progress)
+
     def copy_to(self, source, dest, flags):
         """Copies a file from host to the guest.
 
@@ -9674,11 +10356,14 @@ class IGuestSession(Interface):
             Error starting the copy operation.
         
         """
-        progress = self.call_method('copyTo',
-                     in_p=[source, dest, flags],
-                     rettype=IProgress)
-        return progress
-        
+        assert source is str
+        assert dest is str
+        assert flags is CopyFileFlag
+        progress =\
+            self._call_method('copyTo',
+                     in_p=[source, dest, flags])
+        return IProgress(progress)
+
     def directory_create(self, path, mode, flags):
         """Create a directory on the guest.
 
@@ -9695,7 +10380,10 @@ class IGuestSession(Interface):
             Error while creating the directory.
         
         """
-        self.call_method('directoryCreate',
+        assert path is str
+        assert mode is int
+        assert flags is DirectoryCreateFlag
+        self._call_method('directoryCreate',
                      in_p=[path, mode, flags])
         
     def directory_create_temp(self, template_name, mode, path, secure):
@@ -9739,11 +10427,15 @@ class IGuestSession(Interface):
           option was requested.
         
         """
-        directory = self.call_method('directoryCreateTemp',
-                     in_p=[template_name, mode, path, secure],
-                     rettype=str)
-        return directory
-        
+        assert template_name is str
+        assert mode is int
+        assert path is str
+        assert secure is bool
+        directory =\
+            self._call_method('directoryCreateTemp',
+                     in_p=[template_name, mode, path, secure])
+        return str(directory)
+
     def directory_exists(self, path):
         """Checks whether a directory exists on the guest or not.
 
@@ -9757,11 +10449,12 @@ class IGuestSession(Interface):
             Error while checking existence of the directory specified.
         
         """
-        exists = self.call_method('directoryExists',
-                     in_p=[path],
-                     rettype=bool)
-        return exists
-        
+        assert path is str
+        exists =\
+            self._call_method('directoryExists',
+                     in_p=[path])
+        return bool(exists)
+
     def directory_open(self, path, filter_p, flags):
         """Opens a directory and creates a <link to="IGuestDirectory"/> object that
         can be used for further operations.
@@ -9785,11 +10478,14 @@ class IGuestSession(Interface):
             Error while opening the directory.
         
         """
-        directory = self.call_method('directoryOpen',
-                     in_p=[path, filter_p, flags],
-                     rettype=IGuestDirectory)
-        return directory
-        
+        assert path is str
+        assert filter_p is str
+        assert flags is DirectoryOpenFlag
+        directory =\
+            self._call_method('directoryOpen',
+                     in_p=[path, filter_p, flags])
+        return IGuestDirectory(directory)
+
     def directory_query_info(self, path):
         """Queries information of a directory on the guest.
 
@@ -9806,11 +10502,12 @@ class IGuestSession(Interface):
             Error querying information.
         
         """
-        info = self.call_method('directoryQueryInfo',
-                     in_p=[path],
-                     rettype=IGuestFsObjInfo)
-        return info
-        
+        assert path is str
+        info =\
+            self._call_method('directoryQueryInfo',
+                     in_p=[path])
+        return IGuestFsObjInfo(info)
+
     def directory_remove(self, path):
         """Removes a guest directory if not empty.
 
@@ -9821,7 +10518,8 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        self.call_method('directoryRemove',
+        assert path is str
+        self._call_method('directoryRemove',
                      in_p=[path])
         
     def directory_remove_recursive(self, path, flags):
@@ -9840,11 +10538,13 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        progress = self.call_method('directoryRemoveRecursive',
-                     in_p=[path, flags],
-                     rettype=IProgress)
-        return progress
-        
+        assert path is str
+        assert flags is DirectoryRemoveRecFlag
+        progress =\
+            self._call_method('directoryRemoveRecursive',
+                     in_p=[path, flags])
+        return IProgress(progress)
+
     def directory_rename(self, source, dest, flags):
         """Renames a directory on the guest.
 
@@ -9861,7 +10561,10 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        self.call_method('directoryRename',
+        assert source is str
+        assert dest is str
+        assert flags is PathRenameFlag
+        self._call_method('directoryRename',
                      in_p=[source, dest, flags])
         
     def directory_set_acl(self, path, acl):
@@ -9877,7 +10580,9 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        self.call_method('directorySetACL',
+        assert path is str
+        assert acl is str
+        self._call_method('directorySetACL',
                      in_p=[path, acl])
         
     def environment_clear(self):
@@ -9887,7 +10592,7 @@ class IGuestSession(Interface):
             Error while clearing the session environment variables.
         
         """
-        self.call_method('environmentClear')
+        self._call_method('environmentClear')
         
     def environment_get(self, name):
         """Gets the value of a session environment variable.
@@ -9903,11 +10608,12 @@ class IGuestSession(Interface):
             Error while getting the value of the session environment variable.
         
         """
-        value = self.call_method('environmentGet',
-                     in_p=[name],
-                     rettype=str)
-        return value
-        
+        assert name is str
+        value =\
+            self._call_method('environmentGet',
+                     in_p=[name])
+        return str(value)
+
     def environment_set(self, name, value):
         """Sets a session environment variable.
 
@@ -9921,7 +10627,9 @@ class IGuestSession(Interface):
             Error while setting the session environment variable.
         
         """
-        self.call_method('environmentSet',
+        assert name is str
+        assert value is str
+        self._call_method('environmentSet',
                      in_p=[name, value])
         
     def environment_unset(self, name):
@@ -9934,7 +10642,8 @@ class IGuestSession(Interface):
             Error while unsetting the session environment variable.
         
         """
-        self.call_method('environmentUnset',
+        assert name is str
+        self._call_method('environmentUnset',
                      in_p=[name])
         
     def file_create_temp(self, template_name, mode, path, secure):
@@ -9978,11 +10687,15 @@ class IGuestSession(Interface):
           option was requested.
         
         """
-        file_p = self.call_method('fileCreateTemp',
-                     in_p=[template_name, mode, path, secure],
-                     rettype=IGuestFile)
-        return file_p
-        
+        assert template_name is str
+        assert mode is int
+        assert path is str
+        assert secure is bool
+        file_p =\
+            self._call_method('fileCreateTemp',
+                     in_p=[template_name, mode, path, secure])
+        return IGuestFile(file_p)
+
     def file_exists(self, path):
         """Checks whether a file exists on the guest or not.
 
@@ -9996,11 +10709,12 @@ class IGuestSession(Interface):
             Error while checking existence of the file specified.
         
         """
-        exists = self.call_method('fileExists',
-                     in_p=[path],
-                     rettype=bool)
-        return exists
-        
+        assert path is str
+        exists =\
+            self._call_method('fileExists',
+                     in_p=[path])
+        return bool(exists)
+
     def file_remove(self, path):
         """Removes a single file on the guest.
 
@@ -10014,7 +10728,8 @@ class IGuestSession(Interface):
             Error while removing the file.
         
         """
-        self.call_method('fileRemove',
+        assert path is str
+        self._call_method('fileRemove',
                      in_p=[path])
         
     def file_open(self, path, open_mode, disposition, creation_mode, offset):
@@ -10046,11 +10761,16 @@ class IGuestSession(Interface):
             Error while opening the file.
         
         """
-        file_p = self.call_method('fileOpen',
-                     in_p=[path, open_mode, disposition, creation_mode, offset],
-                     rettype=IGuestFile)
-        return file_p
-        
+        assert path is str
+        assert open_mode is str
+        assert disposition is str
+        assert creation_mode is int
+        assert offset is int
+        file_p =\
+            self._call_method('fileOpen',
+                     in_p=[path, open_mode, disposition, creation_mode, offset])
+        return IGuestFile(file_p)
+
     def file_query_info(self, path):
         """Queries information of a file on the guest.
 
@@ -10067,11 +10787,12 @@ class IGuestSession(Interface):
             Error querying information.
         
         """
-        info = self.call_method('fileQueryInfo',
-                     in_p=[path],
-                     rettype=IGuestFsObjInfo)
-        return info
-        
+        assert path is str
+        info =\
+            self._call_method('fileQueryInfo',
+                     in_p=[path])
+        return IGuestFsObjInfo(info)
+
     def file_query_size(self, path):
         """Queries the size of a file on the guest.
 
@@ -10088,11 +10809,12 @@ class IGuestSession(Interface):
             Error querying file size.
         
         """
-        size = self.call_method('fileQuerySize',
-                     in_p=[path],
-                     rettype=int)
-        return size
-        
+        assert path is str
+        size =\
+            self._call_method('fileQuerySize',
+                     in_p=[path])
+        return int(size)
+
     def file_rename(self, source, dest, flags):
         """Renames a file on the guest.
 
@@ -10109,7 +10831,10 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        self.call_method('fileRename',
+        assert source is str
+        assert dest is str
+        assert flags is PathRenameFlag
+        self._call_method('fileRename',
                      in_p=[source, dest, flags])
         
     def file_set_acl(self, file_p, acl):
@@ -10125,7 +10850,9 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        self.call_method('fileSetACL',
+        assert file_p is str
+        assert acl is str
+        self._call_method('fileSetACL',
                      in_p=[file_p, acl])
         
     def process_create(self, command, arguments, environment, flags, timeout_ms):
@@ -10182,11 +10909,16 @@ class IGuestSession(Interface):
             Error creating guest process.
         
         """
-        guest_process = self.call_method('processCreate',
-                     in_p=[command, arguments, environment, flags, timeout_ms],
-                     rettype=IGuestProcess)
-        return guest_process
-        
+        assert command is str
+        assert arguments is str
+        assert environment is str
+        assert flags is ProcessCreateFlag
+        assert timeout_ms is int
+        guest_process =\
+            self._call_method('processCreate',
+                     in_p=[command, arguments, environment, flags, timeout_ms])
+        return IGuestProcess(guest_process)
+
     def process_create_ex(self, command, arguments, environment, flags, timeout_ms, priority, affinity):
         """<para>Creates a new process running on the guest. Extended version for
           also setting the process priority and affinity.</para>
@@ -10231,11 +10963,18 @@ class IGuestSession(Interface):
             Guest process object of the newly created process.
 
         """
-        guest_process = self.call_method('processCreateEx',
-                     in_p=[command, arguments, environment, flags, timeout_ms, priority, affinity],
-                     rettype=IGuestProcess)
-        return guest_process
-        
+        assert command is str
+        assert arguments is str
+        assert environment is str
+        assert flags is ProcessCreateFlag
+        assert timeout_ms is int
+        assert priority is ProcessPriority
+        assert affinity is int
+        guest_process =\
+            self._call_method('processCreateEx',
+                     in_p=[command, arguments, environment, flags, timeout_ms, priority, affinity])
+        return IGuestProcess(guest_process)
+
     def process_get(self, pid):
         """Gets a certain guest process by its process ID (PID).
 
@@ -10246,11 +10985,12 @@ class IGuestSession(Interface):
             Guest process of specified process ID (PID).
 
         """
-        guest_process = self.call_method('processGet',
-                     in_p=[pid],
-                     rettype=IGuestProcess)
-        return guest_process
-        
+        assert pid is int
+        guest_process =\
+            self._call_method('processGet',
+                     in_p=[pid])
+        return IGuestProcess(guest_process)
+
     def symlink_create(self, source, target, type_p):
         """Creates a symbolic link on the guest.
 
@@ -10268,7 +11008,10 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        self.call_method('symlinkCreate',
+        assert source is str
+        assert target is str
+        assert type_p is SymlinkType
+        self._call_method('symlinkCreate',
                      in_p=[source, target, type_p])
         
     def symlink_exists(self, symlink):
@@ -10284,11 +11027,12 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        exists = self.call_method('symlinkExists',
-                     in_p=[symlink],
-                     rettype=bool)
-        return exists
-        
+        assert symlink is str
+        exists =\
+            self._call_method('symlinkExists',
+                     in_p=[symlink])
+        return bool(exists)
+
     def symlink_read(self, symlink, flags):
         """Reads a symbolic link on the guest.
 
@@ -10305,11 +11049,13 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        target = self.call_method('symlinkRead',
-                     in_p=[symlink, flags],
-                     rettype=str)
-        return target
-        
+        assert symlink is str
+        assert flags is SymlinkReadFlag
+        target =\
+            self._call_method('symlinkRead',
+                     in_p=[symlink, flags])
+        return str(target)
+
     def symlink_remove_directory(self, path):
         """Removes a symbolic link on the guest if it's a directory.
 
@@ -10320,7 +11066,8 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        self.call_method('symlinkRemoveDirectory',
+        assert path is str
+        self._call_method('symlinkRemoveDirectory',
                      in_p=[path])
         
     def symlink_remove_file(self, file_p):
@@ -10333,7 +11080,8 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        self.call_method('symlinkRemoveFile',
+        assert file_p is str
+        self._call_method('symlinkRemoveFile',
                      in_p=[file_p])
         
     def wait_for(self, wait_for, timeout_ms):
@@ -10352,11 +11100,13 @@ class IGuestSession(Interface):
           see <link to="GuestSessionWaitResult"/> for more information.
 
         """
-        reason = self.call_method('waitFor',
-                     in_p=[wait_for, timeout_ms],
-                     rettype=GuestSessionWaitResult)
-        return reason
-        
+        assert wait_for is int
+        assert timeout_ms is int
+        reason =\
+            self._call_method('waitFor',
+                     in_p=[wait_for, timeout_ms])
+        return GuestSessionWaitResult(reason)
+
     def wait_for_array(self, wait_for, timeout_ms):
         """Waits for one more events to happen.
         Scriptable version of <link to="#waitFor"/>.
@@ -10374,11 +11124,13 @@ class IGuestSession(Interface):
           see <link to="GuestSessionWaitResult"/> for more information.
 
         """
-        reason = self.call_method('waitForArray',
-                     in_p=[wait_for, timeout_ms],
-                     rettype=GuestSessionWaitResult)
-        return reason
-        
+        assert wait_for is GuestSessionWaitForFlag
+        assert timeout_ms is int
+        reason =\
+            self._call_method('waitForArray',
+                     in_p=[wait_for, timeout_ms])
+        return GuestSessionWaitResult(reason)
+
 
 class IProcess(Interface):
     """
@@ -10392,28 +11144,32 @@ class IProcess(Interface):
         """Get str value for 'arguments'
         The arguments this process is using for execution.
         """
-        return self.get_attr('arguments', str)
+        value = self._get_attr('arguments')
+        return str(value)
 
     @property
     def environment(self):
         """Get str value for 'environment'
         The environment block this process is using during execution.
         """
-        return self.get_attr('environment', str)
+        value = self._get_attr('environment')
+        return str(value)
 
     @property
     def event_source(self):
         """Get IEventSource value for 'eventSource'
         Event source for VirtualBox events.
         """
-        return self.get_attr('eventSource', IEventSource)
+        value = self._get_attr('eventSource')
+        return IEventSource(value)
 
     @property
     def executable_path(self):
         """Get str value for 'executablePath'
         Full path of the actual executable image.
         """
-        return self.get_attr('executablePath', str)
+        value = self._get_attr('executablePath')
+        return str(value)
 
     @property
     def exit_code(self):
@@ -10421,21 +11177,24 @@ class IProcess(Interface):
         The exit code. Only available when the process has been
         terminated normally.
         """
-        return self.get_attr('exitCode', int)
+        value = self._get_attr('exitCode')
+        return int(value)
 
     @property
     def name(self):
         """Get str value for 'name'
         The friendly name of this process.
         """
-        return self.get_attr('name', str)
+        value = self._get_attr('name')
+        return str(value)
 
     @property
     def pid(self):
         """Get int value for 'PID'
         The process ID (PID).
         """
-        return self.get_attr('PID', int)
+        value = self._get_attr('PID')
+        return int(value)
 
     @property
     def status(self):
@@ -10443,7 +11202,8 @@ class IProcess(Interface):
         The current process status; see <link to="ProcessStatus"/>
         for more information.
         """
-        return self.get_attr('status', ProcessStatus)
+        value = self._get_attr('status')
+        return ProcessStatus(value)
 
     def wait_for(self, wait_for, timeout_ms):
         """Waits for one more events to happen.
@@ -10461,11 +11221,13 @@ class IProcess(Interface):
           see <link to="ProcessWaitResult"/> for more information.
 
         """
-        reason = self.call_method('waitFor',
-                     in_p=[wait_for, timeout_ms],
-                     rettype=ProcessWaitResult)
-        return reason
-        
+        assert wait_for is int
+        assert timeout_ms is int
+        reason =\
+            self._call_method('waitFor',
+                     in_p=[wait_for, timeout_ms])
+        return ProcessWaitResult(reason)
+
     def wait_for_array(self, wait_for, timeout_ms):
         """Waits for one more events to happen.
         Scriptable version of <link to="#waitFor"/>.
@@ -10483,11 +11245,13 @@ class IProcess(Interface):
           see <link to="ProcessWaitResult"/> for more information.
 
         """
-        reason = self.call_method('waitForArray',
-                     in_p=[wait_for, timeout_ms],
-                     rettype=ProcessWaitResult)
-        return reason
-        
+        assert wait_for is ProcessWaitForFlag
+        assert timeout_ms is int
+        reason =\
+            self._call_method('waitForArray',
+                     in_p=[wait_for, timeout_ms])
+        return ProcessWaitResult(reason)
+
     def read(self, handle, to_read, timeout_ms):
         """Reads data from a running process.
 
@@ -10505,11 +11269,14 @@ class IProcess(Interface):
             Array of data read.
 
         """
-        data = self.call_method('read',
-                     in_p=[handle, to_read, timeout_ms],
-                     rettype=str)
-        return data
-        
+        assert handle is int
+        assert to_read is int
+        assert timeout_ms is int
+        data =\
+            self._call_method('read',
+                     in_p=[handle, to_read, timeout_ms])
+        return str(data)
+
     def write(self, handle, flags, data, timeout_ms):
         """Writes data to a running process.
 
@@ -10531,11 +11298,15 @@ class IProcess(Interface):
             How much bytes were written.
 
         """
-        written = self.call_method('write',
-                     in_p=[handle, flags, data, timeout_ms],
-                     rettype=int)
-        return written
-        
+        assert handle is int
+        assert flags is int
+        assert data is str
+        assert timeout_ms is int
+        written =\
+            self._call_method('write',
+                     in_p=[handle, flags, data, timeout_ms])
+        return int(written)
+
     def write_array(self, handle, flags, data, timeout_ms):
         """Writes data to a running process.
         Scriptable version of <link to="#write"/>.
@@ -10558,16 +11329,20 @@ class IProcess(Interface):
             How much bytes were written.
 
         """
-        written = self.call_method('writeArray',
-                     in_p=[handle, flags, data, timeout_ms],
-                     rettype=int)
-        return written
-        
+        assert handle is int
+        assert flags is ProcessInputFlag
+        assert data is str
+        assert timeout_ms is int
+        written =\
+            self._call_method('writeArray',
+                     in_p=[handle, flags, data, timeout_ms])
+        return int(written)
+
     def terminate(self):
         """Terminates (kills) a running process.
 
         """
-        self.call_method('terminate')
+        self._call_method('terminate')
         
 
 class IGuestProcess(IProcess):
@@ -10591,21 +11366,23 @@ class IDirectory(Interface):
         """Get str value for 'directoryName'
         Full path of directory.
         """
-        return self.get_attr('directoryName', str)
+        value = self._get_attr('directoryName')
+        return str(value)
 
     @property
     def filter_p(self):
         """Get str value for 'filter'
         The open filter.
         """
-        return self.get_attr('filter', str)
+        value = self._get_attr('filter')
+        return str(value)
 
     def close(self):
         """Closes this directory. After closing operations like reading the next
         directory entry will not be possible anymore.
 
         """
-        self.call_method('close')
+        self._call_method('close')
         
     def read(self):
         """Reads the next directory entry of this directory.
@@ -10618,10 +11395,10 @@ class IDirectory(Interface):
             No more directory entries to read.
         
         """
-        obj_info = self.call_method('read',
-                     rettype=IFsObjInfo)
-        return obj_info
-        
+        obj_info =\
+            self._call_method('read')
+        return IFsObjInfo(obj_info)
+
 
 class IGuestDirectory(IDirectory):
     """
@@ -10644,63 +11421,71 @@ class IFile(Interface):
         """Get int value for 'creationMode'
         The creation mode.
         """
-        return self.get_attr('creationMode', int)
+        value = self._get_attr('creationMode')
+        return int(value)
 
     @property
     def disposition(self):
         """Get int value for 'disposition'
         The disposition mode.
         """
-        return self.get_attr('disposition', int)
+        value = self._get_attr('disposition')
+        return int(value)
 
     @property
     def event_source(self):
         """Get IEventSource value for 'eventSource'
         Event source for guest session events.
         """
-        return self.get_attr('eventSource', IEventSource)
+        value = self._get_attr('eventSource')
+        return IEventSource(value)
 
     @property
     def file_name(self):
         """Get str value for 'fileName'
         Full path of the actual file name of this file.
         """
-        return self.get_attr('fileName', str)
+        value = self._get_attr('fileName')
+        return str(value)
 
     @property
     def initial_size(self):
         """Get int value for 'initialSize'
         The initial size in bytes when opened.
         """
-        return self.get_attr('initialSize', int)
+        value = self._get_attr('initialSize')
+        return int(value)
 
     @property
     def open_mode(self):
         """Get int value for 'openMode'
         The open mode.
         """
-        return self.get_attr('openMode', int)
+        value = self._get_attr('openMode')
+        return int(value)
 
     @property
     def offset(self):
         """Get int value for 'offset'
         Current read/write offset in bytes.
         """
-        return self.get_attr('offset', int)
+        value = self._get_attr('offset')
+        return int(value)
 
     @property
     def status(self):
         """Get FileStatus value for 'status'
         Current file status.
         """
-        return self.get_attr('status', FileStatus)
+        value = self._get_attr('status')
+        return FileStatus(value)
 
     def close(self):
         """Closes this file. After closing operations like reading data,
         writing data or querying information will not be possible anymore.
 
         """
-        self.call_method('close')
+        self._call_method('close')
         
     def query_info(self):
         """Queries information about this file.
@@ -10713,10 +11498,10 @@ class IFile(Interface):
             The method is not implemented yet.
         
         """
-        obj_info = self.call_method('queryInfo',
-                     rettype=IFsObjInfo)
-        return obj_info
-        
+        obj_info =\
+            self._call_method('queryInfo')
+        return IFsObjInfo(obj_info)
+
     def read(self, to_read, timeout_ms):
         """Reads data from this file.
 
@@ -10734,11 +11519,13 @@ class IFile(Interface):
             The method is not implemented yet.
         
         """
-        data = self.call_method('read',
-                     in_p=[to_read, timeout_ms],
-                     rettype=str)
-        return data
-        
+        assert to_read is int
+        assert timeout_ms is int
+        data =\
+            self._call_method('read',
+                     in_p=[to_read, timeout_ms])
+        return str(data)
+
     def read_at(self, offset, to_read, timeout_ms):
         """Reads data from an offset of this file.
 
@@ -10759,11 +11546,14 @@ class IFile(Interface):
             The method is not implemented yet.
         
         """
-        data = self.call_method('readAt',
-                     in_p=[offset, to_read, timeout_ms],
-                     rettype=str)
-        return data
-        
+        assert offset is int
+        assert to_read is int
+        assert timeout_ms is int
+        data =\
+            self._call_method('readAt',
+                     in_p=[offset, to_read, timeout_ms])
+        return str(data)
+
     def seek(self, offset, whence):
         """Changes the read and write position of this file.
 
@@ -10777,7 +11567,9 @@ class IFile(Interface):
             The method is not implemented yet.
         
         """
-        self.call_method('seek',
+        assert offset is int
+        assert whence is FileSeekType
+        self._call_method('seek',
                      in_p=[offset, whence])
         
     def set_acl(self, acl):
@@ -10790,7 +11582,8 @@ class IFile(Interface):
             The method is not implemented yet.
         
         """
-        self.call_method('setACL',
+        assert acl is str
+        self._call_method('setACL',
                      in_p=[acl])
         
     def write(self, data, timeout_ms):
@@ -10808,11 +11601,13 @@ class IFile(Interface):
             How much bytes were written.
 
         """
-        written = self.call_method('write',
-                     in_p=[data, timeout_ms],
-                     rettype=int)
-        return written
-        
+        assert data is str
+        assert timeout_ms is int
+        written =\
+            self._call_method('write',
+                     in_p=[data, timeout_ms])
+        return int(written)
+
     def write_at(self, offset, data, timeout_ms):
         """Writes bytes at a certain offset to this file.
 
@@ -10834,11 +11629,14 @@ class IFile(Interface):
             The method is not implemented yet.
         
         """
-        written = self.call_method('writeAt',
-                     in_p=[offset, data, timeout_ms],
-                     rettype=int)
-        return written
-        
+        assert offset is int
+        assert data is str
+        assert timeout_ms is int
+        written =\
+            self._call_method('writeAt',
+                     in_p=[offset, data, timeout_ms])
+        return int(written)
+
 
 class IGuestFile(IFile):
     """
@@ -10862,98 +11660,112 @@ class IFsObjInfo(Interface):
         """Get int value for 'accessTime'
         Time of last access (st_atime).
         """
-        return self.get_attr('accessTime', int)
+        value = self._get_attr('accessTime')
+        return int(value)
 
     @property
     def allocated_size(self):
         """Get int value for 'allocatedSize'
         Disk allocation size (st_blocks * DEV_BSIZE).
         """
-        return self.get_attr('allocatedSize', int)
+        value = self._get_attr('allocatedSize')
+        return int(value)
 
     @property
     def birth_time(self):
         """Get int value for 'birthTime'
         Time of file birth (st_birthtime).
         """
-        return self.get_attr('birthTime', int)
+        value = self._get_attr('birthTime')
+        return int(value)
 
     @property
     def change_time(self):
         """Get int value for 'changeTime'
         Time of last status change (st_ctime).
         """
-        return self.get_attr('changeTime', int)
+        value = self._get_attr('changeTime')
+        return int(value)
 
     @property
     def device_number(self):
         """Get int value for 'deviceNumber'
         The device number of a character or block device type object (st_rdev).
         """
-        return self.get_attr('deviceNumber', int)
+        value = self._get_attr('deviceNumber')
+        return int(value)
 
     @property
     def file_attributes(self):
         """Get str value for 'fileAttributes'
         File attributes. Not implemented yet.
         """
-        return self.get_attr('fileAttributes', str)
+        value = self._get_attr('fileAttributes')
+        return str(value)
 
     @property
     def generation_id(self):
         """Get int value for 'generationId'
         The current generation number (st_gen).
         """
-        return self.get_attr('generationId', int)
+        value = self._get_attr('generationId')
+        return int(value)
 
     @property
     def gid(self):
         """Get int value for 'GID'
         The group the filesystem object is assigned (st_gid).
         """
-        return self.get_attr('GID', int)
+        value = self._get_attr('GID')
+        return int(value)
 
     @property
     def group_name(self):
         """Get str value for 'groupName'
         The group name.
         """
-        return self.get_attr('groupName', str)
+        value = self._get_attr('groupName')
+        return str(value)
 
     @property
     def hard_links(self):
         """Get int value for 'hardLinks'
         Number of hard links to this filesystem object (st_nlink).
         """
-        return self.get_attr('hardLinks', int)
+        value = self._get_attr('hardLinks')
+        return int(value)
 
     @property
     def modification_time(self):
         """Get int value for 'modificationTime'
         Time of last data modification (st_mtime).
         """
-        return self.get_attr('modificationTime', int)
+        value = self._get_attr('modificationTime')
+        return int(value)
 
     @property
     def name(self):
         """Get str value for 'name'
         The object's name.
         """
-        return self.get_attr('name', str)
+        value = self._get_attr('name')
+        return str(value)
 
     @property
     def node_id(self):
         """Get int value for 'nodeId'
         The unique identifier (within the filesystem) of this filesystem object (st_ino).
         """
-        return self.get_attr('nodeId', int)
+        value = self._get_attr('nodeId')
+        return int(value)
 
     @property
     def node_id_device(self):
         """Get int value for 'nodeIdDevice'
         The device number of the device which this filesystem object resides on (st_dev).
         """
-        return self.get_attr('nodeIdDevice', int)
+        value = self._get_attr('nodeIdDevice')
+        return int(value)
 
     @property
     def object_size(self):
@@ -10962,35 +11774,40 @@ class IFsObjInfo(Interface):
         For symbolic links, this is the length of the path name contained in the
         symbolic link. For other objects this fields needs to be specified.
         """
-        return self.get_attr('objectSize', int)
+        value = self._get_attr('objectSize')
+        return int(value)
 
     @property
     def type_p(self):
         """Get FsObjType value for 'type'
         The object type. See <link to="FsObjType"/> for more.
         """
-        return self.get_attr('type', FsObjType)
+        value = self._get_attr('type')
+        return FsObjType(value)
 
     @property
     def uid(self):
         """Get int value for 'UID'
         The user owning the filesystem object (st_uid).
         """
-        return self.get_attr('UID', int)
+        value = self._get_attr('UID')
+        return int(value)
 
     @property
     def user_flags(self):
         """Get int value for 'userFlags'
         User flags (st_flags).
         """
-        return self.get_attr('userFlags', int)
+        value = self._get_attr('userFlags')
+        return int(value)
 
     @property
     def user_name(self):
         """Get str value for 'userName'
         The user name.
         """
-        return self.get_attr('userName', str)
+        value = self._get_attr('userName')
+        return str(value)
 
 
 class IGuestFsObjInfo(IFsObjInfo):
@@ -11027,14 +11844,16 @@ class IGuest(Interface):
           If Guest Additions are not installed, this value will be
           the same as <link to="IMachine::OSTypeId"/>.
         """
-        return self.get_attr('OSTypeId', str)
+        value = self._get_attr('OSTypeId')
+        return str(value)
 
     @property
     def additions_run_level(self):
         """Get AdditionsRunLevelType value for 'additionsRunLevel'
         Current run level of the Guest Additions.
         """
-        return self.get_attr('additionsRunLevel', AdditionsRunLevelType)
+        value = self._get_attr('additionsRunLevel')
+        return AdditionsRunLevelType(value)
 
     @property
     def additions_version(self):
@@ -11042,7 +11861,8 @@ class IGuest(Interface):
         Version of the Guest Additions in the same format as
         <link to="IVirtualBox::version"/>.
         """
-        return self.get_attr('additionsVersion', str)
+        value = self._get_attr('additionsVersion')
+        return str(value)
 
     @property
     def additions_revision(self):
@@ -11051,7 +11871,8 @@ class IGuest(Interface):
 
         See also <link to="IVirtualBox::revision"/>.
         """
-        return self.get_attr('additionsRevision', int)
+        value = self._get_attr('additionsRevision')
+        return int(value)
 
     @property
     def facilities(self):
@@ -11059,38 +11880,44 @@ class IGuest(Interface):
         Array of current known facilities. Only returns facilities where a status is known,
         e.g. facilities with an unknown status will not be returned.
         """
-        return self.get_attr('facilities', IAdditionsFacility)
+        value = self._get_attr('facilities')
+        return IAdditionsFacility(value)
 
     @property
     def sessions(self):
         """Get IGuestSession value for 'sessions'
         Returns a collection of all opened guest sessions.
         """
-        return self.get_attr('sessions', IGuestSession)
+        value = self._get_attr('sessions')
+        return IGuestSession(value)
 
     @property
     def memory_balloon_size(self):
         """Get or set int value for 'memoryBalloonSize'
         Guest system memory balloon size in megabytes (transient property).
         """
-        return self.get_attr('memoryBalloonSize', int)
+        value = self._get_attr('memoryBalloonSize')
+        return int(value)
 
     @memory_balloon_size.setter
     def memory_balloon_size(self, value):
-        return self.set_attr('memoryBalloonSize', value)
+        assert type(value) is int
+        return self._set_attr('memoryBalloonSize', value)
 
     @property
     def statistics_update_interval(self):
         """Get or set int value for 'statisticsUpdateInterval'
         Interval to update guest statistics in seconds.
         """
-        return self.get_attr('statisticsUpdateInterval', int)
+        value = self._get_attr('statisticsUpdateInterval')
+        return int(value)
 
     @statistics_update_interval.setter
     def statistics_update_interval(self, value):
-        return self.set_attr('statisticsUpdateInterval', value)
+        assert type(value) is int
+        return self._set_attr('statisticsUpdateInterval', value)
 
-    def internal_get_statistics(self, out_p={}):
+    def internal_get_statistics(self):
         """Internal method; do not use as it might change at any time.
 
         out cpu_user of type int
@@ -11133,10 +11960,11 @@ class IGuest(Interface):
             Total amount of shared memory in the hypervisor.
 
         """
-        self.call_method('internalGetStatistics',
-                     out_p=out_p)
-        
-    def get_facility_status(self, facility, out_p={}):
+        (cpu_user, cpu_kernel, cpu_idle, mem_total, mem_free, mem_balloon, mem_shared, mem_cache, paged_total, mem_alloc_total, mem_free_total, mem_balloon_total, mem_shared_total) =\
+            self._call_method('internalGetStatistics')
+        return (int(cpu_user), int(cpu_kernel), int(cpu_idle), int(mem_total), int(mem_free), int(mem_balloon), int(mem_shared), int(mem_cache), int(paged_total), int(mem_alloc_total), int(mem_free_total), int(mem_balloon_total), int(mem_shared_total))
+
+    def get_facility_status(self, facility):
         """Get the current status of a Guest Additions facility.
 
         in facility of type AdditionsFacilityType
@@ -11149,12 +11977,12 @@ class IGuest(Interface):
             The current (latest) facility status.
 
         """
-        status = self.call_method('getFacilityStatus',
-                     in_p=[facility],
-                     out_p=out_p,
-                     rettype=AdditionsFacilityStatus)
-        return status
-        
+        assert facility is AdditionsFacilityType
+        (timestamp, status) =\
+            self._call_method('getFacilityStatus',
+                     in_p=[facility])
+        return (int(timestamp), AdditionsFacilityStatus(status))
+
     def get_additions_status(self, level):
         """Retrieve the current status of a certain Guest Additions run level.
 
@@ -11168,11 +11996,12 @@ class IGuest(Interface):
             Wrong status level specified.
         
         """
-        active = self.call_method('getAdditionsStatus',
-                     in_p=[level],
-                     rettype=bool)
-        return active
-        
+        assert level is AdditionsRunLevelType
+        active =\
+            self._call_method('getAdditionsStatus',
+                     in_p=[level])
+        return bool(active)
+
     def set_credentials(self, user_name, password, domain, allow_interactive_logon):
         """Store login credentials that can be queried by guest operating
         systems with Additions installed. The credentials are transient
@@ -11198,7 +12027,11 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        self.call_method('setCredentials',
+        assert user_name is str
+        assert password is str
+        assert domain is str
+        assert allow_interactive_logon is bool
+        self._call_method('setCredentials',
                      in_p=[user_name, password, domain, allow_interactive_logon])
         
     def drag_hg_enter(self, screen_id, y, x, default_action, allowed_actions, formats):
@@ -11231,11 +12064,17 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        result_action = self.call_method('dragHGEnter',
-                     in_p=[screen_id, y, x, default_action, allowed_actions, formats],
-                     rettype=DragAndDropAction)
-        return result_action
-        
+        assert screen_id is int
+        assert y is int
+        assert x is int
+        assert default_action is DragAndDropAction
+        assert allowed_actions is DragAndDropAction
+        assert formats is str
+        result_action =\
+            self._call_method('dragHGEnter',
+                     in_p=[screen_id, y, x, default_action, allowed_actions, formats])
+        return DragAndDropAction(result_action)
+
     def drag_hg_move(self, screen_id, x, y, default_action, allowed_actions, formats):
         """Informs the guest about a Drag and Drop move event.
 
@@ -11266,11 +12105,17 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        result_action = self.call_method('dragHGMove',
-                     in_p=[screen_id, x, y, default_action, allowed_actions, formats],
-                     rettype=DragAndDropAction)
-        return result_action
-        
+        assert screen_id is int
+        assert x is int
+        assert y is int
+        assert default_action is DragAndDropAction
+        assert allowed_actions is DragAndDropAction
+        assert formats is str
+        result_action =\
+            self._call_method('dragHGMove',
+                     in_p=[screen_id, x, y, default_action, allowed_actions, formats])
+        return DragAndDropAction(result_action)
+
     def drag_hg_leave(self, screen_id):
         """Informs the guest about a Drag and Drop leave event.
 
@@ -11283,10 +12128,11 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        self.call_method('dragHGLeave',
+        assert screen_id is int
+        self._call_method('dragHGLeave',
                      in_p=[screen_id])
         
-    def drag_hg_drop(self, screen_id, x, y, default_action, allowed_actions, formats, out_p={}):
+    def drag_hg_drop(self, screen_id, x, y, default_action, allowed_actions, formats):
         """Informs the guest about a drop event.
 
         This is used in Host - Guest direction.
@@ -11319,12 +12165,17 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        result_action = self.call_method('dragHGDrop',
-                     in_p=[screen_id, x, y, default_action, allowed_actions, formats],
-                     out_p=out_p,
-                     rettype=DragAndDropAction)
-        return result_action
-        
+        assert screen_id is int
+        assert x is int
+        assert y is int
+        assert default_action is DragAndDropAction
+        assert allowed_actions is DragAndDropAction
+        assert formats is str
+        (format_p, result_action) =\
+            self._call_method('dragHGDrop',
+                     in_p=[screen_id, x, y, default_action, allowed_actions, formats])
+        return (str(format_p), DragAndDropAction(result_action))
+
     def drag_hg_put_data(self, screen_id, format_p, data):
         """Informs the guest about a drop data event.
 
@@ -11346,12 +12197,15 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        progress = self.call_method('dragHGPutData',
-                     in_p=[screen_id, format_p, data],
-                     rettype=IProgress)
-        return progress
-        
-    def drag_gh_pending(self, screen_id, out_p={}):
+        assert screen_id is int
+        assert format_p is str
+        assert data is str
+        progress =\
+            self._call_method('dragHGPutData',
+                     in_p=[screen_id, format_p, data])
+        return IProgress(progress)
+
+    def drag_gh_pending(self, screen_id):
         """Ask the guest if there is any Drag and Drop operation pending in the guest.
 
         If no Drag and Drop operation is pending currently, Ignore is returned.
@@ -11374,12 +12228,12 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        default_action = self.call_method('dragGHPending',
-                     in_p=[screen_id],
-                     out_p=out_p,
-                     rettype=DragAndDropAction)
-        return default_action
-        
+        assert screen_id is int
+        (formats, allowed_actions, default_action) =\
+            self._call_method('dragGHPending',
+                     in_p=[screen_id])
+        return (str(formats), DragAndDropAction(allowed_actions), DragAndDropAction(default_action))
+
     def drag_gh_dropped(self, format_p, action):
         """Informs the guest that a drop event occured for a pending Drag and Drop event.
 
@@ -11398,11 +12252,13 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        progress = self.call_method('dragGHDropped',
-                     in_p=[format_p, action],
-                     rettype=IProgress)
-        return progress
-        
+        assert format_p is str
+        assert action is DragAndDropAction
+        progress =\
+            self._call_method('dragGHDropped',
+                     in_p=[format_p, action])
+        return IProgress(progress)
+
     def drag_gh_get_data(self):
         """Fetch the data of a previously Drag and Drop event from the guest.
 
@@ -11415,10 +12271,10 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        data = self.call_method('dragGHGetData',
-                     rettype=str)
-        return data
-        
+        data =\
+            self._call_method('dragGHGetData')
+        return str(data)
+
     def create_session(self, user, password, domain, session_name):
         """Creates a new guest session for controlling the guest.
 
@@ -11467,11 +12323,15 @@ class IGuest(Interface):
             The newly created session object.
 
         """
-        guest_session = self.call_method('createSession',
-                     in_p=[user, password, domain, session_name],
-                     rettype=IGuestSession)
-        return guest_session
-        
+        assert user is str
+        assert password is str
+        assert domain is str
+        assert session_name is str
+        guest_session =\
+            self._call_method('createSession',
+                     in_p=[user, password, domain, session_name])
+        return IGuestSession(guest_session)
+
     def find_session(self, session_name):
         """Finds guest sessions by their friendly name and returns an interface
         array with all found guest sessions.
@@ -11483,11 +12343,12 @@ class IGuest(Interface):
             Array with all guest sessions found matching the name specified.
 
         """
-        sessions = self.call_method('findSession',
-                     in_p=[session_name],
-                     rettype=IGuestSession)
-        return sessions
-        
+        assert session_name is str
+        sessions =\
+            self._call_method('findSession',
+                     in_p=[session_name])
+        return IGuestSession(sessions)
+
     def update_guest_additions(self, source, flags):
         """Automatically updates already installed Guest Additions in a VM.
 
@@ -11520,11 +12381,13 @@ class IGuest(Interface):
             Error while updating.
         
         """
-        progress = self.call_method('updateGuestAdditions',
-                     in_p=[source, flags],
-                     rettype=IProgress)
-        return progress
-        
+        assert source is str
+        assert flags is AdditionsUpdateFlag
+        progress =\
+            self._call_method('updateGuestAdditions',
+                     in_p=[source, flags])
+        return IProgress(progress)
+
 
 class IProgress(Interface):
     """
@@ -11571,28 +12434,32 @@ class IProgress(Interface):
         """Get str value for 'id'
         ID of the task.
         """
-        return self.get_attr('id', str)
+        value = self._get_attr('id')
+        return str(value)
 
     @property
     def description(self):
         """Get str value for 'description'
         Description of the task.
         """
-        return self.get_attr('description', str)
+        value = self._get_attr('description')
+        return str(value)
 
     @property
     def initiator(self):
         """Get Interface value for 'initiator'
         Initiator of the task.
         """
-        return self.get_attr('initiator', Interface)
+        value = self._get_attr('initiator')
+        return Interface(value)
 
     @property
     def cancelable(self):
         """Get bool value for 'cancelable'
         Whether the task can be interrupted.
         """
-        return self.get_attr('cancelable', bool)
+        value = self._get_attr('cancelable')
+        return bool(value)
 
     @property
     def percent(self):
@@ -11601,7 +12468,8 @@ class IProgress(Interface):
         This value depends on how many operations are already complete.
         Returns 100 if <link to="#completed"/> is @c true.
         """
-        return self.get_attr('percent', int)
+        value = self._get_attr('percent')
+        return int(value)
 
     @property
     def time_remaining(self):
@@ -11616,21 +12484,24 @@ class IProgress(Interface):
             task progresses; it is not recommended to display an ETA
             before at least 20% of a task have completed.
         """
-        return self.get_attr('timeRemaining', int)
+        value = self._get_attr('timeRemaining')
+        return int(value)
 
     @property
     def completed(self):
         """Get bool value for 'completed'
         Whether the task has been completed.
         """
-        return self.get_attr('completed', bool)
+        value = self._get_attr('completed')
+        return bool(value)
 
     @property
     def canceled(self):
         """Get bool value for 'canceled'
         Whether the task has been canceled.
         """
-        return self.get_attr('canceled', bool)
+        value = self._get_attr('canceled')
+        return bool(value)
 
     @property
     def result_code(self):
@@ -11638,7 +12509,8 @@ class IProgress(Interface):
         Result code of the progress task.
         Valid only if <link to="#completed"/> is @c true.
         """
-        return self.get_attr('resultCode', int)
+        value = self._get_attr('resultCode')
+        return int(value)
 
     @property
     def error_info(self):
@@ -11649,7 +12521,8 @@ class IProgress(Interface):
         Valid only if <link to="#completed"/> is @c true and
         <link to="#resultCode"/> indicates a failure.
         """
-        return self.get_attr('errorInfo', IVirtualBoxErrorInfo)
+        value = self._get_attr('errorInfo')
+        return IVirtualBoxErrorInfo(value)
 
     @property
     def operation_count(self):
@@ -11657,35 +12530,40 @@ class IProgress(Interface):
         Number of sub-operations this task is divided into.
           Every task consists of at least one suboperation.
         """
-        return self.get_attr('operationCount', int)
+        value = self._get_attr('operationCount')
+        return int(value)
 
     @property
     def operation(self):
         """Get int value for 'operation'
         Number of the sub-operation being currently executed.
         """
-        return self.get_attr('operation', int)
+        value = self._get_attr('operation')
+        return int(value)
 
     @property
     def operation_description(self):
         """Get str value for 'operationDescription'
         Description of the sub-operation being currently executed.
         """
-        return self.get_attr('operationDescription', str)
+        value = self._get_attr('operationDescription')
+        return str(value)
 
     @property
     def operation_percent(self):
         """Get int value for 'operationPercent'
         Progress value of the current sub-operation only, in percent.
         """
-        return self.get_attr('operationPercent', int)
+        value = self._get_attr('operationPercent')
+        return int(value)
 
     @property
     def operation_weight(self):
         """Get int value for 'operationWeight'
         Weight value of the current sub-operation only.
         """
-        return self.get_attr('operationWeight', int)
+        value = self._get_attr('operationWeight')
+        return int(value)
 
     @property
     def timeout(self):
@@ -11694,11 +12572,13 @@ class IProgress(Interface):
           the operation will automatically be canceled. This can only be set on
           cancelable objects.
         """
-        return self.get_attr('timeout', int)
+        value = self._get_attr('timeout')
+        return int(value)
 
     @timeout.setter
     def timeout(self, value):
-        return self.set_attr('timeout', value)
+        assert type(value) is int
+        return self._set_attr('timeout', value)
 
     def set_current_operation_progress(self, percent):
         """Internal method, not to be called externally.
@@ -11706,7 +12586,8 @@ class IProgress(Interface):
         in percent of type int
 
         """
-        self.call_method('setCurrentOperationProgress',
+        assert percent is int
+        self._call_method('setCurrentOperationProgress',
                      in_p=[percent])
         
     def set_next_operation(self, next_operation_description, next_operations_weight):
@@ -11717,7 +12598,9 @@ class IProgress(Interface):
         in next_operations_weight of type int
 
         """
-        self.call_method('setNextOperation',
+        assert next_operation_description is str
+        assert next_operations_weight is int
+        self._call_method('setNextOperation',
                      in_p=[next_operation_description, next_operations_weight])
         
     def wait_for_completion(self, timeout):
@@ -11739,7 +12622,8 @@ class IProgress(Interface):
             Failed to wait for task completion.
         
         """
-        self.call_method('waitForCompletion',
+        assert timeout is int
+        self._call_method('waitForCompletion',
                      in_p=[timeout])
         
     def wait_for_operation_completion(self, operation, timeout):
@@ -11759,7 +12643,9 @@ class IProgress(Interface):
             Failed to wait for operation completion.
         
         """
-        self.call_method('waitForOperationCompletion',
+        assert operation is int
+        assert timeout is int
+        self._call_method('waitForOperationCompletion',
                      in_p=[operation, timeout])
         
     def wait_for_async_progress_completion(self, p_progress_async):
@@ -11785,7 +12671,8 @@ class IProgress(Interface):
             The progress object of the asynchrony process.
 
         """
-        self.call_method('waitForAsyncProgressCompletion',
+        assert p_progress_async is IProgress
+        self._call_method('waitForAsyncProgressCompletion',
                      in_p=[p_progress_async])
         
     def cancel(self):
@@ -11797,7 +12684,7 @@ class IProgress(Interface):
             Operation cannot be canceled.
         
         """
-        self.call_method('cancel')
+        self._call_method('cancel')
         
 
 class ISnapshot(Interface):
@@ -11890,7 +12777,8 @@ class ISnapshot(Interface):
         """Get str value for 'id'
         UUID of the snapshot.
         """
-        return self.get_attr('id', str)
+        value = self._get_attr('id')
+        return str(value)
 
     @property
     def name(self):
@@ -11899,11 +12787,13 @@ class ISnapshot(Interface):
       Setting this attribute causes <link to="IMachine::saveSettings"/> to
       be called implicitly.
         """
-        return self.get_attr('name', str)
+        value = self._get_attr('name')
+        return str(value)
 
     @name.setter
     def name(self, value):
-        return self.set_attr('name', value)
+        assert type(value) is str
+        return self._set_attr('name', value)
 
     @property
     def description(self):
@@ -11912,18 +12802,21 @@ class ISnapshot(Interface):
       Setting this attribute causes <link to="IMachine::saveSettings"/> to
       be called implicitly.
         """
-        return self.get_attr('description', str)
+        value = self._get_attr('description')
+        return str(value)
 
     @description.setter
     def description(self, value):
-        return self.set_attr('description', value)
+        assert type(value) is str
+        return self._set_attr('description', value)
 
     @property
     def time_stamp(self):
         """Get int value for 'timeStamp'
         Time stamp of the snapshot, in milliseconds since 1970-01-01 UTC.
         """
-        return self.get_attr('timeStamp', int)
+        value = self._get_attr('timeStamp')
+        return int(value)
 
     @property
     def online(self):
@@ -11936,7 +12829,8 @@ class ISnapshot(Interface):
           will point to the saved state file. Otherwise, it will be
           an empty string.
         """
-        return self.get_attr('online', bool)
+        value = self._get_attr('online')
+        return bool(value)
 
     @property
     def machine(self):
@@ -11947,7 +12841,8 @@ class ISnapshot(Interface):
           The returned machine object is immutable, i.e. no
           any settings can be changed.
         """
-        return self.get_attr('machine', IMachine)
+        value = self._get_attr('machine')
+        return IMachine(value)
 
     @property
     def parent(self):
@@ -11955,7 +12850,8 @@ class ISnapshot(Interface):
         Parent snapshot (a snapshot this one is based on), or
         @c null if the snapshot has no parent (i.e. is the first snapshot).
         """
-        return self.get_attr('parent', ISnapshot)
+        value = self._get_attr('parent')
+        return ISnapshot(value)
 
     @property
     def children(self):
@@ -11965,7 +12861,8 @@ class ISnapshot(Interface):
         (which can be obtained by calling <link to="IMachine::findSnapshot"/>
         with a @c null UUID), a machine's snapshots tree can be iterated over.
         """
-        return self.get_attr('children', ISnapshot)
+        value = self._get_attr('children')
+        return ISnapshot(value)
 
     def get_children_count(self):
         """Returns the number of direct childrens of this snapshot.
@@ -11973,10 +12870,10 @@ class ISnapshot(Interface):
         return children_count of type int
 
         """
-        children_count = self.call_method('getChildrenCount',
-                     rettype=int)
-        return children_count
-        
+        children_count =\
+            self._call_method('getChildrenCount')
+        return int(children_count)
+
 
 class IMediumAttachment(Interface):
     """
@@ -12164,7 +13061,8 @@ Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
         Medium object associated with this attachment; it
         can be @c null for removable devices.
         """
-        return self.get_attr('medium', IMedium)
+        value = self._get_attr('medium')
+        return IMedium(value)
 
     @property
     def controller(self):
@@ -12173,7 +13071,8 @@ Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
         refers to one of the controllers in <link to="IMachine::storageControllers"/>
         by name.
         """
-        return self.get_attr('controller', str)
+        value = self._get_attr('controller')
+        return str(value)
 
     @property
     def port(self):
@@ -12181,7 +13080,8 @@ Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
         Port number of this attachment.
         See <link to="IMachine::attachDevice"/> for the meaning of this value for the different controller types.
         """
-        return self.get_attr('port', int)
+        value = self._get_attr('port')
+        return int(value)
 
     @property
     def device(self):
@@ -12189,28 +13089,32 @@ Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
         Device slot number of this attachment.
         See <link to="IMachine::attachDevice"/> for the meaning of this value for the different controller types.
         """
-        return self.get_attr('device', int)
+        value = self._get_attr('device')
+        return int(value)
 
     @property
     def type_p(self):
         """Get DeviceType value for 'type'
         Device type of this attachment.
         """
-        return self.get_attr('type', DeviceType)
+        value = self._get_attr('type')
+        return DeviceType(value)
 
     @property
     def passthrough(self):
         """Get bool value for 'passthrough'
         Pass I/O requests through to a device on the host.
         """
-        return self.get_attr('passthrough', bool)
+        value = self._get_attr('passthrough')
+        return bool(value)
 
     @property
     def temporary_eject(self):
         """Get bool value for 'temporaryEject'
         Whether guest-triggered eject results in unmounting the medium.
         """
-        return self.get_attr('temporaryEject', bool)
+        value = self._get_attr('temporaryEject')
+        return bool(value)
 
     @property
     def is_ejected(self):
@@ -12218,28 +13122,32 @@ Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
         Signals that the removable medium has been ejected. This is not
         necessarily equivalent to having a @c null medium association.
         """
-        return self.get_attr('isEjected', bool)
+        value = self._get_attr('isEjected')
+        return bool(value)
 
     @property
     def non_rotational(self):
         """Get bool value for 'nonRotational'
         Whether the associated medium is non-rotational.
         """
-        return self.get_attr('nonRotational', bool)
+        value = self._get_attr('nonRotational')
+        return bool(value)
 
     @property
     def discard(self):
         """Get bool value for 'discard'
         Whether the associated medium supports discarding unused blocks.
         """
-        return self.get_attr('discard', bool)
+        value = self._get_attr('discard')
+        return bool(value)
 
     @property
     def bandwidth_group(self):
         """Get IBandwidthGroup value for 'bandwidthGroup'
         The bandwidth group this medium attachment is assigned to.
         """
-        return self.get_attr('bandwidthGroup', IBandwidthGroup)
+        value = self._get_attr('bandwidthGroup')
+        return IBandwidthGroup(value)
 
 
 class IMedium(Interface):
@@ -12410,7 +13318,8 @@ class IMedium(Interface):
           MediumState_Deleting states, the value of this property is undefined
           and will most likely be an empty UUID.
         """
-        return self.get_attr('id', str)
+        value = self._get_attr('id')
+        return str(value)
 
     @property
     def description(self):
@@ -12428,11 +13337,13 @@ class IMedium(Interface):
           attribute value is not possible in such case, as well as when the
           medium is the <link to="MediumState_LockedRead"/> state.
         """
-        return self.get_attr('description', str)
+        value = self._get_attr('description')
+        return str(value)
 
     @description.setter
     def description(self, value):
-        return self.set_attr('description', value)
+        assert type(value) is str
+        return self._set_attr('description', value)
 
     @property
     def state(self):
@@ -12447,7 +13358,8 @@ class IMedium(Interface):
         As of version 3.1, this no longer performs an accessibility check
           automatically; call <link to="#refreshState"/> for that.
         """
-        return self.get_attr('state', MediumState)
+        value = self._get_attr('state')
+        return MediumState(value)
 
     @property
     def variant(self):
@@ -12457,7 +13369,8 @@ class IMedium(Interface):
         Before <link to="#refreshState"/> is called this method returns
         an undefined value.
         """
-        return self.get_attr('variant', MediumVariant)
+        value = self._get_attr('variant')
+        return MediumVariant(value)
 
     @property
     def location(self):
@@ -12480,11 +13393,13 @@ class IMedium(Interface):
         the file extension part then a proper default extension will be
         automatically appended by the implementation depending on the medium type.
         """
-        return self.get_attr('location', str)
+        value = self._get_attr('location')
+        return str(value)
 
     @location.setter
     def location(self, value):
-        return self.set_attr('location', value)
+        assert type(value) is str
+        return self._set_attr('location', value)
 
     @property
     def name(self):
@@ -12505,7 +13420,8 @@ class IMedium(Interface):
         attribute will not necessary be unique for a list of media of the
         given type and format.
         """
-        return self.get_attr('name', str)
+        value = self._get_attr('name')
+        return str(value)
 
     @property
     def device_type(self):
@@ -12513,14 +13429,16 @@ class IMedium(Interface):
         Kind of device (DVD/Floppy/HardDisk) which is applicable to this
         medium.
         """
-        return self.get_attr('deviceType', DeviceType)
+        value = self._get_attr('deviceType')
+        return DeviceType(value)
 
     @property
     def host_drive(self):
         """Get bool value for 'hostDrive'
         True if this corresponds to a drive on the host.
         """
-        return self.get_attr('hostDrive', bool)
+        value = self._get_attr('hostDrive')
+        return bool(value)
 
     @property
     def size(self):
@@ -12532,7 +13450,8 @@ class IMedium(Interface):
           last known size. For <link to="MediumState_NotCreated"/> media,
           the returned value is zero.
         """
-        return self.get_attr('size', int)
+        value = self._get_attr('size')
+        return int(value)
 
     @property
     def format_p(self):
@@ -12548,7 +13467,8 @@ class IMedium(Interface):
         installation can be obtained using
         <link to="ISystemProperties::mediumFormats"/>.
         """
-        return self.get_attr('format', str)
+        value = self._get_attr('format')
+        return str(value)
 
     @property
     def medium_format(self):
@@ -12564,7 +13484,8 @@ class IMedium(Interface):
         object. This can e.g. happen for medium objects representing host
         drives and other special medium objects.
         """
-        return self.get_attr('mediumFormat', IMediumFormat)
+        value = self._get_attr('mediumFormat')
+        return IMediumFormat(value)
 
     @property
     def type_p(self):
@@ -12590,18 +13511,21 @@ class IMedium(Interface):
         <link to="MediumType_Normal"/>, except for DVD and floppy media,
         which have a type of <link to="MediumType_Writethrough"/>.
         """
-        return self.get_attr('type', MediumType)
+        value = self._get_attr('type')
+        return MediumType(value)
 
     @type_p.setter
     def type_p(self, value):
-        return self.set_attr('type', value)
+        assert type(value) is MediumType
+        return self._set_attr('type', value)
 
     @property
     def allowed_types(self):
         """Get MediumType value for 'allowedTypes'
         Returns which medium types can selected for this medium.
         """
-        return self.get_attr('allowedTypes', MediumType)
+        value = self._get_attr('allowedTypes')
+        return MediumType(value)
 
     @property
     def parent(self):
@@ -12612,7 +13536,8 @@ class IMedium(Interface):
         Only differencing media have parents. For base (non-differencing)
         media, @c null is returned.
         """
-        return self.get_attr('parent', IMedium)
+        value = self._get_attr('parent')
+        return IMedium(value)
 
     @property
     def children(self):
@@ -12621,7 +13546,8 @@ class IMedium(Interface):
         on this medium). A @c null array is returned if this medium
         does not have any children.
         """
-        return self.get_attr('children', IMedium)
+        value = self._get_attr('children')
+        return IMedium(value)
 
     @property
     def base(self):
@@ -12633,7 +13559,8 @@ class IMedium(Interface):
         property returns the medium object itself (i.e. the same object this
         property is read on).
         """
-        return self.get_attr('base', IMedium)
+        value = self._get_attr('base')
+        return IMedium(value)
 
     @property
     def read_only(self):
@@ -12665,7 +13592,8 @@ class IMedium(Interface):
           <link to="IMedium::state">medium state</link> and not to the read-only
           state of the storage unit.
         """
-        return self.get_attr('readOnly', bool)
+        value = self._get_attr('readOnly')
+        return bool(value)
 
     @property
     def logical_size(self):
@@ -12680,7 +13608,8 @@ class IMedium(Interface):
           last known logical size. For <link to="MediumState_NotCreated"/>
           media, the returned value is zero.
         """
-        return self.get_attr('logicalSize', int)
+        value = self._get_attr('logicalSize')
+        return int(value)
 
     @property
     def auto_reset(self):
@@ -12699,11 +13628,13 @@ class IMedium(Interface):
           always @c false. Changing the value of this property in this
           case is not supported.
         """
-        return self.get_attr('autoReset', bool)
+        value = self._get_attr('autoReset')
+        return bool(value)
 
     @auto_reset.setter
     def auto_reset(self, value):
-        return self.set_attr('autoReset', value)
+        assert type(value) is bool
+        return self._set_attr('autoReset', value)
 
     @property
     def last_access_error(self):
@@ -12719,7 +13650,8 @@ class IMedium(Interface):
         A non-empty string indicates a failure and should normally describe
         a reason of the failure (for example, a file read error).
         """
-        return self.get_attr('lastAccessError', str)
+        value = self._get_attr('lastAccessError')
+        return str(value)
 
     @property
     def machine_ids(self):
@@ -12735,7 +13667,8 @@ class IMedium(Interface):
           one of the machine's snapshots. See <link to="#getSnapshotIds"/> for
           details.
         """
-        return self.get_attr('machineIds', str)
+        value = self._get_attr('machineIds')
+        return str(value)
 
     def set_ids(self, set_image_id, image_id, set_parent_id, parent_id):
         """Changes the UUID and parent UUID for a hard disk medium.
@@ -12763,7 +13696,11 @@ class IMedium(Interface):
             Medium is not a hard disk medium.
         
         """
-        self.call_method('setIds',
+        assert set_image_id is bool
+        assert image_id is str
+        assert set_parent_id is bool
+        assert parent_id is str
+        self._call_method('setIds',
                      in_p=[set_image_id, image_id, set_parent_id, parent_id])
         
     def refresh_state(self):
@@ -12798,10 +13735,10 @@ class IMedium(Interface):
             New medium state.
 
         """
-        state = self.call_method('refreshState',
-                     rettype=MediumState)
-        return state
-        
+        state =\
+            self._call_method('refreshState')
+        return MediumState(state)
+
     def get_snapshot_ids(self, machine_id):
         """Returns an array of UUIDs of all snapshots of the given machine where
         this medium is attached to.
@@ -12825,11 +13762,12 @@ class IMedium(Interface):
             Array of snapshot UUIDs of the given machine using this medium.
 
         """
-        snapshot_ids = self.call_method('getSnapshotIds',
-                     in_p=[machine_id],
-                     rettype=str)
-        return snapshot_ids
-        
+        assert machine_id is str
+        snapshot_ids =\
+            self._call_method('getSnapshotIds',
+                     in_p=[machine_id])
+        return str(snapshot_ids)
+
     def lock_read(self):
         """Locks this medium for reading.
 
@@ -12882,10 +13820,10 @@ class IMedium(Interface):
           creating, deleting).
         
         """
-        state = self.call_method('lockRead',
-                     rettype=MediumState)
-        return state
-        
+        state =\
+            self._call_method('lockRead')
+        return MediumState(state)
+
     def unlock_read(self):
         """Cancels the read lock previously set by <link to="#lockRead"/>.
 
@@ -12901,10 +13839,10 @@ class IMedium(Interface):
             Medium not locked for reading.
         
         """
-        state = self.call_method('unlockRead',
-                     rettype=MediumState)
-        return state
-        
+        state =\
+            self._call_method('unlockRead')
+        return MediumState(state)
+
     def lock_write(self):
         """Locks this medium for writing.
 
@@ -12952,10 +13890,10 @@ class IMedium(Interface):
           creating, deleting).
         
         """
-        state = self.call_method('lockWrite',
-                     rettype=MediumState)
-        return state
-        
+        state =\
+            self._call_method('lockWrite')
+        return MediumState(state)
+
     def unlock_write(self):
         """Cancels the write lock previously set by <link to="#lockWrite"/>.
 
@@ -12971,10 +13909,10 @@ class IMedium(Interface):
             Medium not locked for writing.
         
         """
-        state = self.call_method('unlockWrite',
-                     rettype=MediumState)
-        return state
-        
+        state =\
+            self._call_method('unlockWrite')
+        return MediumState(state)
+
     def close(self):
         """Closes this medium.
 
@@ -13007,7 +13945,7 @@ class IMedium(Interface):
             Could not parse the settings file.
         
         """
-        self.call_method('close')
+        self._call_method('close')
         
     def get_property(self, name):
         """Returns the value of the custom medium property with the given name.
@@ -13031,11 +13969,12 @@ class IMedium(Interface):
             @a name is @c null or empty.
         
         """
-        value = self.call_method('getProperty',
-                     in_p=[name],
-                     rettype=str)
-        return value
-        
+        assert name is str
+        value =\
+            self._call_method('getProperty',
+                     in_p=[name])
+        return str(value)
+
     def set_property(self, name, value):
         """Sets the value of the custom medium property with the given name.
 
@@ -13060,10 +13999,12 @@ class IMedium(Interface):
             @a name is @c null or empty.
         
         """
-        self.call_method('setProperty',
+        assert name is str
+        assert value is str
+        self._call_method('setProperty',
                      in_p=[name, value])
         
-    def get_properties(self, names, out_p={}):
+    def get_properties(self, names):
         """Returns values for a group of properties in one call.
 
         The names of the properties to get are specified using the @a names
@@ -13094,12 +14035,12 @@ class IMedium(Interface):
             Values of returned properties.
 
         """
-        return_values = self.call_method('getProperties',
-                     in_p=[names],
-                     out_p=out_p,
-                     rettype=str)
-        return return_values
-        
+        assert names is str
+        (return_names, return_values) =\
+            self._call_method('getProperties',
+                     in_p=[names])
+        return (str(return_names), str(return_values))
+
     def set_properties(self, names, values):
         """Sets values for a group of properties in one call.
 
@@ -13130,7 +14071,9 @@ class IMedium(Interface):
             Values of properties to set.
 
         """
-        self.call_method('setProperties',
+        assert names is str
+        assert values is str
+        self._call_method('setProperties',
                      in_p=[names, values])
         
     def create_base_storage(self, logical_size, variant):
@@ -13162,11 +14105,13 @@ class IMedium(Interface):
             The variant of storage creation operation is not supported. See
         
         """
-        progress = self.call_method('createBaseStorage',
-                     in_p=[logical_size, variant],
-                     rettype=IProgress)
-        return progress
-        
+        assert logical_size is int
+        assert variant is MediumVariant
+        progress =\
+            self._call_method('createBaseStorage',
+                     in_p=[logical_size, variant])
+        return IProgress(progress)
+
     def delete_storage(self):
         """Starts deleting the storage unit of this medium.
 
@@ -13208,10 +14153,10 @@ class IMedium(Interface):
           operations are supported. See
         
         """
-        progress = self.call_method('deleteStorage',
-                     rettype=IProgress)
-        return progress
-        
+        progress =\
+            self._call_method('deleteStorage')
+        return IProgress(progress)
+
     def create_diff_storage(self, target, variant):
         """Starts creating an empty differencing storage unit based on this
         medium in the format and at the location defined by the @a target
@@ -13246,11 +14191,13 @@ class IMedium(Interface):
             Medium not in @c NotCreated state.
         
         """
-        progress = self.call_method('createDiffStorage',
-                     in_p=[target, variant],
-                     rettype=IProgress)
-        return progress
-        
+        assert target is IMedium
+        assert variant is MediumVariant
+        progress =\
+            self._call_method('createDiffStorage',
+                     in_p=[target, variant])
+        return IProgress(progress)
+
     def merge_to(self, target):
         """Starts merging the contents of this medium and all intermediate
         differencing media in the chain to the given target medium.
@@ -13327,11 +14274,12 @@ class IMedium(Interface):
             Progress object to track the operation completion.
 
         """
-        progress = self.call_method('mergeTo',
-                     in_p=[target],
-                     rettype=IProgress)
-        return progress
-        
+        assert target is IMedium
+        progress =\
+            self._call_method('mergeTo',
+                     in_p=[target])
+        return IProgress(progress)
+
     def clone_to(self, target, variant, parent):
         """Starts creating a clone of this medium in the format and at the
         location defined by the @a target argument.
@@ -13378,11 +14326,14 @@ class IMedium(Interface):
             The specified cloning variant is not supported at the moment.
         
         """
-        progress = self.call_method('cloneTo',
-                     in_p=[target, variant, parent],
-                     rettype=IProgress)
-        return progress
-        
+        assert target is IMedium
+        assert variant is MediumVariant
+        assert parent is IMedium
+        progress =\
+            self._call_method('cloneTo',
+                     in_p=[target, variant, parent])
+        return IProgress(progress)
+
     def clone_to_base(self, target, variant):
         """Starts creating a clone of this medium in the format and at the
     location defined by the @a target argument.
@@ -13425,11 +14376,13 @@ class IMedium(Interface):
             The specified cloning variant is not supported at the moment.
         
         """
-        progress = self.call_method('cloneToBase',
-                     in_p=[target, variant],
-                     rettype=IProgress)
-        return progress
-        
+        assert target is IMedium
+        assert variant is MediumVariant
+        progress =\
+            self._call_method('cloneToBase',
+                     in_p=[target, variant])
+        return IProgress(progress)
+
     def compact(self):
         """Starts compacting of this medium. This means that the medium is
         transformed into a possibly more compact storage representation.
@@ -13453,10 +14406,10 @@ class IMedium(Interface):
           needs it).
         
         """
-        progress = self.call_method('compact',
-                     rettype=IProgress)
-        return progress
-        
+        progress =\
+            self._call_method('compact')
+        return IProgress(progress)
+
     def resize(self, logical_size):
         """Starts resizing this medium. This means that the nominal size of the
         medium is set to the new value. Both increasing and decreasing the
@@ -13485,11 +14438,12 @@ class IMedium(Interface):
             Medium format does not support resizing.
         
         """
-        progress = self.call_method('resize',
-                     in_p=[logical_size],
-                     rettype=IProgress)
-        return progress
-        
+        assert logical_size is int
+        progress =\
+            self._call_method('resize',
+                     in_p=[logical_size])
+        return IProgress(progress)
+
     def reset(self):
         """Starts erasing the contents of this differencing medium.
 
@@ -13512,10 +14466,10 @@ class IMedium(Interface):
             Medium is not in
         
         """
-        progress = self.call_method('reset',
-                     rettype=IProgress)
-        return progress
-        
+        progress =\
+            self._call_method('reset')
+        return IProgress(progress)
+
 
 class IMediumFormat(Interface):
     """
@@ -13556,7 +14510,8 @@ class IMediumFormat(Interface):
         to specify a medium format, such as
         <link to="IVirtualBox::createHardDisk"/>.
         """
-        return self.get_attr('id', str)
+        value = self._get_attr('id')
+        return str(value)
 
     @property
     def name(self):
@@ -13565,7 +14520,8 @@ class IMediumFormat(Interface):
 
         Mainly for use in file open dialogs.
         """
-        return self.get_attr('name', str)
+        value = self._get_attr('name')
+        return str(value)
 
     @property
     def capabilities(self):
@@ -13575,9 +14531,10 @@ class IMediumFormat(Interface):
         For the meaning of individual capability flags see
         <link to="MediumFormatCapabilities"/>.
         """
-        return self.get_attr('capabilities', MediumFormatCapabilities)
+        value = self._get_attr('capabilities')
+        return MediumFormatCapabilities(value)
 
-    def describe_file_extensions(self, out_p={}):
+    def describe_file_extensions(self):
         """Returns two arrays describing the supported file extensions.
 
         The first array contains the supported extensions and the seconds one
@@ -13595,10 +14552,11 @@ class IMediumFormat(Interface):
             The array which indicates the device type for every given extension.
 
         """
-        self.call_method('describeFileExtensions',
-                     out_p=out_p)
-        
-    def describe_properties(self, out_p={}):
+        (extensions, types) =\
+            self._call_method('describeFileExtensions')
+        return (str(extensions), DeviceType(types))
+
+    def describe_properties(self):
         """Returns several arrays describing the properties supported by this
         format.
 
@@ -13628,9 +14586,10 @@ class IMediumFormat(Interface):
             Array of default property values.
 
         """
-        self.call_method('describeProperties',
-                     out_p=out_p)
-        
+        (names, descriptions, types, flags, defaults) =\
+            self._call_method('describeProperties')
+        return (str(names), str(descriptions), DataType(types), int(flags), str(defaults))
+
 
 class IKeyboard(Interface):
     """
@@ -13652,7 +14611,8 @@ class IKeyboard(Interface):
             Could not send scan code to virtual keyboard.
         
         """
-        self.call_method('putScancode',
+        assert scancode is int
+        self._call_method('putScancode',
                      in_p=[scancode])
         
     def put_scancodes(self, scancodes):
@@ -13666,11 +14626,12 @@ class IKeyboard(Interface):
             Could not send all scan codes to virtual keyboard.
         
         """
-        codes_stored = self.call_method('putScancodes',
-                     in_p=[scancodes],
-                     rettype=int)
-        return codes_stored
-        
+        assert scancodes is int
+        codes_stored =\
+            self._call_method('putScancodes',
+                     in_p=[scancodes])
+        return int(codes_stored)
+
     def put_cad(self):
         """Sends the Ctrl-Alt-Del sequence to the keyboard. This
       function is nothing special, it is just a convenience function
@@ -13680,14 +14641,15 @@ class IKeyboard(Interface):
             Could not send all scan codes to virtual keyboard.
         
         """
-        self.call_method('putCAD')
+        self._call_method('putCAD')
         
     @property
     def event_source(self):
         """Get IEventSource value for 'eventSource'
         Event source for keyboard events.
         """
-        return self.get_attr('eventSource', IEventSource)
+        value = self._get_attr('eventSource')
+        return IEventSource(value)
 
 
 class IMouse(Interface):
@@ -13713,7 +14675,8 @@ class IMouse(Interface):
         
         <link to="#putMouseEventAbsolute"/>
         """
-        return self.get_attr('absoluteSupported', bool)
+        value = self._get_attr('absoluteSupported')
+        return bool(value)
 
     @property
     def relative_supported(self):
@@ -13727,7 +14690,8 @@ class IMouse(Interface):
         
         <link to="#putMouseEvent"/>
         """
-        return self.get_attr('relativeSupported', bool)
+        value = self._get_attr('relativeSupported')
+        return bool(value)
 
     @property
     def needs_host_cursor(self):
@@ -13741,7 +14705,8 @@ class IMouse(Interface):
         
         <link to="#putMouseEvent"/>
         """
-        return self.get_attr('needsHostCursor', bool)
+        value = self._get_attr('needsHostCursor')
+        return bool(value)
 
     def put_mouse_event(self, dx, dy, dz, dw, button_state):
         """Initiates a mouse event using relative pointer movements
@@ -13783,7 +14748,12 @@ class IMouse(Interface):
             Could not send mouse event to virtual mouse.
         
         """
-        self.call_method('putMouseEvent',
+        assert dx is int
+        assert dy is int
+        assert dz is int
+        assert dw is int
+        assert button_state is int
+        self._call_method('putMouseEvent',
                      in_p=[dx, dy, dz, dw, button_state])
         
     def put_mouse_event_absolute(self, x, y, dz, dw, button_state):
@@ -13835,7 +14805,12 @@ class IMouse(Interface):
             Could not send mouse event to virtual mouse.
         
         """
-        self.call_method('putMouseEventAbsolute',
+        assert x is int
+        assert y is int
+        assert dz is int
+        assert dw is int
+        assert button_state is int
+        self._call_method('putMouseEventAbsolute',
                      in_p=[x, y, dz, dw, button_state])
         
     @property
@@ -13843,7 +14818,8 @@ class IMouse(Interface):
         """Get IEventSource value for 'eventSource'
         Event source for mouse events.
         """
-        return self.get_attr('eventSource', IEventSource)
+        value = self._get_attr('eventSource')
+        return IEventSource(value)
 
 
 class IFramebuffer(Interface):
@@ -13858,21 +14834,24 @@ class IFramebuffer(Interface):
         """Get str value for 'address'
         Address of the start byte of the frame buffer.
         """
-        return self.get_attr('address', str)
+        value = self._get_attr('address')
+        return str(value)
 
     @property
     def width(self):
         """Get int value for 'width'
         Frame buffer width, in pixels.
         """
-        return self.get_attr('width', int)
+        value = self._get_attr('width')
+        return int(value)
 
     @property
     def height(self):
         """Get int value for 'height'
         Frame buffer height, in pixels.
         """
-        return self.get_attr('height', int)
+        value = self._get_attr('height')
+        return int(value)
 
     @property
     def bits_per_pixel(self):
@@ -13880,7 +14859,8 @@ class IFramebuffer(Interface):
         Color depth, in bits per pixel. When <link to="#pixelFormat"/> is <link to="FramebufferPixelFormat_FOURCC_RGB">FOURCC_RGB</link>, valid values
         are: 8, 15, 16, 24 and 32.
         """
-        return self.get_attr('bitsPerPixel', int)
+        value = self._get_attr('bitsPerPixel')
+        return int(value)
 
     @property
     def bytes_per_line(self):
@@ -13888,7 +14868,8 @@ class IFramebuffer(Interface):
         Scan line size, in bytes. When <link to="#pixelFormat"/> is <link to="FramebufferPixelFormat_FOURCC_RGB">FOURCC_RGB</link>, the
         size of the scan line must be aligned to 32 bits.
         """
-        return self.get_attr('bytesPerLine', int)
+        value = self._get_attr('bytesPerLine')
+        return int(value)
 
     @property
     def pixel_format(self):
@@ -13898,7 +14879,8 @@ class IFramebuffer(Interface):
           This attribute must never return <link to="FramebufferPixelFormat_Opaque"/> -- the format of the buffer
           <link to="#address"/> points to must be always known.
         """
-        return self.get_attr('pixelFormat', int)
+        value = self._get_attr('pixelFormat')
+        return int(value)
 
     @property
     def uses_guest_vram(self):
@@ -13906,7 +14888,8 @@ class IFramebuffer(Interface):
         Defines whether this frame buffer uses the virtual video card's memory
         buffer (guest VRAM) directly or not. See <link to="IFramebuffer::requestResize"/> for more information.
         """
-        return self.get_attr('usesGuestVRAM', bool)
+        value = self._get_attr('usesGuestVRAM')
+        return bool(value)
 
     @property
     def height_reduction(self):
@@ -13917,7 +14900,8 @@ class IFramebuffer(Interface):
         so that it can use it for determining its video mode table. It
         is not guaranteed that the guest respects the value.
         """
-        return self.get_attr('heightReduction', int)
+        value = self._get_attr('heightReduction')
+        return int(value)
 
     @property
     def overlay(self):
@@ -13933,7 +14917,8 @@ class IFramebuffer(Interface):
         attribute can also return @c null to signal that the overlay is not
         implemented.
         """
-        return self.get_attr('overlay', IFramebufferOverlay)
+        value = self._get_attr('overlay')
+        return IFramebufferOverlay(value)
 
     @property
     def win_id(self):
@@ -13941,7 +14926,8 @@ class IFramebuffer(Interface):
         Platform-dependent identifier of the window where context of this
         frame buffer is drawn, or zero if there's no such window.
         """
-        return self.get_attr('winId', int)
+        value = self._get_attr('winId')
+        return int(value)
 
     def lock(self):
         """Locks the frame buffer.
@@ -13949,7 +14935,7 @@ class IFramebuffer(Interface):
         bound to.
 
         """
-        self.call_method('lock')
+        self._call_method('lock')
         
     def unlock(self):
         """Unlocks the frame buffer.
@@ -13957,7 +14943,7 @@ class IFramebuffer(Interface):
         bound to.
 
         """
-        self.call_method('unlock')
+        self._call_method('unlock')
         
     def notify_update(self, x, y, width, height):
         """Informs about an update.
@@ -13973,7 +14959,11 @@ class IFramebuffer(Interface):
         in height of type int
 
         """
-        self.call_method('notifyUpdate',
+        assert x is int
+        assert y is int
+        assert width is int
+        assert height is int
+        self._call_method('notifyUpdate',
                      in_p=[x, y, width, height])
         
     def request_resize(self, screen_id, pixel_format, vram, bits_per_pixel, bytes_per_line, width, height):
@@ -14082,11 +15072,18 @@ class IFramebuffer(Interface):
           <link to="IDisplay::resizeCompleted"/>.
 
         """
-        finished = self.call_method('requestResize',
-                     in_p=[screen_id, pixel_format, vram, bits_per_pixel, bytes_per_line, width, height],
-                     rettype=bool)
-        return finished
-        
+        assert screen_id is int
+        assert pixel_format is int
+        assert vram is str
+        assert bits_per_pixel is int
+        assert bytes_per_line is int
+        assert width is int
+        assert height is int
+        finished =\
+            self._call_method('requestResize',
+                     in_p=[screen_id, pixel_format, vram, bits_per_pixel, bytes_per_line, width, height])
+        return bool(finished)
+
     def video_mode_supported(self, width, height, bpp):
         """Returns whether the frame buffer implementation is willing to
         support a given video mode. In case it is not able to render
@@ -14105,11 +15102,14 @@ class IFramebuffer(Interface):
         return supported of type bool
 
         """
-        supported = self.call_method('videoModeSupported',
-                     in_p=[width, height, bpp],
-                     rettype=bool)
-        return supported
-        
+        assert width is int
+        assert height is int
+        assert bpp is int
+        supported =\
+            self._call_method('videoModeSupported',
+                     in_p=[width, height, bpp])
+        return bool(supported)
+
     def get_visible_region(self, rectangles, count):
         """Returns the visible region of this frame buffer.
 
@@ -14140,11 +15140,13 @@ class IFramebuffer(Interface):
             Number of elements copied to the @a rectangles array.
 
         """
-        count_copied = self.call_method('getVisibleRegion',
-                     in_p=[rectangles, count],
-                     rettype=int)
-        return count_copied
-        
+        assert rectangles is str
+        assert count is int
+        count_copied =\
+            self._call_method('getVisibleRegion',
+                     in_p=[rectangles, count])
+        return int(count_copied)
+
     def set_visible_region(self, rectangles, count):
         """Suggests a new visible region to this frame buffer. This region
         represents the area of the VM display which is a union of regions of
@@ -14171,7 +15173,9 @@ class IFramebuffer(Interface):
             Number of @c RTRECT elements in the @a rectangles array.
 
         """
-        self.call_method('setVisibleRegion',
+        assert rectangles is str
+        assert count is int
+        self._call_method('setVisibleRegion',
                      in_p=[rectangles, count])
         
     def process_vhwa_command(self, command):
@@ -14187,7 +15191,8 @@ class IFramebuffer(Interface):
             Pointer to VBOXVHWACMD containing the command to execute.
 
         """
-        self.call_method('processVHWACommand',
+        assert command is str
+        self._call_method('processVHWACommand',
                      in_p=[command])
         
     def notify3_d_event(self, type_p, reserved):
@@ -14200,7 +15205,9 @@ class IFramebuffer(Interface):
             Reserved for future use, must be NULL.
 
         """
-        self.call_method('notify3DEvent',
+        assert type_p is int
+        assert reserved is str
+        self._call_method('notify3DEvent',
                      in_p=[type_p, reserved])
         
 
@@ -14223,25 +15230,29 @@ class IFramebufferOverlay(IFramebuffer):
         """Get int value for 'x'
         X position of the overlay, relative to the frame buffer.
         """
-        return self.get_attr('x', int)
+        value = self._get_attr('x')
+        return int(value)
 
     @property
     def y(self):
         """Get int value for 'y'
         Y position of the overlay, relative to the frame buffer.
         """
-        return self.get_attr('y', int)
+        value = self._get_attr('y')
+        return int(value)
 
     @property
     def visible(self):
         """Get or set bool value for 'visible'
         Whether the overlay is currently visible.
         """
-        return self.get_attr('visible', bool)
+        value = self._get_attr('visible')
+        return bool(value)
 
     @visible.setter
     def visible(self, value):
-        return self.set_attr('visible', value)
+        assert type(value) is bool
+        return self._set_attr('visible', value)
 
     @property
     def alpha(self):
@@ -14249,11 +15260,13 @@ class IFramebufferOverlay(IFramebuffer):
         The global alpha value for the overlay. This may or may not be
         supported by a given front end.
         """
-        return self.get_attr('alpha', int)
+        value = self._get_attr('alpha')
+        return int(value)
 
     @alpha.setter
     def alpha(self, value):
-        return self.set_attr('alpha', value)
+        assert type(value) is int
+        return self._set_attr('alpha', value)
 
     def move(self, x, y):
         """Changes the overlay's position relative to the IFramebuffer.
@@ -14263,7 +15276,9 @@ class IFramebufferOverlay(IFramebuffer):
         in y of type int
 
         """
-        self.call_method('move',
+        assert x is int
+        assert y is int
+        self._call_method('move',
                      in_p=[x, y])
         
 
@@ -14282,7 +15297,7 @@ class IDisplay(Interface):
     uuid = '0598a3df-3dc0-43c7-a79c-237fb5bb633d'
     wsmap = 'managed'
     
-    def get_screen_resolution(self, screen_id, out_p={}):
+    def get_screen_resolution(self, screen_id):
         """Queries display width, height and color depth for given screen.
 
         in screen_id of type int
@@ -14294,10 +15309,12 @@ class IDisplay(Interface):
         out bits_per_pixel of type int
 
         """
-        self.call_method('getScreenResolution',
-                     in_p=[screen_id],
-                     out_p=out_p)
-        
+        assert screen_id is int
+        (width, height, bits_per_pixel) =\
+            self._call_method('getScreenResolution',
+                     in_p=[screen_id])
+        return (int(width), int(height), int(bits_per_pixel))
+
     def set_framebuffer(self, screen_id, framebuffer):
         """Sets the framebuffer for given screen.
 
@@ -14306,10 +15323,12 @@ class IDisplay(Interface):
         in framebuffer of type IFramebuffer
 
         """
-        self.call_method('setFramebuffer',
+        assert screen_id is int
+        assert framebuffer is IFramebuffer
+        self._call_method('setFramebuffer',
                      in_p=[screen_id, framebuffer])
         
-    def get_framebuffer(self, screen_id, out_p={}):
+    def get_framebuffer(self, screen_id):
         """Queries the framebuffer for given screen.
 
         in screen_id of type int
@@ -14321,10 +15340,12 @@ class IDisplay(Interface):
         out y_origin of type int
 
         """
-        self.call_method('getFramebuffer',
-                     in_p=[screen_id],
-                     out_p=out_p)
-        
+        assert screen_id is int
+        (framebuffer, x_origin, y_origin) =\
+            self._call_method('getFramebuffer',
+                     in_p=[screen_id])
+        return (IFramebuffer(framebuffer), int(x_origin), int(y_origin))
+
     def set_video_mode_hint(self, display, enabled, change_origin, origin_x, origin_y, width, height, bits_per_pixel):
         """Asks VirtualBox to request the given video mode from
         the guest. This is just a hint and it cannot be guaranteed
@@ -14370,7 +15391,15 @@ class IDisplay(Interface):
             The @a display is not associated with any monitor.
         
         """
-        self.call_method('setVideoModeHint',
+        assert display is int
+        assert enabled is bool
+        assert change_origin is bool
+        assert origin_x is int
+        assert origin_y is int
+        assert width is int
+        assert height is int
+        assert bits_per_pixel is int
+        self._call_method('setVideoModeHint',
                      in_p=[display, enabled, change_origin, origin_x, origin_y, width, height, bits_per_pixel])
         
     def set_seamless_mode(self, enabled):
@@ -14383,7 +15412,8 @@ class IDisplay(Interface):
         in enabled of type bool
 
         """
-        self.call_method('setSeamlessMode',
+        assert enabled is bool
+        self._call_method('setSeamlessMode',
                      in_p=[enabled])
         
     def take_screen_shot(self, screen_id, address, width, height):
@@ -14412,7 +15442,11 @@ class IDisplay(Interface):
             Could not take a screenshot.
         
         """
-        self.call_method('takeScreenShot',
+        assert screen_id is int
+        assert address is str
+        assert width is int
+        assert height is int
+        self._call_method('takeScreenShot',
                      in_p=[screen_id, address, width, height])
         
     def take_screen_shot_to_array(self, screen_id, width, height):
@@ -14443,11 +15477,14 @@ class IDisplay(Interface):
             Could not take a screenshot.
         
         """
-        screen_data = self.call_method('takeScreenShotToArray',
-                     in_p=[screen_id, width, height],
-                     rettype=str)
-        return screen_data
-        
+        assert screen_id is int
+        assert width is int
+        assert height is int
+        screen_data =\
+            self._call_method('takeScreenShotToArray',
+                     in_p=[screen_id, width, height])
+        return str(screen_data)
+
     def take_screen_shot_png_to_array(self, screen_id, width, height):
         """Takes a guest screen shot of the requested size and returns it as
         PNG image in array.
@@ -14471,11 +15508,14 @@ class IDisplay(Interface):
             Could not take a screenshot.
         
         """
-        screen_data = self.call_method('takeScreenShotPNGToArray',
-                     in_p=[screen_id, width, height],
-                     rettype=str)
-        return screen_data
-        
+        assert screen_id is int
+        assert width is int
+        assert height is int
+        screen_data =\
+            self._call_method('takeScreenShotPNGToArray',
+                     in_p=[screen_id, width, height])
+        return str(screen_data)
+
     def enable_video_capture(self, screens):
         """Start/continue video capture.
 
@@ -14483,7 +15523,8 @@ class IDisplay(Interface):
             The screens to start/continue capturing.
 
         """
-        self.call_method('enableVideoCapture',
+        assert screens is bool
+        self._call_method('enableVideoCapture',
                      in_p=[screens])
         
     def disable_video_capture(self, screens):
@@ -14493,7 +15534,8 @@ class IDisplay(Interface):
             The screens to stop capturing.
 
         """
-        self.call_method('disableVideoCapture',
+        assert screens is bool
+        self._call_method('disableVideoCapture',
                      in_p=[screens])
         
     def draw_to_screen(self, screen_id, address, x, y, width, height):
@@ -14525,7 +15567,13 @@ class IDisplay(Interface):
             Could not draw to screen.
         
         """
-        self.call_method('drawToScreen',
+        assert screen_id is int
+        assert address is str
+        assert x is int
+        assert y is int
+        assert width is int
+        assert height is int
+        self._call_method('drawToScreen',
                      in_p=[screen_id, address, x, y, width, height])
         
     def invalidate_and_update(self):
@@ -14536,7 +15584,7 @@ class IDisplay(Interface):
             Could not invalidate and update screen.
         
         """
-        self.call_method('invalidateAndUpdate')
+        self._call_method('invalidateAndUpdate')
         
     def resize_completed(self, screen_id):
         """Signals that a framebuffer has completed the resize operation.
@@ -14547,7 +15595,8 @@ class IDisplay(Interface):
             Operation only valid for external frame buffers.
         
         """
-        self.call_method('resizeCompleted',
+        assert screen_id is int
+        self._call_method('resizeCompleted',
                      in_p=[screen_id])
         
     def complete_vhwa_command(self, command):
@@ -14557,7 +15606,8 @@ class IDisplay(Interface):
             Pointer to VBOXVHWACMD containing the completed command.
 
         """
-        self.call_method('completeVHWACommand',
+        assert command is str
+        self._call_method('completeVHWACommand',
                      in_p=[command])
         
     def viewport_changed(self, screen_id, x, y, width, height):
@@ -14582,7 +15632,12 @@ class IDisplay(Interface):
             The specified viewport data is invalid.
         
         """
-        self.call_method('viewportChanged',
+        assert screen_id is int
+        assert x is int
+        assert y is int
+        assert width is int
+        assert height is int
+        self._call_method('viewportChanged',
                      in_p=[screen_id, x, y, width, height])
         
 
@@ -14608,11 +15663,13 @@ class INetworkAdapter(Interface):
         VirtualBox will provide a different virtual network hardware
         to the guest.
         """
-        return self.get_attr('adapterType', NetworkAdapterType)
+        value = self._get_attr('adapterType')
+        return NetworkAdapterType(value)
 
     @adapter_type.setter
     def adapter_type(self, value):
-        return self.set_attr('adapterType', value)
+        assert type(value) is NetworkAdapterType
+        return self._set_attr('adapterType', value)
 
     @property
     def slot(self):
@@ -14621,7 +15678,8 @@ class INetworkAdapter(Interface):
         the value you pass to <link to="IMachine::getNetworkAdapter"/>
         to obtain this instance.
         """
-        return self.get_attr('slot', int)
+        value = self._get_attr('slot')
+        return int(value)
 
     @property
     def enabled(self):
@@ -14631,11 +15689,13 @@ class INetworkAdapter(Interface):
         not contain this network adapter. Can only be changed when
         the VM is not running.
         """
-        return self.get_attr('enabled', bool)
+        value = self._get_attr('enabled')
+        return bool(value)
 
     @enabled.setter
     def enabled(self, value):
-        return self.set_attr('enabled', value)
+        assert type(value) is bool
+        return self._set_attr('enabled', value)
 
     @property
     def mac_address(self):
@@ -14643,77 +15703,91 @@ class INetworkAdapter(Interface):
         Ethernet MAC address of the adapter, 12 hexadecimal characters. When setting
         it to @c null or an empty string, VirtualBox will generate a unique MAC address.
         """
-        return self.get_attr('MACAddress', str)
+        value = self._get_attr('MACAddress')
+        return str(value)
 
     @mac_address.setter
     def mac_address(self, value):
-        return self.set_attr('MACAddress', value)
+        assert type(value) is str
+        return self._set_attr('MACAddress', value)
 
     @property
     def attachment_type(self):
         """Get or set NetworkAttachmentType value for 'attachmentType'
         Sets/Gets network attachment type of this network adapter.
         """
-        return self.get_attr('attachmentType', NetworkAttachmentType)
+        value = self._get_attr('attachmentType')
+        return NetworkAttachmentType(value)
 
     @attachment_type.setter
     def attachment_type(self, value):
-        return self.set_attr('attachmentType', value)
+        assert type(value) is NetworkAttachmentType
+        return self._set_attr('attachmentType', value)
 
     @property
     def bridged_interface(self):
         """Get or set str value for 'bridgedInterface'
         Name of the network interface the VM should be bridged to.
         """
-        return self.get_attr('bridgedInterface', str)
+        value = self._get_attr('bridgedInterface')
+        return str(value)
 
     @bridged_interface.setter
     def bridged_interface(self, value):
-        return self.set_attr('bridgedInterface', value)
+        assert type(value) is str
+        return self._set_attr('bridgedInterface', value)
 
     @property
     def host_only_interface(self):
         """Get or set str value for 'hostOnlyInterface'
         Name of the host only network interface the VM is attached to.
         """
-        return self.get_attr('hostOnlyInterface', str)
+        value = self._get_attr('hostOnlyInterface')
+        return str(value)
 
     @host_only_interface.setter
     def host_only_interface(self, value):
-        return self.set_attr('hostOnlyInterface', value)
+        assert type(value) is str
+        return self._set_attr('hostOnlyInterface', value)
 
     @property
     def internal_network(self):
         """Get or set str value for 'internalNetwork'
         Name of the internal network the VM is attached to.
         """
-        return self.get_attr('internalNetwork', str)
+        value = self._get_attr('internalNetwork')
+        return str(value)
 
     @internal_network.setter
     def internal_network(self, value):
-        return self.set_attr('internalNetwork', value)
+        assert type(value) is str
+        return self._set_attr('internalNetwork', value)
 
     @property
     def nat_network(self):
         """Get or set str value for 'NATNetwork'
         Name of the NAT network the VM is attached to.
         """
-        return self.get_attr('NATNetwork', str)
+        value = self._get_attr('NATNetwork')
+        return str(value)
 
     @nat_network.setter
     def nat_network(self, value):
-        return self.set_attr('NATNetwork', value)
+        assert type(value) is str
+        return self._set_attr('NATNetwork', value)
 
     @property
     def generic_driver(self):
         """Get or set str value for 'genericDriver'
         Name of the driver to use for the "Generic" network attachment type.
         """
-        return self.get_attr('genericDriver', str)
+        value = self._get_attr('genericDriver')
+        return str(value)
 
     @generic_driver.setter
     def generic_driver(self, value):
-        return self.set_attr('genericDriver', value)
+        assert type(value) is str
+        return self._set_attr('genericDriver', value)
 
     @property
     def cable_connected(self):
@@ -14721,22 +15795,26 @@ class INetworkAdapter(Interface):
         Flag whether the adapter reports the cable as connected or not.
         It can be used to report offline situations to a VM.
         """
-        return self.get_attr('cableConnected', bool)
+        value = self._get_attr('cableConnected')
+        return bool(value)
 
     @cable_connected.setter
     def cable_connected(self, value):
-        return self.set_attr('cableConnected', value)
+        assert type(value) is bool
+        return self._set_attr('cableConnected', value)
 
     @property
     def line_speed(self):
         """Get or set int value for 'lineSpeed'
         Line speed reported by custom drivers, in units of 1 kbps.
         """
-        return self.get_attr('lineSpeed', int)
+        value = self._get_attr('lineSpeed')
+        return int(value)
 
     @line_speed.setter
     def line_speed(self, value):
-        return self.set_attr('lineSpeed', value)
+        assert type(value) is int
+        return self._set_attr('lineSpeed', value)
 
     @property
     def promisc_mode_policy(self):
@@ -14744,11 +15822,13 @@ class INetworkAdapter(Interface):
         The promiscuous mode policy of the network adapter when attached to an
         internal network, host only network or a bridge.
         """
-        return self.get_attr('promiscModePolicy', NetworkAdapterPromiscModePolicy)
+        value = self._get_attr('promiscModePolicy')
+        return NetworkAdapterPromiscModePolicy(value)
 
     @promisc_mode_policy.setter
     def promisc_mode_policy(self, value):
-        return self.set_attr('promiscModePolicy', value)
+        assert type(value) is NetworkAdapterPromiscModePolicy
+        return self._set_attr('promiscModePolicy', value)
 
     @property
     def trace_enabled(self):
@@ -14756,11 +15836,13 @@ class INetworkAdapter(Interface):
         Flag whether network traffic from/to the network card should be traced.
         Can only be toggled when the VM is turned off.
         """
-        return self.get_attr('traceEnabled', bool)
+        value = self._get_attr('traceEnabled')
+        return bool(value)
 
     @trace_enabled.setter
     def trace_enabled(self, value):
-        return self.set_attr('traceEnabled', value)
+        assert type(value) is bool
+        return self._set_attr('traceEnabled', value)
 
     @property
     def trace_file(self):
@@ -14768,11 +15850,13 @@ class INetworkAdapter(Interface):
         Filename where a network trace will be stored. If not set, VBox-pid.pcap
         will be used.
         """
-        return self.get_attr('traceFile', str)
+        value = self._get_attr('traceFile')
+        return str(value)
 
     @trace_file.setter
     def trace_file(self, value):
-        return self.set_attr('traceFile', value)
+        assert type(value) is str
+        return self._set_attr('traceFile', value)
 
     @property
     def nat_engine(self):
@@ -14781,7 +15865,8 @@ class INetworkAdapter(Interface):
         for this interface. This is active only when the interface actually uses
         NAT.
         """
-        return self.get_attr('NATEngine', INATEngine)
+        value = self._get_attr('NATEngine')
+        return INATEngine(value)
 
     @property
     def boot_priority(self):
@@ -14789,22 +15874,26 @@ class INetworkAdapter(Interface):
         Network boot priority of the adapter. Priority 1 is highest. If not set,
         the priority is considered to be at the lowest possible setting.
         """
-        return self.get_attr('bootPriority', int)
+        value = self._get_attr('bootPriority')
+        return int(value)
 
     @boot_priority.setter
     def boot_priority(self, value):
-        return self.set_attr('bootPriority', value)
+        assert type(value) is int
+        return self._set_attr('bootPriority', value)
 
     @property
     def bandwidth_group(self):
         """Get or set IBandwidthGroup value for 'bandwidthGroup'
         The bandwidth group this network adapter is assigned to.
         """
-        return self.get_attr('bandwidthGroup', IBandwidthGroup)
+        value = self._get_attr('bandwidthGroup')
+        return IBandwidthGroup(value)
 
     @bandwidth_group.setter
     def bandwidth_group(self, value):
-        return self.set_attr('bandwidthGroup', value)
+        assert type(value) is IBandwidthGroup
+        return self._set_attr('bandwidthGroup', value)
 
     def get_property(self, key):
         """Returns the value of the network attachment property with the given name.
@@ -14822,11 +15911,12 @@ class INetworkAdapter(Interface):
             @a name is @c null or empty.
         
         """
-        value = self.call_method('getProperty',
-                     in_p=[key],
-                     rettype=str)
-        return value
-        
+        assert key is str
+        value =\
+            self._call_method('getProperty',
+                     in_p=[key])
+        return str(value)
+
     def set_property(self, key, value):
         """Sets the value of the network attachment property with the given name.
 
@@ -14843,10 +15933,12 @@ class INetworkAdapter(Interface):
             @a name is @c null or empty.
         
         """
-        self.call_method('setProperty',
+        assert key is str
+        assert value is str
+        self._call_method('setProperty',
                      in_p=[key, value])
         
-    def get_properties(self, names, out_p={}):
+    def get_properties(self, names):
         """Returns values for a group of properties in one call.
 
         The names of the properties to get are specified using the @a names
@@ -14871,12 +15963,12 @@ class INetworkAdapter(Interface):
             Values of returned properties.
 
         """
-        return_values = self.call_method('getProperties',
-                     in_p=[names],
-                     out_p=out_p,
-                     rettype=str)
-        return return_values
-        
+        assert names is str
+        (return_names, return_values) =\
+            self._call_method('getProperties',
+                     in_p=[names])
+        return (str(return_names), str(return_values))
+
 
 class ISerialPort(Interface):
     """
@@ -14912,7 +16004,8 @@ class ISerialPort(Interface):
         the value you pass to <link to="IMachine::getSerialPort"/>
         to obtain this instance.
         """
-        return self.get_attr('slot', int)
+        value = self._get_attr('slot')
+        return int(value)
 
     @property
     def enabled(self):
@@ -14920,33 +16013,39 @@ class ISerialPort(Interface):
         Flag whether the serial port is enabled. If disabled,
         the serial port will not be reported to the guest OS.
         """
-        return self.get_attr('enabled', bool)
+        value = self._get_attr('enabled')
+        return bool(value)
 
     @enabled.setter
     def enabled(self, value):
-        return self.set_attr('enabled', value)
+        assert type(value) is bool
+        return self._set_attr('enabled', value)
 
     @property
     def io_base(self):
         """Get or set int value for 'IOBase'
         Base I/O address of the serial port.
         """
-        return self.get_attr('IOBase', int)
+        value = self._get_attr('IOBase')
+        return int(value)
 
     @io_base.setter
     def io_base(self, value):
-        return self.set_attr('IOBase', value)
+        assert type(value) is int
+        return self._set_attr('IOBase', value)
 
     @property
     def irq(self):
         """Get or set int value for 'IRQ'
         IRQ number of the serial port.
         """
-        return self.get_attr('IRQ', int)
+        value = self._get_attr('IRQ')
+        return int(value)
 
     @irq.setter
     def irq(self, value):
-        return self.set_attr('IRQ', value)
+        assert type(value) is int
+        return self._set_attr('IRQ', value)
 
     @property
     def host_mode(self):
@@ -14956,11 +16055,13 @@ class ISerialPort(Interface):
           Changing this attribute may fail if the conditions for
           <link to="#path"/> are not met.
         """
-        return self.get_attr('hostMode', PortMode)
+        value = self._get_attr('hostMode')
+        return PortMode(value)
 
     @host_mode.setter
     def host_mode(self, value):
-        return self.set_attr('hostMode', value)
+        assert type(value) is PortMode
+        return self._set_attr('hostMode', value)
 
     @property
     def server(self):
@@ -14969,11 +16070,13 @@ class ISerialPort(Interface):
         the host) or as a client (uses the existing pipe). This attribute is
         used only when <link to="#hostMode"/> is PortMode_HostPipe.
         """
-        return self.get_attr('server', bool)
+        value = self._get_attr('server')
+        return bool(value)
 
     @server.setter
     def server(self, value):
-        return self.set_attr('server', value)
+        assert type(value) is bool
+        return self._set_attr('server', value)
 
     @property
     def path(self):
@@ -14984,11 +16087,13 @@ class ISerialPort(Interface):
         cases, setting a @c null or empty string as the attribute's value
         is an error. Otherwise, the value of this property is ignored.
         """
-        return self.get_attr('path', str)
+        value = self._get_attr('path')
+        return str(value)
 
     @path.setter
     def path(self, value):
-        return self.set_attr('path', value)
+        assert type(value) is str
+        return self._set_attr('path', value)
 
 
 class IParallelPort(Interface):
@@ -15016,7 +16121,8 @@ class IParallelPort(Interface):
         the value you pass to <link to="IMachine::getParallelPort"/>
         to obtain this instance.
         """
-        return self.get_attr('slot', int)
+        value = self._get_attr('slot')
+        return int(value)
 
     @property
     def enabled(self):
@@ -15024,33 +16130,39 @@ class IParallelPort(Interface):
         Flag whether the parallel port is enabled. If disabled,
         the parallel port will not be reported to the guest OS.
         """
-        return self.get_attr('enabled', bool)
+        value = self._get_attr('enabled')
+        return bool(value)
 
     @enabled.setter
     def enabled(self, value):
-        return self.set_attr('enabled', value)
+        assert type(value) is bool
+        return self._set_attr('enabled', value)
 
     @property
     def io_base(self):
         """Get or set int value for 'IOBase'
         Base I/O address of the parallel port.
         """
-        return self.get_attr('IOBase', int)
+        value = self._get_attr('IOBase')
+        return int(value)
 
     @io_base.setter
     def io_base(self, value):
-        return self.set_attr('IOBase', value)
+        assert type(value) is int
+        return self._set_attr('IOBase', value)
 
     @property
     def irq(self):
         """Get or set int value for 'IRQ'
         IRQ number of the parallel port.
         """
-        return self.get_attr('IRQ', int)
+        value = self._get_attr('IRQ')
+        return int(value)
 
     @irq.setter
     def irq(self, value):
-        return self.set_attr('IRQ', value)
+        assert type(value) is int
+        return self._set_attr('IRQ', value)
 
     @property
     def path(self):
@@ -15059,11 +16171,13 @@ class IParallelPort(Interface):
         @c null or an empty string as this attribute's value will result in
         an error.
         """
-        return self.get_attr('path', str)
+        value = self._get_attr('path')
+        return str(value)
 
     @path.setter
     def path(self, value):
-        return self.set_attr('path', value)
+        assert type(value) is str
+        return self._set_attr('path', value)
 
 
 class IMachineDebugger(Interface):
@@ -15087,7 +16201,9 @@ class IMachineDebugger(Interface):
             Reserved for future compression method indicator.
 
         """
-        self.call_method('dumpGuestCore',
+        assert filename is str
+        assert compression is str
+        self._call_method('dumpGuestCore',
                      in_p=[filename, compression])
         
     def dump_host_process_core(self, filename, compression):
@@ -15103,7 +16219,9 @@ class IMachineDebugger(Interface):
             Reserved for future compression method indicator.
 
         """
-        self.call_method('dumpHostProcessCore',
+        assert filename is str
+        assert compression is str
+        self._call_method('dumpHostProcessCore',
                      in_p=[filename, compression])
         
     def info(self, name, args):
@@ -15122,16 +16240,18 @@ class IMachineDebugger(Interface):
             The into string.
 
         """
-        info = self.call_method('info',
-                     in_p=[name, args],
-                     rettype=str)
-        return info
-        
+        assert name is str
+        assert args is str
+        info =\
+            self._call_method('info',
+                     in_p=[name, args])
+        return str(info)
+
     def inject_nmi(self):
         """Inject an NMI into a running VT-x/AMD-V VM.
 
         """
-        self.call_method('injectNMI')
+        self._call_method('injectNMI')
         
     def modify_log_groups(self, settings):
         """Modifies the group settings of the debug or release logger.
@@ -15141,7 +16261,8 @@ class IMachineDebugger(Interface):
           release logger, prefix the string with "release:".
 
         """
-        self.call_method('modifyLogGroups',
+        assert settings is str
+        self._call_method('modifyLogGroups',
                      in_p=[settings])
         
     def modify_log_flags(self, settings):
@@ -15152,7 +16273,8 @@ class IMachineDebugger(Interface):
           release logger, prefix the string with "release:".
 
         """
-        self.call_method('modifyLogFlags',
+        assert settings is str
+        self._call_method('modifyLogFlags',
                      in_p=[settings])
         
     def modify_log_destinations(self, settings):
@@ -15163,7 +16285,8 @@ class IMachineDebugger(Interface):
           release logger, prefix the string with "release:".
 
         """
-        self.call_method('modifyLogDestinations',
+        assert settings is str
+        self._call_method('modifyLogDestinations',
                      in_p=[settings])
         
     def read_physical_memory(self, address, size):
@@ -15182,11 +16305,13 @@ class IMachineDebugger(Interface):
             The bytes read.
 
         """
-        bytes_p = self.call_method('readPhysicalMemory',
-                     in_p=[address, size],
-                     rettype=str)
-        return bytes_p
-        
+        assert address is int
+        assert size is int
+        bytes_p =\
+            self._call_method('readPhysicalMemory',
+                     in_p=[address, size])
+        return str(bytes_p)
+
     def write_physical_memory(self, address, size, bytes_p):
         """Writes guest physical memory, access handles (MMIO++) are ignored.
 
@@ -15203,7 +16328,10 @@ class IMachineDebugger(Interface):
             The bytes to write.
 
         """
-        self.call_method('writePhysicalMemory',
+        assert address is int
+        assert size is int
+        assert bytes_p is str
+        self._call_method('writePhysicalMemory',
                      in_p=[address, size, bytes_p])
         
     def read_virtual_memory(self, cpu_id, address, size):
@@ -15225,11 +16353,14 @@ class IMachineDebugger(Interface):
             The bytes read.
 
         """
-        bytes_p = self.call_method('readVirtualMemory',
-                     in_p=[cpu_id, address, size],
-                     rettype=str)
-        return bytes_p
-        
+        assert cpu_id is int
+        assert address is int
+        assert size is int
+        bytes_p =\
+            self._call_method('readVirtualMemory',
+                     in_p=[cpu_id, address, size])
+        return str(bytes_p)
+
     def write_virtual_memory(self, cpu_id, address, size, bytes_p):
         """Writes guest virtual memory, access handles (MMIO++) are ignored.
 
@@ -15249,7 +16380,11 @@ class IMachineDebugger(Interface):
             The bytes to write.
 
         """
-        self.call_method('writeVirtualMemory',
+        assert cpu_id is int
+        assert address is int
+        assert size is int
+        assert bytes_p is str
+        self._call_method('writeVirtualMemory',
                      in_p=[cpu_id, address, size, bytes_p])
         
     def detect_os(self):
@@ -15262,10 +16397,10 @@ class IMachineDebugger(Interface):
             The detected OS kernel on success.
 
         """
-        os = self.call_method('detectOS',
-                     rettype=str)
-        return os
-        
+        os =\
+            self._call_method('detectOS')
+        return str(os)
+
     def get_register(self, cpu_id, name):
         """Gets one register.
 
@@ -15283,12 +16418,14 @@ class IMachineDebugger(Interface):
           but other format may be used for floating point registers (TBD).
 
         """
-        value = self.call_method('getRegister',
-                     in_p=[cpu_id, name],
-                     rettype=str)
-        return value
-        
-    def get_registers(self, cpu_id, out_p={}):
+        assert cpu_id is int
+        assert name is str
+        value =\
+            self._call_method('getRegister',
+                     in_p=[cpu_id, name])
+        return str(value)
+
+    def get_registers(self, cpu_id):
         """Gets all the registers for the given CPU.
 
         This feature is not implemented in the 4.0.0 release but may show up
@@ -15305,10 +16442,12 @@ class IMachineDebugger(Interface):
           register was returned by <link to="IMachineDebugger::getRegister"/>.
 
         """
-        self.call_method('getRegisters',
-                     in_p=[cpu_id],
-                     out_p=out_p)
-        
+        assert cpu_id is int
+        (names, values) =\
+            self._call_method('getRegisters',
+                     in_p=[cpu_id])
+        return (str(names), str(values))
+
     def set_register(self, cpu_id, name, value):
         """Gets one register.
 
@@ -15327,7 +16466,10 @@ class IMachineDebugger(Interface):
           the getters.
 
         """
-        self.call_method('setRegister',
+        assert cpu_id is int
+        assert name is str
+        assert value is str
+        self._call_method('setRegister',
                      in_p=[cpu_id, name, value])
         
     def set_registers(self, cpu_id, names, values):
@@ -15348,7 +16490,10 @@ class IMachineDebugger(Interface):
           guidelines.
 
         """
-        self.call_method('setRegisters',
+        assert cpu_id is int
+        assert names is str
+        assert values is str
+        self._call_method('setRegisters',
                      in_p=[cpu_id, names, values])
         
     def dump_guest_stack(self, cpu_id):
@@ -15364,11 +16509,12 @@ class IMachineDebugger(Interface):
             String containing the formatted stack dump.
 
         """
-        stack = self.call_method('dumpGuestStack',
-                     in_p=[cpu_id],
-                     rettype=str)
-        return stack
-        
+        assert cpu_id is int
+        stack =\
+            self._call_method('dumpGuestStack',
+                     in_p=[cpu_id])
+        return str(stack)
+
     def reset_stats(self, pattern):
         """Reset VM statistics.
 
@@ -15376,7 +16522,8 @@ class IMachineDebugger(Interface):
             The selection pattern. A bit similar to filename globbing.
 
         """
-        self.call_method('resetStats',
+        assert pattern is str
+        self._call_method('resetStats',
                      in_p=[pattern])
         
     def dump_stats(self, pattern):
@@ -15386,7 +16533,8 @@ class IMachineDebugger(Interface):
             The selection pattern. A bit similar to filename globbing.
 
         """
-        self.call_method('dumpStats',
+        assert pattern is str
+        self._call_method('dumpStats',
                      in_p=[pattern])
         
     def get_stats(self, pattern, with_descriptions):
@@ -15402,118 +16550,138 @@ class IMachineDebugger(Interface):
             The XML document containing the statistics.
 
         """
-        stats = self.call_method('getStats',
-                     in_p=[pattern, with_descriptions],
-                     rettype=str)
-        return stats
-        
+        assert pattern is str
+        assert with_descriptions is bool
+        stats =\
+            self._call_method('getStats',
+                     in_p=[pattern, with_descriptions])
+        return str(stats)
+
     @property
     def single_step(self):
         """Get or set bool value for 'singleStep'
         Switch for enabling single-stepping.
         """
-        return self.get_attr('singleStep', bool)
+        value = self._get_attr('singleStep')
+        return bool(value)
 
     @single_step.setter
     def single_step(self, value):
-        return self.set_attr('singleStep', value)
+        assert type(value) is bool
+        return self._set_attr('singleStep', value)
 
     @property
     def recompile_user(self):
         """Get or set bool value for 'recompileUser'
         Switch for forcing code recompilation for user mode code.
         """
-        return self.get_attr('recompileUser', bool)
+        value = self._get_attr('recompileUser')
+        return bool(value)
 
     @recompile_user.setter
     def recompile_user(self, value):
-        return self.set_attr('recompileUser', value)
+        assert type(value) is bool
+        return self._set_attr('recompileUser', value)
 
     @property
     def recompile_supervisor(self):
         """Get or set bool value for 'recompileSupervisor'
         Switch for forcing code recompilation for supervisor mode code.
         """
-        return self.get_attr('recompileSupervisor', bool)
+        value = self._get_attr('recompileSupervisor')
+        return bool(value)
 
     @recompile_supervisor.setter
     def recompile_supervisor(self, value):
-        return self.set_attr('recompileSupervisor', value)
+        assert type(value) is bool
+        return self._set_attr('recompileSupervisor', value)
 
     @property
     def patm_enabled(self):
         """Get or set bool value for 'PATMEnabled'
         Switch for enabling and disabling the PATM component.
         """
-        return self.get_attr('PATMEnabled', bool)
+        value = self._get_attr('PATMEnabled')
+        return bool(value)
 
     @patm_enabled.setter
     def patm_enabled(self, value):
-        return self.set_attr('PATMEnabled', value)
+        assert type(value) is bool
+        return self._set_attr('PATMEnabled', value)
 
     @property
     def csam_enabled(self):
         """Get or set bool value for 'CSAMEnabled'
         Switch for enabling and disabling the CSAM component.
         """
-        return self.get_attr('CSAMEnabled', bool)
+        value = self._get_attr('CSAMEnabled')
+        return bool(value)
 
     @csam_enabled.setter
     def csam_enabled(self, value):
-        return self.set_attr('CSAMEnabled', value)
+        assert type(value) is bool
+        return self._set_attr('CSAMEnabled', value)
 
     @property
     def log_enabled(self):
         """Get or set bool value for 'logEnabled'
         Switch for enabling and disabling the debug logger.
         """
-        return self.get_attr('logEnabled', bool)
+        value = self._get_attr('logEnabled')
+        return bool(value)
 
     @log_enabled.setter
     def log_enabled(self, value):
-        return self.set_attr('logEnabled', value)
+        assert type(value) is bool
+        return self._set_attr('logEnabled', value)
 
     @property
     def log_dbg_flags(self):
         """Get str value for 'logDbgFlags'
         The debug logger flags.
         """
-        return self.get_attr('logDbgFlags', str)
+        value = self._get_attr('logDbgFlags')
+        return str(value)
 
     @property
     def log_dbg_groups(self):
         """Get str value for 'logDbgGroups'
         The debug logger's group settings.
         """
-        return self.get_attr('logDbgGroups', str)
+        value = self._get_attr('logDbgGroups')
+        return str(value)
 
     @property
     def log_dbg_destinations(self):
         """Get str value for 'logDbgDestinations'
         The debug logger's destination settings.
         """
-        return self.get_attr('logDbgDestinations', str)
+        value = self._get_attr('logDbgDestinations')
+        return str(value)
 
     @property
     def log_rel_flags(self):
         """Get str value for 'logRelFlags'
         The release logger flags.
         """
-        return self.get_attr('logRelFlags', str)
+        value = self._get_attr('logRelFlags')
+        return str(value)
 
     @property
     def log_rel_groups(self):
         """Get str value for 'logRelGroups'
         The release logger's group settings.
         """
-        return self.get_attr('logRelGroups', str)
+        value = self._get_attr('logRelGroups')
+        return str(value)
 
     @property
     def log_rel_destinations(self):
         """Get str value for 'logRelDestinations'
         The relase logger's destination settings.
         """
-        return self.get_attr('logRelDestinations', str)
+        value = self._get_attr('logRelDestinations')
+        return str(value)
 
     @property
     def hw_virt_ex_enabled(self):
@@ -15521,7 +16689,8 @@ class IMachineDebugger(Interface):
         Flag indicating whether the VM is currently making use of CPU hardware
         virtualization extensions.
         """
-        return self.get_attr('HWVirtExEnabled', bool)
+        value = self._get_attr('HWVirtExEnabled')
+        return bool(value)
 
     @property
     def hw_virt_ex_nested_paging_enabled(self):
@@ -15529,7 +16698,8 @@ class IMachineDebugger(Interface):
         Flag indicating whether the VM is currently making use of the nested paging
         CPU hardware virtualization extension.
         """
-        return self.get_attr('HWVirtExNestedPagingEnabled', bool)
+        value = self._get_attr('HWVirtExNestedPagingEnabled')
+        return bool(value)
 
     @property
     def hw_virt_ex_vpid_enabled(self):
@@ -15537,7 +16707,8 @@ class IMachineDebugger(Interface):
         Flag indicating whether the VM is currently making use of the VPID
         VT-x extension.
         """
-        return self.get_attr('HWVirtExVPIDEnabled', bool)
+        value = self._get_attr('HWVirtExVPIDEnabled')
+        return bool(value)
 
     @property
     def hw_virt_ex_ux_enabled(self):
@@ -15545,7 +16716,8 @@ class IMachineDebugger(Interface):
         Flag indicating whether the VM is currently making use of the
         unrestricted execution feature of VT-x.
         """
-        return self.get_attr('HWVirtExUXEnabled', bool)
+        value = self._get_attr('HWVirtExUXEnabled')
+        return bool(value)
 
     @property
     def os_name(self):
@@ -15555,7 +16727,8 @@ class IMachineDebugger(Interface):
         This feature is not implemented in the 4.0.0 release but may show up
         in a dot release.
         """
-        return self.get_attr('OSName', str)
+        value = self._get_attr('OSName')
+        return str(value)
 
     @property
     def os_version(self):
@@ -15565,7 +16738,8 @@ class IMachineDebugger(Interface):
         This feature is not implemented in the 4.0.0 release but may show up
         in a dot release.
         """
-        return self.get_attr('OSVersion', str)
+        value = self._get_attr('OSVersion')
+        return str(value)
 
     @property
     def pae_enabled(self):
@@ -15573,7 +16747,8 @@ class IMachineDebugger(Interface):
         Flag indicating whether the VM is currently making use of the Physical
         Address Extension CPU feature.
         """
-        return self.get_attr('PAEEnabled', bool)
+        value = self._get_attr('PAEEnabled')
+        return bool(value)
 
     @property
     def virtual_time_rate(self):
@@ -15581,11 +16756,13 @@ class IMachineDebugger(Interface):
         The rate at which the virtual time runs expressed as a percentage.
         The accepted range is 2% to 20000%.
         """
-        return self.get_attr('virtualTimeRate', int)
+        value = self._get_attr('virtualTimeRate')
+        return int(value)
 
     @virtual_time_rate.setter
     def virtual_time_rate(self, value):
-        return self.set_attr('virtualTimeRate', value)
+        assert type(value) is int
+        return self._set_attr('virtualTimeRate', value)
 
     @property
     def vm(self):
@@ -15594,7 +16771,8 @@ class IMachineDebugger(Interface):
         VMR3ReleaseUVM when done.  This is only for internal use while we carve
         the details of this interface.
         """
-        return self.get_attr('VM', int)
+        value = self._get_attr('VM')
+        return int(value)
 
 
 class IUSBController(Interface):
@@ -15615,11 +16793,13 @@ class IUSBController(Interface):
         not contain any USB controller. Can only be changed when
         the VM is powered off.
         """
-        return self.get_attr('enabled', bool)
+        value = self._get_attr('enabled')
+        return bool(value)
 
     @enabled.setter
     def enabled(self, value):
-        return self.set_attr('enabled', value)
+        assert type(value) is bool
+        return self._set_attr('enabled', value)
 
     @property
     def enabled_ehci(self):
@@ -15629,18 +16809,21 @@ class IUSBController(Interface):
         not contain a USB EHCI controller. Can only be changed when
         the VM is powered off.
         """
-        return self.get_attr('enabledEHCI', bool)
+        value = self._get_attr('enabledEHCI')
+        return bool(value)
 
     @enabled_ehci.setter
     def enabled_ehci(self, value):
-        return self.set_attr('enabledEHCI', value)
+        assert type(value) is bool
+        return self._set_attr('enabledEHCI', value)
 
     @property
     def proxy_available(self):
         """Get bool value for 'proxyAvailable'
         Flag whether there is an USB proxy available.
         """
-        return self.get_attr('proxyAvailable', bool)
+        value = self._get_attr('proxyAvailable')
+        return bool(value)
 
     @property
     def usb_standard(self):
@@ -15649,7 +16832,8 @@ class IUSBController(Interface):
         This is a BCD which means that the major version is in the
         high byte and minor version is in the low byte.
         """
-        return self.get_attr('USBStandard', int)
+        value = self._get_attr('USBStandard')
+        return int(value)
 
     @property
     def device_filters(self):
@@ -15675,7 +16859,8 @@ class IUSBController(Interface):
 
         <link to="IUSBDeviceFilter"/>, <link to="IUSBController"/>
         """
-        return self.get_attr('deviceFilters', IUSBDeviceFilter)
+        value = self._get_attr('deviceFilters')
+        return IUSBDeviceFilter(value)
 
     def create_device_filter(self, name):
         """Creates a new USB device filter. All attributes except
@@ -15700,11 +16885,12 @@ class IUSBController(Interface):
             The virtual machine is not mutable.
         
         """
-        filter_p = self.call_method('createDeviceFilter',
-                     in_p=[name],
-                     rettype=IUSBDeviceFilter)
-        return filter_p
-        
+        assert name is str
+        filter_p =\
+            self._call_method('createDeviceFilter',
+                     in_p=[name])
+        return IUSBDeviceFilter(filter_p)
+
     def insert_device_filter(self, position, filter_p):
         """Inserts the given USB device to the specified position
         in the list of filters.
@@ -15739,7 +16925,9 @@ class IUSBController(Interface):
             USB device filter already in list.
         
         """
-        self.call_method('insertDeviceFilter',
+        assert position is int
+        assert filter_p is IUSBDeviceFilter
+        self._call_method('insertDeviceFilter',
                      in_p=[position, filter_p])
         
     def remove_device_filter(self, position):
@@ -15765,11 +16953,12 @@ class IUSBController(Interface):
             USB device filter list empty or invalid @a position.
         
         """
-        filter_p = self.call_method('removeDeviceFilter',
-                     in_p=[position],
-                     rettype=IUSBDeviceFilter)
-        return filter_p
-        
+        assert position is int
+        filter_p =\
+            self._call_method('removeDeviceFilter',
+                     in_p=[position])
+        return IUSBDeviceFilter(filter_p)
+
 
 class IUSBDevice(Interface):
     """
@@ -15789,21 +16978,24 @@ class IUSBDevice(Interface):
         Unique USB device ID. This ID is built from #vendorId,
         #productId, #revision and #serialNumber.
         """
-        return self.get_attr('id', str)
+        value = self._get_attr('id')
+        return str(value)
 
     @property
     def vendor_id(self):
         """Get int value for 'vendorId'
         Vendor ID.
         """
-        return self.get_attr('vendorId', int)
+        value = self._get_attr('vendorId')
+        return int(value)
 
     @property
     def product_id(self):
         """Get int value for 'productId'
         Product ID.
         """
-        return self.get_attr('productId', int)
+        value = self._get_attr('productId')
+        return int(value)
 
     @property
     def revision(self):
@@ -15812,35 +17004,40 @@ class IUSBDevice(Interface):
         unsigned short. The high byte is the integer part and the low
         byte is the decimal.
         """
-        return self.get_attr('revision', int)
+        value = self._get_attr('revision')
+        return int(value)
 
     @property
     def manufacturer(self):
         """Get str value for 'manufacturer'
         Manufacturer string.
         """
-        return self.get_attr('manufacturer', str)
+        value = self._get_attr('manufacturer')
+        return str(value)
 
     @property
     def product(self):
         """Get str value for 'product'
         Product string.
         """
-        return self.get_attr('product', str)
+        value = self._get_attr('product')
+        return str(value)
 
     @property
     def serial_number(self):
         """Get str value for 'serialNumber'
         Serial number string.
         """
-        return self.get_attr('serialNumber', str)
+        value = self._get_attr('serialNumber')
+        return str(value)
 
     @property
     def address(self):
         """Get str value for 'address'
         Host specific address of the device.
         """
-        return self.get_attr('address', str)
+        value = self._get_attr('address')
+        return str(value)
 
     @property
     def port(self):
@@ -15848,14 +17045,16 @@ class IUSBDevice(Interface):
         Host USB port number the device is physically
         connected to.
         """
-        return self.get_attr('port', int)
+        value = self._get_attr('port')
+        return int(value)
 
     @property
     def version(self):
         """Get int value for 'version'
         The major USB version of the device - 1 or 2.
         """
-        return self.get_attr('version', int)
+        value = self._get_attr('version')
+        return int(value)
 
     @property
     def port_version(self):
@@ -15864,7 +17063,8 @@ class IUSBDevice(Interface):
         physically connected to - 1 or 2. For devices not connected to
         anything this will have the same value as the version attribute.
         """
-        return self.get_attr('portVersion', int)
+        value = self._get_attr('portVersion')
+        return int(value)
 
     @property
     def remote(self):
@@ -15872,7 +17072,8 @@ class IUSBDevice(Interface):
         Whether the device is physically connected to a remote VRDE
         client or to a local host machine.
         """
-        return self.get_attr('remote', bool)
+        value = self._get_attr('remote')
+        return bool(value)
 
 
 class IUSBDeviceFilter(Interface):
@@ -15954,22 +17155,26 @@ class IUSBDeviceFilter(Interface):
         This name is used to visually distinguish one filter from another,
         so it can neither be @c null nor an empty string.
         """
-        return self.get_attr('name', str)
+        value = self._get_attr('name')
+        return str(value)
 
     @name.setter
     def name(self, value):
-        return self.set_attr('name', value)
+        assert type(value) is str
+        return self._set_attr('name', value)
 
     @property
     def active(self):
         """Get or set bool value for 'active'
         Whether this filter active or has been temporarily disabled.
         """
-        return self.get_attr('active', bool)
+        value = self._get_attr('active')
+        return bool(value)
 
     @active.setter
     def active(self, value):
-        return self.set_attr('active', value)
+        assert type(value) is bool
+        return self._set_attr('active', value)
 
     @property
     def vendor_id(self):
@@ -15979,11 +17184,13 @@ class IUSBDeviceFilter(Interface):
         has the form XXXX, where X is the hex digit
         (including leading zeroes).
         """
-        return self.get_attr('vendorId', str)
+        value = self._get_attr('vendorId')
+        return str(value)
 
     @vendor_id.setter
     def vendor_id(self, value):
-        return self.set_attr('vendorId', value)
+        assert type(value) is str
+        return self._set_attr('vendorId', value)
 
     @property
     def product_id(self):
@@ -15993,11 +17200,13 @@ class IUSBDeviceFilter(Interface):
         has the form XXXX, where X is the hex digit
         (including leading zeroes).
         """
-        return self.get_attr('productId', str)
+        value = self._get_attr('productId')
+        return str(value)
 
     @product_id.setter
     def product_id(self, value):
-        return self.set_attr('productId', value)
+        assert type(value) is str
+        return self._set_attr('productId', value)
 
     @property
     def revision(self):
@@ -16013,55 +17222,65 @@ class IUSBDeviceFilter(Interface):
         so the expression int:0x0100-0x0199 will match any
         revision from 1.0 to 1.99.
         """
-        return self.get_attr('revision', str)
+        value = self._get_attr('revision')
+        return str(value)
 
     @revision.setter
     def revision(self, value):
-        return self.set_attr('revision', value)
+        assert type(value) is str
+        return self._set_attr('revision', value)
 
     @property
     def manufacturer(self):
         """Get or set str value for 'manufacturer'
         <link to="IUSBDevice::manufacturer">Manufacturer</link> filter.
         """
-        return self.get_attr('manufacturer', str)
+        value = self._get_attr('manufacturer')
+        return str(value)
 
     @manufacturer.setter
     def manufacturer(self, value):
-        return self.set_attr('manufacturer', value)
+        assert type(value) is str
+        return self._set_attr('manufacturer', value)
 
     @property
     def product(self):
         """Get or set str value for 'product'
         <link to="IUSBDevice::product">Product</link> filter.
         """
-        return self.get_attr('product', str)
+        value = self._get_attr('product')
+        return str(value)
 
     @product.setter
     def product(self, value):
-        return self.set_attr('product', value)
+        assert type(value) is str
+        return self._set_attr('product', value)
 
     @property
     def serial_number(self):
         """Get or set str value for 'serialNumber'
         <link to="IUSBDevice::serialNumber">Serial number</link> filter.
         """
-        return self.get_attr('serialNumber', str)
+        value = self._get_attr('serialNumber')
+        return str(value)
 
     @serial_number.setter
     def serial_number(self, value):
-        return self.set_attr('serialNumber', value)
+        assert type(value) is str
+        return self._set_attr('serialNumber', value)
 
     @property
     def port(self):
         """Get or set str value for 'port'
         <link to="IUSBDevice::port">Host USB port</link> filter.
         """
-        return self.get_attr('port', str)
+        value = self._get_attr('port')
+        return str(value)
 
     @port.setter
     def port(self, value):
-        return self.set_attr('port', value)
+        assert type(value) is str
+        return self._set_attr('port', value)
 
     @property
     def remote(self):
@@ -16071,11 +17290,13 @@ class IUSBDeviceFilter(Interface):
           This filter makes sense only for machine USB filters,
           i.e. it is ignored by IHostUSBDeviceFilter objects.
         """
-        return self.get_attr('remote', str)
+        value = self._get_attr('remote')
+        return str(value)
 
     @remote.setter
     def remote(self, value):
-        return self.set_attr('remote', value)
+        assert type(value) is str
+        return self._set_attr('remote', value)
 
     @property
     def masked_interfaces(self):
@@ -16086,11 +17307,13 @@ class IUSBDeviceFilter(Interface):
         if you like.
         This feature only works on Linux hosts.
         """
-        return self.get_attr('maskedInterfaces', int)
+        value = self._get_attr('maskedInterfaces')
+        return int(value)
 
     @masked_interfaces.setter
     def masked_interfaces(self, value):
-        return self.set_attr('maskedInterfaces', value)
+        assert type(value) is int
+        return self._set_attr('maskedInterfaces', value)
 
 
 class IHostUSBDevice(IUSBDevice):
@@ -16113,7 +17336,8 @@ class IHostUSBDevice(IUSBDevice):
         """Get USBDeviceState value for 'state'
         Current state of the device.
         """
-        return self.get_attr('state', USBDeviceState)
+        value = self._get_attr('state')
+        return USBDeviceState(value)
 
 
 class IHostUSBDeviceFilter(IUSBDeviceFilter):
@@ -16143,11 +17367,13 @@ class IHostUSBDeviceFilter(IUSBDeviceFilter):
         Action performed by the host when an attached USB device
         matches this filter.
         """
-        return self.get_attr('action', USBDeviceFilterAction)
+        value = self._get_attr('action')
+        return USBDeviceFilterAction(value)
 
     @action.setter
     def action(self, value):
-        return self.set_attr('action', value)
+        assert type(value) is USBDeviceFilterAction
+        return self._set_attr('action', value)
 
 
 class IAudioAdapter(Interface):
@@ -16166,22 +17392,26 @@ class IAudioAdapter(Interface):
         not contain any audio adapter. Can only be changed when
         the VM is not running.
         """
-        return self.get_attr('enabled', bool)
+        value = self._get_attr('enabled')
+        return bool(value)
 
     @enabled.setter
     def enabled(self, value):
-        return self.set_attr('enabled', value)
+        assert type(value) is bool
+        return self._set_attr('enabled', value)
 
     @property
     def audio_controller(self):
         """Get or set AudioControllerType value for 'audioController'
         The audio hardware we emulate.
         """
-        return self.get_attr('audioController', AudioControllerType)
+        value = self._get_attr('audioController')
+        return AudioControllerType(value)
 
     @audio_controller.setter
     def audio_controller(self, value):
-        return self.set_attr('audioController', value)
+        assert type(value) is AudioControllerType
+        return self._set_attr('audioController', value)
 
     @property
     def audio_driver(self):
@@ -16189,11 +17419,13 @@ class IAudioAdapter(Interface):
         Audio driver the adapter is connected to. This setting
         can only be changed when the VM is not running.
         """
-        return self.get_attr('audioDriver', AudioDriverType)
+        value = self._get_attr('audioDriver')
+        return AudioDriverType(value)
 
     @audio_driver.setter
     def audio_driver(self, value):
-        return self.set_attr('audioDriver', value)
+        assert type(value) is AudioDriverType
+        return self._set_attr('audioDriver', value)
 
 
 class IVRDEServer(Interface):
@@ -16208,33 +17440,39 @@ class IVRDEServer(Interface):
         """Get or set bool value for 'enabled'
         Flag if VRDE server is enabled.
         """
-        return self.get_attr('enabled', bool)
+        value = self._get_attr('enabled')
+        return bool(value)
 
     @enabled.setter
     def enabled(self, value):
-        return self.set_attr('enabled', value)
+        assert type(value) is bool
+        return self._set_attr('enabled', value)
 
     @property
     def auth_type(self):
         """Get or set AuthType value for 'authType'
         VRDE authentication method.
         """
-        return self.get_attr('authType', AuthType)
+        value = self._get_attr('authType')
+        return AuthType(value)
 
     @auth_type.setter
     def auth_type(self, value):
-        return self.set_attr('authType', value)
+        assert type(value) is AuthType
+        return self._set_attr('authType', value)
 
     @property
     def auth_timeout(self):
         """Get or set int value for 'authTimeout'
         Timeout for guest authentication. Milliseconds.
         """
-        return self.get_attr('authTimeout', int)
+        value = self._get_attr('authTimeout')
+        return int(value)
 
     @auth_timeout.setter
     def auth_timeout(self, value):
-        return self.set_attr('authTimeout', value)
+        assert type(value) is int
+        return self._set_attr('authTimeout', value)
 
     @property
     def allow_multi_connection(self):
@@ -16242,11 +17480,13 @@ class IVRDEServer(Interface):
         Flag whether multiple simultaneous connections to the VM are permitted.
         Note that this will be replaced by a more powerful mechanism in the future.
         """
-        return self.get_attr('allowMultiConnection', bool)
+        value = self._get_attr('allowMultiConnection')
+        return bool(value)
 
     @allow_multi_connection.setter
     def allow_multi_connection(self, value):
-        return self.set_attr('allowMultiConnection', value)
+        assert type(value) is bool
+        return self._set_attr('allowMultiConnection', value)
 
     @property
     def reuse_single_connection(self):
@@ -16255,11 +17495,13 @@ class IVRDEServer(Interface):
         must be established by the VRDE server, when a new client connects in single
         connection mode.
         """
-        return self.get_attr('reuseSingleConnection', bool)
+        value = self._get_attr('reuseSingleConnection')
+        return bool(value)
 
     @reuse_single_connection.setter
     def reuse_single_connection(self, value):
-        return self.set_attr('reuseSingleConnection', value)
+        assert type(value) is bool
+        return self._set_attr('reuseSingleConnection', value)
 
     @property
     def vrde_ext_pack(self):
@@ -16267,11 +17509,13 @@ class IVRDEServer(Interface):
         The name of Extension Pack providing VRDE for this VM. Overrides
         <link to="ISystemProperties::defaultVRDEExtPack"/>.
         """
-        return self.get_attr('VRDEExtPack', str)
+        value = self._get_attr('VRDEExtPack')
+        return str(value)
 
     @vrde_ext_pack.setter
     def vrde_ext_pack(self, value):
-        return self.set_attr('VRDEExtPack', value)
+        assert type(value) is str
+        return self._set_attr('VRDEExtPack', value)
 
     @property
     def auth_library(self):
@@ -16279,18 +17523,21 @@ class IVRDEServer(Interface):
         Library used for authentication of RDP clients by this VM. Overrides
         <link to="ISystemProperties::VRDEAuthLibrary"/>.
         """
-        return self.get_attr('authLibrary', str)
+        value = self._get_attr('authLibrary')
+        return str(value)
 
     @auth_library.setter
     def auth_library(self, value):
-        return self.set_attr('authLibrary', value)
+        assert type(value) is str
+        return self._set_attr('authLibrary', value)
 
     @property
     def vrde_properties(self):
         """Get str value for 'VRDEProperties'
         Array of names of properties, which are supported by this VRDE server.
         """
-        return self.get_attr('VRDEProperties', str)
+        value = self._get_attr('VRDEProperties')
+        return str(value)
 
     def set_vrde_property(self, key, value):
         """Sets a VRDE specific property string.
@@ -16305,7 +17552,9 @@ class IVRDEServer(Interface):
             Value to assign to the key.
 
         """
-        self.call_method('setVRDEProperty',
+        assert key is str
+        assert value is str
+        self._call_method('setVRDEProperty',
                      in_p=[key, value])
         
     def get_vrde_property(self, key):
@@ -16321,11 +17570,12 @@ class IVRDEServer(Interface):
             Value of the requested key.
 
         """
-        value = self.call_method('getVRDEProperty',
-                     in_p=[key],
-                     rettype=str)
-        return value
-        
+        assert key is str
+        value =\
+            self._call_method('getVRDEProperty',
+                     in_p=[key])
+        return str(value)
+
 
 class ISharedFolder(Interface):
     """
@@ -16384,14 +17634,16 @@ class ISharedFolder(Interface):
         """Get str value for 'name'
         Logical name of the shared folder.
         """
-        return self.get_attr('name', str)
+        value = self._get_attr('name')
+        return str(value)
 
     @property
     def host_path(self):
         """Get str value for 'hostPath'
         Full path to the shared folder in the host file system.
         """
-        return self.get_attr('hostPath', str)
+        value = self._get_attr('hostPath')
+        return str(value)
 
     @property
     def accessible(self):
@@ -16402,7 +17654,8 @@ class ISharedFolder(Interface):
         on the network share that is not available by the time
         this property is read.
         """
-        return self.get_attr('accessible', bool)
+        value = self._get_attr('accessible')
+        return bool(value)
 
     @property
     def writable(self):
@@ -16410,14 +17663,16 @@ class ISharedFolder(Interface):
         Whether the folder defined by the host path is writable or
         not.
         """
-        return self.get_attr('writable', bool)
+        value = self._get_attr('writable')
+        return bool(value)
 
     @property
     def auto_mount(self):
         """Get bool value for 'autoMount'
         Whether the folder gets automatically mounted by the guest or not.
         """
-        return self.get_attr('autoMount', bool)
+        value = self._get_attr('autoMount')
+        return bool(value)
 
     @property
     def last_access_error(self):
@@ -16431,7 +17686,8 @@ class ISharedFolder(Interface):
         failure and should normally describe a reason of the failure (for
         example, a file read error).
         """
-        return self.get_attr('lastAccessError', str)
+        value = self._get_attr('lastAccessError')
+        return str(value)
 
 
 class IInternalSessionControl(Interface):
@@ -16447,10 +17703,10 @@ class IInternalSessionControl(Interface):
         return pid of type int
 
         """
-        pid = self.call_method('getPID',
-                     rettype=int)
-        return pid
-        
+        pid =\
+            self._call_method('getPID')
+        return int(pid)
+
     def get_remote_console(self):
         """Returns the console object suitable for remote control.
 
@@ -16463,10 +17719,10 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        console = self.call_method('getRemoteConsole',
-                     rettype=IConsole)
-        return console
-        
+        console =\
+            self._call_method('getRemoteConsole')
+        return IConsole(console)
+
     def assign_machine(self, machine, lock_type):
         """Assigns the machine object associated with this direct-type
         session or informs the session that it will be a remote one
@@ -16483,7 +17739,9 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        self.call_method('assignMachine',
+        assert machine is IMachine
+        assert lock_type is LockType
+        self._call_method('assignMachine',
                      in_p=[machine, lock_type])
         
     def assign_remote_machine(self, machine, console):
@@ -16498,7 +17756,9 @@ class IInternalSessionControl(Interface):
             Session state prevents operation.
         
         """
-        self.call_method('assignRemoteMachine',
+        assert machine is IMachine
+        assert console is IConsole
+        self._call_method('assignRemoteMachine',
                      in_p=[machine, console])
         
     def update_machine_state(self, machine_state):
@@ -16515,7 +17775,8 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        self.call_method('updateMachineState',
+        assert machine_state is MachineState
+        self._call_method('updateMachineState',
                      in_p=[machine_state])
         
     def uninitialize(self):
@@ -16527,7 +17788,7 @@ class IInternalSessionControl(Interface):
             Session state prevents operation.
         
         """
-        self.call_method('uninitialize')
+        self._call_method('uninitialize')
         
     def on_network_adapter_change(self, network_adapter, change_adapter):
         """Triggered when settings of a network adapter of the
@@ -16544,7 +17805,9 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        self.call_method('onNetworkAdapterChange',
+        assert network_adapter is INetworkAdapter
+        assert change_adapter is bool
+        self._call_method('onNetworkAdapterChange',
                      in_p=[network_adapter, change_adapter])
         
     def on_serial_port_change(self, serial_port):
@@ -16560,7 +17823,8 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        self.call_method('onSerialPortChange',
+        assert serial_port is ISerialPort
+        self._call_method('onSerialPortChange',
                      in_p=[serial_port])
         
     def on_parallel_port_change(self, parallel_port):
@@ -16576,7 +17840,8 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        self.call_method('onParallelPortChange',
+        assert parallel_port is IParallelPort
+        self._call_method('onParallelPortChange',
                      in_p=[parallel_port])
         
     def on_storage_controller_change(self):
@@ -16590,7 +17855,7 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        self.call_method('onStorageControllerChange')
+        self._call_method('onStorageControllerChange')
         
     def on_medium_change(self, medium_attachment, force):
         """Triggered when attached media of the
@@ -16609,7 +17874,9 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        self.call_method('onMediumChange',
+        assert medium_attachment is IMediumAttachment
+        assert force is bool
+        self._call_method('onMediumChange',
                      in_p=[medium_attachment, force])
         
     def on_storage_device_change(self, medium_attachment, remove, silent):
@@ -16633,7 +17900,10 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        self.call_method('onStorageDeviceChange',
+        assert medium_attachment is IMediumAttachment
+        assert remove is bool
+        assert silent is bool
+        self._call_method('onStorageDeviceChange',
                      in_p=[medium_attachment, remove, silent])
         
     def on_clipboard_mode_change(self, clipboard_mode):
@@ -16643,7 +17913,8 @@ class IInternalSessionControl(Interface):
             The new shared clipboard mode.
 
         """
-        self.call_method('onClipboardModeChange',
+        assert clipboard_mode is ClipboardMode
+        self._call_method('onClipboardModeChange',
                      in_p=[clipboard_mode])
         
     def on_drag_and_drop_mode_change(self, drag_and_drop_mode):
@@ -16653,7 +17924,8 @@ class IInternalSessionControl(Interface):
             The new mode for drag'n'drop.
 
         """
-        self.call_method('onDragAndDropModeChange',
+        assert drag_and_drop_mode is DragAndDropMode
+        self._call_method('onDragAndDropModeChange',
                      in_p=[drag_and_drop_mode])
         
     def on_cpu_change(self, cpu, add):
@@ -16666,7 +17938,9 @@ class IInternalSessionControl(Interface):
             Flag whether the CPU was added or removed
 
         """
-        self.call_method('onCPUChange',
+        assert cpu is int
+        assert add is bool
+        self._call_method('onCPUChange',
                      in_p=[cpu, add])
         
     def on_cpu_execution_cap_change(self, execution_cap):
@@ -16676,7 +17950,8 @@ class IInternalSessionControl(Interface):
             The new CPU execution cap value. (1-100)
 
         """
-        self.call_method('onCPUExecutionCapChange',
+        assert execution_cap is int
+        self._call_method('onCPUExecutionCapChange',
                      in_p=[execution_cap])
         
     def on_vrde_server_change(self, restart):
@@ -16693,7 +17968,8 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        self.call_method('onVRDEServerChange',
+        assert restart is bool
+        self._call_method('onVRDEServerChange',
                      in_p=[restart])
         
     def on_usb_controller_change(self):
@@ -16707,7 +17983,7 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        self.call_method('onUSBControllerChange')
+        self._call_method('onUSBControllerChange')
         
     def on_shared_folder_change(self, global_p):
         """Triggered when a permanent (global or machine) shared folder has been
@@ -16727,7 +18003,8 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        self.call_method('onSharedFolderChange',
+        assert global_p is bool
+        self._call_method('onSharedFolderChange',
                      in_p=[global_p])
         
     def on_usb_device_attach(self, device, error, masked_interfaces):
@@ -16750,7 +18027,10 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        self.call_method('onUSBDeviceAttach',
+        assert device is IUSBDevice
+        assert error is IVirtualBoxErrorInfo
+        assert masked_interfaces is int
+        self._call_method('onUSBDeviceAttach',
                      in_p=[device, error, masked_interfaces])
         
     def on_usb_device_detach(self, id_p, error):
@@ -16771,10 +18051,12 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        self.call_method('onUSBDeviceDetach',
+        assert id_p is str
+        assert error is IVirtualBoxErrorInfo
+        self._call_method('onUSBDeviceDetach',
                      in_p=[id_p, error])
         
-    def on_show_window(self, check, out_p={}):
+    def on_show_window(self, check):
         """Called by <link to="IMachine::canShowConsoleWindow"/> and by
         <link to="IMachine::showConsoleWindow"/> in order to notify
         console listeners
@@ -16791,10 +18073,12 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        self.call_method('onShowWindow',
-                     in_p=[check],
-                     out_p=out_p)
-        
+        assert check is bool
+        (can_show, win_id) =\
+            self._call_method('onShowWindow',
+                     in_p=[check])
+        return (bool(can_show), int(win_id))
+
     def on_bandwidth_group_change(self, bandwidth_group):
         """Notification when one of the bandwidth groups change.
 
@@ -16802,10 +18086,11 @@ class IInternalSessionControl(Interface):
             The bandwidth group which changed.
 
         """
-        self.call_method('onBandwidthGroupChange',
+        assert bandwidth_group is IBandwidthGroup
+        self._call_method('onBandwidthGroupChange',
                      in_p=[bandwidth_group])
         
-    def access_guest_property(self, name, value, flags, is_setter, out_p={}):
+    def access_guest_property(self, name, value, flags, is_setter):
         """Called by <link to="IMachine::getGuestProperty"/> and by
         <link to="IMachine::setGuestProperty"/> in order to read and
         modify guest properties.
@@ -16831,11 +18116,16 @@ class IInternalSessionControl(Interface):
             Session type is not direct.
         
         """
-        self.call_method('accessGuestProperty',
-                     in_p=[name, value, flags, is_setter],
-                     out_p=out_p)
-        
-    def enumerate_guest_properties(self, patterns, out_p={}):
+        assert name is str
+        assert value is str
+        assert flags is str
+        assert is_setter is bool
+        (ret_value, ret_timestamp, ret_flags) =\
+            self._call_method('accessGuestProperty',
+                     in_p=[name, value, flags, is_setter])
+        return (str(ret_value), int(ret_timestamp), str(ret_flags))
+
+    def enumerate_guest_properties(self, patterns):
         """Return a list of the guest properties matching a set of patterns along
         with their values, time stamps and flags.
 
@@ -16866,10 +18156,12 @@ class IInternalSessionControl(Interface):
             Session type is not direct.
         
         """
-        self.call_method('enumerateGuestProperties',
-                     in_p=[patterns],
-                     out_p=out_p)
-        
+        assert patterns is str
+        (keys, values, timestamps, flags) =\
+            self._call_method('enumerateGuestProperties',
+                     in_p=[patterns])
+        return (str(keys), str(values), int(timestamps), str(flags))
+
     def online_merge_medium(self, medium_attachment, source_idx, target_idx, source, target, merge_forward, parent_for_target, children_to_reparent, progress):
         """Triggers online merging of a hard disk. Used internally when deleting
         a snapshot while a VM referring to the same hard disk chain is running.
@@ -16911,7 +18203,16 @@ class IInternalSessionControl(Interface):
             Session type is not direct.
         
         """
-        self.call_method('onlineMergeMedium',
+        assert medium_attachment is IMediumAttachment
+        assert source_idx is int
+        assert target_idx is int
+        assert source is IMedium
+        assert target is IMedium
+        assert merge_forward is bool
+        assert parent_for_target is IMedium
+        assert children_to_reparent is IMedium
+        assert progress is IProgress
+        self._call_method('onlineMergeMedium',
                      in_p=[medium_attachment, source_idx, target_idx, source, target, merge_forward, parent_for_target, children_to_reparent, progress])
         
     def enable_vmm_statistics(self, enable):
@@ -16927,7 +18228,8 @@ class IInternalSessionControl(Interface):
             Session type is not direct.
         
         """
-        self.call_method('enableVMMStatistics',
+        assert enable is bool
+        self._call_method('enableVMMStatistics',
                      in_p=[enable])
         
 
@@ -16994,7 +18296,8 @@ class ISession(Interface):
         """Get SessionState value for 'state'
         Current state of this session.
         """
-        return self.get_attr('state', SessionState)
+        value = self._get_attr('state')
+        return SessionState(value)
 
     @property
     def type_p(self):
@@ -17003,21 +18306,24 @@ class ISession(Interface):
         if the session currently has a machine locked (i.e. its
         <link to="#state"/> is Locked), otherwise an error will be returned.
         """
-        return self.get_attr('type', SessionType)
+        value = self._get_attr('type')
+        return SessionType(value)
 
     @property
     def machine(self):
         """Get IMachine value for 'machine'
         Machine object associated with this session.
         """
-        return self.get_attr('machine', IMachine)
+        value = self._get_attr('machine')
+        return IMachine(value)
 
     @property
     def console(self):
         """Get IConsole value for 'console'
         Console object associated with this session.
         """
-        return self.get_attr('console', IConsole)
+        value = self._get_attr('console')
+        return IConsole(value)
 
     def unlock_machine(self):
         """Unlocks a machine that was previously locked for the current session.
@@ -17043,7 +18349,7 @@ class ISession(Interface):
             Session is not locked.
         
         """
-        self.call_method('unlockMachine')
+        self._call_method('unlockMachine')
         
 
 class IStorageController(Interface):
@@ -17076,39 +18382,45 @@ class IStorageController(Interface):
         identifies this controller with other method calls such as
         <link to="IMachine::attachDevice"/> and <link to="IMachine::mountMedium"/>.
         """
-        return self.get_attr('name', str)
+        value = self._get_attr('name')
+        return str(value)
 
     @property
     def max_devices_per_port_count(self):
         """Get int value for 'maxDevicesPerPortCount'
         Maximum number of devices which can be attached to one port.
         """
-        return self.get_attr('maxDevicesPerPortCount', int)
+        value = self._get_attr('maxDevicesPerPortCount')
+        return int(value)
 
     @property
     def min_port_count(self):
         """Get int value for 'minPortCount'
         Minimum number of ports that <link to="IStorageController::portCount"/> can be set to.
         """
-        return self.get_attr('minPortCount', int)
+        value = self._get_attr('minPortCount')
+        return int(value)
 
     @property
     def max_port_count(self):
         """Get int value for 'maxPortCount'
         Maximum number of ports that <link to="IStorageController::portCount"/> can be set to.
         """
-        return self.get_attr('maxPortCount', int)
+        value = self._get_attr('maxPortCount')
+        return int(value)
 
     @property
     def instance(self):
         """Get or set int value for 'instance'
         The instance number of the device in the running VM.
         """
-        return self.get_attr('instance', int)
+        value = self._get_attr('instance')
+        return int(value)
 
     @instance.setter
     def instance(self, value):
-        return self.set_attr('instance', value)
+        assert type(value) is int
+        return self._set_attr('instance', value)
 
     @property
     def port_count(self):
@@ -17118,18 +18430,21 @@ class IStorageController(Interface):
         stored in <link to="IStorageController::minPortCount"/>
         and <link to="IStorageController::maxPortCount"/>.
         """
-        return self.get_attr('portCount', int)
+        value = self._get_attr('portCount')
+        return int(value)
 
     @port_count.setter
     def port_count(self, value):
-        return self.set_attr('portCount', value)
+        assert type(value) is int
+        return self._set_attr('portCount', value)
 
     @property
     def bus(self):
         """Get StorageBus value for 'bus'
         The bus type of the storage controller (IDE, SATA, SCSI, SAS or Floppy).
         """
-        return self.get_attr('bus', StorageBus)
+        value = self._get_attr('bus')
+        return StorageBus(value)
 
     @property
     def controller_type(self):
@@ -17143,11 +18458,13 @@ class IStorageController(Interface):
 
         For SCSI controllers, the default type is LsiLogic.
         """
-        return self.get_attr('controllerType', StorageControllerType)
+        value = self._get_attr('controllerType')
+        return StorageControllerType(value)
 
     @controller_type.setter
     def controller_type(self, value):
-        return self.set_attr('controllerType', value)
+        assert type(value) is StorageControllerType
+        return self._set_attr('controllerType', value)
 
     @property
     def use_host_io_cache(self):
@@ -17163,18 +18480,21 @@ class IStorageController(Interface):
         virtual machines are running at the same time to prevent I/O cache related hangs.
         This option new with the API of VirtualBox 3.2 and is now the default for non-IDE storage controllers.
         """
-        return self.get_attr('useHostIOCache', bool)
+        value = self._get_attr('useHostIOCache')
+        return bool(value)
 
     @use_host_io_cache.setter
     def use_host_io_cache(self, value):
-        return self.set_attr('useHostIOCache', value)
+        assert type(value) is bool
+        return self._set_attr('useHostIOCache', value)
 
     @property
     def bootable(self):
         """Get bool value for 'bootable'
         Returns whether it is possible to boot from disks attached to this controller.
         """
-        return self.get_attr('bootable', bool)
+        value = self._get_attr('bootable')
+        return bool(value)
 
 
 class IPerformanceMetric(Interface):
@@ -17190,28 +18510,32 @@ class IPerformanceMetric(Interface):
         """Get str value for 'metricName'
         Name of the metric.
         """
-        return self.get_attr('metricName', str)
+        value = self._get_attr('metricName')
+        return str(value)
 
     @property
     def object_p(self):
         """Get Interface value for 'object'
         Object this metric belongs to.
         """
-        return self.get_attr('object', Interface)
+        value = self._get_attr('object')
+        return Interface(value)
 
     @property
     def description(self):
         """Get str value for 'description'
         Textual description of the metric.
         """
-        return self.get_attr('description', str)
+        value = self._get_attr('description')
+        return str(value)
 
     @property
     def period(self):
         """Get int value for 'period'
         Time interval between samples, measured in seconds.
         """
-        return self.get_attr('period', int)
+        value = self._get_attr('period')
+        return int(value)
 
     @property
     def count(self):
@@ -17222,28 +18546,32 @@ class IPerformanceMetric(Interface):
         When the collected sample count exceeds this number, older samples
         are discarded.
         """
-        return self.get_attr('count', int)
+        value = self._get_attr('count')
+        return int(value)
 
     @property
     def unit(self):
         """Get str value for 'unit'
         Unit of measurement.
         """
-        return self.get_attr('unit', str)
+        value = self._get_attr('unit')
+        return str(value)
 
     @property
     def minimum_value(self):
         """Get int value for 'minimumValue'
         Minimum possible value of this metric.
         """
-        return self.get_attr('minimumValue', int)
+        value = self._get_attr('minimumValue')
+        return int(value)
 
     @property
     def maximum_value(self):
         """Get int value for 'maximumValue'
         Maximum possible value of this metric.
         """
-        return self.get_attr('maximumValue', int)
+        value = self._get_attr('maximumValue')
+        return int(value)
 
 
 class IPerformanceCollector(Interface):
@@ -17361,7 +18689,8 @@ class IPerformanceCollector(Interface):
         <link to="IPerformanceCollector::getMetrics"/> can be used to get the
         list of supported metrics for a particular object.
         """
-        return self.get_attr('metricNames', str)
+        value = self._get_attr('metricNames')
+        return str(value)
 
     def get_metrics(self, metric_names, objects):
         """Returns parameters of specified metrics for a set of objects.
@@ -17380,11 +18709,13 @@ class IPerformanceCollector(Interface):
             Array of returned metric parameters.
 
         """
-        metrics = self.call_method('getMetrics',
-                     in_p=[metric_names, objects],
-                     rettype=IPerformanceMetric)
-        return metrics
-        
+        assert metric_names is str
+        assert objects is Interface
+        metrics =\
+            self._call_method('getMetrics',
+                     in_p=[metric_names, objects])
+        return IPerformanceMetric(metrics)
+
     def setup_metrics(self, metric_names, objects, period, count):
         """Sets parameters of specified base metrics for a set of objects. Returns
         an array of <link to="IPerformanceMetric"/> describing the metrics
@@ -17415,11 +18746,15 @@ class IPerformanceCollector(Interface):
             Array of metrics that have been modified by the call to this method.
 
         """
-        affected_metrics = self.call_method('setupMetrics',
-                     in_p=[metric_names, objects, period, count],
-                     rettype=IPerformanceMetric)
-        return affected_metrics
-        
+        assert metric_names is str
+        assert objects is Interface
+        assert period is int
+        assert count is int
+        affected_metrics =\
+            self._call_method('setupMetrics',
+                     in_p=[metric_names, objects, period, count])
+        return IPerformanceMetric(affected_metrics)
+
     def enable_metrics(self, metric_names, objects):
         """Turns on collecting specified base metrics. Returns an array of
         <link to="IPerformanceMetric"/> describing the metrics have been
@@ -17442,11 +18777,13 @@ class IPerformanceCollector(Interface):
             Array of metrics that have been modified by the call to this method.
 
         """
-        affected_metrics = self.call_method('enableMetrics',
-                     in_p=[metric_names, objects],
-                     rettype=IPerformanceMetric)
-        return affected_metrics
-        
+        assert metric_names is str
+        assert objects is Interface
+        affected_metrics =\
+            self._call_method('enableMetrics',
+                     in_p=[metric_names, objects])
+        return IPerformanceMetric(affected_metrics)
+
     def disable_metrics(self, metric_names, objects):
         """Turns off collecting specified base metrics. Returns an array of
         <link to="IPerformanceMetric"/> describing the metrics have been
@@ -17469,12 +18806,14 @@ class IPerformanceCollector(Interface):
             Array of metrics that have been modified by the call to this method.
 
         """
-        affected_metrics = self.call_method('disableMetrics',
-                     in_p=[metric_names, objects],
-                     rettype=IPerformanceMetric)
-        return affected_metrics
-        
-    def query_metrics_data(self, metric_names, objects, out_p={}):
+        assert metric_names is str
+        assert objects is Interface
+        affected_metrics =\
+            self._call_method('disableMetrics',
+                     in_p=[metric_names, objects])
+        return IPerformanceMetric(affected_metrics)
+
+    def query_metrics_data(self, metric_names, objects):
         """Queries collected metrics data for a set of objects.
 
         The data itself and related metric information are returned in seven
@@ -17548,12 +18887,13 @@ class IPerformanceCollector(Interface):
           each metric.
 
         """
-        return_data = self.call_method('queryMetricsData',
-                     in_p=[metric_names, objects],
-                     out_p=out_p,
-                     rettype=int)
-        return return_data
-        
+        assert metric_names is str
+        assert objects is Interface
+        (return_metric_names, return_objects, return_units, return_scales, return_sequence_numbers, return_data_indices, return_data_lengths, return_data) =\
+            self._call_method('queryMetricsData',
+                     in_p=[metric_names, objects])
+        return (str(return_metric_names), Interface(return_objects), str(return_units), int(return_scales), int(return_sequence_numbers), int(return_data_indices), int(return_data_lengths), int(return_data))
+
 
 class INATEngine(Interface):
     """
@@ -17570,11 +18910,13 @@ class INATEngine(Interface):
         The network attribute of the NAT engine (the same value is used with built-in
         DHCP server to fill corresponding fields of DHCP leases).
         """
-        return self.get_attr('network', str)
+        value = self._get_attr('network')
+        return str(value)
 
     @network.setter
     def network(self, value):
-        return self.set_attr('network', value)
+        assert type(value) is str
+        return self._set_attr('network', value)
 
     @property
     def host_ip(self):
@@ -17582,11 +18924,13 @@ class INATEngine(Interface):
         IP of host interface to bind all opened sockets to.
           Changing this does not change binding of port forwarding.
         """
-        return self.get_attr('hostIP', str)
+        value = self._get_attr('hostIP')
+        return str(value)
 
     @host_ip.setter
     def host_ip(self, value):
-        return self.set_attr('hostIP', value)
+        assert type(value) is str
+        return self._set_attr('hostIP', value)
 
     @property
     def tftp_prefix(self):
@@ -17594,11 +18938,13 @@ class INATEngine(Interface):
         TFTP prefix attribute which is used with the built-in DHCP server to fill
         the corresponding fields of DHCP leases.
         """
-        return self.get_attr('TFTPPrefix', str)
+        value = self._get_attr('TFTPPrefix')
+        return str(value)
 
     @tftp_prefix.setter
     def tftp_prefix(self, value):
-        return self.set_attr('TFTPPrefix', value)
+        assert type(value) is str
+        return self._set_attr('TFTPPrefix', value)
 
     @property
     def tftp_boot_file(self):
@@ -17606,11 +18952,13 @@ class INATEngine(Interface):
         TFTP boot file attribute which is used with the built-in DHCP server to fill
         the corresponding fields of DHCP leases.
         """
-        return self.get_attr('TFTPBootFile', str)
+        value = self._get_attr('TFTPBootFile')
+        return str(value)
 
     @tftp_boot_file.setter
     def tftp_boot_file(self, value):
-        return self.set_attr('TFTPBootFile', value)
+        assert type(value) is str
+        return self._set_attr('TFTPBootFile', value)
 
     @property
     def tftp_next_server(self):
@@ -17619,33 +18967,39 @@ class INATEngine(Interface):
         the corresponding fields of DHCP leases.
         The preferred form is IPv4 addresses.
         """
-        return self.get_attr('TFTPNextServer', str)
+        value = self._get_attr('TFTPNextServer')
+        return str(value)
 
     @tftp_next_server.setter
     def tftp_next_server(self, value):
-        return self.set_attr('TFTPNextServer', value)
+        assert type(value) is str
+        return self._set_attr('TFTPNextServer', value)
 
     @property
     def alias_mode(self):
         """Get or set int value for 'aliasMode'
         <desc/>
         """
-        return self.get_attr('aliasMode', int)
+        value = self._get_attr('aliasMode')
+        return int(value)
 
     @alias_mode.setter
     def alias_mode(self, value):
-        return self.set_attr('aliasMode', value)
+        assert type(value) is int
+        return self._set_attr('aliasMode', value)
 
     @property
     def dns_pass_domain(self):
         """Get or set bool value for 'DNSPassDomain'
         Whether the DHCP server should pass the DNS domain used by the host.
         """
-        return self.get_attr('DNSPassDomain', bool)
+        value = self._get_attr('DNSPassDomain')
+        return bool(value)
 
     @dns_pass_domain.setter
     def dns_pass_domain(self, value):
-        return self.set_attr('DNSPassDomain', value)
+        assert type(value) is bool
+        return self._set_attr('DNSPassDomain', value)
 
     @property
     def dns_proxy(self):
@@ -17653,11 +19007,13 @@ class INATEngine(Interface):
         Whether the DHCP server (and the DNS traffic by NAT) should pass the address
         of the DNS proxy and process traffic using DNS servers registered on the host.
         """
-        return self.get_attr('DNSProxy', bool)
+        value = self._get_attr('DNSProxy')
+        return bool(value)
 
     @dns_proxy.setter
     def dns_proxy(self, value):
-        return self.set_attr('DNSProxy', value)
+        assert type(value) is bool
+        return self._set_attr('DNSProxy', value)
 
     @property
     def dns_use_host_resolver(self):
@@ -17665,11 +19021,13 @@ class INATEngine(Interface):
         Whether the DHCP server (and the DNS traffic by NAT) should pass the address
         of the DNS proxy and process traffic using the host resolver mechanism.
         """
-        return self.get_attr('DNSUseHostResolver', bool)
+        value = self._get_attr('DNSUseHostResolver')
+        return bool(value)
 
     @dns_use_host_resolver.setter
     def dns_use_host_resolver(self, value):
-        return self.set_attr('DNSUseHostResolver', value)
+        assert type(value) is bool
+        return self._set_attr('DNSUseHostResolver', value)
 
     @property
     def redirects(self):
@@ -17677,7 +19035,8 @@ class INATEngine(Interface):
         Array of NAT port-forwarding rules in string representation, in the following
         format: "name,protocol id,host ip,host port,guest ip,guest port".
         """
-        return self.get_attr('redirects', str)
+        value = self._get_attr('redirects')
+        return str(value)
 
     def set_network_settings(self, mtu, sock_snd, sock_rcv, tcp_wnd_snd, tcp_wnd_rcv):
         """Sets network configuration of the NAT engine.
@@ -17700,10 +19059,15 @@ class INATEngine(Interface):
           establishing a new TCP connection.
 
         """
-        self.call_method('setNetworkSettings',
+        assert mtu is int
+        assert sock_snd is int
+        assert sock_rcv is int
+        assert tcp_wnd_snd is int
+        assert tcp_wnd_rcv is int
+        self._call_method('setNetworkSettings',
                      in_p=[mtu, sock_snd, sock_rcv, tcp_wnd_snd, tcp_wnd_rcv])
         
-    def get_network_settings(self, out_p={}):
+    def get_network_settings(self):
         """Returns network configuration of NAT engine. See <link to="#setNetworkSettings"/>
         for parameter descriptions.
 
@@ -17718,9 +19082,10 @@ class INATEngine(Interface):
         out tcp_wnd_rcv of type int
 
         """
-        self.call_method('getNetworkSettings',
-                     out_p=out_p)
-        
+        (mtu, sock_snd, sock_rcv, tcp_wnd_snd, tcp_wnd_rcv) =\
+            self._call_method('getNetworkSettings')
+        return (int(mtu), int(sock_snd), int(sock_rcv), int(tcp_wnd_snd), int(tcp_wnd_rcv))
+
     def add_redirect(self, name, proto, host_ip, host_port, guest_ip, guest_port):
         """Adds a new NAT port-forwarding rule.
 
@@ -17747,7 +19112,13 @@ class INATEngine(Interface):
             The port number to forward.
 
         """
-        self.call_method('addRedirect',
+        assert name is str
+        assert proto is NATProtocol
+        assert host_ip is str
+        assert host_port is int
+        assert guest_ip is str
+        assert guest_port is int
+        self._call_method('addRedirect',
                      in_p=[name, proto, host_ip, host_port, guest_ip, guest_port])
         
     def remove_redirect(self, name):
@@ -17757,7 +19128,8 @@ class INATEngine(Interface):
             The name of the rule to delete.
 
         """
-        self.call_method('removeRedirect',
+        assert name is str
+        self._call_method('removeRedirect',
                      in_p=[name])
         
 
@@ -17774,28 +19146,32 @@ class IExtPackPlugIn(Interface):
         """Get str value for 'name'
         The plug-in name.
         """
-        return self.get_attr('name', str)
+        value = self._get_attr('name')
+        return str(value)
 
     @property
     def description(self):
         """Get str value for 'description'
         The plug-in description.
         """
-        return self.get_attr('description', str)
+        value = self._get_attr('description')
+        return str(value)
 
     @property
     def frontend(self):
         """Get str value for 'frontend'
         The name of the frontend or component name this plug-in plugs into.
         """
-        return self.get_attr('frontend', str)
+        value = self._get_attr('frontend')
+        return str(value)
 
     @property
     def module_path(self):
         """Get str value for 'modulePath'
         The module path.
         """
-        return self.get_attr('modulePath', str)
+        value = self._get_attr('modulePath')
+        return str(value)
 
 
 class IExtPackBase(Interface):
@@ -17811,14 +19187,16 @@ class IExtPackBase(Interface):
         """Get str value for 'name'
         The extension pack name. This is unique.
         """
-        return self.get_attr('name', str)
+        value = self._get_attr('name')
+        return str(value)
 
     @property
     def description(self):
         """Get str value for 'description'
         The extension pack description.
         """
-        return self.get_attr('description', str)
+        value = self._get_attr('description')
+        return str(value)
 
     @property
     def version(self):
@@ -17831,14 +19209,16 @@ class IExtPackBase(Interface):
 
         Examples: "1.2.3", "1.2.3_BETA1" and "1.2.3_RC2".
         """
-        return self.get_attr('version', str)
+        value = self._get_attr('version')
+        return str(value)
 
     @property
     def revision(self):
         """Get int value for 'revision'
         The extension pack internal revision number.
         """
-        return self.get_attr('revision', int)
+        value = self._get_attr('revision')
+        return int(value)
 
     @property
     def edition(self):
@@ -17849,21 +19229,24 @@ class IExtPackBase(Interface):
         of the same extension pack where only the license, service contract or
         something differs.
         """
-        return self.get_attr('edition', str)
+        value = self._get_attr('edition')
+        return str(value)
 
     @property
     def vrde_module(self):
         """Get str value for 'VRDEModule'
         The name of the VRDE module if the extension pack sports one.
         """
-        return self.get_attr('VRDEModule', str)
+        value = self._get_attr('VRDEModule')
+        return str(value)
 
     @property
     def plug_ins(self):
         """Get IExtPackPlugIn value for 'plugIns'
         Plug-ins provided by this extension pack.
         """
-        return self.get_attr('plugIns', IExtPackPlugIn)
+        value = self._get_attr('plugIns')
+        return IExtPackPlugIn(value)
 
     @property
     def usable(self):
@@ -17874,7 +19257,8 @@ class IExtPackBase(Interface):
         typical examples would be broken installation/file or that it is
         incompatible with the current VirtualBox version.
         """
-        return self.get_attr('usable', bool)
+        value = self._get_attr('usable')
+        return bool(value)
 
     @property
     def why_unusable(self):
@@ -17882,14 +19266,16 @@ class IExtPackBase(Interface):
         String indicating why the extension pack is not usable. This is an
         empty string if usable and always a non-empty string if not usable.
         """
-        return self.get_attr('whyUnusable', str)
+        value = self._get_attr('whyUnusable')
+        return str(value)
 
     @property
     def show_license(self):
         """Get bool value for 'showLicense'
         Whether to show the license before installation
         """
-        return self.get_attr('showLicense', bool)
+        value = self._get_attr('showLicense')
+        return bool(value)
 
     @property
     def license_p(self):
@@ -17899,7 +19285,8 @@ class IExtPackBase(Interface):
         preferredLocale and preferredLanguage as empty strings and format set
         to html.
         """
-        return self.get_attr('license', str)
+        value = self._get_attr('license')
+        return str(value)
 
     def query_license(self, preferred_locale, preferred_language, format_p):
         """Full feature version of the license attribute.
@@ -17921,11 +19308,14 @@ class IExtPackBase(Interface):
             The license text.
 
         """
-        license_text = self.call_method('queryLicense',
-                     in_p=[preferred_locale, preferred_language, format_p],
-                     rettype=str)
-        return license_text
-        
+        assert preferred_locale is str
+        assert preferred_language is str
+        assert format_p is str
+        license_text =\
+            self._call_method('queryLicense',
+                     in_p=[preferred_locale, preferred_language, format_p])
+        return str(license_text)
+
 
 class IExtPack(IExtPackBase):
     """
@@ -17947,11 +19337,12 @@ class IExtPack(IExtPackBase):
             The queried interface.
 
         """
-        return_interface = self.call_method('queryObject',
-                     in_p=[obj_uuid],
-                     rettype=Interface)
-        return return_interface
-        
+        assert obj_uuid is str
+        return_interface =\
+            self._call_method('queryObject',
+                     in_p=[obj_uuid])
+        return Interface(return_interface)
+
 
 class IExtPackFile(IExtPackBase):
     """
@@ -17967,7 +19358,8 @@ class IExtPackFile(IExtPackBase):
         """Get str value for 'filePath'
         The path to the extension pack file.
         """
-        return self.get_attr('filePath', str)
+        value = self._get_attr('filePath')
+        return str(value)
 
     def install(self, replace, display_info):
         """Install the extension pack.
@@ -17983,11 +19375,13 @@ class IExtPackFile(IExtPackBase):
             Progress object for the operation.
 
         """
-        progess = self.call_method('install',
-                     in_p=[replace, display_info],
-                     rettype=IProgress)
-        return progess
-        
+        assert replace is bool
+        assert display_info is str
+        progess =\
+            self._call_method('install',
+                     in_p=[replace, display_info])
+        return IProgress(progess)
+
 
 class IExtPackManager(Interface):
     """
@@ -18004,7 +19398,8 @@ class IExtPackManager(Interface):
         """Get IExtPack value for 'installedExtPacks'
         List of the installed extension packs.
         """
-        return self.get_attr('installedExtPacks', IExtPack)
+        value = self._get_attr('installedExtPacks')
+        return IExtPack(value)
 
     def find(self, name):
         """Returns the extension pack with the specified name if found.
@@ -18019,11 +19414,12 @@ class IExtPackManager(Interface):
             No extension pack matching @a name was found.
         
         """
-        return_data = self.call_method('find',
-                     in_p=[name],
-                     rettype=IExtPack)
-        return return_data
-        
+        assert name is str
+        return_data =\
+            self._call_method('find',
+                     in_p=[name])
+        return IExtPack(return_data)
+
     def open_ext_pack_file(self, path):
         """Attempts to open an extension pack file in preparation for
         installation.
@@ -18036,11 +19432,12 @@ class IExtPackManager(Interface):
             The interface of the extension pack file object.
 
         """
-        file_p = self.call_method('openExtPackFile',
-                     in_p=[path],
-                     rettype=IExtPackFile)
-        return file_p
-        
+        assert path is str
+        file_p =\
+            self._call_method('openExtPackFile',
+                     in_p=[path])
+        return IExtPackFile(file_p)
+
     def uninstall(self, name, forced_removal, display_info):
         """Uninstalls an extension pack, removing all related files.
 
@@ -18058,16 +19455,19 @@ class IExtPackManager(Interface):
             Progress object for the operation.
 
         """
-        progess = self.call_method('uninstall',
-                     in_p=[name, forced_removal, display_info],
-                     rettype=IProgress)
-        return progess
-        
+        assert name is str
+        assert forced_removal is bool
+        assert display_info is str
+        progess =\
+            self._call_method('uninstall',
+                     in_p=[name, forced_removal, display_info])
+        return IProgress(progess)
+
     def cleanup(self):
         """Cleans up failed installs and uninstalls
 
         """
-        self.call_method('cleanup')
+        self._call_method('cleanup')
         
     def query_all_plug_ins_for_frontend(self, frontend_name):
         """Gets the path to all the plug-in modules for a given frontend.
@@ -18082,11 +19482,12 @@ class IExtPackManager(Interface):
             Array containing the plug-in modules (full paths).
 
         """
-        plug_in_modules = self.call_method('queryAllPlugInsForFrontend',
-                     in_p=[frontend_name],
-                     rettype=str)
-        return plug_in_modules
-        
+        assert frontend_name is str
+        plug_in_modules =\
+            self._call_method('queryAllPlugInsForFrontend',
+                     in_p=[frontend_name])
+        return str(plug_in_modules)
+
     def is_ext_pack_usable(self, name):
         """Check if the given extension pack is loaded and usable.
 
@@ -18097,11 +19498,12 @@ class IExtPackManager(Interface):
             Is the given extension pack loaded and usable.
 
         """
-        usable = self.call_method('isExtPackUsable',
-                     in_p=[name],
-                     rettype=bool)
-        return usable
-        
+        assert name is str
+        usable =\
+            self._call_method('isExtPackUsable',
+                     in_p=[name])
+        return bool(usable)
+
 
 class IBandwidthGroup(Interface):
     """
@@ -18115,21 +19517,24 @@ class IBandwidthGroup(Interface):
         """Get str value for 'name'
         Name of the group.
         """
-        return self.get_attr('name', str)
+        value = self._get_attr('name')
+        return str(value)
 
     @property
     def type_p(self):
         """Get BandwidthGroupType value for 'type'
         Type of the group.
         """
-        return self.get_attr('type', BandwidthGroupType)
+        value = self._get_attr('type')
+        return BandwidthGroupType(value)
 
     @property
     def reference(self):
         """Get int value for 'reference'
         How many devices/medium attachements use this group.
         """
-        return self.get_attr('reference', int)
+        value = self._get_attr('reference')
+        return int(value)
 
     @property
     def max_bytes_per_sec(self):
@@ -18137,11 +19542,13 @@ class IBandwidthGroup(Interface):
         The maximum number of bytes which can be transfered by all
         entities attached to this group during one second.
         """
-        return self.get_attr('maxBytesPerSec', int)
+        value = self._get_attr('maxBytesPerSec')
+        return int(value)
 
     @max_bytes_per_sec.setter
     def max_bytes_per_sec(self, value):
-        return self.set_attr('maxBytesPerSec', value)
+        assert type(value) is int
+        return self._set_attr('maxBytesPerSec', value)
 
 
 class IBandwidthControl(Interface):
@@ -18157,7 +19564,8 @@ class IBandwidthControl(Interface):
         """Get int value for 'numGroups'
         The current number of existing bandwidth groups managed.
         """
-        return self.get_attr('numGroups', int)
+        value = self._get_attr('numGroups')
+        return int(value)
 
     def create_bandwidth_group(self, name, type_p, max_bytes_per_sec):
         """Creates a new bandwidth group.
@@ -18173,7 +19581,10 @@ class IBandwidthControl(Interface):
           entities attached to this group during one second.
 
         """
-        self.call_method('createBandwidthGroup',
+        assert name is str
+        assert type_p is BandwidthGroupType
+        assert max_bytes_per_sec is int
+        self._call_method('createBandwidthGroup',
                      in_p=[name, type_p, max_bytes_per_sec])
         
     def delete_bandwidth_group(self, name):
@@ -18183,7 +19594,8 @@ class IBandwidthControl(Interface):
             Name of the bandwidth group to delete.
 
         """
-        self.call_method('deleteBandwidthGroup',
+        assert name is str
+        self._call_method('deleteBandwidthGroup',
                      in_p=[name])
         
     def get_bandwidth_group(self, name):
@@ -18196,11 +19608,12 @@ class IBandwidthControl(Interface):
             Where to store the bandwidth group on success.
 
         """
-        bandwidth_group = self.call_method('getBandwidthGroup',
-                     in_p=[name],
-                     rettype=IBandwidthGroup)
-        return bandwidth_group
-        
+        assert name is str
+        bandwidth_group =\
+            self._call_method('getBandwidthGroup',
+                     in_p=[name])
+        return IBandwidthGroup(bandwidth_group)
+
     def get_all_bandwidth_groups(self):
         """Get all managed bandwidth groups.
 
@@ -18208,10 +19621,10 @@ class IBandwidthControl(Interface):
             The array of managed bandwidth groups.
 
         """
-        bandwidth_groups = self.call_method('getAllBandwidthGroups',
-                     rettype=IBandwidthGroup)
-        return bandwidth_groups
-        
+        bandwidth_groups =\
+            self._call_method('getAllBandwidthGroups')
+        return IBandwidthGroup(bandwidth_groups)
+
 
 class IVirtualBoxClient(Interface):
     """
@@ -18230,21 +19643,24 @@ class IVirtualBoxClient(Interface):
         """Get IVirtualBox value for 'virtualBox'
         Reference to the server-side API root object.
         """
-        return self.get_attr('virtualBox', IVirtualBox)
+        value = self._get_attr('virtualBox')
+        return IVirtualBox(value)
 
     @property
     def session(self):
         """Get ISession value for 'session'
         Create a new session object and return the reference to it.
         """
-        return self.get_attr('session', ISession)
+        value = self._get_attr('session')
+        return ISession(value)
 
     @property
     def event_source(self):
         """Get IEventSource value for 'eventSource'
         Event source for VirtualBoxClient events.
         """
-        return self.get_attr('eventSource', IEventSource)
+        value = self._get_attr('eventSource')
+        return IEventSource(value)
 
     def check_machine_error(self, machine):
         """Perform error checking before using an <link to="IMachine"/> object.
@@ -18256,7 +19672,8 @@ class IVirtualBoxClient(Interface):
             The machine object to check.
 
         """
-        self.call_method('checkMachineError',
+        assert machine is IMachine
+        self._call_method('checkMachineError',
                      in_p=[machine])
         
 
@@ -18279,10 +19696,10 @@ class IEventSource(Interface):
         return listener of type IEventListener
 
         """
-        listener = self.call_method('createListener',
-                     rettype=IEventListener)
-        return listener
-        
+        listener =\
+            self._call_method('createListener')
+        return IEventListener(listener)
+
     def create_aggregator(self, subordinates):
         """Creates an aggregator event source, collecting events from multiple sources.
         This way a single listener can listen for events coming from multiple sources,
@@ -18295,11 +19712,12 @@ class IEventSource(Interface):
             Event source aggregating passed sources.
 
         """
-        result = self.call_method('createAggregator',
-                     in_p=[subordinates],
-                     rettype=IEventSource)
-        return result
-        
+        assert subordinates is IEventSource
+        result =\
+            self._call_method('createAggregator',
+                     in_p=[subordinates])
+        return IEventSource(result)
+
     def register_listener(self, listener, interesting, active):
         """Register an event listener.
 
@@ -18328,7 +19746,10 @@ class IEventSource(Interface):
           external code must call <link to="#eventProcessed"/>.
 
         """
-        self.call_method('registerListener',
+        assert listener is IEventListener
+        assert interesting is VBoxEventType
+        assert active is bool
+        self._call_method('registerListener',
                      in_p=[listener, interesting, active])
         
     def unregister_listener(self, listener):
@@ -18339,7 +19760,8 @@ class IEventSource(Interface):
             Listener to unregister.
 
         """
-        self.call_method('unregisterListener',
+        assert listener is IEventListener
+        self._call_method('unregisterListener',
                      in_p=[listener])
         
     def fire_event(self, event, timeout):
@@ -18356,11 +19778,13 @@ class IEventSource(Interface):
             true if an event was delivered to all targets, or is non-waitable.
 
         """
-        result = self.call_method('fireEvent',
-                     in_p=[event, timeout],
-                     rettype=bool)
-        return result
-        
+        assert event is IEvent
+        assert timeout is int
+        result =\
+            self._call_method('fireEvent',
+                     in_p=[event, timeout])
+        return bool(result)
+
     def get_event(self, listener, timeout):
         """Get events from this peer's event queue (for passive mode). Calling this method
         regularly is required for passive event listeners to avoid system overload;
@@ -18380,11 +19804,13 @@ class IEventSource(Interface):
             Listener is not registered, or autounregistered.
         
         """
-        event = self.call_method('getEvent',
-                     in_p=[listener, timeout],
-                     rettype=IEvent)
-        return event
-        
+        assert listener is IEventListener
+        assert timeout is int
+        event =\
+            self._call_method('getEvent',
+                     in_p=[listener, timeout])
+        return IEvent(event)
+
     def event_processed(self, listener, event):
         """Must be called for waitable events after a particular listener finished its
         event processing. When all listeners of a particular event have called this
@@ -18397,7 +19823,9 @@ class IEventSource(Interface):
             Which event.
 
         """
-        self.call_method('eventProcessed',
+        assert listener is IEventListener
+        assert event is IEvent
+        self._call_method('eventProcessed',
                      in_p=[listener, event])
         
 
@@ -18422,7 +19850,8 @@ class IEventListener(Interface):
             Event available.
 
         """
-        self.call_method('handleEvent',
+        assert event is IEvent
+        self._call_method('handleEvent',
                      in_p=[event])
         
 
@@ -18508,14 +19937,16 @@ class IEvent(Interface):
         """Get VBoxEventType value for 'type'
         Event type.
         """
-        return self.get_attr('type', VBoxEventType)
+        value = self._get_attr('type')
+        return VBoxEventType(value)
 
     @property
     def source(self):
         """Get IEventSource value for 'source'
         Source of this event.
         """
-        return self.get_attr('source', IEventSource)
+        value = self._get_attr('source')
+        return IEventSource(value)
 
     @property
     def waitable(self):
@@ -18527,14 +19958,15 @@ class IEvent(Interface):
         for example for vetoable changes, or if event refers to some resource which need to be kept immutable
         until all consumers confirmed events.
         """
-        return self.get_attr('waitable', bool)
+        value = self._get_attr('waitable')
+        return bool(value)
 
     def set_processed(self):
         """Internal method called by the system when all listeners of a particular event have called
         <link to="IEventSource::eventProcessed"/>. This should not be called by client code.
 
         """
-        self.call_method('setProcessed')
+        self._call_method('setProcessed')
         
     def wait_processed(self, timeout):
         """Wait until time outs, or this event is processed. Event must be waitable for this operation to have
@@ -18548,11 +19980,12 @@ class IEvent(Interface):
             If this event was processed before timeout.
 
         """
-        result = self.call_method('waitProcessed',
-                     in_p=[timeout],
-                     rettype=bool)
-        return result
-        
+        assert timeout is int
+        result =\
+            self._call_method('waitProcessed',
+                     in_p=[timeout])
+        return bool(result)
+
 
 class IReusableEvent(IEvent):
     """
@@ -18566,14 +19999,15 @@ class IReusableEvent(IEvent):
         """Get int value for 'generation'
         Current generation of event, incremented on reuse.
         """
-        return self.get_attr('generation', int)
+        value = self._get_attr('generation')
+        return int(value)
 
     def reuse(self):
         """Marks an event as reused, increments 'generation', fields shall no
         longer be considered valid.
 
         """
-        self.call_method('reuse')
+        self._call_method('reuse')
         
 
 class IMachineEvent(IEvent):
@@ -18588,7 +20022,8 @@ class IMachineEvent(IEvent):
         """Get str value for 'machineId'
         ID of the machine this event relates to.
         """
-        return self.get_attr('machineId', str)
+        value = self._get_attr('machineId')
+        return str(value)
 
 
 class IMachineStateChangedEvent(IMachineEvent):
@@ -18603,7 +20038,8 @@ class IMachineStateChangedEvent(IMachineEvent):
         """Get MachineState value for 'state'
         New execution state.
         """
-        return self.get_attr('state', MachineState)
+        value = self._get_attr('state')
+        return MachineState(value)
 
 
 class IMachineDataChangedEvent(IMachineEvent):
@@ -18621,7 +20057,8 @@ class IMachineDataChangedEvent(IMachineEvent):
         changes for running VMs will trigger an event. Note: sending events
         for temporary changes is NOT IMPLEMENTED.
         """
-        return self.get_attr('temporary', bool)
+        value = self._get_attr('temporary')
+        return bool(value)
 
 
 class IMediumRegisteredEvent(IEvent):
@@ -18637,14 +20074,16 @@ class IMediumRegisteredEvent(IEvent):
         """Get str value for 'mediumId'
         ID of the medium this event relates to.
         """
-        return self.get_attr('mediumId', str)
+        value = self._get_attr('mediumId')
+        return str(value)
 
     @property
     def medium_type(self):
         """Get DeviceType value for 'mediumType'
         Type of the medium this event relates to.
         """
-        return self.get_attr('mediumType', DeviceType)
+        value = self._get_attr('mediumType')
+        return DeviceType(value)
 
     @property
     def registered(self):
@@ -18652,7 +20091,8 @@ class IMediumRegisteredEvent(IEvent):
         If @c true, the medium was registered, otherwise it was
         unregistered.
         """
-        return self.get_attr('registered', bool)
+        value = self._get_attr('registered')
+        return bool(value)
 
 
 class IMachineRegisteredEvent(IMachineEvent):
@@ -18669,7 +20109,8 @@ class IMachineRegisteredEvent(IMachineEvent):
         If @c true, the machine was registered, otherwise it was
         unregistered.
         """
-        return self.get_attr('registered', bool)
+        value = self._get_attr('registered')
+        return bool(value)
 
 
 class ISessionStateChangedEvent(IMachineEvent):
@@ -18685,7 +20126,8 @@ class ISessionStateChangedEvent(IMachineEvent):
         """Get SessionState value for 'state'
         New session state.
         """
-        return self.get_attr('state', SessionState)
+        value = self._get_attr('state')
+        return SessionState(value)
 
 
 class IGuestPropertyChangedEvent(IMachineEvent):
@@ -18700,21 +20142,24 @@ class IGuestPropertyChangedEvent(IMachineEvent):
         """Get str value for 'name'
         The name of the property that has changed.
         """
-        return self.get_attr('name', str)
+        value = self._get_attr('name')
+        return str(value)
 
     @property
     def value(self):
         """Get str value for 'value'
         The new property value.
         """
-        return self.get_attr('value', str)
+        value = self._get_attr('value')
+        return str(value)
 
     @property
     def flags(self):
         """Get str value for 'flags'
         The new property flags.
         """
-        return self.get_attr('flags', str)
+        value = self._get_attr('flags')
+        return str(value)
 
 
 class ISnapshotEvent(IMachineEvent):
@@ -18729,7 +20174,8 @@ class ISnapshotEvent(IMachineEvent):
         """Get str value for 'snapshotId'
         ID of the snapshot this event relates to.
         """
-        return self.get_attr('snapshotId', str)
+        value = self._get_attr('snapshotId')
+        return str(value)
 
 
 class ISnapshotTakenEvent(ISnapshotEvent):
@@ -18779,42 +20225,48 @@ class IMousePointerShapeChangedEvent(IEvent):
         """Get bool value for 'visible'
         Flag whether the pointer is visible.
         """
-        return self.get_attr('visible', bool)
+        value = self._get_attr('visible')
+        return bool(value)
 
     @property
     def alpha(self):
         """Get bool value for 'alpha'
         Flag whether the pointer has an alpha channel.
         """
-        return self.get_attr('alpha', bool)
+        value = self._get_attr('alpha')
+        return bool(value)
 
     @property
     def xhot(self):
         """Get int value for 'xhot'
         The pointer hot spot X coordinate.
         """
-        return self.get_attr('xhot', int)
+        value = self._get_attr('xhot')
+        return int(value)
 
     @property
     def yhot(self):
         """Get int value for 'yhot'
         The pointer hot spot Y coordinate.
         """
-        return self.get_attr('yhot', int)
+        value = self._get_attr('yhot')
+        return int(value)
 
     @property
     def width(self):
         """Get int value for 'width'
         Width of the pointer shape in pixels.
         """
-        return self.get_attr('width', int)
+        value = self._get_attr('width')
+        return int(value)
 
     @property
     def height(self):
         """Get int value for 'height'
         Height of the pointer shape in pixels.
         """
-        return self.get_attr('height', int)
+        value = self._get_attr('height')
+        return int(value)
 
     @property
     def shape(self):
@@ -18846,7 +20298,8 @@ class IMousePointerShapeChangedEvent(IEvent):
         
           If @a shape is 0, only the pointer visibility is changed.
         """
-        return self.get_attr('shape', str)
+        value = self._get_attr('shape')
+        return str(value)
 
 
 class IMouseCapabilityChangedEvent(IEvent):
@@ -18862,21 +20315,24 @@ class IMouseCapabilityChangedEvent(IEvent):
         """Get bool value for 'supportsAbsolute'
         Supports absolute coordinates.
         """
-        return self.get_attr('supportsAbsolute', bool)
+        value = self._get_attr('supportsAbsolute')
+        return bool(value)
 
     @property
     def supports_relative(self):
         """Get bool value for 'supportsRelative'
         Supports relative coordinates.
         """
-        return self.get_attr('supportsRelative', bool)
+        value = self._get_attr('supportsRelative')
+        return bool(value)
 
     @property
     def needs_host_cursor(self):
         """Get bool value for 'needsHostCursor'
         If host cursor is needed.
         """
-        return self.get_attr('needsHostCursor', bool)
+        value = self._get_attr('needsHostCursor')
+        return bool(value)
 
 
 class IKeyboardLedsChangedEvent(IEvent):
@@ -18892,21 +20348,24 @@ class IKeyboardLedsChangedEvent(IEvent):
         """Get bool value for 'numLock'
         NumLock status.
         """
-        return self.get_attr('numLock', bool)
+        value = self._get_attr('numLock')
+        return bool(value)
 
     @property
     def caps_lock(self):
         """Get bool value for 'capsLock'
         CapsLock status.
         """
-        return self.get_attr('capsLock', bool)
+        value = self._get_attr('capsLock')
+        return bool(value)
 
     @property
     def scroll_lock(self):
         """Get bool value for 'scrollLock'
         ScrollLock status.
         """
-        return self.get_attr('scrollLock', bool)
+        value = self._get_attr('scrollLock')
+        return bool(value)
 
 
 class IStateChangedEvent(IEvent):
@@ -18922,7 +20381,8 @@ class IStateChangedEvent(IEvent):
         """Get MachineState value for 'state'
         New machine state.
         """
-        return self.get_attr('state', MachineState)
+        value = self._get_attr('state')
+        return MachineState(value)
 
 
 class IAdditionsStateChangedEvent(IEvent):
@@ -18950,7 +20410,8 @@ class INetworkAdapterChangedEvent(IEvent):
         """Get INetworkAdapter value for 'networkAdapter'
         Network adapter that is subject to change.
         """
-        return self.get_attr('networkAdapter', INetworkAdapter)
+        value = self._get_attr('networkAdapter')
+        return INetworkAdapter(value)
 
 
 class ISerialPortChangedEvent(IEvent):
@@ -18968,7 +20429,8 @@ class ISerialPortChangedEvent(IEvent):
         """Get ISerialPort value for 'serialPort'
         Serial port that is subject to change.
         """
-        return self.get_attr('serialPort', ISerialPort)
+        value = self._get_attr('serialPort')
+        return ISerialPort(value)
 
 
 class IParallelPortChangedEvent(IEvent):
@@ -18986,7 +20448,8 @@ class IParallelPortChangedEvent(IEvent):
         """Get IParallelPort value for 'parallelPort'
         Parallel port that is subject to change.
         """
-        return self.get_attr('parallelPort', IParallelPort)
+        value = self._get_attr('parallelPort')
+        return IParallelPort(value)
 
 
 class IStorageControllerChangedEvent(IEvent):
@@ -19013,7 +20476,8 @@ class IMediumChangedEvent(IEvent):
         """Get IMediumAttachment value for 'mediumAttachment'
         Medium attachment that is subject to change.
         """
-        return self.get_attr('mediumAttachment', IMediumAttachment)
+        value = self._get_attr('mediumAttachment')
+        return IMediumAttachment(value)
 
 
 class IClipboardModeChangedEvent(IEvent):
@@ -19028,7 +20492,8 @@ class IClipboardModeChangedEvent(IEvent):
         """Get ClipboardMode value for 'clipboardMode'
         The new clipboard mode.
         """
-        return self.get_attr('clipboardMode', ClipboardMode)
+        value = self._get_attr('clipboardMode')
+        return ClipboardMode(value)
 
 
 class IDragAndDropModeChangedEvent(IEvent):
@@ -19043,7 +20508,8 @@ class IDragAndDropModeChangedEvent(IEvent):
         """Get DragAndDropMode value for 'dragAndDropMode'
         The new drag'n'drop mode.
         """
-        return self.get_attr('dragAndDropMode', DragAndDropMode)
+        value = self._get_attr('dragAndDropMode')
+        return DragAndDropMode(value)
 
 
 class ICPUChangedEvent(IEvent):
@@ -19058,14 +20524,16 @@ class ICPUChangedEvent(IEvent):
         """Get int value for 'CPU'
         The CPU which changed.
         """
-        return self.get_attr('CPU', int)
+        value = self._get_attr('CPU')
+        return int(value)
 
     @property
     def add(self):
         """Get bool value for 'add'
         Flag whether the CPU was added or removed.
         """
-        return self.get_attr('add', bool)
+        value = self._get_attr('add')
+        return bool(value)
 
 
 class ICPUExecutionCapChangedEvent(IEvent):
@@ -19080,7 +20548,8 @@ class ICPUExecutionCapChangedEvent(IEvent):
         """Get int value for 'executionCap'
         The new CPU execution cap value. (1-100)
         """
-        return self.get_attr('executionCap', int)
+        value = self._get_attr('executionCap')
+        return int(value)
 
 
 class IGuestKeyboardEvent(IEvent):
@@ -19095,7 +20564,8 @@ class IGuestKeyboardEvent(IEvent):
         """Get int value for 'scancodes'
         Array of scancodes.
         """
-        return self.get_attr('scancodes', int)
+        value = self._get_attr('scancodes')
+        return int(value)
 
 
 class IGuestMouseEvent(IReusableEvent):
@@ -19110,42 +20580,48 @@ class IGuestMouseEvent(IReusableEvent):
         """Get bool value for 'absolute'
         If this event is relative or absolute.
         """
-        return self.get_attr('absolute', bool)
+        value = self._get_attr('absolute')
+        return bool(value)
 
     @property
     def x(self):
         """Get int value for 'x'
         New X position, or X delta.
         """
-        return self.get_attr('x', int)
+        value = self._get_attr('x')
+        return int(value)
 
     @property
     def y(self):
         """Get int value for 'y'
         New Y position, or Y delta.
         """
-        return self.get_attr('y', int)
+        value = self._get_attr('y')
+        return int(value)
 
     @property
     def z(self):
         """Get int value for 'z'
         Z delta.
         """
-        return self.get_attr('z', int)
+        value = self._get_attr('z')
+        return int(value)
 
     @property
     def w(self):
         """Get int value for 'w'
         W delta.
         """
-        return self.get_attr('w', int)
+        value = self._get_attr('w')
+        return int(value)
 
     @property
     def buttons(self):
         """Get int value for 'buttons'
         Button state bitmask.
         """
-        return self.get_attr('buttons', int)
+        value = self._get_attr('buttons')
+        return int(value)
 
 
 class IGuestSessionEvent(IEvent):
@@ -19160,7 +20636,8 @@ class IGuestSessionEvent(IEvent):
         """Get IGuestSession value for 'session'
         Guest session that is subject to change.
         """
-        return self.get_attr('session', IGuestSession)
+        value = self._get_attr('session')
+        return IGuestSession(value)
 
 
 class IGuestSessionStateChangedEvent(IGuestSessionEvent):
@@ -19175,14 +20652,16 @@ class IGuestSessionStateChangedEvent(IGuestSessionEvent):
         """Get int value for 'id'
         Session ID of guest session which was changed.
         """
-        return self.get_attr('id', int)
+        value = self._get_attr('id')
+        return int(value)
 
     @property
     def status(self):
         """Get GuestSessionStatus value for 'status'
         New session status.
         """
-        return self.get_attr('status', GuestSessionStatus)
+        value = self._get_attr('status')
+        return GuestSessionStatus(value)
 
     @property
     def error(self):
@@ -19193,7 +20672,8 @@ class IGuestSessionStateChangedEvent(IGuestSessionEvent):
         the runtime (IPRT) error code from the guest. See include/iprt/err.h and
         include/VBox/err.h for details.
         """
-        return self.get_attr('error', IVirtualBoxErrorInfo)
+        value = self._get_attr('error')
+        return IVirtualBoxErrorInfo(value)
 
 
 class IGuestSessionRegisteredEvent(IGuestSessionEvent):
@@ -19209,7 +20689,8 @@ class IGuestSessionRegisteredEvent(IGuestSessionEvent):
         If @c true, the guest session was registered, otherwise it was
         unregistered.
         """
-        return self.get_attr('registered', bool)
+        value = self._get_attr('registered')
+        return bool(value)
 
 
 class IGuestProcessEvent(IGuestSessionEvent):
@@ -19224,14 +20705,16 @@ class IGuestProcessEvent(IGuestSessionEvent):
         """Get IGuestProcess value for 'process'
         Guest process object which is related to this event.
         """
-        return self.get_attr('process', IGuestProcess)
+        value = self._get_attr('process')
+        return IGuestProcess(value)
 
     @property
     def pid(self):
         """Get int value for 'pid'
         Guest process ID (PID).
         """
-        return self.get_attr('pid', int)
+        value = self._get_attr('pid')
+        return int(value)
 
 
 class IGuestProcessRegisteredEvent(IGuestProcessEvent):
@@ -19247,7 +20730,8 @@ class IGuestProcessRegisteredEvent(IGuestProcessEvent):
         If @c true, the guest process was registered, otherwise it was
         unregistered.
         """
-        return self.get_attr('registered', bool)
+        value = self._get_attr('registered')
+        return bool(value)
 
 
 class IGuestProcessStateChangedEvent(IGuestProcessEvent):
@@ -19262,7 +20746,8 @@ class IGuestProcessStateChangedEvent(IGuestProcessEvent):
         """Get ProcessStatus value for 'status'
         New guest process status.
         """
-        return self.get_attr('status', ProcessStatus)
+        value = self._get_attr('status')
+        return ProcessStatus(value)
 
     @property
     def error(self):
@@ -19273,7 +20758,8 @@ class IGuestProcessStateChangedEvent(IGuestProcessEvent):
         the runtime (IPRT) error code from the guest. See include/iprt/err.h and
         include/VBox/err.h for details.
         """
-        return self.get_attr('error', IVirtualBoxErrorInfo)
+        value = self._get_attr('error')
+        return IVirtualBoxErrorInfo(value)
 
 
 class IGuestProcessIOEvent(IGuestProcessEvent):
@@ -19289,14 +20775,16 @@ class IGuestProcessIOEvent(IGuestProcessEvent):
         Input/output (IO) handle involved in this event. Usually 0 is stdin,
         1 is stdout and 2 is stderr.
         """
-        return self.get_attr('handle', int)
+        value = self._get_attr('handle')
+        return int(value)
 
     @property
     def processed(self):
         """Get int value for 'processed'
         Processed input or output (in bytes).
         """
-        return self.get_attr('processed', int)
+        value = self._get_attr('processed')
+        return int(value)
 
 
 class IGuestProcessInputNotifyEvent(IGuestProcessIOEvent):
@@ -19312,7 +20800,8 @@ class IGuestProcessInputNotifyEvent(IGuestProcessIOEvent):
         """Get ProcessInputStatus value for 'status'
         Current process input status.
         """
-        return self.get_attr('status', ProcessInputStatus)
+        value = self._get_attr('status')
+        return ProcessInputStatus(value)
 
 
 class IGuestProcessOutputEvent(IGuestProcessIOEvent):
@@ -19327,7 +20816,8 @@ class IGuestProcessOutputEvent(IGuestProcessIOEvent):
         """Get str value for 'data'
         Actual output data.
         """
-        return self.get_attr('data', str)
+        value = self._get_attr('data')
+        return str(value)
 
 
 class IGuestFileEvent(IGuestSessionEvent):
@@ -19342,7 +20832,8 @@ class IGuestFileEvent(IGuestSessionEvent):
         """Get IGuestFile value for 'file'
         Guest file object which is related to this event.
         """
-        return self.get_attr('file', IGuestFile)
+        value = self._get_attr('file')
+        return IGuestFile(value)
 
 
 class IGuestFileRegisteredEvent(IGuestFileEvent):
@@ -19358,7 +20849,8 @@ class IGuestFileRegisteredEvent(IGuestFileEvent):
         If @c true, the guest file was registered, otherwise it was
         unregistered.
         """
-        return self.get_attr('registered', bool)
+        value = self._get_attr('registered')
+        return bool(value)
 
 
 class IGuestFileStateChangedEvent(IGuestFileEvent):
@@ -19373,7 +20865,8 @@ class IGuestFileStateChangedEvent(IGuestFileEvent):
         """Get FileStatus value for 'status'
         New guest file status.
         """
-        return self.get_attr('status', FileStatus)
+        value = self._get_attr('status')
+        return FileStatus(value)
 
     @property
     def error(self):
@@ -19384,7 +20877,8 @@ class IGuestFileStateChangedEvent(IGuestFileEvent):
         the runtime (IPRT) error code from the guest. See include/iprt/err.h and
         include/VBox/err.h for details.
         """
-        return self.get_attr('error', IVirtualBoxErrorInfo)
+        value = self._get_attr('error')
+        return IVirtualBoxErrorInfo(value)
 
 
 class IGuestFileIOEvent(IGuestFileEvent):
@@ -19399,14 +20893,16 @@ class IGuestFileIOEvent(IGuestFileEvent):
         """Get int value for 'offset'
         Current offset (in bytes).
         """
-        return self.get_attr('offset', int)
+        value = self._get_attr('offset')
+        return int(value)
 
     @property
     def processed(self):
         """Get int value for 'processed'
         Processed input or output (in bytes).
         """
-        return self.get_attr('processed', int)
+        value = self._get_attr('processed')
+        return int(value)
 
 
 class IGuestFileOffsetChangedEvent(IGuestFileIOEvent):
@@ -19429,7 +20925,8 @@ class IGuestFileReadEvent(IGuestFileIOEvent):
         """Get str value for 'data'
         Actual data read.
         """
-        return self.get_attr('data', str)
+        value = self._get_attr('data')
+        return str(value)
 
 
 class IGuestFileWriteEvent(IGuestFileIOEvent):
@@ -19500,21 +20997,24 @@ class IUSBDeviceStateChangedEvent(IEvent):
         """Get IUSBDevice value for 'device'
         Device that is subject to state change.
         """
-        return self.get_attr('device', IUSBDevice)
+        value = self._get_attr('device')
+        return IUSBDevice(value)
 
     @property
     def attached(self):
         """Get bool value for 'attached'
         @c true if the device was attached and @c false otherwise.
         """
-        return self.get_attr('attached', bool)
+        value = self._get_attr('attached')
+        return bool(value)
 
     @property
     def error(self):
         """Get IVirtualBoxErrorInfo value for 'error'
         @c null on success or an error message object on failure.
         """
-        return self.get_attr('error', IVirtualBoxErrorInfo)
+        value = self._get_attr('error')
+        return IVirtualBoxErrorInfo(value)
 
 
 class ISharedFolderChangedEvent(IEvent):
@@ -19537,7 +21037,8 @@ class ISharedFolderChangedEvent(IEvent):
         """Get Scope value for 'scope'
         Scope of the notification.
         """
-        return self.get_attr('scope', Scope)
+        value = self._get_attr('scope')
+        return Scope(value)
 
 
 class IRuntimeErrorEvent(IEvent):
@@ -19598,21 +21099,24 @@ class IRuntimeErrorEvent(IEvent):
         """Get bool value for 'fatal'
         Whether the error is fatal or not.
         """
-        return self.get_attr('fatal', bool)
+        value = self._get_attr('fatal')
+        return bool(value)
 
     @property
     def id_p(self):
         """Get str value for 'id'
         Error identifier.
         """
-        return self.get_attr('id', str)
+        value = self._get_attr('id')
+        return str(value)
 
     @property
     def message(self):
         """Get str value for 'message'
         Optional error message.
         """
-        return self.get_attr('message', str)
+        value = self._get_attr('message')
+        return str(value)
 
 
 class IEventSourceChangedEvent(IEvent):
@@ -19627,14 +21131,16 @@ class IEventSourceChangedEvent(IEvent):
         """Get IEventListener value for 'listener'
         Event listener which has changed.
         """
-        return self.get_attr('listener', IEventListener)
+        value = self._get_attr('listener')
+        return IEventListener(value)
 
     @property
     def add(self):
         """Get bool value for 'add'
         Flag whether listener was added or removed.
         """
-        return self.get_attr('add', bool)
+        value = self._get_attr('add')
+        return bool(value)
 
 
 class IExtraDataChangedEvent(IEvent):
@@ -19651,21 +21157,24 @@ class IExtraDataChangedEvent(IEvent):
         ID of the machine this event relates to.
         Null for global extra data changes.
         """
-        return self.get_attr('machineId', str)
+        value = self._get_attr('machineId')
+        return str(value)
 
     @property
     def key(self):
         """Get str value for 'key'
         Extra data key that has changed.
         """
-        return self.get_attr('key', str)
+        value = self._get_attr('key')
+        return str(value)
 
     @property
     def value(self):
         """Get str value for 'value'
         Extra data value for the given key.
         """
-        return self.get_attr('value', str)
+        value = self._get_attr('value')
+        return str(value)
 
 
 class IVetoEvent(IEvent):
@@ -19682,7 +21191,8 @@ class IVetoEvent(IEvent):
             Reason for veto, could be null or empty string.
 
         """
-        self.call_method('addVeto',
+        assert reason is str
+        self._call_method('addVeto',
                      in_p=[reason])
         
     def is_vetoed(self):
@@ -19692,10 +21202,10 @@ class IVetoEvent(IEvent):
             Reason for veto.
 
         """
-        result = self.call_method('isVetoed',
-                     rettype=bool)
-        return result
-        
+        result =\
+            self._call_method('isVetoed')
+        return bool(result)
+
     def get_vetos(self):
         """Current veto reason list, if size is 0 - no veto.
 
@@ -19703,10 +21213,10 @@ class IVetoEvent(IEvent):
             Array of reasons for veto provided by different event handlers.
 
         """
-        result = self.call_method('getVetos',
-                     rettype=str)
-        return result
-        
+        result =\
+            self._call_method('getVetos')
+        return str(result)
+
 
 class IExtraDataCanChangeEvent(IVetoEvent):
     """
@@ -19723,21 +21233,24 @@ class IExtraDataCanChangeEvent(IVetoEvent):
         ID of the machine this event relates to.
         Null for global extra data changes.
         """
-        return self.get_attr('machineId', str)
+        value = self._get_attr('machineId')
+        return str(value)
 
     @property
     def key(self):
         """Get str value for 'key'
         Extra data key that has changed.
         """
-        return self.get_attr('key', str)
+        value = self._get_attr('key')
+        return str(value)
 
     @property
     def value(self):
         """Get str value for 'value'
         Extra data value for the given key.
         """
-        return self.get_attr('value', str)
+        value = self._get_attr('value')
+        return str(value)
 
 
 class ICanShowWindowEvent(IVetoEvent):
@@ -19795,11 +21308,13 @@ class IShowWindowEvent(IEvent):
         necessary to implement the show window semantics for
         the given platform and/or this VirtualBox front-end.
         """
-        return self.get_attr('winId', int)
+        value = self._get_attr('winId')
+        return int(value)
 
     @win_id.setter
     def win_id(self, value):
-        return self.set_attr('winId', value)
+        assert type(value) is int
+        return self._set_attr('winId', value)
 
 
 class INATRedirectEvent(IMachineEvent):
@@ -19814,56 +21329,64 @@ class INATRedirectEvent(IMachineEvent):
         """Get int value for 'slot'
         Adapter which NAT attached to.
         """
-        return self.get_attr('slot', int)
+        value = self._get_attr('slot')
+        return int(value)
 
     @property
     def remove(self):
         """Get bool value for 'remove'
         Whether rule remove or add.
         """
-        return self.get_attr('remove', bool)
+        value = self._get_attr('remove')
+        return bool(value)
 
     @property
     def name(self):
         """Get str value for 'name'
         Name of the rule.
         """
-        return self.get_attr('name', str)
+        value = self._get_attr('name')
+        return str(value)
 
     @property
     def proto(self):
         """Get NATProtocol value for 'proto'
         Protocol (TCP or UDP) of the redirect rule.
         """
-        return self.get_attr('proto', NATProtocol)
+        value = self._get_attr('proto')
+        return NATProtocol(value)
 
     @property
     def host_ip(self):
         """Get str value for 'hostIP'
         Host ip address to bind socket on.
         """
-        return self.get_attr('hostIP', str)
+        value = self._get_attr('hostIP')
+        return str(value)
 
     @property
     def host_port(self):
         """Get int value for 'hostPort'
         Host port to bind socket on.
         """
-        return self.get_attr('hostPort', int)
+        value = self._get_attr('hostPort')
+        return int(value)
 
     @property
     def guest_ip(self):
         """Get str value for 'guestIP'
         Guest ip address to redirect to.
         """
-        return self.get_attr('guestIP', str)
+        value = self._get_attr('guestIP')
+        return str(value)
 
     @property
     def guest_port(self):
         """Get int value for 'guestPort'
         Guest port to redirect to.
         """
-        return self.get_attr('guestPort', int)
+        value = self._get_attr('guestPort')
+        return int(value)
 
 
 class IHostPCIDevicePlugEvent(IMachineEvent):
@@ -19882,7 +21405,8 @@ class IHostPCIDevicePlugEvent(IMachineEvent):
         """Get bool value for 'plugged'
         If device successfully plugged or unplugged.
         """
-        return self.get_attr('plugged', bool)
+        value = self._get_attr('plugged')
+        return bool(value)
 
     @property
     def success(self):
@@ -19890,21 +21414,24 @@ class IHostPCIDevicePlugEvent(IMachineEvent):
         If operation was successful, if false - 'message' attribute
         may be of interest.
         """
-        return self.get_attr('success', bool)
+        value = self._get_attr('success')
+        return bool(value)
 
     @property
     def attachment(self):
         """Get IPCIDeviceAttachment value for 'attachment'
         Attachment info for this device.
         """
-        return self.get_attr('attachment', IPCIDeviceAttachment)
+        value = self._get_attr('attachment')
+        return IPCIDeviceAttachment(value)
 
     @property
     def message(self):
         """Get str value for 'message'
         Optional error message.
         """
-        return self.get_attr('message', str)
+        value = self._get_attr('message')
+        return str(value)
 
 
 class IVBoxSVCAvailabilityChangedEvent(IEvent):
@@ -19920,7 +21447,8 @@ class IVBoxSVCAvailabilityChangedEvent(IEvent):
         """Get bool value for 'available'
         Whether VBoxSVC is available now.
         """
-        return self.get_attr('available', bool)
+        value = self._get_attr('available')
+        return bool(value)
 
 
 class IBandwidthGroupChangedEvent(IEvent):
@@ -19935,7 +21463,8 @@ class IBandwidthGroupChangedEvent(IEvent):
         """Get IBandwidthGroup value for 'bandwidthGroup'
         The changed bandwidth group.
         """
-        return self.get_attr('bandwidthGroup', IBandwidthGroup)
+        value = self._get_attr('bandwidthGroup')
+        return IBandwidthGroup(value)
 
 
 class IGuestMonitorChangedEvent(IEvent):
@@ -19950,14 +21479,16 @@ class IGuestMonitorChangedEvent(IEvent):
         """Get GuestMonitorChangedEventType value for 'changeType'
         What was changed for this guest monitor.
         """
-        return self.get_attr('changeType', GuestMonitorChangedEventType)
+        value = self._get_attr('changeType')
+        return GuestMonitorChangedEventType(value)
 
     @property
     def screen_id(self):
         """Get int value for 'screenId'
         The monitor which was changed.
         """
-        return self.get_attr('screenId', int)
+        value = self._get_attr('screenId')
+        return int(value)
 
     @property
     def origin_x(self):
@@ -19965,7 +21496,8 @@ class IGuestMonitorChangedEvent(IEvent):
         Physical X origin relative to the primary screen.
         Valid for Enabled and NewOrigin.
         """
-        return self.get_attr('originX', int)
+        value = self._get_attr('originX')
+        return int(value)
 
     @property
     def origin_y(self):
@@ -19973,7 +21505,8 @@ class IGuestMonitorChangedEvent(IEvent):
         Physical Y origin relative to the primary screen.
         Valid for Enabled and NewOrigin.
         """
-        return self.get_attr('originY', int)
+        value = self._get_attr('originY')
+        return int(value)
 
     @property
     def width(self):
@@ -19981,7 +21514,8 @@ class IGuestMonitorChangedEvent(IEvent):
         Width of the screen.
         Valid for Enabled.
         """
-        return self.get_attr('width', int)
+        value = self._get_attr('width')
+        return int(value)
 
     @property
     def height(self):
@@ -19989,7 +21523,8 @@ class IGuestMonitorChangedEvent(IEvent):
         Height of the screen.
         Valid for Enabled.
         """
-        return self.get_attr('height', int)
+        value = self._get_attr('height')
+        return int(value)
 
 
 class IStorageDeviceChangedEvent(IEvent):
@@ -20006,21 +21541,24 @@ class IStorageDeviceChangedEvent(IEvent):
         """Get IMediumAttachment value for 'storageDevice'
         Storage device that is subject to change.
         """
-        return self.get_attr('storageDevice', IMediumAttachment)
+        value = self._get_attr('storageDevice')
+        return IMediumAttachment(value)
 
     @property
     def removed(self):
         """Get bool value for 'removed'
         Flag whether the device was removed or added to the VM.
         """
-        return self.get_attr('removed', bool)
+        value = self._get_attr('removed')
+        return bool(value)
 
     @property
     def silent(self):
         """Get bool value for 'silent'
         Flag whether the guest should be notified about the change.
         """
-        return self.get_attr('silent', bool)
+        value = self._get_attr('silent')
+        return bool(value)
 
 
 class INATNetworkChangedEvent(IEvent):
@@ -20031,7 +21569,8 @@ class INATNetworkChangedEvent(IEvent):
     @property
     def network_name(self):
         """Get str value for 'NetworkName'"""
-        return self.get_attr('NetworkName', str)
+        value = self._get_attr('NetworkName')
+        return str(value)
 
 
 class INATNetworkStartStopEvent(INATNetworkChangedEvent):
@@ -20046,7 +21585,8 @@ class INATNetworkStartStopEvent(INATNetworkChangedEvent):
         """Get bool value for 'startEvent'
         IsStartEvent is true when NAT network is started and false on stopping.
         """
-        return self.get_attr('startEvent', bool)
+        value = self._get_attr('startEvent')
+        return bool(value)
 
 
 class INATNetworkAlterEvent(INATNetworkChangedEvent):
@@ -20063,7 +21603,8 @@ class INATNetworkCreationDeletionEvent(INATNetworkAlterEvent):
     @property
     def creation_event(self):
         """Get bool value for 'creationEvent'"""
-        return self.get_attr('creationEvent', bool)
+        value = self._get_attr('creationEvent')
+        return bool(value)
 
 
 class INATNetworkSettingEvent(INATNetworkAlterEvent):
@@ -20074,27 +21615,32 @@ class INATNetworkSettingEvent(INATNetworkAlterEvent):
     @property
     def enabled(self):
         """Get bool value for 'enabled'"""
-        return self.get_attr('enabled', bool)
+        value = self._get_attr('enabled')
+        return bool(value)
 
     @property
     def network(self):
         """Get str value for 'network'"""
-        return self.get_attr('network', str)
+        value = self._get_attr('network')
+        return str(value)
 
     @property
     def gateway(self):
         """Get str value for 'gateway'"""
-        return self.get_attr('gateway', str)
+        value = self._get_attr('gateway')
+        return str(value)
 
     @property
     def advertise_default_i_pv6_route_enabled(self):
         """Get bool value for 'advertiseDefaultIPv6RouteEnabled'"""
-        return self.get_attr('advertiseDefaultIPv6RouteEnabled', bool)
+        value = self._get_attr('advertiseDefaultIPv6RouteEnabled')
+        return bool(value)
 
     @property
     def need_dhcp_server(self):
         """Get bool value for 'needDhcpServer'"""
-        return self.get_attr('needDhcpServer', bool)
+        value = self._get_attr('needDhcpServer')
+        return bool(value)
 
 
 class INATNetworkPortForwardEvent(INATNetworkAlterEvent):
@@ -20105,40 +21651,48 @@ class INATNetworkPortForwardEvent(INATNetworkAlterEvent):
     @property
     def create(self):
         """Get bool value for 'create'"""
-        return self.get_attr('create', bool)
+        value = self._get_attr('create')
+        return bool(value)
 
     @property
     def ipv6(self):
         """Get bool value for 'ipv6'"""
-        return self.get_attr('ipv6', bool)
+        value = self._get_attr('ipv6')
+        return bool(value)
 
     @property
     def name(self):
         """Get str value for 'name'"""
-        return self.get_attr('name', str)
+        value = self._get_attr('name')
+        return str(value)
 
     @property
     def proto(self):
         """Get NATProtocol value for 'proto'"""
-        return self.get_attr('proto', NATProtocol)
+        value = self._get_attr('proto')
+        return NATProtocol(value)
 
     @property
     def host_ip(self):
         """Get str value for 'hostIp'"""
-        return self.get_attr('hostIp', str)
+        value = self._get_attr('hostIp')
+        return str(value)
 
     @property
     def host_port(self):
         """Get int value for 'hostPort'"""
-        return self.get_attr('hostPort', int)
+        value = self._get_attr('hostPort')
+        return int(value)
 
     @property
     def guest_ip(self):
         """Get str value for 'guestIp'"""
-        return self.get_attr('guestIp', str)
+        value = self._get_attr('guestIp')
+        return str(value)
 
     @property
     def guest_port(self):
         """Get int value for 'guestPort'"""
-        return self.get_attr('guestPort', int)
+        value = self._get_attr('guestPort')
+        return int(value)
 
