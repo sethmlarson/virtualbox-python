@@ -367,8 +367,7 @@ METHOD_DOC_RAISES = '''\
 
 METHOD_ASSERT_IN = '''\
         assert isinstance(%(invar)s, %(invartype)s), \\
-                "%(invar)s is not an instance of %(invartype)s"
-        '''
+                "%(invar)s is not an instance of %(invartype)s"'''
 
 METHOD_CALL = '''\
         %(outvars)sself._call_method('%(name)s'%(in_p)s)'''
@@ -477,7 +476,7 @@ def process_interface_method(node):
             retvars = "(%s)" % (", ".join(outvars))
         else:
             retvars = outvars[0]
-        outvars = "%s =\\\n%s" % (retvars, " " * 12)
+        outvars = "%s = " % (retvars)
     else:
         outvars = ''
 
