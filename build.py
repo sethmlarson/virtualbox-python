@@ -1,3 +1,10 @@
+"""
+This build tool generates the VirtualBox librar.py Main COM API.
+
+By Michael Dorman
+[mjdorma+pyvbox@gmail.com]
+
+"""
 from xml.dom import minidom
 import pprint
 import sys
@@ -53,6 +60,8 @@ def pythonic_name(name):
 
 
 class EnumType(type):
+    """EnumType is a metaclass for Enum. It is responsible for configuring
+    the Enum class object's values defined in Enum.lookup_label"""
     def __init__(cls, name, bases, dct):
         cls.value = None
         cls.lookup_label = {v:k for k, v in cls.lookup_value.items()}
@@ -69,6 +78,7 @@ class EnumType(type):
 
 
 class Enum(object):
+    """Enum objects provides a contain for VirtualBox enumerations"""
     lookup_value = {}
     __metaclass__ = EnumType
     def __init__(self, value=None):
@@ -93,7 +103,7 @@ class Enum(object):
 
 
 class Interface(object):
-
+    """Interface objects provide a wrapper for the VirtualBox COM objects"""
     def __init__(self, interface=None):
         if interface is None:
             self._i = interface
@@ -171,8 +181,9 @@ def get_doc(node):
 
 ###########################################################
 #
+#   Generate error code
 #
-#
+###########################################################
 RESULT = '''\
 class %(pname)s(VBoxError):
     """%(doc)s"""
@@ -195,8 +206,9 @@ def process_result(node):
 
 ###########################################################
 #
+# Generate Enumeration code
 #
-#
+###########################################################
 ENUM_DEFINE = '''\
 class %(name)s(Enum):
     """(%(doc)s)"""
@@ -242,8 +254,9 @@ def process_enum(node):
 
 ###########################################################
 #
+# Generate Interface code
 #
-#
+###########################################################
 CLASS_DEF = '''\
 class %(name)s(%(extends)s):
     """%(doc)s"""
@@ -532,8 +545,9 @@ def process_interface_method(node):
 
 ###########################################################
 #
+#  Where it all begins... 
 #
-#
+###########################################################
 XIDL = """\
 http://www.virtualbox.org/svn/vbox/trunk/src/VBox/Main/idl/VirtualBox.xidl"""
 

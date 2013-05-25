@@ -86,6 +86,8 @@ def pythonic_name(name):
 
 
 class EnumType(type):
+    """EnumType is a metaclass for Enum. It is responsible for configuring
+    the Enum class object's values defined in Enum.lookup_label"""
     def __init__(cls, name, bases, dct):
         cls.value = None
         cls.lookup_label = {v:k for k, v in cls.lookup_value.items()}
@@ -102,6 +104,7 @@ class EnumType(type):
 
 
 class Enum(object):
+    """Enum objects provides a contain for VirtualBox enumerations"""
     lookup_value = {}
     __metaclass__ = EnumType
     def __init__(self, value=None):
@@ -126,7 +129,7 @@ class Enum(object):
 
 
 class Interface(object):
-
+    """Interface objects provide a wrapper for the VirtualBox COM objects"""
     def __init__(self, interface=None):
         if interface is None:
             self._i = interface
