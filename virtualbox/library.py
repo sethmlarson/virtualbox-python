@@ -1672,20 +1672,20 @@ class INATNetwork(Interface):
             The port number to forward.
 
         """
-        assert isinstance(is_ipv6, bool), \
-                "is_ipv6 is not an instance of bool"
-        assert isinstance(rule_name, str), \
-                "rule_name is not an instance of str"
-        assert isinstance(proto, NATProtocol), \
-                "proto is not an instance of NATProtocol"
-        assert isinstance(host_ip, str), \
-                "host_ip is not an instance of str"
-        assert isinstance(host_port, int), \
-                "host_port is not an instance of int"
-        assert isinstance(guest_ip, str), \
-                "guest_ip is not an instance of str"
-        assert isinstance(guest_port, int), \
-                "guest_port is not an instance of int"
+        if not isinstance(is_ipv6, bool):
+            raise TypeError("is_ipv6 is not an instance of bool")
+        if not isinstance(rule_name, str):
+            raise TypeError("rule_name is not an instance of str")
+        if not isinstance(proto, NATProtocol):
+            raise TypeError("proto is not an instance of NATProtocol")
+        if not isinstance(host_ip, str):
+            raise TypeError("host_ip is not an instance of str")
+        if not isinstance(host_port, int):
+            raise TypeError("host_port is not an instance of int")
+        if not isinstance(guest_ip, str):
+            raise TypeError("guest_ip is not an instance of str")
+        if not isinstance(guest_port, int):
+            raise TypeError("guest_port is not an instance of int")
         self._call_method('addPortForwardRule',
                      in_p=[is_ipv6, rule_name, proto, host_ip, host_port, guest_ip, guest_port])
         
@@ -1697,10 +1697,10 @@ class INATNetwork(Interface):
         in rule_name of type str
 
         """
-        assert isinstance(i_sipv6, bool), \
-                "i_sipv6 is not an instance of bool"
-        assert isinstance(rule_name, str), \
-                "rule_name is not an instance of str"
+        if not isinstance(i_sipv6, bool):
+            raise TypeError("i_sipv6 is not an instance of bool")
+        if not isinstance(rule_name, str):
+            raise TypeError("rule_name is not an instance of str")
         self._call_method('removePortForwardRule',
                      in_p=[i_sipv6, rule_name])
         
@@ -1711,8 +1711,8 @@ class INATNetwork(Interface):
             Type of internal network trunk.
 
         """
-        assert isinstance(trunk_type, str), \
-                "trunk_type is not an instance of str"
+        if not isinstance(trunk_type, str):
+            raise TypeError("trunk_type is not an instance of str")
         self._call_method('start',
                      in_p=[trunk_type])
         
@@ -1806,14 +1806,14 @@ class IDHCPServer(Interface):
             invalid configuration supplied
         
         """
-        assert isinstance(ip_address, str), \
-                "ip_address is not an instance of str"
-        assert isinstance(network_mask, str), \
-                "network_mask is not an instance of str"
-        assert isinstance(from_ip_address, str), \
-                "from_ip_address is not an instance of str"
-        assert isinstance(to_ip_address, str), \
-                "to_ip_address is not an instance of str"
+        if not isinstance(ip_address, str):
+            raise TypeError("ip_address is not an instance of str")
+        if not isinstance(network_mask, str):
+            raise TypeError("network_mask is not an instance of str")
+        if not isinstance(from_ip_address, str):
+            raise TypeError("from_ip_address is not an instance of str")
+        if not isinstance(to_ip_address, str):
+            raise TypeError("to_ip_address is not an instance of str")
         self._call_method('setConfiguration',
                      in_p=[ip_address, network_mask, from_ip_address, to_ip_address])
         
@@ -1833,12 +1833,12 @@ class IDHCPServer(Interface):
             Failed to start the process.
         
         """
-        assert isinstance(network_name, str), \
-                "network_name is not an instance of str"
-        assert isinstance(trunk_name, str), \
-                "trunk_name is not an instance of str"
-        assert isinstance(trunk_type, str), \
-                "trunk_type is not an instance of str"
+        if not isinstance(network_name, str):
+            raise TypeError("network_name is not an instance of str")
+        if not isinstance(trunk_name, str):
+            raise TypeError("trunk_name is not an instance of str")
+        if not isinstance(trunk_type, str):
+            raise TypeError("trunk_type is not an instance of str")
         self._call_method('start',
                      in_p=[network_name, trunk_name, trunk_type])
         
@@ -2159,14 +2159,14 @@ class IVirtualBox(Interface):
             Fully qualified path where the machine would be created.
 
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(group, str), \
-                "group is not an instance of str"
-        assert isinstance(create_flags, str), \
-                "create_flags is not an instance of str"
-        assert isinstance(base_folder, str), \
-                "base_folder is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(group, str):
+            raise TypeError("group is not an instance of str")
+        if not isinstance(create_flags, str):
+            raise TypeError("create_flags is not an instance of str")
+        if not isinstance(base_folder, str):
+            raise TypeError("base_folder is not an instance of str")
         file_p = self._call_method('composeMachineFilename',
                      in_p=[name, group, create_flags, base_folder])
         file_p = str(file_p)
@@ -2265,16 +2265,19 @@ class IVirtualBox(Interface):
             @a name is empty or @c null.
         
         """
-        assert isinstance(settings_file, str), \
-                "settings_file is not an instance of str"
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(groups, list), \
-                "groups is not an instance of list"
-        assert isinstance(os_type_id, str), \
-                "os_type_id is not an instance of str"
-        assert isinstance(flags, str), \
-                "flags is not an instance of str"
+        if not isinstance(settings_file, str):
+            raise TypeError("settings_file is not an instance of str")
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(groups, list):
+            raise TypeError("groups is not an instance of list")
+        for a in groups:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
+        if not isinstance(os_type_id, str):
+            raise TypeError("os_type_id is not an instance of str")
+        if not isinstance(flags, str):
+            raise TypeError("flags is not an instance of str")
         machine = self._call_method('createMachine',
                      in_p=[settings_file, name, groups, os_type_id, flags])
         machine = IMachine(machine)
@@ -2299,8 +2302,8 @@ class IVirtualBox(Interface):
             Settings file name invalid, not found or sharing violation.
         
         """
-        assert isinstance(settings_file, str), \
-                "settings_file is not an instance of str"
+        if not isinstance(settings_file, str):
+            raise TypeError("settings_file is not an instance of str")
         machine = self._call_method('openMachine',
                      in_p=[settings_file])
         machine = IMachine(machine)
@@ -2326,8 +2329,8 @@ class IVirtualBox(Interface):
             Virtual machine was not created within this VirtualBox instance.
         
         """
-        assert isinstance(machine, IMachine), \
-                "machine is not an instance of IMachine"
+        if not isinstance(machine, IMachine):
+            raise TypeError("machine is not an instance of IMachine")
         self._call_method('registerMachine',
                      in_p=[machine])
         
@@ -2347,8 +2350,8 @@ class IVirtualBox(Interface):
             Could not find registered machine matching @a nameOrId.
         
         """
-        assert isinstance(name_or_id, str), \
-                "name_or_id is not an instance of str"
+        if not isinstance(name_or_id, str):
+            raise TypeError("name_or_id is not an instance of str")
         machine = self._call_method('findMachine',
                      in_p=[name_or_id])
         machine = IMachine(machine)
@@ -2366,8 +2369,11 @@ class IVirtualBox(Interface):
             All machines which matched.
 
         """
-        assert isinstance(groups, list), \
-                "groups is not an instance of list"
+        if not isinstance(groups, list):
+            raise TypeError("groups is not an instance of list")
+        for a in groups:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
         machines = self._call_method('getMachinesByGroups',
                      in_p=[groups])
         machines = [IMachine(a) for a in machines]
@@ -2383,8 +2389,11 @@ class IVirtualBox(Interface):
             Machine states, corresponding to the machines.
 
         """
-        assert isinstance(machines, list), \
-                "machines is not an instance of list"
+        if not isinstance(machines, list):
+            raise TypeError("machines is not an instance of list")
+        for a in machines:
+            if not isinstance(a, IMachine):
+                raise TypeError("array can only contain IMachine objects")
         states = self._call_method('getMachineStates',
                      in_p=[machines])
         states = [MachineState(a) for a in states]
@@ -2450,10 +2459,10 @@ class IVirtualBox(Interface):
             @a location is a not valid file name (for file-based formats only).
         
         """
-        assert isinstance(format_p, str), \
-                "format_p is not an instance of str"
-        assert isinstance(location, str), \
-                "location is not an instance of str"
+        if not isinstance(format_p, str):
+            raise TypeError("format_p is not an instance of str")
+        if not isinstance(location, str):
+            raise TypeError("location is not an instance of str")
         medium = self._call_method('createHardDisk',
                      in_p=[format_p, location])
         medium = IMedium(medium)
@@ -2548,14 +2557,14 @@ class IVirtualBox(Interface):
             Medium has already been added to a media registry.
         
         """
-        assert isinstance(location, str), \
-                "location is not an instance of str"
-        assert isinstance(device_type, DeviceType), \
-                "device_type is not an instance of DeviceType"
-        assert isinstance(access_mode, AccessMode), \
-                "access_mode is not an instance of AccessMode"
-        assert isinstance(force_new_uuid, bool), \
-                "force_new_uuid is not an instance of bool"
+        if not isinstance(location, str):
+            raise TypeError("location is not an instance of str")
+        if not isinstance(device_type, DeviceType):
+            raise TypeError("device_type is not an instance of DeviceType")
+        if not isinstance(access_mode, AccessMode):
+            raise TypeError("access_mode is not an instance of AccessMode")
+        if not isinstance(force_new_uuid, bool):
+            raise TypeError("force_new_uuid is not an instance of bool")
         medium = self._call_method('openMedium',
                      in_p=[location, device_type, access_mode, force_new_uuid])
         medium = IMedium(medium)
@@ -2585,8 +2594,8 @@ class IVirtualBox(Interface):
             @a id is not a valid Guest OS type.
         
         """
-        assert isinstance(id_p, str), \
-                "id_p is not an instance of str"
+        if not isinstance(id_p, str):
+            raise TypeError("id_p is not an instance of str")
         type_p = self._call_method('getGuestOSType',
                      in_p=[id_p])
         type_p = IGuestOSType(type_p)
@@ -2615,14 +2624,14 @@ class IVirtualBox(Interface):
           or not.
 
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(host_path, str), \
-                "host_path is not an instance of str"
-        assert isinstance(writable, bool), \
-                "writable is not an instance of bool"
-        assert isinstance(automount, bool), \
-                "automount is not an instance of bool"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(host_path, str):
+            raise TypeError("host_path is not an instance of str")
+        if not isinstance(writable, bool):
+            raise TypeError("writable is not an instance of bool")
+        if not isinstance(automount, bool):
+            raise TypeError("automount is not an instance of bool")
         self._call_method('createSharedFolder',
                      in_p=[name, host_path, writable, automount])
         
@@ -2638,8 +2647,8 @@ class IVirtualBox(Interface):
             Logical name of the shared folder to remove.
 
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         self._call_method('removeSharedFolder',
                      in_p=[name])
         
@@ -2674,8 +2683,8 @@ class IVirtualBox(Interface):
             Could not parse the settings file.
         
         """
-        assert isinstance(key, str), \
-                "key is not an instance of str"
+        if not isinstance(key, str):
+            raise TypeError("key is not an instance of str")
         value = self._call_method('getExtraData',
                      in_p=[key])
         value = str(value)
@@ -2716,10 +2725,10 @@ class IVirtualBox(Interface):
             Modification request refused.
         
         """
-        assert isinstance(key, str), \
-                "key is not an instance of str"
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if not isinstance(key, str):
+            raise TypeError("key is not an instance of str")
+        if not isinstance(value, str):
+            raise TypeError("value is not an instance of str")
         self._call_method('setExtraData',
                      in_p=[key, value])
         
@@ -2734,8 +2743,8 @@ class IVirtualBox(Interface):
             Virtual machine is not mutable.
         
         """
-        assert isinstance(password, str), \
-                "password is not an instance of str"
+        if not isinstance(password, str):
+            raise TypeError("password is not an instance of str")
         self._call_method('setSettingsSecret',
                      in_p=[password])
         
@@ -2752,8 +2761,8 @@ class IVirtualBox(Interface):
             Host network interface @a name already exists.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         server = self._call_method('createDHCPServer',
                      in_p=[name])
         server = IDHCPServer(server)
@@ -2772,8 +2781,8 @@ class IVirtualBox(Interface):
             Host network interface @a name already exists.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         server = self._call_method('findDHCPServerByNetworkName',
                      in_p=[name])
         server = IDHCPServer(server)
@@ -2789,8 +2798,8 @@ class IVirtualBox(Interface):
             Host network interface @a name already exists.
         
         """
-        assert isinstance(server, IDHCPServer), \
-                "server is not an instance of IDHCPServer"
+        if not isinstance(server, IDHCPServer):
+            raise TypeError("server is not an instance of IDHCPServer")
         self._call_method('removeDHCPServer',
                      in_p=[server])
         
@@ -2802,8 +2811,8 @@ class IVirtualBox(Interface):
         return network of type INATNetwork
 
         """
-        assert isinstance(network_name, str), \
-                "network_name is not an instance of str"
+        if not isinstance(network_name, str):
+            raise TypeError("network_name is not an instance of str")
         network = self._call_method('createNATNetwork',
                      in_p=[network_name])
         network = INATNetwork(network)
@@ -2817,8 +2826,8 @@ class IVirtualBox(Interface):
         return network of type INATNetwork
 
         """
-        assert isinstance(network_name, str), \
-                "network_name is not an instance of str"
+        if not isinstance(network_name, str):
+            raise TypeError("network_name is not an instance of str")
         network = self._call_method('findNATNetworkByName',
                      in_p=[network_name])
         network = INATNetwork(network)
@@ -2830,8 +2839,8 @@ class IVirtualBox(Interface):
         in network of type INATNetwork
 
         """
-        assert isinstance(network, INATNetwork), \
-                "network is not an instance of INATNetwork"
+        if not isinstance(network, INATNetwork):
+            raise TypeError("network is not an instance of INATNetwork")
         self._call_method('removeNATNetwork',
                      in_p=[network])
         
@@ -2857,10 +2866,10 @@ class IVirtualBox(Interface):
             If firmware of this type and version is available.
 
         """
-        assert isinstance(firmware_type, FirmwareType), \
-                "firmware_type is not an instance of FirmwareType"
-        assert isinstance(version, str), \
-                "version is not an instance of str"
+        if not isinstance(firmware_type, FirmwareType):
+            raise TypeError("firmware_type is not an instance of FirmwareType")
+        if not isinstance(version, str):
+            raise TypeError("version is not an instance of str")
         (url, file_p, result) = self._call_method('checkFirmwarePresent',
                      in_p=[firmware_type, version])
         url = str(url)
@@ -2918,8 +2927,8 @@ class IVFSExplorer(Interface):
             Progress object to track the operation completion.
 
         """
-        assert isinstance(dir_p, str), \
-                "dir_p is not an instance of str"
+        if not isinstance(dir_p, str):
+            raise TypeError("dir_p is not an instance of str")
         progress = self._call_method('cd',
                      in_p=[dir_p])
         progress = IProgress(progress)
@@ -2971,8 +2980,11 @@ class IVFSExplorer(Interface):
             The names which exist.
 
         """
-        assert isinstance(names, list), \
-                "names is not an instance of list"
+        if not isinstance(names, list):
+            raise TypeError("names is not an instance of list")
+        for a in names:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
         exists = self._call_method('exists',
                      in_p=[names])
         exists = [str(a) for a in exists]
@@ -2988,8 +3000,11 @@ class IVFSExplorer(Interface):
             Progress object to track the operation completion.
 
         """
-        assert isinstance(names, list), \
-                "names is not an instance of list"
+        if not isinstance(names, list):
+            raise TypeError("names is not an instance of list")
+        for a in names:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
         progress = self._call_method('remove',
                      in_p=[names])
         progress = IProgress(progress)
@@ -3160,8 +3175,8 @@ class IAppliance(Interface):
             Progress object to track the operation completion.
 
         """
-        assert isinstance(file_p, str), \
-                "file_p is not an instance of str"
+        if not isinstance(file_p, str):
+            raise TypeError("file_p is not an instance of str")
         progress = self._call_method('read',
                      in_p=[file_p])
         progress = IProgress(progress)
@@ -3207,8 +3222,11 @@ class IAppliance(Interface):
             Progress object to track the operation completion.
 
         """
-        assert isinstance(options, list), \
-                "options is not an instance of list"
+        if not isinstance(options, list):
+            raise TypeError("options is not an instance of list")
+        for a in options:
+            if not isinstance(a, ImportOptions):
+                raise TypeError("array can only contain ImportOptions objects")
         progress = self._call_method('importMachines',
                      in_p=[options])
         progress = IProgress(progress)
@@ -3224,8 +3242,8 @@ class IAppliance(Interface):
             <desc/>
 
         """
-        assert isinstance(uri, str), \
-                "uri is not an instance of str"
+        if not isinstance(uri, str):
+            raise TypeError("uri is not an instance of str")
         explorer = self._call_method('createVFSExplorer',
                      in_p=[uri])
         explorer = IVFSExplorer(explorer)
@@ -3257,12 +3275,12 @@ class IAppliance(Interface):
             Progress object to track the operation completion.
 
         """
-        assert isinstance(format_p, str), \
-                "format_p is not an instance of str"
-        assert isinstance(manifest, bool), \
-                "manifest is not an instance of bool"
-        assert isinstance(path, str), \
-                "path is not an instance of str"
+        if not isinstance(format_p, str):
+            raise TypeError("format_p is not an instance of str")
+        if not isinstance(manifest, bool):
+            raise TypeError("manifest is not an instance of bool")
+        if not isinstance(path, str):
+            raise TypeError("path is not an instance of str")
         progress = self._call_method('write',
                      in_p=[format_p, manifest, path])
         progress = IProgress(progress)
@@ -3458,8 +3476,8 @@ class IVirtualSystemDescription(Interface):
             <desc/>
 
         """
-        assert isinstance(type_p, VirtualSystemDescriptionType), \
-                "type_p is not an instance of VirtualSystemDescriptionType"
+        if not isinstance(type_p, VirtualSystemDescriptionType):
+            raise TypeError("type_p is not an instance of VirtualSystemDescriptionType")
         (types, refs, ovf_values, v_box_values, extra_config_values) = self._call_method('getDescriptionByType',
                      in_p=[type_p])
         types = [VirtualSystemDescriptionType(a) for a in types]
@@ -3484,10 +3502,10 @@ class IVirtualSystemDescription(Interface):
             <desc/>
 
         """
-        assert isinstance(type_p, VirtualSystemDescriptionType), \
-                "type_p is not an instance of VirtualSystemDescriptionType"
-        assert isinstance(which, VirtualSystemDescriptionValueType), \
-                "which is not an instance of VirtualSystemDescriptionValueType"
+        if not isinstance(type_p, VirtualSystemDescriptionType):
+            raise TypeError("type_p is not an instance of VirtualSystemDescriptionType")
+        if not isinstance(which, VirtualSystemDescriptionValueType):
+            raise TypeError("which is not an instance of VirtualSystemDescriptionValueType")
         values = self._call_method('getValuesByType',
                      in_p=[type_p, which])
         values = [str(a) for a in values]
@@ -3520,12 +3538,21 @@ class IVirtualSystemDescription(Interface):
             <desc/>
 
         """
-        assert isinstance(enabled, list), \
-                "enabled is not an instance of list"
-        assert isinstance(v_box_values, list), \
-                "v_box_values is not an instance of list"
-        assert isinstance(extra_config_values, list), \
-                "extra_config_values is not an instance of list"
+        if not isinstance(enabled, list):
+            raise TypeError("enabled is not an instance of list")
+        for a in enabled:
+            if not isinstance(a, bool):
+                raise TypeError("array can only contain bool objects")
+        if not isinstance(v_box_values, list):
+            raise TypeError("v_box_values is not an instance of list")
+        for a in v_box_values:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
+        if not isinstance(extra_config_values, list):
+            raise TypeError("extra_config_values is not an instance of list")
+        for a in extra_config_values:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
         self._call_method('setFinalValues',
                      in_p=[enabled, v_box_values, extra_config_values])
         
@@ -3545,12 +3572,12 @@ class IVirtualSystemDescription(Interface):
             <desc/>
 
         """
-        assert isinstance(type_p, VirtualSystemDescriptionType), \
-                "type_p is not an instance of VirtualSystemDescriptionType"
-        assert isinstance(v_box_value, str), \
-                "v_box_value is not an instance of str"
-        assert isinstance(extra_config_value, str), \
-                "extra_config_value is not an instance of str"
+        if not isinstance(type_p, VirtualSystemDescriptionType):
+            raise TypeError("type_p is not an instance of VirtualSystemDescriptionType")
+        if not isinstance(v_box_value, str):
+            raise TypeError("v_box_value is not an instance of str")
+        if not isinstance(extra_config_value, str):
+            raise TypeError("extra_config_value is not an instance of str")
         self._call_method('addDescription',
                      in_p=[type_p, v_box_value, extra_config_value])
         
@@ -3570,8 +3597,8 @@ class IInternalMachineControl(Interface):
         in remove of type bool
 
         """
-        assert isinstance(remove, bool), \
-                "remove is not an instance of bool"
+        if not isinstance(remove, bool):
+            raise TypeError("remove is not an instance of bool")
         self._call_method('setRemoveSavedStateFile',
                      in_p=[remove])
         
@@ -3585,8 +3612,8 @@ class IInternalMachineControl(Interface):
         in state of type MachineState
 
         """
-        assert isinstance(state, MachineState), \
-                "state is not an instance of MachineState"
+        if not isinstance(state, MachineState):
+            raise TypeError("state is not an instance of MachineState")
         self._call_method('updateState',
                      in_p=[state])
         
@@ -3612,8 +3639,8 @@ class IInternalMachineControl(Interface):
         in progress of type IProgress
 
         """
-        assert isinstance(progress, IProgress), \
-                "progress is not an instance of IProgress"
+        if not isinstance(progress, IProgress):
+            raise TypeError("progress is not an instance of IProgress")
         self._call_method('beginPowerUp',
                      in_p=[progress])
         
@@ -3627,8 +3654,8 @@ class IInternalMachineControl(Interface):
         in result of type int
 
         """
-        assert isinstance(result, int), \
-                "result is not an instance of int"
+        if not isinstance(result, int):
+            raise TypeError("result is not an instance of int")
         self._call_method('endPowerUp',
                      in_p=[result])
         
@@ -3663,10 +3690,10 @@ class IInternalMachineControl(Interface):
             Could not parse the settings file.
         
         """
-        assert isinstance(result, int), \
-                "result is not an instance of int"
-        assert isinstance(err_msg, str), \
-                "err_msg is not an instance of str"
+        if not isinstance(result, int):
+            raise TypeError("result is not an instance of int")
+        if not isinstance(err_msg, str):
+            raise TypeError("err_msg is not an instance of str")
         self._call_method('endPoweringDown',
                      in_p=[result, err_msg])
         
@@ -3686,8 +3713,8 @@ class IInternalMachineControl(Interface):
         out masked_interfaces of type int
 
         """
-        assert isinstance(device, IUSBDevice), \
-                "device is not an instance of IUSBDevice"
+        if not isinstance(device, IUSBDevice):
+            raise TypeError("device is not an instance of IUSBDevice")
         (matched, masked_interfaces) = self._call_method('runUSBDeviceFilters',
                      in_p=[device])
         matched = bool(matched)
@@ -3703,8 +3730,8 @@ class IInternalMachineControl(Interface):
         in id_p of type str
 
         """
-        assert isinstance(id_p, str), \
-                "id_p is not an instance of str"
+        if not isinstance(id_p, str):
+            raise TypeError("id_p is not an instance of str")
         self._call_method('captureUSBDevice',
                      in_p=[id_p])
         
@@ -3724,10 +3751,10 @@ class IInternalMachineControl(Interface):
         in done of type bool
 
         """
-        assert isinstance(id_p, str), \
-                "id_p is not an instance of str"
-        assert isinstance(done, bool), \
-                "done is not an instance of bool"
+        if not isinstance(id_p, str):
+            raise TypeError("id_p is not an instance of str")
+        if not isinstance(done, bool):
+            raise TypeError("done is not an instance of bool")
         self._call_method('detachUSBDevice',
                      in_p=[id_p, done])
         
@@ -3754,8 +3781,8 @@ class IInternalMachineControl(Interface):
         in done of type bool
 
         """
-        assert isinstance(done, bool), \
-                "done is not an instance of bool"
+        if not isinstance(done, bool):
+            raise TypeError("done is not an instance of bool")
         self._call_method('detachAllUSBDevices',
                      in_p=[done])
         
@@ -3772,8 +3799,8 @@ class IInternalMachineControl(Interface):
           Returned only when this session is a direct one.
 
         """
-        assert isinstance(session, ISession), \
-                "session is not an instance of ISession"
+        if not isinstance(session, ISession):
+            raise TypeError("session is not an instance of ISession")
         progress = self._call_method('onSessionEnd',
                      in_p=[session])
         progress = IProgress(progress)
@@ -3814,10 +3841,10 @@ class IInternalMachineControl(Interface):
             Could not parse the settings file.
         
         """
-        assert isinstance(result, int), \
-                "result is not an instance of int"
-        assert isinstance(err_msg, str), \
-                "err_msg is not an instance of str"
+        if not isinstance(result, int):
+            raise TypeError("result is not an instance of int")
+        if not isinstance(err_msg, str):
+            raise TypeError("err_msg is not an instance of str")
         self._call_method('endSavingState',
                      in_p=[result, err_msg])
         
@@ -3831,8 +3858,8 @@ class IInternalMachineControl(Interface):
             Invalid saved state file path.
         
         """
-        assert isinstance(saved_state_file, str), \
-                "saved_state_file is not an instance of str"
+        if not isinstance(saved_state_file, str):
+            raise TypeError("saved_state_file is not an instance of str")
         self._call_method('adoptSavedState',
                      in_p=[saved_state_file])
         
@@ -3873,16 +3900,16 @@ class IInternalMachineControl(Interface):
             Could not parse the settings file.
         
         """
-        assert isinstance(initiator, IConsole), \
-                "initiator is not an instance of IConsole"
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(description, str), \
-                "description is not an instance of str"
-        assert isinstance(console_progress, IProgress), \
-                "console_progress is not an instance of IProgress"
-        assert isinstance(f_taking_snapshot_online, bool), \
-                "f_taking_snapshot_online is not an instance of bool"
+        if not isinstance(initiator, IConsole):
+            raise TypeError("initiator is not an instance of IConsole")
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(description, str):
+            raise TypeError("description is not an instance of str")
+        if not isinstance(console_progress, IProgress):
+            raise TypeError("console_progress is not an instance of IProgress")
+        if not isinstance(f_taking_snapshot_online, bool):
+            raise TypeError("f_taking_snapshot_online is not an instance of bool")
         state_file_path = self._call_method('beginTakingSnapshot',
                      in_p=[initiator, name, description, console_progress, f_taking_snapshot_online])
         state_file_path = str(state_file_path)
@@ -3897,8 +3924,8 @@ class IInternalMachineControl(Interface):
             @c true to indicate success and @c false otherwise
 
         """
-        assert isinstance(success, bool), \
-                "success is not an instance of bool"
+        if not isinstance(success, bool):
+            raise TypeError("success is not an instance of bool")
         self._call_method('endTakingSnapshot',
                      in_p=[success])
         
@@ -3931,14 +3958,14 @@ class IInternalMachineControl(Interface):
           not meet the linearity condition.
         
         """
-        assert isinstance(initiator, IConsole), \
-                "initiator is not an instance of IConsole"
-        assert isinstance(start_id, str), \
-                "start_id is not an instance of str"
-        assert isinstance(end_id, str), \
-                "end_id is not an instance of str"
-        assert isinstance(delete_all_children, bool), \
-                "delete_all_children is not an instance of bool"
+        if not isinstance(initiator, IConsole):
+            raise TypeError("initiator is not an instance of IConsole")
+        if not isinstance(start_id, str):
+            raise TypeError("start_id is not an instance of str")
+        if not isinstance(end_id, str):
+            raise TypeError("end_id is not an instance of str")
+        if not isinstance(delete_all_children, bool):
+            raise TypeError("delete_all_children is not an instance of bool")
         (machine_state, progress) = self._call_method('deleteSnapshot',
                      in_p=[initiator, start_id, end_id, delete_all_children])
         machine_state = MachineState(machine_state)
@@ -3968,18 +3995,21 @@ class IInternalMachineControl(Interface):
         updated.
 
         """
-        assert isinstance(medium_attachment, IMediumAttachment), \
-                "medium_attachment is not an instance of IMediumAttachment"
-        assert isinstance(source, IMedium), \
-                "source is not an instance of IMedium"
-        assert isinstance(target, IMedium), \
-                "target is not an instance of IMedium"
-        assert isinstance(merge_forward, bool), \
-                "merge_forward is not an instance of bool"
-        assert isinstance(parent_for_target, IMedium), \
-                "parent_for_target is not an instance of IMedium"
-        assert isinstance(children_to_reparent, list), \
-                "children_to_reparent is not an instance of list"
+        if not isinstance(medium_attachment, IMediumAttachment):
+            raise TypeError("medium_attachment is not an instance of IMediumAttachment")
+        if not isinstance(source, IMedium):
+            raise TypeError("source is not an instance of IMedium")
+        if not isinstance(target, IMedium):
+            raise TypeError("target is not an instance of IMedium")
+        if not isinstance(merge_forward, bool):
+            raise TypeError("merge_forward is not an instance of bool")
+        if not isinstance(parent_for_target, IMedium):
+            raise TypeError("parent_for_target is not an instance of IMedium")
+        if not isinstance(children_to_reparent, list):
+            raise TypeError("children_to_reparent is not an instance of list")
+        for a in children_to_reparent:
+            if not isinstance(a, IMedium):
+                raise TypeError("array can only contain IMedium objects")
         self._call_method('finishOnlineMergeMedium',
                      in_p=[medium_attachment, source, target, merge_forward, parent_for_target, children_to_reparent])
         
@@ -3999,10 +4029,10 @@ class IInternalMachineControl(Interface):
             Progress object to track the operation completion.
 
         """
-        assert isinstance(initiator, IConsole), \
-                "initiator is not an instance of IConsole"
-        assert isinstance(snapshot, ISnapshot), \
-                "snapshot is not an instance of ISnapshot"
+        if not isinstance(initiator, IConsole):
+            raise TypeError("initiator is not an instance of IConsole")
+        if not isinstance(snapshot, ISnapshot):
+            raise TypeError("snapshot is not an instance of ISnapshot")
         (machine_state, progress) = self._call_method('restoreSnapshot',
                      in_p=[initiator, snapshot])
         machine_state = MachineState(machine_state)
@@ -4053,14 +4083,14 @@ class IInternalMachineControl(Interface):
             The flags of the property.
 
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(value, str), \
-                "value is not an instance of str"
-        assert isinstance(timestamp, int), \
-                "timestamp is not an instance of int"
-        assert isinstance(flags, str), \
-                "flags is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(value, str):
+            raise TypeError("value is not an instance of str")
+        if not isinstance(timestamp, int):
+            raise TypeError("timestamp is not an instance of int")
+        if not isinstance(flags, str):
+            raise TypeError("flags is not an instance of str")
         self._call_method('pushGuestProperty',
                      in_p=[name, value, timestamp, flags])
         
@@ -4098,8 +4128,8 @@ class IInternalMachineControl(Interface):
           result in the creation of a new instance.
 
         """
-        assert isinstance(attachment, IMediumAttachment), \
-                "attachment is not an instance of IMediumAttachment"
+        if not isinstance(attachment, IMediumAttachment):
+            raise TypeError("attachment is not an instance of IMediumAttachment")
         new_attachment = self._call_method('ejectMedium',
                      in_p=[attachment])
         new_attachment = IMediumAttachment(new_attachment)
@@ -4158,38 +4188,38 @@ class IInternalMachineControl(Interface):
             Network transmit rate for VM.
 
         """
-        assert isinstance(valid_stats, int), \
-                "valid_stats is not an instance of int"
-        assert isinstance(cpu_user, int), \
-                "cpu_user is not an instance of int"
-        assert isinstance(cpu_kernel, int), \
-                "cpu_kernel is not an instance of int"
-        assert isinstance(cpu_idle, int), \
-                "cpu_idle is not an instance of int"
-        assert isinstance(mem_total, int), \
-                "mem_total is not an instance of int"
-        assert isinstance(mem_free, int), \
-                "mem_free is not an instance of int"
-        assert isinstance(mem_balloon, int), \
-                "mem_balloon is not an instance of int"
-        assert isinstance(mem_shared, int), \
-                "mem_shared is not an instance of int"
-        assert isinstance(mem_cache, int), \
-                "mem_cache is not an instance of int"
-        assert isinstance(paged_total, int), \
-                "paged_total is not an instance of int"
-        assert isinstance(mem_alloc_total, int), \
-                "mem_alloc_total is not an instance of int"
-        assert isinstance(mem_free_total, int), \
-                "mem_free_total is not an instance of int"
-        assert isinstance(mem_balloon_total, int), \
-                "mem_balloon_total is not an instance of int"
-        assert isinstance(mem_shared_total, int), \
-                "mem_shared_total is not an instance of int"
-        assert isinstance(vm_net_rx, int), \
-                "vm_net_rx is not an instance of int"
-        assert isinstance(vm_net_tx, int), \
-                "vm_net_tx is not an instance of int"
+        if not isinstance(valid_stats, int):
+            raise TypeError("valid_stats is not an instance of int")
+        if not isinstance(cpu_user, int):
+            raise TypeError("cpu_user is not an instance of int")
+        if not isinstance(cpu_kernel, int):
+            raise TypeError("cpu_kernel is not an instance of int")
+        if not isinstance(cpu_idle, int):
+            raise TypeError("cpu_idle is not an instance of int")
+        if not isinstance(mem_total, int):
+            raise TypeError("mem_total is not an instance of int")
+        if not isinstance(mem_free, int):
+            raise TypeError("mem_free is not an instance of int")
+        if not isinstance(mem_balloon, int):
+            raise TypeError("mem_balloon is not an instance of int")
+        if not isinstance(mem_shared, int):
+            raise TypeError("mem_shared is not an instance of int")
+        if not isinstance(mem_cache, int):
+            raise TypeError("mem_cache is not an instance of int")
+        if not isinstance(paged_total, int):
+            raise TypeError("paged_total is not an instance of int")
+        if not isinstance(mem_alloc_total, int):
+            raise TypeError("mem_alloc_total is not an instance of int")
+        if not isinstance(mem_free_total, int):
+            raise TypeError("mem_free_total is not an instance of int")
+        if not isinstance(mem_balloon_total, int):
+            raise TypeError("mem_balloon_total is not an instance of int")
+        if not isinstance(mem_shared_total, int):
+            raise TypeError("mem_shared_total is not an instance of int")
+        if not isinstance(vm_net_rx, int):
+            raise TypeError("vm_net_rx is not an instance of int")
+        if not isinstance(vm_net_tx, int):
+            raise TypeError("vm_net_tx is not an instance of int")
         self._call_method('reportVmStatistics',
                      in_p=[valid_stats, cpu_user, cpu_kernel, cpu_idle, mem_total, mem_free, mem_balloon, mem_shared, mem_cache, paged_total, mem_alloc_total, mem_free_total, mem_balloon_total, mem_shared_total, vm_net_rx, vm_net_tx])
         
@@ -4401,8 +4431,8 @@ class IPCIAddress(Interface):
         in number of type int
 
         """
-        assert isinstance(number, int), \
-                "number is not an instance of int"
+        if not isinstance(number, int):
+            raise TypeError("number is not an instance of int")
         self._call_method('fromLong',
                      in_p=[number])
         
@@ -5818,10 +5848,10 @@ class IMachine(Interface):
             Failed to assign machine to session.
         
         """
-        assert isinstance(session, ISession), \
-                "session is not an instance of ISession"
-        assert isinstance(lock_type, LockType), \
-                "lock_type is not an instance of LockType"
+        if not isinstance(session, ISession):
+            raise TypeError("session is not an instance of ISession")
+        if not isinstance(lock_type, LockType):
+            raise TypeError("lock_type is not an instance of LockType")
         self._call_method('lockMachine',
                      in_p=[session, lock_type])
         
@@ -5931,12 +5961,12 @@ class IMachine(Interface):
             Failed to assign machine to session.
         
         """
-        assert isinstance(session, ISession), \
-                "session is not an instance of ISession"
-        assert isinstance(type_p, str), \
-                "type_p is not an instance of str"
-        assert isinstance(environment, str), \
-                "environment is not an instance of str"
+        if not isinstance(session, ISession):
+            raise TypeError("session is not an instance of ISession")
+        if not isinstance(type_p, str):
+            raise TypeError("type_p is not an instance of str")
+        if not isinstance(environment, str):
+            raise TypeError("environment is not an instance of str")
         progress = self._call_method('launchVMProcess',
                      in_p=[session, type_p, environment])
         progress = IProgress(progress)
@@ -5966,10 +5996,10 @@ class IMachine(Interface):
             Booting from USB @a device currently not supported.
         
         """
-        assert isinstance(position, int), \
-                "position is not an instance of int"
-        assert isinstance(device, DeviceType), \
-                "device is not an instance of DeviceType"
+        if not isinstance(position, int):
+            raise TypeError("position is not an instance of int")
+        if not isinstance(device, DeviceType):
+            raise TypeError("device is not an instance of DeviceType")
         self._call_method('setBootOrder',
                      in_p=[position, device])
         
@@ -5999,8 +6029,8 @@ class IMachine(Interface):
             Boot @a position out of range.
         
         """
-        assert isinstance(position, int), \
-                "position is not an instance of int"
+        if not isinstance(position, int):
+            raise TypeError("position is not an instance of int")
         device = self._call_method('getBootOrder',
                      in_p=[position])
         device = DeviceType(device)
@@ -6094,16 +6124,16 @@ class IMachine(Interface):
             A medium is already attached to this or another virtual machine.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(controller_port, int), \
-                "controller_port is not an instance of int"
-        assert isinstance(device, int), \
-                "device is not an instance of int"
-        assert isinstance(type_p, DeviceType), \
-                "type_p is not an instance of DeviceType"
-        assert isinstance(medium, IMedium), \
-                "medium is not an instance of IMedium"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(controller_port, int):
+            raise TypeError("controller_port is not an instance of int")
+        if not isinstance(device, int):
+            raise TypeError("device is not an instance of int")
+        if not isinstance(type_p, DeviceType):
+            raise TypeError("type_p is not an instance of DeviceType")
+        if not isinstance(medium, IMedium):
+            raise TypeError("medium is not an instance of IMedium")
         self._call_method('attachDevice',
                      in_p=[name, controller_port, device, type_p, medium])
         
@@ -6188,14 +6218,14 @@ class IMachine(Interface):
             A medium is already attached to this or another virtual machine.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(controller_port, int), \
-                "controller_port is not an instance of int"
-        assert isinstance(device, int), \
-                "device is not an instance of int"
-        assert isinstance(type_p, DeviceType), \
-                "type_p is not an instance of DeviceType"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(controller_port, int):
+            raise TypeError("controller_port is not an instance of int")
+        if not isinstance(device, int):
+            raise TypeError("device is not an instance of int")
+        if not isinstance(type_p, DeviceType):
+            raise TypeError("type_p is not an instance of DeviceType")
         self._call_method('attachDeviceWithoutMedium',
                      in_p=[name, controller_port, device, type_p])
         
@@ -6239,12 +6269,12 @@ class IMachine(Interface):
           created differencing media, should not happen).
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(controller_port, int), \
-                "controller_port is not an instance of int"
-        assert isinstance(device, int), \
-                "device is not an instance of int"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(controller_port, int):
+            raise TypeError("controller_port is not an instance of int")
+        if not isinstance(device, int):
+            raise TypeError("device is not an instance of int")
         self._call_method('detachDevice',
                      in_p=[name, controller_port, device])
         
@@ -6280,14 +6310,14 @@ class IMachine(Interface):
             Invalid machine state.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(controller_port, int), \
-                "controller_port is not an instance of int"
-        assert isinstance(device, int), \
-                "device is not an instance of int"
-        assert isinstance(passthrough, bool), \
-                "passthrough is not an instance of bool"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(controller_port, int):
+            raise TypeError("controller_port is not an instance of int")
+        if not isinstance(device, int):
+            raise TypeError("device is not an instance of int")
+        if not isinstance(passthrough, bool):
+            raise TypeError("passthrough is not an instance of bool")
         self._call_method('passthroughDevice',
                      in_p=[name, controller_port, device, passthrough])
         
@@ -6323,14 +6353,14 @@ class IMachine(Interface):
             Invalid machine state.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(controller_port, int), \
-                "controller_port is not an instance of int"
-        assert isinstance(device, int), \
-                "device is not an instance of int"
-        assert isinstance(temporary_eject, bool), \
-                "temporary_eject is not an instance of bool"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(controller_port, int):
+            raise TypeError("controller_port is not an instance of int")
+        if not isinstance(device, int):
+            raise TypeError("device is not an instance of int")
+        if not isinstance(temporary_eject, bool):
+            raise TypeError("temporary_eject is not an instance of bool")
         self._call_method('temporaryEjectDevice',
                      in_p=[name, controller_port, device, temporary_eject])
         
@@ -6369,14 +6399,14 @@ class IMachine(Interface):
             Invalid machine state.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(controller_port, int), \
-                "controller_port is not an instance of int"
-        assert isinstance(device, int), \
-                "device is not an instance of int"
-        assert isinstance(non_rotational, bool), \
-                "non_rotational is not an instance of bool"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(controller_port, int):
+            raise TypeError("controller_port is not an instance of int")
+        if not isinstance(device, int):
+            raise TypeError("device is not an instance of int")
+        if not isinstance(non_rotational, bool):
+            raise TypeError("non_rotational is not an instance of bool")
         self._call_method('nonRotationalDevice',
                      in_p=[name, controller_port, device, non_rotational])
         
@@ -6415,14 +6445,14 @@ class IMachine(Interface):
             Invalid machine state.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(controller_port, int), \
-                "controller_port is not an instance of int"
-        assert isinstance(device, int), \
-                "device is not an instance of int"
-        assert isinstance(discard, bool), \
-                "discard is not an instance of bool"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(controller_port, int):
+            raise TypeError("controller_port is not an instance of int")
+        if not isinstance(device, int):
+            raise TypeError("device is not an instance of int")
+        if not isinstance(discard, bool):
+            raise TypeError("discard is not an instance of bool")
         self._call_method('setAutoDiscardForDevice',
                      in_p=[name, controller_port, device, discard])
         
@@ -6456,14 +6486,14 @@ class IMachine(Interface):
             Invalid machine state.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(controller_port, int), \
-                "controller_port is not an instance of int"
-        assert isinstance(device, int), \
-                "device is not an instance of int"
-        assert isinstance(bandwidth_group, IBandwidthGroup), \
-                "bandwidth_group is not an instance of IBandwidthGroup"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(controller_port, int):
+            raise TypeError("controller_port is not an instance of int")
+        if not isinstance(device, int):
+            raise TypeError("device is not an instance of int")
+        if not isinstance(bandwidth_group, IBandwidthGroup):
+            raise TypeError("bandwidth_group is not an instance of IBandwidthGroup")
         self._call_method('setBandwidthGroupForDevice',
                      in_p=[name, controller_port, device, bandwidth_group])
         
@@ -6493,12 +6523,12 @@ class IMachine(Interface):
             Invalid machine state.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(controller_port, int), \
-                "controller_port is not an instance of int"
-        assert isinstance(device, int), \
-                "device is not an instance of int"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(controller_port, int):
+            raise TypeError("controller_port is not an instance of int")
+        if not isinstance(device, int):
+            raise TypeError("device is not an instance of int")
         self._call_method('setNoBandwidthGroupForDevice',
                      in_p=[name, controller_port, device])
         
@@ -6550,14 +6580,14 @@ class IMachine(Interface):
             Medium not attached to specified port, device, controller.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(controller_port, int), \
-                "controller_port is not an instance of int"
-        assert isinstance(device, int), \
-                "device is not an instance of int"
-        assert isinstance(force, bool), \
-                "force is not an instance of bool"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(controller_port, int):
+            raise TypeError("controller_port is not an instance of int")
+        if not isinstance(device, int):
+            raise TypeError("device is not an instance of int")
+        if not isinstance(force, bool):
+            raise TypeError("force is not an instance of bool")
         self._call_method('unmountMedium',
                      in_p=[name, controller_port, device, force])
         
@@ -6611,16 +6641,16 @@ class IMachine(Interface):
             Medium already attached to this or another virtual machine.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(controller_port, int), \
-                "controller_port is not an instance of int"
-        assert isinstance(device, int), \
-                "device is not an instance of int"
-        assert isinstance(medium, IMedium), \
-                "medium is not an instance of IMedium"
-        assert isinstance(force, bool), \
-                "force is not an instance of bool"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(controller_port, int):
+            raise TypeError("controller_port is not an instance of int")
+        if not isinstance(device, int):
+            raise TypeError("device is not an instance of int")
+        if not isinstance(medium, IMedium):
+            raise TypeError("medium is not an instance of IMedium")
+        if not isinstance(force, bool):
+            raise TypeError("force is not an instance of bool")
         self._call_method('mountMedium',
                      in_p=[name, controller_port, device, medium, force])
         
@@ -6650,12 +6680,12 @@ class IMachine(Interface):
             No medium attached to given slot/bus.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(controller_port, int), \
-                "controller_port is not an instance of int"
-        assert isinstance(device, int), \
-                "device is not an instance of int"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(controller_port, int):
+            raise TypeError("controller_port is not an instance of int")
+        if not isinstance(device, int):
+            raise TypeError("device is not an instance of int")
         medium = self._call_method('getMedium',
                      in_p=[name, controller_port, device])
         medium = IMedium(medium)
@@ -6673,8 +6703,8 @@ class IMachine(Interface):
             A storage controller with given name doesn't exist.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         medium_attachments = self._call_method('getMediumAttachmentsOfController',
                      in_p=[name])
         medium_attachments = [IMediumAttachment(a) for a in medium_attachments]
@@ -6696,12 +6726,12 @@ class IMachine(Interface):
             No attachment exists for the given controller/port/device combination.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(controller_port, int), \
-                "controller_port is not an instance of int"
-        assert isinstance(device, int), \
-                "device is not an instance of int"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(controller_port, int):
+            raise TypeError("controller_port is not an instance of int")
+        if not isinstance(device, int):
+            raise TypeError("device is not an instance of int")
         attachment = self._call_method('getMediumAttachment',
                      in_p=[name, controller_port, device])
         attachment = IMediumAttachment(attachment)
@@ -6736,12 +6766,12 @@ class IMachine(Interface):
             Hardware or host OS doesn't allow PCI device passthrought.
         
         """
-        assert isinstance(host_address, int), \
-                "host_address is not an instance of int"
-        assert isinstance(desired_guest_address, int), \
-                "desired_guest_address is not an instance of int"
-        assert isinstance(try_to_unbind, bool), \
-                "try_to_unbind is not an instance of bool"
+        if not isinstance(host_address, int):
+            raise TypeError("host_address is not an instance of int")
+        if not isinstance(desired_guest_address, int):
+            raise TypeError("desired_guest_address is not an instance of int")
+        if not isinstance(try_to_unbind, bool):
+            raise TypeError("try_to_unbind is not an instance of bool")
         self._call_method('attachHostPCIDevice',
                      in_p=[host_address, desired_guest_address, try_to_unbind])
         
@@ -6769,8 +6799,8 @@ class IMachine(Interface):
             Hardware or host OS doesn't allow PCI device passthrought.
         
         """
-        assert isinstance(host_address, int), \
-                "host_address is not an instance of int"
+        if not isinstance(host_address, int):
+            raise TypeError("host_address is not an instance of int")
         self._call_method('detachHostPCIDevice',
                      in_p=[host_address])
         
@@ -6789,8 +6819,8 @@ class IMachine(Interface):
             Invalid @a slot number.
         
         """
-        assert isinstance(slot, int), \
-                "slot is not an instance of int"
+        if not isinstance(slot, int):
+            raise TypeError("slot is not an instance of int")
         adapter = self._call_method('getNetworkAdapter',
                      in_p=[slot])
         adapter = INetworkAdapter(adapter)
@@ -6823,10 +6853,10 @@ class IMachine(Interface):
             Invalid @a controllerType.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(connection_type, StorageBus), \
-                "connection_type is not an instance of StorageBus"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(connection_type, StorageBus):
+            raise TypeError("connection_type is not an instance of StorageBus")
         controller = self._call_method('addStorageController',
                      in_p=[name, connection_type])
         controller = IStorageController(controller)
@@ -6843,8 +6873,8 @@ class IMachine(Interface):
             A storage controller with given name doesn't exist.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         storage_controller = self._call_method('getStorageControllerByName',
                      in_p=[name])
         storage_controller = IStorageController(storage_controller)
@@ -6861,8 +6891,8 @@ class IMachine(Interface):
             A storage controller with given instance number doesn't exist.
         
         """
-        assert isinstance(instance, int), \
-                "instance is not an instance of int"
+        if not isinstance(instance, int):
+            raise TypeError("instance is not an instance of int")
         storage_controller = self._call_method('getStorageControllerByInstance',
                      in_p=[instance])
         storage_controller = IStorageController(storage_controller)
@@ -6881,8 +6911,8 @@ class IMachine(Interface):
           created differencing media, should not happen).
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         self._call_method('removeStorageController',
                      in_p=[name])
         
@@ -6900,10 +6930,10 @@ class IMachine(Interface):
             Another storage controller is marked as bootable already.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(bootable, bool), \
-                "bootable is not an instance of bool"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(bootable, bool):
+            raise TypeError("bootable is not an instance of bool")
         self._call_method('setStorageControllerBootable',
                      in_p=[name, bootable])
         
@@ -6922,8 +6952,8 @@ class IMachine(Interface):
             Invalid @a slot number.
         
         """
-        assert isinstance(slot, int), \
-                "slot is not an instance of int"
+        if not isinstance(slot, int):
+            raise TypeError("slot is not an instance of int")
         port = self._call_method('getSerialPort',
                      in_p=[slot])
         port = ISerialPort(port)
@@ -6944,8 +6974,8 @@ class IMachine(Interface):
             Invalid @a slot number.
         
         """
-        assert isinstance(slot, int), \
-                "slot is not an instance of int"
+        if not isinstance(slot, int):
+            raise TypeError("slot is not an instance of int")
         port = self._call_method('getParallelPort',
                      in_p=[slot])
         port = IParallelPort(port)
@@ -6982,8 +7012,8 @@ class IMachine(Interface):
             Could not parse the settings file.
         
         """
-        assert isinstance(key, str), \
-                "key is not an instance of str"
+        if not isinstance(key, str):
+            raise TypeError("key is not an instance of str")
         value = self._call_method('getExtraData',
                      in_p=[key])
         value = str(value)
@@ -7026,10 +7056,10 @@ class IMachine(Interface):
             Could not parse the settings file.
         
         """
-        assert isinstance(key, str), \
-                "key is not an instance of str"
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if not isinstance(key, str):
+            raise TypeError("key is not an instance of str")
+        if not isinstance(value, str):
+            raise TypeError("value is not an instance of str")
         self._call_method('setExtraData',
                      in_p=[key, value])
         
@@ -7046,8 +7076,8 @@ class IMachine(Interface):
             Invalid property.
         
         """
-        assert isinstance(property_p, CPUPropertyType), \
-                "property_p is not an instance of CPUPropertyType"
+        if not isinstance(property_p, CPUPropertyType):
+            raise TypeError("property_p is not an instance of CPUPropertyType")
         value = self._call_method('getCPUProperty',
                      in_p=[property_p])
         value = bool(value)
@@ -7066,10 +7096,10 @@ class IMachine(Interface):
             Invalid property.
         
         """
-        assert isinstance(property_p, CPUPropertyType), \
-                "property_p is not an instance of CPUPropertyType"
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(property_p, CPUPropertyType):
+            raise TypeError("property_p is not an instance of CPUPropertyType")
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         self._call_method('setCPUProperty',
                      in_p=[property_p, value])
         
@@ -7102,8 +7132,8 @@ class IMachine(Interface):
             Invalid id.
         
         """
-        assert isinstance(id_p, int), \
-                "id_p is not an instance of int"
+        if not isinstance(id_p, int):
+            raise TypeError("id_p is not an instance of int")
         (val_eax, val_ebx, val_ecx, val_edx) = self._call_method('getCPUIDLeaf',
                      in_p=[id_p])
         val_eax = int(val_eax)
@@ -7145,16 +7175,16 @@ class IMachine(Interface):
             Invalid id.
         
         """
-        assert isinstance(id_p, int), \
-                "id_p is not an instance of int"
-        assert isinstance(val_eax, int), \
-                "val_eax is not an instance of int"
-        assert isinstance(val_ebx, int), \
-                "val_ebx is not an instance of int"
-        assert isinstance(val_ecx, int), \
-                "val_ecx is not an instance of int"
-        assert isinstance(val_edx, int), \
-                "val_edx is not an instance of int"
+        if not isinstance(id_p, int):
+            raise TypeError("id_p is not an instance of int")
+        if not isinstance(val_eax, int):
+            raise TypeError("val_eax is not an instance of int")
+        if not isinstance(val_ebx, int):
+            raise TypeError("val_ebx is not an instance of int")
+        if not isinstance(val_ecx, int):
+            raise TypeError("val_ecx is not an instance of int")
+        if not isinstance(val_edx, int):
+            raise TypeError("val_edx is not an instance of int")
         self._call_method('setCPUIDLeaf',
                      in_p=[id_p, val_eax, val_ebx, val_ecx, val_edx])
         
@@ -7168,8 +7198,8 @@ class IMachine(Interface):
             Invalid id.
         
         """
-        assert isinstance(id_p, int), \
-                "id_p is not an instance of int"
+        if not isinstance(id_p, int):
+            raise TypeError("id_p is not an instance of int")
         self._call_method('removeCPUIDLeaf',
                      in_p=[id_p])
         
@@ -7192,8 +7222,8 @@ class IMachine(Interface):
             Invalid property.
         
         """
-        assert isinstance(property_p, HWVirtExPropertyType), \
-                "property_p is not an instance of HWVirtExPropertyType"
+        if not isinstance(property_p, HWVirtExPropertyType):
+            raise TypeError("property_p is not an instance of HWVirtExPropertyType")
         value = self._call_method('getHWVirtExProperty',
                      in_p=[property_p])
         value = bool(value)
@@ -7212,10 +7242,10 @@ class IMachine(Interface):
             Invalid property.
         
         """
-        assert isinstance(property_p, HWVirtExPropertyType), \
-                "property_p is not an instance of HWVirtExPropertyType"
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(property_p, HWVirtExPropertyType):
+            raise TypeError("property_p is not an instance of HWVirtExPropertyType")
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         self._call_method('setHWVirtExProperty',
                      in_p=[property_p, value])
         
@@ -7346,8 +7376,8 @@ class IMachine(Interface):
             Machine is currently locked for a session.
         
         """
-        assert isinstance(cleanup_mode, CleanupMode), \
-                "cleanup_mode is not an instance of CleanupMode"
+        if not isinstance(cleanup_mode, CleanupMode):
+            raise TypeError("cleanup_mode is not an instance of CleanupMode")
         media = self._call_method('unregister',
                      in_p=[cleanup_mode])
         media = [IMedium(a) for a in media]
@@ -7400,8 +7430,11 @@ class IMachine(Interface):
             Could not delete the settings file.
         
         """
-        assert isinstance(media, list), \
-                "media is not an instance of list"
+        if not isinstance(media, list):
+            raise TypeError("media is not an instance of list")
+        for a in media:
+            if not isinstance(a, IMedium):
+                raise TypeError("array can only contain IMedium objects")
         progress = self._call_method('deleteConfig',
                      in_p=[media])
         progress = IProgress(progress)
@@ -7421,10 +7454,10 @@ class IMachine(Interface):
             VirtualSystemDescription object which is created for this machine.
 
         """
-        assert isinstance(appliance, IAppliance), \
-                "appliance is not an instance of IAppliance"
-        assert isinstance(location, str), \
-                "location is not an instance of str"
+        if not isinstance(appliance, IAppliance):
+            raise TypeError("appliance is not an instance of IAppliance")
+        if not isinstance(location, str):
+            raise TypeError("location is not an instance of str")
         description = self._call_method('exportTo',
                      in_p=[appliance, location])
         description = IVirtualSystemDescription(description)
@@ -7449,8 +7482,8 @@ class IMachine(Interface):
             Virtual machine has no snapshots or snapshot not found.
         
         """
-        assert isinstance(name_or_id, str), \
-                "name_or_id is not an instance of str"
+        if not isinstance(name_or_id, str):
+            raise TypeError("name_or_id is not an instance of str")
         snapshot = self._call_method('findSnapshot',
                      in_p=[name_or_id])
         snapshot = ISnapshot(snapshot)
@@ -7482,14 +7515,14 @@ class IMachine(Interface):
             Shared folder @a hostPath not accessible.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(host_path, str), \
-                "host_path is not an instance of str"
-        assert isinstance(writable, bool), \
-                "writable is not an instance of bool"
-        assert isinstance(automount, bool), \
-                "automount is not an instance of bool"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(host_path, str):
+            raise TypeError("host_path is not an instance of str")
+        if not isinstance(writable, bool):
+            raise TypeError("writable is not an instance of bool")
+        if not isinstance(automount, bool):
+            raise TypeError("automount is not an instance of bool")
         self._call_method('createSharedFolder',
                      in_p=[name, host_path, writable, automount])
         
@@ -7508,8 +7541,8 @@ class IMachine(Interface):
             Shared folder @a name does not exist.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         self._call_method('removeSharedFolder',
                      in_p=[name])
         
@@ -7584,8 +7617,8 @@ class IMachine(Interface):
             Machine session is not open.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         (value, timestamp, flags) = self._call_method('getGuestProperty',
                      in_p=[name])
         value = str(value)
@@ -7607,8 +7640,8 @@ class IMachine(Interface):
             Machine session is not open.
         
         """
-        assert isinstance(property_p, str), \
-                "property_p is not an instance of str"
+        if not isinstance(property_p, str):
+            raise TypeError("property_p is not an instance of str")
         value = self._call_method('getGuestPropertyValue',
                      in_p=[property_p])
         value = str(value)
@@ -7628,8 +7661,8 @@ class IMachine(Interface):
             Machine session is not open.
         
         """
-        assert isinstance(property_p, str), \
-                "property_p is not an instance of str"
+        if not isinstance(property_p, str):
+            raise TypeError("property_p is not an instance of str")
         value = self._call_method('getGuestPropertyTimestamp',
                      in_p=[property_p])
         value = int(value)
@@ -7665,12 +7698,12 @@ class IMachine(Interface):
             Cannot set transient property when machine not running.
         
         """
-        assert isinstance(property_p, str), \
-                "property_p is not an instance of str"
-        assert isinstance(value, str), \
-                "value is not an instance of str"
-        assert isinstance(flags, str), \
-                "flags is not an instance of str"
+        if not isinstance(property_p, str):
+            raise TypeError("property_p is not an instance of str")
+        if not isinstance(value, str):
+            raise TypeError("value is not an instance of str")
+        if not isinstance(flags, str):
+            raise TypeError("flags is not an instance of str")
         self._call_method('setGuestProperty',
                      in_p=[property_p, value, flags])
         
@@ -7697,10 +7730,10 @@ class IMachine(Interface):
             Cannot set transient property when machine not running.
         
         """
-        assert isinstance(property_p, str), \
-                "property_p is not an instance of str"
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if not isinstance(property_p, str):
+            raise TypeError("property_p is not an instance of str")
+        if not isinstance(value, str):
+            raise TypeError("value is not an instance of str")
         self._call_method('setGuestPropertyValue',
                      in_p=[property_p, value])
         
@@ -7714,8 +7747,8 @@ class IMachine(Interface):
             Machine session is not open.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         self._call_method('deleteGuestProperty',
                      in_p=[name])
         
@@ -7743,8 +7776,8 @@ class IMachine(Interface):
           corresponding entries in the @a name array.
 
         """
-        assert isinstance(patterns, str), \
-                "patterns is not an instance of str"
+        if not isinstance(patterns, str):
+            raise TypeError("patterns is not an instance of str")
         (names, values, timestamps, flags) = self._call_method('enumerateGuestProperties',
                      in_p=[patterns])
         names = [str(a) for a in names]
@@ -7775,8 +7808,8 @@ class IMachine(Interface):
             Whether the monitor is enabled in the guest.
 
         """
-        assert isinstance(screen_id, int), \
-                "screen_id is not an instance of int"
+        if not isinstance(screen_id, int):
+            raise TypeError("screen_id is not an instance of int")
         (origin_x, origin_y, width, height, enabled) = self._call_method('querySavedGuestScreenInfo',
                      in_p=[screen_id])
         origin_x = int(origin_x)
@@ -7802,8 +7835,8 @@ class IMachine(Interface):
             Bitmap height.
 
         """
-        assert isinstance(screen_id, int), \
-                "screen_id is not an instance of int"
+        if not isinstance(screen_id, int):
+            raise TypeError("screen_id is not an instance of int")
         (size, width, height) = self._call_method('querySavedThumbnailSize',
                      in_p=[screen_id])
         size = int(size)
@@ -7831,10 +7864,10 @@ class IMachine(Interface):
             Array with resulting bitmap data.
 
         """
-        assert isinstance(screen_id, int), \
-                "screen_id is not an instance of int"
-        assert isinstance(bgr, bool), \
-                "bgr is not an instance of bool"
+        if not isinstance(screen_id, int):
+            raise TypeError("screen_id is not an instance of int")
+        if not isinstance(bgr, bool):
+            raise TypeError("bgr is not an instance of bool")
         (width, height, data) = self._call_method('readSavedThumbnailToArray',
                      in_p=[screen_id, bgr])
         width = int(width)
@@ -7858,8 +7891,8 @@ class IMachine(Interface):
             Array with resulting PNG data.
 
         """
-        assert isinstance(screen_id, int), \
-                "screen_id is not an instance of int"
+        if not isinstance(screen_id, int):
+            raise TypeError("screen_id is not an instance of int")
         (width, height, data) = self._call_method('readSavedThumbnailPNGToArray',
                      in_p=[screen_id])
         width = int(width)
@@ -7883,8 +7916,8 @@ class IMachine(Interface):
             Image height.
 
         """
-        assert isinstance(screen_id, int), \
-                "screen_id is not an instance of int"
+        if not isinstance(screen_id, int):
+            raise TypeError("screen_id is not an instance of int")
         (size, width, height) = self._call_method('querySavedScreenshotPNGSize',
                      in_p=[screen_id])
         size = int(size)
@@ -7908,8 +7941,8 @@ class IMachine(Interface):
             Array with resulting PNG data.
 
         """
-        assert isinstance(screen_id, int), \
-                "screen_id is not an instance of int"
+        if not isinstance(screen_id, int):
+            raise TypeError("screen_id is not an instance of int")
         (width, height, data) = self._call_method('readSavedScreenshotPNGToArray',
                      in_p=[screen_id])
         width = int(width)
@@ -7924,8 +7957,8 @@ class IMachine(Interface):
             The CPU id to insert.
 
         """
-        assert isinstance(cpu, int), \
-                "cpu is not an instance of int"
+        if not isinstance(cpu, int):
+            raise TypeError("cpu is not an instance of int")
         self._call_method('hotPlugCPU',
                      in_p=[cpu])
         
@@ -7936,8 +7969,8 @@ class IMachine(Interface):
             The CPU id to remove.
 
         """
-        assert isinstance(cpu, int), \
-                "cpu is not an instance of int"
+        if not isinstance(cpu, int):
+            raise TypeError("cpu is not an instance of int")
         self._call_method('hotUnplugCPU',
                      in_p=[cpu])
         
@@ -7951,8 +7984,8 @@ class IMachine(Interface):
             Status of the CPU.
 
         """
-        assert isinstance(cpu, int), \
-                "cpu is not an instance of int"
+        if not isinstance(cpu, int):
+            raise TypeError("cpu is not an instance of int")
         attached = self._call_method('getCPUStatus',
                      in_p=[cpu])
         attached = bool(attached)
@@ -7969,8 +8002,8 @@ class IMachine(Interface):
             On return the full path to the log file or an empty string on error.
 
         """
-        assert isinstance(idx, int), \
-                "idx is not an instance of int"
+        if not isinstance(idx, int):
+            raise TypeError("idx is not an instance of int")
         filename = self._call_method('queryLogFilename',
                      in_p=[idx])
         filename = str(filename)
@@ -7996,12 +8029,12 @@ class IMachine(Interface):
           the system the server is running on.
 
         """
-        assert isinstance(idx, int), \
-                "idx is not an instance of int"
-        assert isinstance(offset, int), \
-                "offset is not an instance of int"
-        assert isinstance(size, int), \
-                "size is not an instance of int"
+        if not isinstance(idx, int):
+            raise TypeError("idx is not an instance of int")
+        if not isinstance(offset, int):
+            raise TypeError("offset is not an instance of int")
+        if not isinstance(size, int):
+            raise TypeError("size is not an instance of int")
         data = self._call_method('readLog',
                      in_p=[idx, offset, size])
         data = [str(a) for a in data]
@@ -8037,12 +8070,15 @@ class IMachine(Interface):
             @a target is @c null.
         
         """
-        assert isinstance(target, IMachine), \
-                "target is not an instance of IMachine"
-        assert isinstance(mode, CloneMode), \
-                "mode is not an instance of CloneMode"
-        assert isinstance(options, list), \
-                "options is not an instance of list"
+        if not isinstance(target, IMachine):
+            raise TypeError("target is not an instance of IMachine")
+        if not isinstance(mode, CloneMode):
+            raise TypeError("mode is not an instance of CloneMode")
+        if not isinstance(options, list):
+            raise TypeError("options is not an instance of list")
+        for a in options:
+            if not isinstance(a, CloneOptions):
+                raise TypeError("array can only contain CloneOptions objects")
         progress = self._call_method('cloneTo',
                      in_p=[target, mode, options])
         progress = IProgress(progress)
@@ -8616,8 +8652,8 @@ class IConsole(Interface):
             Virtual machine state neither PoweredOff nor Aborted.
         
         """
-        assert isinstance(saved_state_file, str), \
-                "saved_state_file is not an instance of str"
+        if not isinstance(saved_state_file, str):
+            raise TypeError("saved_state_file is not an instance of str")
         self._call_method('adoptSavedState',
                      in_p=[saved_state_file])
         
@@ -8645,8 +8681,8 @@ class IConsole(Interface):
             Virtual machine not in state Saved.
         
         """
-        assert isinstance(f_remove_file, bool), \
-                "f_remove_file is not an instance of bool"
+        if not isinstance(f_remove_file, bool):
+            raise TypeError("f_remove_file is not an instance of bool")
         self._call_method('discardSavedState',
                      in_p=[f_remove_file])
         
@@ -8661,8 +8697,8 @@ class IConsole(Interface):
             Invalid device type.
         
         """
-        assert isinstance(type_p, DeviceType), \
-                "type_p is not an instance of DeviceType"
+        if not isinstance(type_p, DeviceType):
+            raise TypeError("type_p is not an instance of DeviceType")
         activity = self._call_method('getDeviceActivity',
                      in_p=[type_p])
         activity = DeviceActivity(activity)
@@ -8695,8 +8731,8 @@ class IConsole(Interface):
             Virtual machine does not have a USB controller.
         
         """
-        assert isinstance(id_p, str), \
-                "id_p is not an instance of str"
+        if not isinstance(id_p, str):
+            raise TypeError("id_p is not an instance of str")
         self._call_method('attachUSBDevice',
                      in_p=[id_p])
         
@@ -8725,8 +8761,8 @@ class IConsole(Interface):
             USB device not attached to this virtual machine.
         
         """
-        assert isinstance(id_p, str), \
-                "id_p is not an instance of str"
+        if not isinstance(id_p, str):
+            raise TypeError("id_p is not an instance of str")
         device = self._call_method('detachUSBDevice',
                      in_p=[id_p])
         device = IUSBDevice(device)
@@ -8750,8 +8786,8 @@ class IConsole(Interface):
             Given @c name does not correspond to any USB device.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         device = self._call_method('findUSBDeviceByAddress',
                      in_p=[name])
         device = IUSBDevice(device)
@@ -8774,8 +8810,8 @@ class IConsole(Interface):
             Given @c id does not correspond to any USB device.
         
         """
-        assert isinstance(id_p, str), \
-                "id_p is not an instance of str"
+        if not isinstance(id_p, str):
+            raise TypeError("id_p is not an instance of str")
         device = self._call_method('findUSBDeviceById',
                      in_p=[id_p])
         device = IUSBDevice(device)
@@ -8807,14 +8843,14 @@ class IConsole(Interface):
             Shared folder already exists or not accessible.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(host_path, str), \
-                "host_path is not an instance of str"
-        assert isinstance(writable, bool), \
-                "writable is not an instance of bool"
-        assert isinstance(automount, bool), \
-                "automount is not an instance of bool"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(host_path, str):
+            raise TypeError("host_path is not an instance of str")
+        if not isinstance(writable, bool):
+            raise TypeError("writable is not an instance of bool")
+        if not isinstance(automount, bool):
+            raise TypeError("automount is not an instance of bool")
         self._call_method('createSharedFolder',
                      in_p=[name, host_path, writable, automount])
         
@@ -8833,8 +8869,8 @@ class IConsole(Interface):
             Shared folder does not exists.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         self._call_method('removeSharedFolder',
                      in_p=[name])
         
@@ -8871,10 +8907,10 @@ class IConsole(Interface):
             Virtual machine currently changing state.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(description, str), \
-                "description is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(description, str):
+            raise TypeError("description is not an instance of str")
         progress = self._call_method('takeSnapshot',
                      in_p=[name, description])
         progress = IProgress(progress)
@@ -8948,8 +8984,8 @@ class IConsole(Interface):
           text explains the reason for the failure.
         
         """
-        assert isinstance(id_p, str), \
-                "id_p is not an instance of str"
+        if not isinstance(id_p, str):
+            raise TypeError("id_p is not an instance of str")
         progress = self._call_method('deleteSnapshot',
                      in_p=[id_p])
         progress = IProgress(progress)
@@ -8985,8 +9021,8 @@ class IConsole(Interface):
             The method is not implemented yet.
         
         """
-        assert isinstance(id_p, str), \
-                "id_p is not an instance of str"
+        if not isinstance(id_p, str):
+            raise TypeError("id_p is not an instance of str")
         progress = self._call_method('deleteSnapshotAndAllChildren',
                      in_p=[id_p])
         progress = IProgress(progress)
@@ -9027,10 +9063,10 @@ class IConsole(Interface):
             The method is not implemented yet.
         
         """
-        assert isinstance(start_id, str), \
-                "start_id is not an instance of str"
-        assert isinstance(end_id, str), \
-                "end_id is not an instance of str"
+        if not isinstance(start_id, str):
+            raise TypeError("start_id is not an instance of str")
+        if not isinstance(end_id, str):
+            raise TypeError("end_id is not an instance of str")
         progress = self._call_method('deleteSnapshotRange',
                      in_p=[start_id, end_id])
         progress = IProgress(progress)
@@ -9071,8 +9107,8 @@ class IConsole(Interface):
             Virtual machine is running.
         
         """
-        assert isinstance(snapshot, ISnapshot), \
-                "snapshot is not an instance of ISnapshot"
+        if not isinstance(snapshot, ISnapshot):
+            raise TypeError("snapshot is not an instance of ISnapshot")
         progress = self._call_method('restoreSnapshot',
                      in_p=[snapshot])
         progress = IProgress(progress)
@@ -9111,14 +9147,14 @@ class IConsole(Interface):
             Virtual machine not running or paused.
         
         """
-        assert isinstance(hostname, str), \
-                "hostname is not an instance of str"
-        assert isinstance(tcpport, int), \
-                "tcpport is not an instance of int"
-        assert isinstance(password, str), \
-                "password is not an instance of str"
-        assert isinstance(max_downtime, int), \
-                "max_downtime is not an instance of int"
+        if not isinstance(hostname, str):
+            raise TypeError("hostname is not an instance of str")
+        if not isinstance(tcpport, int):
+            raise TypeError("tcpport is not an instance of int")
+        if not isinstance(password, str):
+            raise TypeError("password is not an instance of str")
+        if not isinstance(max_downtime, int):
+            raise TypeError("max_downtime is not an instance of int")
         progress = self._call_method('teleport',
                      in_p=[hostname, tcpport, password, max_downtime])
         progress = IProgress(progress)
@@ -9249,10 +9285,10 @@ class IHostNetworkInterface(Interface):
             network mask.
 
         """
-        assert isinstance(ip_address, str), \
-                "ip_address is not an instance of str"
-        assert isinstance(network_mask, str), \
-                "network_mask is not an instance of str"
+        if not isinstance(ip_address, str):
+            raise TypeError("ip_address is not an instance of str")
+        if not isinstance(network_mask, str):
+            raise TypeError("network_mask is not an instance of str")
         self._call_method('enableStaticIPConfig',
                      in_p=[ip_address, network_mask])
         
@@ -9266,10 +9302,10 @@ class IHostNetworkInterface(Interface):
             network mask.
 
         """
-        assert isinstance(ipv6_address, str), \
-                "ipv6_address is not an instance of str"
-        assert isinstance(ipv6_network_mask_prefix_length, int), \
-                "ipv6_network_mask_prefix_length is not an instance of int"
+        if not isinstance(ipv6_address, str):
+            raise TypeError("ipv6_address is not an instance of str")
+        if not isinstance(ipv6_network_mask_prefix_length, int):
+            raise TypeError("ipv6_network_mask_prefix_length is not an instance of int")
         self._call_method('enableStaticIPConfigV6',
                      in_p=[ipv6_address, ipv6_network_mask_prefix_length])
         
@@ -9400,8 +9436,8 @@ class IHost(Interface):
           invalid.
 
         """
-        assert isinstance(cpu_id, int), \
-                "cpu_id is not an instance of int"
+        if not isinstance(cpu_id, int):
+            raise TypeError("cpu_id is not an instance of int")
         speed = self._call_method('getProcessorSpeed',
                      in_p=[cpu_id])
         speed = int(speed)
@@ -9417,8 +9453,8 @@ class IHost(Interface):
             Feature is supported or not.
 
         """
-        assert isinstance(feature, ProcessorFeature), \
-                "feature is not an instance of ProcessorFeature"
+        if not isinstance(feature, ProcessorFeature):
+            raise TypeError("feature is not an instance of ProcessorFeature")
         supported = self._call_method('getProcessorFeature',
                      in_p=[feature])
         supported = bool(supported)
@@ -9438,8 +9474,8 @@ class IHost(Interface):
           @a cpuId is invalid.
 
         """
-        assert isinstance(cpu_id, int), \
-                "cpu_id is not an instance of int"
+        if not isinstance(cpu_id, int):
+            raise TypeError("cpu_id is not an instance of int")
         description = self._call_method('getProcessorDescription',
                      in_p=[cpu_id])
         description = str(description)
@@ -9475,12 +9511,12 @@ class IHost(Interface):
             CPUID leaf value for register edx.
 
         """
-        assert isinstance(cpu_id, int), \
-                "cpu_id is not an instance of int"
-        assert isinstance(leaf, int), \
-                "leaf is not an instance of int"
-        assert isinstance(sub_leaf, int), \
-                "sub_leaf is not an instance of int"
+        if not isinstance(cpu_id, int):
+            raise TypeError("cpu_id is not an instance of int")
+        if not isinstance(leaf, int):
+            raise TypeError("leaf is not an instance of int")
+        if not isinstance(sub_leaf, int):
+            raise TypeError("sub_leaf is not an instance of int")
         (val_eax, val_ebx, val_ecx, val_edx) = self._call_method('getProcessorCPUIDLeaf',
                      in_p=[cpu_id, leaf, sub_leaf])
         val_eax = int(val_eax)
@@ -9568,8 +9604,8 @@ class IHost(Interface):
             No host network interface matching @a id found.
         
         """
-        assert isinstance(id_p, str), \
-                "id_p is not an instance of str"
+        if not isinstance(id_p, str):
+            raise TypeError("id_p is not an instance of str")
         progress = self._call_method('removeHostOnlyNetworkInterface',
                      in_p=[id_p])
         progress = IProgress(progress)
@@ -9592,8 +9628,8 @@ class IHost(Interface):
             Created filter object.
 
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         filter_p = self._call_method('createUSBDeviceFilter',
                      in_p=[name])
         filter_p = IHostUSBDeviceFilter(filter_p)
@@ -9631,10 +9667,10 @@ class IHost(Interface):
             USB device filter already in list.
         
         """
-        assert isinstance(position, int), \
-                "position is not an instance of int"
-        assert isinstance(filter_p, IHostUSBDeviceFilter), \
-                "filter_p is not an instance of IHostUSBDeviceFilter"
+        if not isinstance(position, int):
+            raise TypeError("position is not an instance of int")
+        if not isinstance(filter_p, IHostUSBDeviceFilter):
+            raise TypeError("filter_p is not an instance of IHostUSBDeviceFilter")
         self._call_method('insertUSBDeviceFilter',
                      in_p=[position, filter_p])
         
@@ -9660,8 +9696,8 @@ class IHost(Interface):
             USB device filter list empty or invalid @a position.
         
         """
-        assert isinstance(position, int), \
-                "position is not an instance of int"
+        if not isinstance(position, int):
+            raise TypeError("position is not an instance of int")
         self._call_method('removeUSBDeviceFilter',
                      in_p=[position])
         
@@ -9678,8 +9714,8 @@ class IHost(Interface):
             Given @c name does not correspond to any host drive.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         drive = self._call_method('findHostDVDDrive',
                      in_p=[name])
         drive = IMedium(drive)
@@ -9698,8 +9734,8 @@ class IHost(Interface):
             Given @c name does not correspond to any host floppy drive.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         drive = self._call_method('findHostFloppyDrive',
                      in_p=[name])
         drive = IMedium(drive)
@@ -9719,8 +9755,8 @@ class IHost(Interface):
             Found host network interface object.
 
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         network_interface = self._call_method('findHostNetworkInterfaceByName',
                      in_p=[name])
         network_interface = IHostNetworkInterface(network_interface)
@@ -9740,8 +9776,8 @@ class IHost(Interface):
             Found host network interface object.
 
         """
-        assert isinstance(id_p, str), \
-                "id_p is not an instance of str"
+        if not isinstance(id_p, str):
+            raise TypeError("id_p is not an instance of str")
         network_interface = self._call_method('findHostNetworkInterfaceById',
                      in_p=[id_p])
         network_interface = IHostNetworkInterface(network_interface)
@@ -9757,8 +9793,8 @@ class IHost(Interface):
             Found host network interface objects.
 
         """
-        assert isinstance(type_p, HostNetworkInterfaceType), \
-                "type_p is not an instance of HostNetworkInterfaceType"
+        if not isinstance(type_p, HostNetworkInterfaceType):
+            raise TypeError("type_p is not an instance of HostNetworkInterfaceType")
         network_interfaces = self._call_method('findHostNetworkInterfacesOfType',
                      in_p=[type_p])
         network_interfaces = [IHostNetworkInterface(a) for a in network_interfaces]
@@ -9781,8 +9817,8 @@ class IHost(Interface):
             Given @c id does not correspond to any USB device.
         
         """
-        assert isinstance(id_p, str), \
-                "id_p is not an instance of str"
+        if not isinstance(id_p, str):
+            raise TypeError("id_p is not an instance of str")
         device = self._call_method('findUSBDeviceById',
                      in_p=[id_p])
         device = IHostUSBDevice(device)
@@ -9806,8 +9842,8 @@ class IHost(Interface):
             Given @c name does not correspond to any USB device.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         device = self._call_method('findUSBDeviceByAddress',
                      in_p=[name])
         device = IHostUSBDevice(device)
@@ -10267,8 +10303,8 @@ class ISystemProperties(Interface):
             The maximum total number of network adapters allowed.
 
         """
-        assert isinstance(chipset, ChipsetType), \
-                "chipset is not an instance of ChipsetType"
+        if not isinstance(chipset, ChipsetType):
+            raise TypeError("chipset is not an instance of ChipsetType")
         max_network_adapters = self._call_method('getMaxNetworkAdapters',
                      in_p=[chipset])
         max_network_adapters = int(max_network_adapters)
@@ -10289,10 +10325,10 @@ class ISystemProperties(Interface):
           particular chipset and attachment type.
 
         """
-        assert isinstance(chipset, ChipsetType), \
-                "chipset is not an instance of ChipsetType"
-        assert isinstance(type_p, NetworkAttachmentType), \
-                "type_p is not an instance of NetworkAttachmentType"
+        if not isinstance(chipset, ChipsetType):
+            raise TypeError("chipset is not an instance of ChipsetType")
+        if not isinstance(type_p, NetworkAttachmentType):
+            raise TypeError("type_p is not an instance of NetworkAttachmentType")
         max_network_adapters = self._call_method('getMaxNetworkAdaptersOfType',
                      in_p=[chipset, type_p])
         max_network_adapters = int(max_network_adapters)
@@ -10310,8 +10346,8 @@ class ISystemProperties(Interface):
         storage bus.
 
         """
-        assert isinstance(bus, StorageBus), \
-                "bus is not an instance of StorageBus"
+        if not isinstance(bus, StorageBus):
+            raise TypeError("bus is not an instance of StorageBus")
         max_devices_per_port = self._call_method('getMaxDevicesPerPortForStorageBus',
                      in_p=[bus])
         max_devices_per_port = int(max_devices_per_port)
@@ -10327,8 +10363,8 @@ class ISystemProperties(Interface):
             The minimum number of ports for the given storage bus.
 
         """
-        assert isinstance(bus, StorageBus), \
-                "bus is not an instance of StorageBus"
+        if not isinstance(bus, StorageBus):
+            raise TypeError("bus is not an instance of StorageBus")
         min_port_count = self._call_method('getMinPortCountForStorageBus',
                      in_p=[bus])
         min_port_count = int(min_port_count)
@@ -10344,8 +10380,8 @@ class ISystemProperties(Interface):
             The maximum number of ports for the given storage bus.
 
         """
-        assert isinstance(bus, StorageBus), \
-                "bus is not an instance of StorageBus"
+        if not isinstance(bus, StorageBus):
+            raise TypeError("bus is not an instance of StorageBus")
         max_port_count = self._call_method('getMaxPortCountForStorageBus',
                      in_p=[bus])
         max_port_count = int(max_port_count)
@@ -10367,10 +10403,10 @@ class ISystemProperties(Interface):
             The maximum number of instances for the given storage bus.
 
         """
-        assert isinstance(chipset, ChipsetType), \
-                "chipset is not an instance of ChipsetType"
-        assert isinstance(bus, StorageBus), \
-                "bus is not an instance of StorageBus"
+        if not isinstance(chipset, ChipsetType):
+            raise TypeError("chipset is not an instance of ChipsetType")
+        if not isinstance(bus, StorageBus):
+            raise TypeError("bus is not an instance of StorageBus")
         max_instances = self._call_method('getMaxInstancesOfStorageBus',
                      in_p=[chipset, bus])
         max_instances = int(max_instances)
@@ -10388,8 +10424,8 @@ class ISystemProperties(Interface):
             The list of all supported device types for the given storage bus.
 
         """
-        assert isinstance(bus, StorageBus), \
-                "bus is not an instance of StorageBus"
+        if not isinstance(bus, StorageBus):
+            raise TypeError("bus is not an instance of StorageBus")
         device_types = self._call_method('getDeviceTypesForStorageBus',
                      in_p=[bus])
         device_types = [DeviceType(a) for a in device_types]
@@ -10406,8 +10442,8 @@ class ISystemProperties(Interface):
             Returned flag indicating the default value
 
         """
-        assert isinstance(controller_type, StorageControllerType), \
-                "controller_type is not an instance of StorageControllerType"
+        if not isinstance(controller_type, StorageControllerType):
+            raise TypeError("controller_type is not an instance of StorageControllerType")
         enabled = self._call_method('getDefaultIoCacheSettingForStorageController',
                      in_p=[controller_type])
         enabled = bool(enabled)
@@ -10839,12 +10875,15 @@ class IGuestSession(Interface):
             Error starting the copy operation.
         
         """
-        assert isinstance(source, str), \
-                "source is not an instance of str"
-        assert isinstance(dest, str), \
-                "dest is not an instance of str"
-        assert isinstance(flags, list), \
-                "flags is not an instance of list"
+        if not isinstance(source, str):
+            raise TypeError("source is not an instance of str")
+        if not isinstance(dest, str):
+            raise TypeError("dest is not an instance of str")
+        if not isinstance(flags, list):
+            raise TypeError("flags is not an instance of list")
+        for a in flags:
+            if not isinstance(a, CopyFileFlag):
+                raise TypeError("array can only contain CopyFileFlag objects")
         progress = self._call_method('copyFrom',
                      in_p=[source, dest, flags])
         progress = IProgress(progress)
@@ -10869,12 +10908,15 @@ class IGuestSession(Interface):
             Error starting the copy operation.
         
         """
-        assert isinstance(source, str), \
-                "source is not an instance of str"
-        assert isinstance(dest, str), \
-                "dest is not an instance of str"
-        assert isinstance(flags, list), \
-                "flags is not an instance of list"
+        if not isinstance(source, str):
+            raise TypeError("source is not an instance of str")
+        if not isinstance(dest, str):
+            raise TypeError("dest is not an instance of str")
+        if not isinstance(flags, list):
+            raise TypeError("flags is not an instance of list")
+        for a in flags:
+            if not isinstance(a, CopyFileFlag):
+                raise TypeError("array can only contain CopyFileFlag objects")
         progress = self._call_method('copyTo',
                      in_p=[source, dest, flags])
         progress = IProgress(progress)
@@ -10896,12 +10938,15 @@ class IGuestSession(Interface):
             Error while creating the directory.
         
         """
-        assert isinstance(path, str), \
-                "path is not an instance of str"
-        assert isinstance(mode, int), \
-                "mode is not an instance of int"
-        assert isinstance(flags, list), \
-                "flags is not an instance of list"
+        if not isinstance(path, str):
+            raise TypeError("path is not an instance of str")
+        if not isinstance(mode, int):
+            raise TypeError("mode is not an instance of int")
+        if not isinstance(flags, list):
+            raise TypeError("flags is not an instance of list")
+        for a in flags:
+            if not isinstance(a, DirectoryCreateFlag):
+                raise TypeError("array can only contain DirectoryCreateFlag objects")
         self._call_method('directoryCreate',
                      in_p=[path, mode, flags])
         
@@ -10946,14 +10991,14 @@ class IGuestSession(Interface):
           option was requested.
         
         """
-        assert isinstance(template_name, str), \
-                "template_name is not an instance of str"
-        assert isinstance(mode, int), \
-                "mode is not an instance of int"
-        assert isinstance(path, str), \
-                "path is not an instance of str"
-        assert isinstance(secure, bool), \
-                "secure is not an instance of bool"
+        if not isinstance(template_name, str):
+            raise TypeError("template_name is not an instance of str")
+        if not isinstance(mode, int):
+            raise TypeError("mode is not an instance of int")
+        if not isinstance(path, str):
+            raise TypeError("path is not an instance of str")
+        if not isinstance(secure, bool):
+            raise TypeError("secure is not an instance of bool")
         directory = self._call_method('directoryCreateTemp',
                      in_p=[template_name, mode, path, secure])
         directory = str(directory)
@@ -10972,8 +11017,8 @@ class IGuestSession(Interface):
             Error while checking existence of the directory specified.
         
         """
-        assert isinstance(path, str), \
-                "path is not an instance of str"
+        if not isinstance(path, str):
+            raise TypeError("path is not an instance of str")
         exists = self._call_method('directoryExists',
                      in_p=[path])
         exists = bool(exists)
@@ -11002,12 +11047,15 @@ class IGuestSession(Interface):
             Error while opening the directory.
         
         """
-        assert isinstance(path, str), \
-                "path is not an instance of str"
-        assert isinstance(filter_p, str), \
-                "filter_p is not an instance of str"
-        assert isinstance(flags, list), \
-                "flags is not an instance of list"
+        if not isinstance(path, str):
+            raise TypeError("path is not an instance of str")
+        if not isinstance(filter_p, str):
+            raise TypeError("filter_p is not an instance of str")
+        if not isinstance(flags, list):
+            raise TypeError("flags is not an instance of list")
+        for a in flags:
+            if not isinstance(a, DirectoryOpenFlag):
+                raise TypeError("array can only contain DirectoryOpenFlag objects")
         directory = self._call_method('directoryOpen',
                      in_p=[path, filter_p, flags])
         directory = IGuestDirectory(directory)
@@ -11029,8 +11077,8 @@ class IGuestSession(Interface):
             Error querying information.
         
         """
-        assert isinstance(path, str), \
-                "path is not an instance of str"
+        if not isinstance(path, str):
+            raise TypeError("path is not an instance of str")
         info = self._call_method('directoryQueryInfo',
                      in_p=[path])
         info = IGuestFsObjInfo(info)
@@ -11046,8 +11094,8 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        assert isinstance(path, str), \
-                "path is not an instance of str"
+        if not isinstance(path, str):
+            raise TypeError("path is not an instance of str")
         self._call_method('directoryRemove',
                      in_p=[path])
         
@@ -11067,10 +11115,13 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        assert isinstance(path, str), \
-                "path is not an instance of str"
-        assert isinstance(flags, list), \
-                "flags is not an instance of list"
+        if not isinstance(path, str):
+            raise TypeError("path is not an instance of str")
+        if not isinstance(flags, list):
+            raise TypeError("flags is not an instance of list")
+        for a in flags:
+            if not isinstance(a, DirectoryRemoveRecFlag):
+                raise TypeError("array can only contain DirectoryRemoveRecFlag objects")
         progress = self._call_method('directoryRemoveRecursive',
                      in_p=[path, flags])
         progress = IProgress(progress)
@@ -11092,12 +11143,15 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        assert isinstance(source, str), \
-                "source is not an instance of str"
-        assert isinstance(dest, str), \
-                "dest is not an instance of str"
-        assert isinstance(flags, list), \
-                "flags is not an instance of list"
+        if not isinstance(source, str):
+            raise TypeError("source is not an instance of str")
+        if not isinstance(dest, str):
+            raise TypeError("dest is not an instance of str")
+        if not isinstance(flags, list):
+            raise TypeError("flags is not an instance of list")
+        for a in flags:
+            if not isinstance(a, PathRenameFlag):
+                raise TypeError("array can only contain PathRenameFlag objects")
         self._call_method('directoryRename',
                      in_p=[source, dest, flags])
         
@@ -11114,10 +11168,10 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        assert isinstance(path, str), \
-                "path is not an instance of str"
-        assert isinstance(acl, str), \
-                "acl is not an instance of str"
+        if not isinstance(path, str):
+            raise TypeError("path is not an instance of str")
+        if not isinstance(acl, str):
+            raise TypeError("acl is not an instance of str")
         self._call_method('directorySetACL',
                      in_p=[path, acl])
         
@@ -11144,8 +11198,8 @@ class IGuestSession(Interface):
             Error while getting the value of the session environment variable.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         value = self._call_method('environmentGet',
                      in_p=[name])
         value = str(value)
@@ -11164,10 +11218,10 @@ class IGuestSession(Interface):
             Error while setting the session environment variable.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(value, str):
+            raise TypeError("value is not an instance of str")
         self._call_method('environmentSet',
                      in_p=[name, value])
         
@@ -11181,8 +11235,8 @@ class IGuestSession(Interface):
             Error while unsetting the session environment variable.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         self._call_method('environmentUnset',
                      in_p=[name])
         
@@ -11227,14 +11281,14 @@ class IGuestSession(Interface):
           option was requested.
         
         """
-        assert isinstance(template_name, str), \
-                "template_name is not an instance of str"
-        assert isinstance(mode, int), \
-                "mode is not an instance of int"
-        assert isinstance(path, str), \
-                "path is not an instance of str"
-        assert isinstance(secure, bool), \
-                "secure is not an instance of bool"
+        if not isinstance(template_name, str):
+            raise TypeError("template_name is not an instance of str")
+        if not isinstance(mode, int):
+            raise TypeError("mode is not an instance of int")
+        if not isinstance(path, str):
+            raise TypeError("path is not an instance of str")
+        if not isinstance(secure, bool):
+            raise TypeError("secure is not an instance of bool")
         file_p = self._call_method('fileCreateTemp',
                      in_p=[template_name, mode, path, secure])
         file_p = IGuestFile(file_p)
@@ -11253,8 +11307,8 @@ class IGuestSession(Interface):
             Error while checking existence of the file specified.
         
         """
-        assert isinstance(path, str), \
-                "path is not an instance of str"
+        if not isinstance(path, str):
+            raise TypeError("path is not an instance of str")
         exists = self._call_method('fileExists',
                      in_p=[path])
         exists = bool(exists)
@@ -11273,8 +11327,8 @@ class IGuestSession(Interface):
             Error while removing the file.
         
         """
-        assert isinstance(path, str), \
-                "path is not an instance of str"
+        if not isinstance(path, str):
+            raise TypeError("path is not an instance of str")
         self._call_method('fileRemove',
                      in_p=[path])
         
@@ -11307,16 +11361,16 @@ class IGuestSession(Interface):
             Error while opening the file.
         
         """
-        assert isinstance(path, str), \
-                "path is not an instance of str"
-        assert isinstance(open_mode, str), \
-                "open_mode is not an instance of str"
-        assert isinstance(disposition, str), \
-                "disposition is not an instance of str"
-        assert isinstance(creation_mode, int), \
-                "creation_mode is not an instance of int"
-        assert isinstance(offset, int), \
-                "offset is not an instance of int"
+        if not isinstance(path, str):
+            raise TypeError("path is not an instance of str")
+        if not isinstance(open_mode, str):
+            raise TypeError("open_mode is not an instance of str")
+        if not isinstance(disposition, str):
+            raise TypeError("disposition is not an instance of str")
+        if not isinstance(creation_mode, int):
+            raise TypeError("creation_mode is not an instance of int")
+        if not isinstance(offset, int):
+            raise TypeError("offset is not an instance of int")
         file_p = self._call_method('fileOpen',
                      in_p=[path, open_mode, disposition, creation_mode, offset])
         file_p = IGuestFile(file_p)
@@ -11338,8 +11392,8 @@ class IGuestSession(Interface):
             Error querying information.
         
         """
-        assert isinstance(path, str), \
-                "path is not an instance of str"
+        if not isinstance(path, str):
+            raise TypeError("path is not an instance of str")
         info = self._call_method('fileQueryInfo',
                      in_p=[path])
         info = IGuestFsObjInfo(info)
@@ -11361,8 +11415,8 @@ class IGuestSession(Interface):
             Error querying file size.
         
         """
-        assert isinstance(path, str), \
-                "path is not an instance of str"
+        if not isinstance(path, str):
+            raise TypeError("path is not an instance of str")
         size = self._call_method('fileQuerySize',
                      in_p=[path])
         size = int(size)
@@ -11384,12 +11438,15 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        assert isinstance(source, str), \
-                "source is not an instance of str"
-        assert isinstance(dest, str), \
-                "dest is not an instance of str"
-        assert isinstance(flags, list), \
-                "flags is not an instance of list"
+        if not isinstance(source, str):
+            raise TypeError("source is not an instance of str")
+        if not isinstance(dest, str):
+            raise TypeError("dest is not an instance of str")
+        if not isinstance(flags, list):
+            raise TypeError("flags is not an instance of list")
+        for a in flags:
+            if not isinstance(a, PathRenameFlag):
+                raise TypeError("array can only contain PathRenameFlag objects")
         self._call_method('fileRename',
                      in_p=[source, dest, flags])
         
@@ -11406,10 +11463,10 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        assert isinstance(file_p, str), \
-                "file_p is not an instance of str"
-        assert isinstance(acl, str), \
-                "acl is not an instance of str"
+        if not isinstance(file_p, str):
+            raise TypeError("file_p is not an instance of str")
+        if not isinstance(acl, str):
+            raise TypeError("acl is not an instance of str")
         self._call_method('fileSetACL',
                      in_p=[file_p, acl])
         
@@ -11467,16 +11524,25 @@ class IGuestSession(Interface):
             Error creating guest process.
         
         """
-        assert isinstance(command, str), \
-                "command is not an instance of str"
-        assert isinstance(arguments, list), \
-                "arguments is not an instance of list"
-        assert isinstance(environment, list), \
-                "environment is not an instance of list"
-        assert isinstance(flags, list), \
-                "flags is not an instance of list"
-        assert isinstance(timeout_ms, int), \
-                "timeout_ms is not an instance of int"
+        if not isinstance(command, str):
+            raise TypeError("command is not an instance of str")
+        if not isinstance(arguments, list):
+            raise TypeError("arguments is not an instance of list")
+        for a in arguments:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
+        if not isinstance(environment, list):
+            raise TypeError("environment is not an instance of list")
+        for a in environment:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
+        if not isinstance(flags, list):
+            raise TypeError("flags is not an instance of list")
+        for a in flags:
+            if not isinstance(a, ProcessCreateFlag):
+                raise TypeError("array can only contain ProcessCreateFlag objects")
+        if not isinstance(timeout_ms, int):
+            raise TypeError("timeout_ms is not an instance of int")
         guest_process = self._call_method('processCreate',
                      in_p=[command, arguments, environment, flags, timeout_ms])
         guest_process = IGuestProcess(guest_process)
@@ -11526,20 +11592,32 @@ class IGuestSession(Interface):
             Guest process object of the newly created process.
 
         """
-        assert isinstance(command, str), \
-                "command is not an instance of str"
-        assert isinstance(arguments, list), \
-                "arguments is not an instance of list"
-        assert isinstance(environment, list), \
-                "environment is not an instance of list"
-        assert isinstance(flags, list), \
-                "flags is not an instance of list"
-        assert isinstance(timeout_ms, int), \
-                "timeout_ms is not an instance of int"
-        assert isinstance(priority, ProcessPriority), \
-                "priority is not an instance of ProcessPriority"
-        assert isinstance(affinity, list), \
-                "affinity is not an instance of list"
+        if not isinstance(command, str):
+            raise TypeError("command is not an instance of str")
+        if not isinstance(arguments, list):
+            raise TypeError("arguments is not an instance of list")
+        for a in arguments:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
+        if not isinstance(environment, list):
+            raise TypeError("environment is not an instance of list")
+        for a in environment:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
+        if not isinstance(flags, list):
+            raise TypeError("flags is not an instance of list")
+        for a in flags:
+            if not isinstance(a, ProcessCreateFlag):
+                raise TypeError("array can only contain ProcessCreateFlag objects")
+        if not isinstance(timeout_ms, int):
+            raise TypeError("timeout_ms is not an instance of int")
+        if not isinstance(priority, ProcessPriority):
+            raise TypeError("priority is not an instance of ProcessPriority")
+        if not isinstance(affinity, list):
+            raise TypeError("affinity is not an instance of list")
+        for a in affinity:
+            if not isinstance(a, int):
+                raise TypeError("array can only contain int objects")
         guest_process = self._call_method('processCreateEx',
                      in_p=[command, arguments, environment, flags, timeout_ms, priority, affinity])
         guest_process = IGuestProcess(guest_process)
@@ -11555,8 +11633,8 @@ class IGuestSession(Interface):
             Guest process of specified process ID (PID).
 
         """
-        assert isinstance(pid, int), \
-                "pid is not an instance of int"
+        if not isinstance(pid, int):
+            raise TypeError("pid is not an instance of int")
         guest_process = self._call_method('processGet',
                      in_p=[pid])
         guest_process = IGuestProcess(guest_process)
@@ -11579,12 +11657,12 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        assert isinstance(source, str), \
-                "source is not an instance of str"
-        assert isinstance(target, str), \
-                "target is not an instance of str"
-        assert isinstance(type_p, SymlinkType), \
-                "type_p is not an instance of SymlinkType"
+        if not isinstance(source, str):
+            raise TypeError("source is not an instance of str")
+        if not isinstance(target, str):
+            raise TypeError("target is not an instance of str")
+        if not isinstance(type_p, SymlinkType):
+            raise TypeError("type_p is not an instance of SymlinkType")
         self._call_method('symlinkCreate',
                      in_p=[source, target, type_p])
         
@@ -11601,8 +11679,8 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        assert isinstance(symlink, str), \
-                "symlink is not an instance of str"
+        if not isinstance(symlink, str):
+            raise TypeError("symlink is not an instance of str")
         exists = self._call_method('symlinkExists',
                      in_p=[symlink])
         exists = bool(exists)
@@ -11624,10 +11702,13 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        assert isinstance(symlink, str), \
-                "symlink is not an instance of str"
-        assert isinstance(flags, list), \
-                "flags is not an instance of list"
+        if not isinstance(symlink, str):
+            raise TypeError("symlink is not an instance of str")
+        if not isinstance(flags, list):
+            raise TypeError("flags is not an instance of list")
+        for a in flags:
+            if not isinstance(a, SymlinkReadFlag):
+                raise TypeError("array can only contain SymlinkReadFlag objects")
         target = self._call_method('symlinkRead',
                      in_p=[symlink, flags])
         target = str(target)
@@ -11643,8 +11724,8 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        assert isinstance(path, str), \
-                "path is not an instance of str"
+        if not isinstance(path, str):
+            raise TypeError("path is not an instance of str")
         self._call_method('symlinkRemoveDirectory',
                      in_p=[path])
         
@@ -11658,8 +11739,8 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        assert isinstance(file_p, str), \
-                "file_p is not an instance of str"
+        if not isinstance(file_p, str):
+            raise TypeError("file_p is not an instance of str")
         self._call_method('symlinkRemoveFile',
                      in_p=[file_p])
         
@@ -11679,10 +11760,10 @@ class IGuestSession(Interface):
           see <link to="GuestSessionWaitResult"/> for more information.
 
         """
-        assert isinstance(wait_for, int), \
-                "wait_for is not an instance of int"
-        assert isinstance(timeout_ms, int), \
-                "timeout_ms is not an instance of int"
+        if not isinstance(wait_for, int):
+            raise TypeError("wait_for is not an instance of int")
+        if not isinstance(timeout_ms, int):
+            raise TypeError("timeout_ms is not an instance of int")
         reason = self._call_method('waitFor',
                      in_p=[wait_for, timeout_ms])
         reason = GuestSessionWaitResult(reason)
@@ -11705,10 +11786,13 @@ class IGuestSession(Interface):
           see <link to="GuestSessionWaitResult"/> for more information.
 
         """
-        assert isinstance(wait_for, list), \
-                "wait_for is not an instance of list"
-        assert isinstance(timeout_ms, int), \
-                "timeout_ms is not an instance of int"
+        if not isinstance(wait_for, list):
+            raise TypeError("wait_for is not an instance of list")
+        for a in wait_for:
+            if not isinstance(a, GuestSessionWaitForFlag):
+                raise TypeError("array can only contain GuestSessionWaitForFlag objects")
+        if not isinstance(timeout_ms, int):
+            raise TypeError("timeout_ms is not an instance of int")
         reason = self._call_method('waitForArray',
                      in_p=[wait_for, timeout_ms])
         reason = GuestSessionWaitResult(reason)
@@ -11804,10 +11888,10 @@ class IProcess(Interface):
           see <link to="ProcessWaitResult"/> for more information.
 
         """
-        assert isinstance(wait_for, int), \
-                "wait_for is not an instance of int"
-        assert isinstance(timeout_ms, int), \
-                "timeout_ms is not an instance of int"
+        if not isinstance(wait_for, int):
+            raise TypeError("wait_for is not an instance of int")
+        if not isinstance(timeout_ms, int):
+            raise TypeError("timeout_ms is not an instance of int")
         reason = self._call_method('waitFor',
                      in_p=[wait_for, timeout_ms])
         reason = ProcessWaitResult(reason)
@@ -11830,10 +11914,13 @@ class IProcess(Interface):
           see <link to="ProcessWaitResult"/> for more information.
 
         """
-        assert isinstance(wait_for, list), \
-                "wait_for is not an instance of list"
-        assert isinstance(timeout_ms, int), \
-                "timeout_ms is not an instance of int"
+        if not isinstance(wait_for, list):
+            raise TypeError("wait_for is not an instance of list")
+        for a in wait_for:
+            if not isinstance(a, ProcessWaitForFlag):
+                raise TypeError("array can only contain ProcessWaitForFlag objects")
+        if not isinstance(timeout_ms, int):
+            raise TypeError("timeout_ms is not an instance of int")
         reason = self._call_method('waitForArray',
                      in_p=[wait_for, timeout_ms])
         reason = ProcessWaitResult(reason)
@@ -11856,12 +11943,12 @@ class IProcess(Interface):
             Array of data read.
 
         """
-        assert isinstance(handle, int), \
-                "handle is not an instance of int"
-        assert isinstance(to_read, int), \
-                "to_read is not an instance of int"
-        assert isinstance(timeout_ms, int), \
-                "timeout_ms is not an instance of int"
+        if not isinstance(handle, int):
+            raise TypeError("handle is not an instance of int")
+        if not isinstance(to_read, int):
+            raise TypeError("to_read is not an instance of int")
+        if not isinstance(timeout_ms, int):
+            raise TypeError("timeout_ms is not an instance of int")
         data = self._call_method('read',
                      in_p=[handle, to_read, timeout_ms])
         data = [str(a) for a in data]
@@ -11888,14 +11975,17 @@ class IProcess(Interface):
             How much bytes were written.
 
         """
-        assert isinstance(handle, int), \
-                "handle is not an instance of int"
-        assert isinstance(flags, int), \
-                "flags is not an instance of int"
-        assert isinstance(data, list), \
-                "data is not an instance of list"
-        assert isinstance(timeout_ms, int), \
-                "timeout_ms is not an instance of int"
+        if not isinstance(handle, int):
+            raise TypeError("handle is not an instance of int")
+        if not isinstance(flags, int):
+            raise TypeError("flags is not an instance of int")
+        if not isinstance(data, list):
+            raise TypeError("data is not an instance of list")
+        for a in data:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
+        if not isinstance(timeout_ms, int):
+            raise TypeError("timeout_ms is not an instance of int")
         written = self._call_method('write',
                      in_p=[handle, flags, data, timeout_ms])
         written = int(written)
@@ -11923,14 +12013,20 @@ class IProcess(Interface):
             How much bytes were written.
 
         """
-        assert isinstance(handle, int), \
-                "handle is not an instance of int"
-        assert isinstance(flags, list), \
-                "flags is not an instance of list"
-        assert isinstance(data, list), \
-                "data is not an instance of list"
-        assert isinstance(timeout_ms, int), \
-                "timeout_ms is not an instance of int"
+        if not isinstance(handle, int):
+            raise TypeError("handle is not an instance of int")
+        if not isinstance(flags, list):
+            raise TypeError("flags is not an instance of list")
+        for a in flags:
+            if not isinstance(a, ProcessInputFlag):
+                raise TypeError("array can only contain ProcessInputFlag objects")
+        if not isinstance(data, list):
+            raise TypeError("data is not an instance of list")
+        for a in data:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
+        if not isinstance(timeout_ms, int):
+            raise TypeError("timeout_ms is not an instance of int")
         written = self._call_method('writeArray',
                      in_p=[handle, flags, data, timeout_ms])
         written = int(written)
@@ -12117,10 +12213,10 @@ class IFile(Interface):
             The method is not implemented yet.
         
         """
-        assert isinstance(to_read, int), \
-                "to_read is not an instance of int"
-        assert isinstance(timeout_ms, int), \
-                "timeout_ms is not an instance of int"
+        if not isinstance(to_read, int):
+            raise TypeError("to_read is not an instance of int")
+        if not isinstance(timeout_ms, int):
+            raise TypeError("timeout_ms is not an instance of int")
         data = self._call_method('read',
                      in_p=[to_read, timeout_ms])
         data = [str(a) for a in data]
@@ -12146,12 +12242,12 @@ class IFile(Interface):
             The method is not implemented yet.
         
         """
-        assert isinstance(offset, int), \
-                "offset is not an instance of int"
-        assert isinstance(to_read, int), \
-                "to_read is not an instance of int"
-        assert isinstance(timeout_ms, int), \
-                "timeout_ms is not an instance of int"
+        if not isinstance(offset, int):
+            raise TypeError("offset is not an instance of int")
+        if not isinstance(to_read, int):
+            raise TypeError("to_read is not an instance of int")
+        if not isinstance(timeout_ms, int):
+            raise TypeError("timeout_ms is not an instance of int")
         data = self._call_method('readAt',
                      in_p=[offset, to_read, timeout_ms])
         data = [str(a) for a in data]
@@ -12170,10 +12266,10 @@ class IFile(Interface):
             The method is not implemented yet.
         
         """
-        assert isinstance(offset, int), \
-                "offset is not an instance of int"
-        assert isinstance(whence, FileSeekType), \
-                "whence is not an instance of FileSeekType"
+        if not isinstance(offset, int):
+            raise TypeError("offset is not an instance of int")
+        if not isinstance(whence, FileSeekType):
+            raise TypeError("whence is not an instance of FileSeekType")
         self._call_method('seek',
                      in_p=[offset, whence])
         
@@ -12187,8 +12283,8 @@ class IFile(Interface):
             The method is not implemented yet.
         
         """
-        assert isinstance(acl, str), \
-                "acl is not an instance of str"
+        if not isinstance(acl, str):
+            raise TypeError("acl is not an instance of str")
         self._call_method('setACL',
                      in_p=[acl])
         
@@ -12207,10 +12303,13 @@ class IFile(Interface):
             How much bytes were written.
 
         """
-        assert isinstance(data, list), \
-                "data is not an instance of list"
-        assert isinstance(timeout_ms, int), \
-                "timeout_ms is not an instance of int"
+        if not isinstance(data, list):
+            raise TypeError("data is not an instance of list")
+        for a in data:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
+        if not isinstance(timeout_ms, int):
+            raise TypeError("timeout_ms is not an instance of int")
         written = self._call_method('write',
                      in_p=[data, timeout_ms])
         written = int(written)
@@ -12237,12 +12336,15 @@ class IFile(Interface):
             The method is not implemented yet.
         
         """
-        assert isinstance(offset, int), \
-                "offset is not an instance of int"
-        assert isinstance(data, list), \
-                "data is not an instance of list"
-        assert isinstance(timeout_ms, int), \
-                "timeout_ms is not an instance of int"
+        if not isinstance(offset, int):
+            raise TypeError("offset is not an instance of int")
+        if not isinstance(data, list):
+            raise TypeError("data is not an instance of list")
+        for a in data:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
+        if not isinstance(timeout_ms, int):
+            raise TypeError("timeout_ms is not an instance of int")
         written = self._call_method('writeAt',
                      in_p=[offset, data, timeout_ms])
         written = int(written)
@@ -12602,8 +12704,8 @@ class IGuest(Interface):
             The current (latest) facility status.
 
         """
-        assert isinstance(facility, AdditionsFacilityType), \
-                "facility is not an instance of AdditionsFacilityType"
+        if not isinstance(facility, AdditionsFacilityType):
+            raise TypeError("facility is not an instance of AdditionsFacilityType")
         (timestamp, status) = self._call_method('getFacilityStatus',
                      in_p=[facility])
         timestamp = int(timestamp)
@@ -12623,8 +12725,8 @@ class IGuest(Interface):
             Wrong status level specified.
         
         """
-        assert isinstance(level, AdditionsRunLevelType), \
-                "level is not an instance of AdditionsRunLevelType"
+        if not isinstance(level, AdditionsRunLevelType):
+            raise TypeError("level is not an instance of AdditionsRunLevelType")
         active = self._call_method('getAdditionsStatus',
                      in_p=[level])
         active = bool(active)
@@ -12655,14 +12757,14 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        assert isinstance(user_name, str), \
-                "user_name is not an instance of str"
-        assert isinstance(password, str), \
-                "password is not an instance of str"
-        assert isinstance(domain, str), \
-                "domain is not an instance of str"
-        assert isinstance(allow_interactive_logon, bool), \
-                "allow_interactive_logon is not an instance of bool"
+        if not isinstance(user_name, str):
+            raise TypeError("user_name is not an instance of str")
+        if not isinstance(password, str):
+            raise TypeError("password is not an instance of str")
+        if not isinstance(domain, str):
+            raise TypeError("domain is not an instance of str")
+        if not isinstance(allow_interactive_logon, bool):
+            raise TypeError("allow_interactive_logon is not an instance of bool")
         self._call_method('setCredentials',
                      in_p=[user_name, password, domain, allow_interactive_logon])
         
@@ -12696,18 +12798,24 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        assert isinstance(screen_id, int), \
-                "screen_id is not an instance of int"
-        assert isinstance(y, int), \
-                "y is not an instance of int"
-        assert isinstance(x, int), \
-                "x is not an instance of int"
-        assert isinstance(default_action, DragAndDropAction), \
-                "default_action is not an instance of DragAndDropAction"
-        assert isinstance(allowed_actions, list), \
-                "allowed_actions is not an instance of list"
-        assert isinstance(formats, list), \
-                "formats is not an instance of list"
+        if not isinstance(screen_id, int):
+            raise TypeError("screen_id is not an instance of int")
+        if not isinstance(y, int):
+            raise TypeError("y is not an instance of int")
+        if not isinstance(x, int):
+            raise TypeError("x is not an instance of int")
+        if not isinstance(default_action, DragAndDropAction):
+            raise TypeError("default_action is not an instance of DragAndDropAction")
+        if not isinstance(allowed_actions, list):
+            raise TypeError("allowed_actions is not an instance of list")
+        for a in allowed_actions:
+            if not isinstance(a, DragAndDropAction):
+                raise TypeError("array can only contain DragAndDropAction objects")
+        if not isinstance(formats, list):
+            raise TypeError("formats is not an instance of list")
+        for a in formats:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
         result_action = self._call_method('dragHGEnter',
                      in_p=[screen_id, y, x, default_action, allowed_actions, formats])
         result_action = DragAndDropAction(result_action)
@@ -12743,18 +12851,24 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        assert isinstance(screen_id, int), \
-                "screen_id is not an instance of int"
-        assert isinstance(x, int), \
-                "x is not an instance of int"
-        assert isinstance(y, int), \
-                "y is not an instance of int"
-        assert isinstance(default_action, DragAndDropAction), \
-                "default_action is not an instance of DragAndDropAction"
-        assert isinstance(allowed_actions, list), \
-                "allowed_actions is not an instance of list"
-        assert isinstance(formats, list), \
-                "formats is not an instance of list"
+        if not isinstance(screen_id, int):
+            raise TypeError("screen_id is not an instance of int")
+        if not isinstance(x, int):
+            raise TypeError("x is not an instance of int")
+        if not isinstance(y, int):
+            raise TypeError("y is not an instance of int")
+        if not isinstance(default_action, DragAndDropAction):
+            raise TypeError("default_action is not an instance of DragAndDropAction")
+        if not isinstance(allowed_actions, list):
+            raise TypeError("allowed_actions is not an instance of list")
+        for a in allowed_actions:
+            if not isinstance(a, DragAndDropAction):
+                raise TypeError("array can only contain DragAndDropAction objects")
+        if not isinstance(formats, list):
+            raise TypeError("formats is not an instance of list")
+        for a in formats:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
         result_action = self._call_method('dragHGMove',
                      in_p=[screen_id, x, y, default_action, allowed_actions, formats])
         result_action = DragAndDropAction(result_action)
@@ -12772,8 +12886,8 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        assert isinstance(screen_id, int), \
-                "screen_id is not an instance of int"
+        if not isinstance(screen_id, int):
+            raise TypeError("screen_id is not an instance of int")
         self._call_method('dragHGLeave',
                      in_p=[screen_id])
         
@@ -12810,18 +12924,24 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        assert isinstance(screen_id, int), \
-                "screen_id is not an instance of int"
-        assert isinstance(x, int), \
-                "x is not an instance of int"
-        assert isinstance(y, int), \
-                "y is not an instance of int"
-        assert isinstance(default_action, DragAndDropAction), \
-                "default_action is not an instance of DragAndDropAction"
-        assert isinstance(allowed_actions, list), \
-                "allowed_actions is not an instance of list"
-        assert isinstance(formats, list), \
-                "formats is not an instance of list"
+        if not isinstance(screen_id, int):
+            raise TypeError("screen_id is not an instance of int")
+        if not isinstance(x, int):
+            raise TypeError("x is not an instance of int")
+        if not isinstance(y, int):
+            raise TypeError("y is not an instance of int")
+        if not isinstance(default_action, DragAndDropAction):
+            raise TypeError("default_action is not an instance of DragAndDropAction")
+        if not isinstance(allowed_actions, list):
+            raise TypeError("allowed_actions is not an instance of list")
+        for a in allowed_actions:
+            if not isinstance(a, DragAndDropAction):
+                raise TypeError("array can only contain DragAndDropAction objects")
+        if not isinstance(formats, list):
+            raise TypeError("formats is not an instance of list")
+        for a in formats:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
         (format_p, result_action) = self._call_method('dragHGDrop',
                      in_p=[screen_id, x, y, default_action, allowed_actions, formats])
         format_p = str(format_p)
@@ -12849,12 +12969,15 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        assert isinstance(screen_id, int), \
-                "screen_id is not an instance of int"
-        assert isinstance(format_p, str), \
-                "format_p is not an instance of str"
-        assert isinstance(data, list), \
-                "data is not an instance of list"
+        if not isinstance(screen_id, int):
+            raise TypeError("screen_id is not an instance of int")
+        if not isinstance(format_p, str):
+            raise TypeError("format_p is not an instance of str")
+        if not isinstance(data, list):
+            raise TypeError("data is not an instance of list")
+        for a in data:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
         progress = self._call_method('dragHGPutData',
                      in_p=[screen_id, format_p, data])
         progress = IProgress(progress)
@@ -12883,8 +13006,8 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        assert isinstance(screen_id, int), \
-                "screen_id is not an instance of int"
+        if not isinstance(screen_id, int):
+            raise TypeError("screen_id is not an instance of int")
         (formats, allowed_actions, default_action) = self._call_method('dragGHPending',
                      in_p=[screen_id])
         formats = [str(a) for a in formats]
@@ -12910,10 +13033,10 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        assert isinstance(format_p, str), \
-                "format_p is not an instance of str"
-        assert isinstance(action, DragAndDropAction), \
-                "action is not an instance of DragAndDropAction"
+        if not isinstance(format_p, str):
+            raise TypeError("format_p is not an instance of str")
+        if not isinstance(action, DragAndDropAction):
+            raise TypeError("action is not an instance of DragAndDropAction")
         progress = self._call_method('dragGHDropped',
                      in_p=[format_p, action])
         progress = IProgress(progress)
@@ -12983,14 +13106,14 @@ class IGuest(Interface):
             The newly created session object.
 
         """
-        assert isinstance(user, str), \
-                "user is not an instance of str"
-        assert isinstance(password, str), \
-                "password is not an instance of str"
-        assert isinstance(domain, str), \
-                "domain is not an instance of str"
-        assert isinstance(session_name, str), \
-                "session_name is not an instance of str"
+        if not isinstance(user, str):
+            raise TypeError("user is not an instance of str")
+        if not isinstance(password, str):
+            raise TypeError("password is not an instance of str")
+        if not isinstance(domain, str):
+            raise TypeError("domain is not an instance of str")
+        if not isinstance(session_name, str):
+            raise TypeError("session_name is not an instance of str")
         guest_session = self._call_method('createSession',
                      in_p=[user, password, domain, session_name])
         guest_session = IGuestSession(guest_session)
@@ -13007,8 +13130,8 @@ class IGuest(Interface):
             Array with all guest sessions found matching the name specified.
 
         """
-        assert isinstance(session_name, str), \
-                "session_name is not an instance of str"
+        if not isinstance(session_name, str):
+            raise TypeError("session_name is not an instance of str")
         sessions = self._call_method('findSession',
                      in_p=[session_name])
         sessions = [IGuestSession(a) for a in sessions]
@@ -13046,10 +13169,13 @@ class IGuest(Interface):
             Error while updating.
         
         """
-        assert isinstance(source, str), \
-                "source is not an instance of str"
-        assert isinstance(flags, list), \
-                "flags is not an instance of list"
+        if not isinstance(source, str):
+            raise TypeError("source is not an instance of str")
+        if not isinstance(flags, list):
+            raise TypeError("flags is not an instance of list")
+        for a in flags:
+            if not isinstance(a, AdditionsUpdateFlag):
+                raise TypeError("array can only contain AdditionsUpdateFlag objects")
         progress = self._call_method('updateGuestAdditions',
                      in_p=[source, flags])
         progress = IProgress(progress)
@@ -13254,8 +13380,8 @@ class IProgress(Interface):
         in percent of type int
 
         """
-        assert isinstance(percent, int), \
-                "percent is not an instance of int"
+        if not isinstance(percent, int):
+            raise TypeError("percent is not an instance of int")
         self._call_method('setCurrentOperationProgress',
                      in_p=[percent])
         
@@ -13267,10 +13393,10 @@ class IProgress(Interface):
         in next_operations_weight of type int
 
         """
-        assert isinstance(next_operation_description, str), \
-                "next_operation_description is not an instance of str"
-        assert isinstance(next_operations_weight, int), \
-                "next_operations_weight is not an instance of int"
+        if not isinstance(next_operation_description, str):
+            raise TypeError("next_operation_description is not an instance of str")
+        if not isinstance(next_operations_weight, int):
+            raise TypeError("next_operations_weight is not an instance of int")
         self._call_method('setNextOperation',
                      in_p=[next_operation_description, next_operations_weight])
         
@@ -13293,8 +13419,8 @@ class IProgress(Interface):
             Failed to wait for task completion.
         
         """
-        assert isinstance(timeout, int), \
-                "timeout is not an instance of int"
+        if not isinstance(timeout, int):
+            raise TypeError("timeout is not an instance of int")
         self._call_method('waitForCompletion',
                      in_p=[timeout])
         
@@ -13315,10 +13441,10 @@ class IProgress(Interface):
             Failed to wait for operation completion.
         
         """
-        assert isinstance(operation, int), \
-                "operation is not an instance of int"
-        assert isinstance(timeout, int), \
-                "timeout is not an instance of int"
+        if not isinstance(operation, int):
+            raise TypeError("operation is not an instance of int")
+        if not isinstance(timeout, int):
+            raise TypeError("timeout is not an instance of int")
         self._call_method('waitForOperationCompletion',
                      in_p=[operation, timeout])
         
@@ -13345,8 +13471,8 @@ class IProgress(Interface):
             The progress object of the asynchrony process.
 
         """
-        assert isinstance(p_progress_async, IProgress), \
-                "p_progress_async is not an instance of IProgress"
+        if not isinstance(p_progress_async, IProgress):
+            raise TypeError("p_progress_async is not an instance of IProgress")
         self._call_method('waitForAsyncProgressCompletion',
                      in_p=[p_progress_async])
         
@@ -14377,14 +14503,14 @@ class IMedium(Interface):
             Medium is not a hard disk medium.
         
         """
-        assert isinstance(set_image_id, bool), \
-                "set_image_id is not an instance of bool"
-        assert isinstance(image_id, str), \
-                "image_id is not an instance of str"
-        assert isinstance(set_parent_id, bool), \
-                "set_parent_id is not an instance of bool"
-        assert isinstance(parent_id, str), \
-                "parent_id is not an instance of str"
+        if not isinstance(set_image_id, bool):
+            raise TypeError("set_image_id is not an instance of bool")
+        if not isinstance(image_id, str):
+            raise TypeError("image_id is not an instance of str")
+        if not isinstance(set_parent_id, bool):
+            raise TypeError("set_parent_id is not an instance of bool")
+        if not isinstance(parent_id, str):
+            raise TypeError("parent_id is not an instance of str")
         self._call_method('setIds',
                      in_p=[set_image_id, image_id, set_parent_id, parent_id])
         
@@ -14447,8 +14573,8 @@ class IMedium(Interface):
             Array of snapshot UUIDs of the given machine using this medium.
 
         """
-        assert isinstance(machine_id, str), \
-                "machine_id is not an instance of str"
+        if not isinstance(machine_id, str):
+            raise TypeError("machine_id is not an instance of str")
         snapshot_ids = self._call_method('getSnapshotIds',
                      in_p=[machine_id])
         snapshot_ids = [str(a) for a in snapshot_ids]
@@ -14655,8 +14781,8 @@ class IMedium(Interface):
             @a name is @c null or empty.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         value = self._call_method('getProperty',
                      in_p=[name])
         value = str(value)
@@ -14686,10 +14812,10 @@ class IMedium(Interface):
             @a name is @c null or empty.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(value, str):
+            raise TypeError("value is not an instance of str")
         self._call_method('setProperty',
                      in_p=[name, value])
         
@@ -14724,8 +14850,8 @@ class IMedium(Interface):
             Values of returned properties.
 
         """
-        assert isinstance(names, str), \
-                "names is not an instance of str"
+        if not isinstance(names, str):
+            raise TypeError("names is not an instance of str")
         (return_names, return_values) = self._call_method('getProperties',
                      in_p=[names])
         return_names = [str(a) for a in return_names]
@@ -14762,10 +14888,16 @@ class IMedium(Interface):
             Values of properties to set.
 
         """
-        assert isinstance(names, list), \
-                "names is not an instance of list"
-        assert isinstance(values, list), \
-                "values is not an instance of list"
+        if not isinstance(names, list):
+            raise TypeError("names is not an instance of list")
+        for a in names:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
+        if not isinstance(values, list):
+            raise TypeError("values is not an instance of list")
+        for a in values:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
         self._call_method('setProperties',
                      in_p=[names, values])
         
@@ -14798,10 +14930,13 @@ class IMedium(Interface):
             The variant of storage creation operation is not supported. See
         
         """
-        assert isinstance(logical_size, int), \
-                "logical_size is not an instance of int"
-        assert isinstance(variant, list), \
-                "variant is not an instance of list"
+        if not isinstance(logical_size, int):
+            raise TypeError("logical_size is not an instance of int")
+        if not isinstance(variant, list):
+            raise TypeError("variant is not an instance of list")
+        for a in variant:
+            if not isinstance(a, MediumVariant):
+                raise TypeError("array can only contain MediumVariant objects")
         progress = self._call_method('createBaseStorage',
                      in_p=[logical_size, variant])
         progress = IProgress(progress)
@@ -14886,10 +15021,13 @@ class IMedium(Interface):
             Medium not in @c NotCreated state.
         
         """
-        assert isinstance(target, IMedium), \
-                "target is not an instance of IMedium"
-        assert isinstance(variant, list), \
-                "variant is not an instance of list"
+        if not isinstance(target, IMedium):
+            raise TypeError("target is not an instance of IMedium")
+        if not isinstance(variant, list):
+            raise TypeError("variant is not an instance of list")
+        for a in variant:
+            if not isinstance(a, MediumVariant):
+                raise TypeError("array can only contain MediumVariant objects")
         progress = self._call_method('createDiffStorage',
                      in_p=[target, variant])
         progress = IProgress(progress)
@@ -14971,8 +15109,8 @@ class IMedium(Interface):
             Progress object to track the operation completion.
 
         """
-        assert isinstance(target, IMedium), \
-                "target is not an instance of IMedium"
+        if not isinstance(target, IMedium):
+            raise TypeError("target is not an instance of IMedium")
         progress = self._call_method('mergeTo',
                      in_p=[target])
         progress = IProgress(progress)
@@ -15024,12 +15162,15 @@ class IMedium(Interface):
             The specified cloning variant is not supported at the moment.
         
         """
-        assert isinstance(target, IMedium), \
-                "target is not an instance of IMedium"
-        assert isinstance(variant, list), \
-                "variant is not an instance of list"
-        assert isinstance(parent, IMedium), \
-                "parent is not an instance of IMedium"
+        if not isinstance(target, IMedium):
+            raise TypeError("target is not an instance of IMedium")
+        if not isinstance(variant, list):
+            raise TypeError("variant is not an instance of list")
+        for a in variant:
+            if not isinstance(a, MediumVariant):
+                raise TypeError("array can only contain MediumVariant objects")
+        if not isinstance(parent, IMedium):
+            raise TypeError("parent is not an instance of IMedium")
         progress = self._call_method('cloneTo',
                      in_p=[target, variant, parent])
         progress = IProgress(progress)
@@ -15077,10 +15218,13 @@ class IMedium(Interface):
             The specified cloning variant is not supported at the moment.
         
         """
-        assert isinstance(target, IMedium), \
-                "target is not an instance of IMedium"
-        assert isinstance(variant, list), \
-                "variant is not an instance of list"
+        if not isinstance(target, IMedium):
+            raise TypeError("target is not an instance of IMedium")
+        if not isinstance(variant, list):
+            raise TypeError("variant is not an instance of list")
+        for a in variant:
+            if not isinstance(a, MediumVariant):
+                raise TypeError("array can only contain MediumVariant objects")
         progress = self._call_method('cloneToBase',
                      in_p=[target, variant])
         progress = IProgress(progress)
@@ -15141,8 +15285,8 @@ class IMedium(Interface):
             Medium format does not support resizing.
         
         """
-        assert isinstance(logical_size, int), \
-                "logical_size is not an instance of int"
+        if not isinstance(logical_size, int):
+            raise TypeError("logical_size is not an instance of int")
         progress = self._call_method('resize',
                      in_p=[logical_size])
         progress = IProgress(progress)
@@ -15320,8 +15464,8 @@ class IKeyboard(Interface):
             Could not send scan code to virtual keyboard.
         
         """
-        assert isinstance(scancode, int), \
-                "scancode is not an instance of int"
+        if not isinstance(scancode, int):
+            raise TypeError("scancode is not an instance of int")
         self._call_method('putScancode',
                      in_p=[scancode])
         
@@ -15336,8 +15480,11 @@ class IKeyboard(Interface):
             Could not send all scan codes to virtual keyboard.
         
         """
-        assert isinstance(scancodes, list), \
-                "scancodes is not an instance of list"
+        if not isinstance(scancodes, list):
+            raise TypeError("scancodes is not an instance of list")
+        for a in scancodes:
+            if not isinstance(a, int):
+                raise TypeError("array can only contain int objects")
         codes_stored = self._call_method('putScancodes',
                      in_p=[scancodes])
         codes_stored = int(codes_stored)
@@ -15459,16 +15606,16 @@ class IMouse(Interface):
             Could not send mouse event to virtual mouse.
         
         """
-        assert isinstance(dx, int), \
-                "dx is not an instance of int"
-        assert isinstance(dy, int), \
-                "dy is not an instance of int"
-        assert isinstance(dz, int), \
-                "dz is not an instance of int"
-        assert isinstance(dw, int), \
-                "dw is not an instance of int"
-        assert isinstance(button_state, int), \
-                "button_state is not an instance of int"
+        if not isinstance(dx, int):
+            raise TypeError("dx is not an instance of int")
+        if not isinstance(dy, int):
+            raise TypeError("dy is not an instance of int")
+        if not isinstance(dz, int):
+            raise TypeError("dz is not an instance of int")
+        if not isinstance(dw, int):
+            raise TypeError("dw is not an instance of int")
+        if not isinstance(button_state, int):
+            raise TypeError("button_state is not an instance of int")
         self._call_method('putMouseEvent',
                      in_p=[dx, dy, dz, dw, button_state])
         
@@ -15521,16 +15668,16 @@ class IMouse(Interface):
             Could not send mouse event to virtual mouse.
         
         """
-        assert isinstance(x, int), \
-                "x is not an instance of int"
-        assert isinstance(y, int), \
-                "y is not an instance of int"
-        assert isinstance(dz, int), \
-                "dz is not an instance of int"
-        assert isinstance(dw, int), \
-                "dw is not an instance of int"
-        assert isinstance(button_state, int), \
-                "button_state is not an instance of int"
+        if not isinstance(x, int):
+            raise TypeError("x is not an instance of int")
+        if not isinstance(y, int):
+            raise TypeError("y is not an instance of int")
+        if not isinstance(dz, int):
+            raise TypeError("dz is not an instance of int")
+        if not isinstance(dw, int):
+            raise TypeError("dw is not an instance of int")
+        if not isinstance(button_state, int):
+            raise TypeError("button_state is not an instance of int")
         self._call_method('putMouseEventAbsolute',
                      in_p=[x, y, dz, dw, button_state])
         
@@ -15680,14 +15827,14 @@ class IFramebuffer(Interface):
         in height of type int
 
         """
-        assert isinstance(x, int), \
-                "x is not an instance of int"
-        assert isinstance(y, int), \
-                "y is not an instance of int"
-        assert isinstance(width, int), \
-                "width is not an instance of int"
-        assert isinstance(height, int), \
-                "height is not an instance of int"
+        if not isinstance(x, int):
+            raise TypeError("x is not an instance of int")
+        if not isinstance(y, int):
+            raise TypeError("y is not an instance of int")
+        if not isinstance(width, int):
+            raise TypeError("width is not an instance of int")
+        if not isinstance(height, int):
+            raise TypeError("height is not an instance of int")
         self._call_method('notifyUpdate',
                      in_p=[x, y, width, height])
         
@@ -15797,20 +15944,20 @@ class IFramebuffer(Interface):
           <link to="IDisplay::resizeCompleted"/>.
 
         """
-        assert isinstance(screen_id, int), \
-                "screen_id is not an instance of int"
-        assert isinstance(pixel_format, int), \
-                "pixel_format is not an instance of int"
-        assert isinstance(vram, str), \
-                "vram is not an instance of str"
-        assert isinstance(bits_per_pixel, int), \
-                "bits_per_pixel is not an instance of int"
-        assert isinstance(bytes_per_line, int), \
-                "bytes_per_line is not an instance of int"
-        assert isinstance(width, int), \
-                "width is not an instance of int"
-        assert isinstance(height, int), \
-                "height is not an instance of int"
+        if not isinstance(screen_id, int):
+            raise TypeError("screen_id is not an instance of int")
+        if not isinstance(pixel_format, int):
+            raise TypeError("pixel_format is not an instance of int")
+        if not isinstance(vram, str):
+            raise TypeError("vram is not an instance of str")
+        if not isinstance(bits_per_pixel, int):
+            raise TypeError("bits_per_pixel is not an instance of int")
+        if not isinstance(bytes_per_line, int):
+            raise TypeError("bytes_per_line is not an instance of int")
+        if not isinstance(width, int):
+            raise TypeError("width is not an instance of int")
+        if not isinstance(height, int):
+            raise TypeError("height is not an instance of int")
         finished = self._call_method('requestResize',
                      in_p=[screen_id, pixel_format, vram, bits_per_pixel, bytes_per_line, width, height])
         finished = bool(finished)
@@ -15834,12 +15981,12 @@ class IFramebuffer(Interface):
         return supported of type bool
 
         """
-        assert isinstance(width, int), \
-                "width is not an instance of int"
-        assert isinstance(height, int), \
-                "height is not an instance of int"
-        assert isinstance(bpp, int), \
-                "bpp is not an instance of int"
+        if not isinstance(width, int):
+            raise TypeError("width is not an instance of int")
+        if not isinstance(height, int):
+            raise TypeError("height is not an instance of int")
+        if not isinstance(bpp, int):
+            raise TypeError("bpp is not an instance of int")
         supported = self._call_method('videoModeSupported',
                      in_p=[width, height, bpp])
         supported = bool(supported)
@@ -15875,10 +16022,10 @@ class IFramebuffer(Interface):
             Number of elements copied to the @a rectangles array.
 
         """
-        assert isinstance(rectangles, str), \
-                "rectangles is not an instance of str"
-        assert isinstance(count, int), \
-                "count is not an instance of int"
+        if not isinstance(rectangles, str):
+            raise TypeError("rectangles is not an instance of str")
+        if not isinstance(count, int):
+            raise TypeError("count is not an instance of int")
         count_copied = self._call_method('getVisibleRegion',
                      in_p=[rectangles, count])
         count_copied = int(count_copied)
@@ -15910,10 +16057,10 @@ class IFramebuffer(Interface):
             Number of @c RTRECT elements in the @a rectangles array.
 
         """
-        assert isinstance(rectangles, str), \
-                "rectangles is not an instance of str"
-        assert isinstance(count, int), \
-                "count is not an instance of int"
+        if not isinstance(rectangles, str):
+            raise TypeError("rectangles is not an instance of str")
+        if not isinstance(count, int):
+            raise TypeError("count is not an instance of int")
         self._call_method('setVisibleRegion',
                      in_p=[rectangles, count])
         
@@ -15930,8 +16077,8 @@ class IFramebuffer(Interface):
             Pointer to VBOXVHWACMD containing the command to execute.
 
         """
-        assert isinstance(command, str), \
-                "command is not an instance of str"
+        if not isinstance(command, str):
+            raise TypeError("command is not an instance of str")
         self._call_method('processVHWACommand',
                      in_p=[command])
         
@@ -15945,10 +16092,10 @@ class IFramebuffer(Interface):
             Reserved for future use, must be NULL.
 
         """
-        assert isinstance(type_p, int), \
-                "type_p is not an instance of int"
-        assert isinstance(reserved, str), \
-                "reserved is not an instance of str"
+        if not isinstance(type_p, int):
+            raise TypeError("type_p is not an instance of int")
+        if not isinstance(reserved, str):
+            raise TypeError("reserved is not an instance of str")
         self._call_method('notify3DEvent',
                      in_p=[type_p, reserved])
         
@@ -16020,10 +16167,10 @@ class IFramebufferOverlay(IFramebuffer):
         in y of type int
 
         """
-        assert isinstance(x, int), \
-                "x is not an instance of int"
-        assert isinstance(y, int), \
-                "y is not an instance of int"
+        if not isinstance(x, int):
+            raise TypeError("x is not an instance of int")
+        if not isinstance(y, int):
+            raise TypeError("y is not an instance of int")
         self._call_method('move',
                      in_p=[x, y])
         
@@ -16055,8 +16202,8 @@ class IDisplay(Interface):
         out bits_per_pixel of type int
 
         """
-        assert isinstance(screen_id, int), \
-                "screen_id is not an instance of int"
+        if not isinstance(screen_id, int):
+            raise TypeError("screen_id is not an instance of int")
         (width, height, bits_per_pixel) = self._call_method('getScreenResolution',
                      in_p=[screen_id])
         width = int(width)
@@ -16072,10 +16219,10 @@ class IDisplay(Interface):
         in framebuffer of type IFramebuffer
 
         """
-        assert isinstance(screen_id, int), \
-                "screen_id is not an instance of int"
-        assert isinstance(framebuffer, IFramebuffer), \
-                "framebuffer is not an instance of IFramebuffer"
+        if not isinstance(screen_id, int):
+            raise TypeError("screen_id is not an instance of int")
+        if not isinstance(framebuffer, IFramebuffer):
+            raise TypeError("framebuffer is not an instance of IFramebuffer")
         self._call_method('setFramebuffer',
                      in_p=[screen_id, framebuffer])
         
@@ -16091,8 +16238,8 @@ class IDisplay(Interface):
         out y_origin of type int
 
         """
-        assert isinstance(screen_id, int), \
-                "screen_id is not an instance of int"
+        if not isinstance(screen_id, int):
+            raise TypeError("screen_id is not an instance of int")
         (framebuffer, x_origin, y_origin) = self._call_method('getFramebuffer',
                      in_p=[screen_id])
         framebuffer = IFramebuffer(framebuffer)
@@ -16145,22 +16292,22 @@ class IDisplay(Interface):
             The @a display is not associated with any monitor.
         
         """
-        assert isinstance(display, int), \
-                "display is not an instance of int"
-        assert isinstance(enabled, bool), \
-                "enabled is not an instance of bool"
-        assert isinstance(change_origin, bool), \
-                "change_origin is not an instance of bool"
-        assert isinstance(origin_x, int), \
-                "origin_x is not an instance of int"
-        assert isinstance(origin_y, int), \
-                "origin_y is not an instance of int"
-        assert isinstance(width, int), \
-                "width is not an instance of int"
-        assert isinstance(height, int), \
-                "height is not an instance of int"
-        assert isinstance(bits_per_pixel, int), \
-                "bits_per_pixel is not an instance of int"
+        if not isinstance(display, int):
+            raise TypeError("display is not an instance of int")
+        if not isinstance(enabled, bool):
+            raise TypeError("enabled is not an instance of bool")
+        if not isinstance(change_origin, bool):
+            raise TypeError("change_origin is not an instance of bool")
+        if not isinstance(origin_x, int):
+            raise TypeError("origin_x is not an instance of int")
+        if not isinstance(origin_y, int):
+            raise TypeError("origin_y is not an instance of int")
+        if not isinstance(width, int):
+            raise TypeError("width is not an instance of int")
+        if not isinstance(height, int):
+            raise TypeError("height is not an instance of int")
+        if not isinstance(bits_per_pixel, int):
+            raise TypeError("bits_per_pixel is not an instance of int")
         self._call_method('setVideoModeHint',
                      in_p=[display, enabled, change_origin, origin_x, origin_y, width, height, bits_per_pixel])
         
@@ -16174,8 +16321,8 @@ class IDisplay(Interface):
         in enabled of type bool
 
         """
-        assert isinstance(enabled, bool), \
-                "enabled is not an instance of bool"
+        if not isinstance(enabled, bool):
+            raise TypeError("enabled is not an instance of bool")
         self._call_method('setSeamlessMode',
                      in_p=[enabled])
         
@@ -16205,14 +16352,14 @@ class IDisplay(Interface):
             Could not take a screenshot.
         
         """
-        assert isinstance(screen_id, int), \
-                "screen_id is not an instance of int"
-        assert isinstance(address, str), \
-                "address is not an instance of str"
-        assert isinstance(width, int), \
-                "width is not an instance of int"
-        assert isinstance(height, int), \
-                "height is not an instance of int"
+        if not isinstance(screen_id, int):
+            raise TypeError("screen_id is not an instance of int")
+        if not isinstance(address, str):
+            raise TypeError("address is not an instance of str")
+        if not isinstance(width, int):
+            raise TypeError("width is not an instance of int")
+        if not isinstance(height, int):
+            raise TypeError("height is not an instance of int")
         self._call_method('takeScreenShot',
                      in_p=[screen_id, address, width, height])
         
@@ -16244,12 +16391,12 @@ class IDisplay(Interface):
             Could not take a screenshot.
         
         """
-        assert isinstance(screen_id, int), \
-                "screen_id is not an instance of int"
-        assert isinstance(width, int), \
-                "width is not an instance of int"
-        assert isinstance(height, int), \
-                "height is not an instance of int"
+        if not isinstance(screen_id, int):
+            raise TypeError("screen_id is not an instance of int")
+        if not isinstance(width, int):
+            raise TypeError("width is not an instance of int")
+        if not isinstance(height, int):
+            raise TypeError("height is not an instance of int")
         screen_data = self._call_method('takeScreenShotToArray',
                      in_p=[screen_id, width, height])
         screen_data = [str(a) for a in screen_data]
@@ -16278,12 +16425,12 @@ class IDisplay(Interface):
             Could not take a screenshot.
         
         """
-        assert isinstance(screen_id, int), \
-                "screen_id is not an instance of int"
-        assert isinstance(width, int), \
-                "width is not an instance of int"
-        assert isinstance(height, int), \
-                "height is not an instance of int"
+        if not isinstance(screen_id, int):
+            raise TypeError("screen_id is not an instance of int")
+        if not isinstance(width, int):
+            raise TypeError("width is not an instance of int")
+        if not isinstance(height, int):
+            raise TypeError("height is not an instance of int")
         screen_data = self._call_method('takeScreenShotPNGToArray',
                      in_p=[screen_id, width, height])
         screen_data = [str(a) for a in screen_data]
@@ -16296,8 +16443,11 @@ class IDisplay(Interface):
             The screens to start/continue capturing.
 
         """
-        assert isinstance(screens, list), \
-                "screens is not an instance of list"
+        if not isinstance(screens, list):
+            raise TypeError("screens is not an instance of list")
+        for a in screens:
+            if not isinstance(a, bool):
+                raise TypeError("array can only contain bool objects")
         self._call_method('enableVideoCapture',
                      in_p=[screens])
         
@@ -16308,8 +16458,11 @@ class IDisplay(Interface):
             The screens to stop capturing.
 
         """
-        assert isinstance(screens, list), \
-                "screens is not an instance of list"
+        if not isinstance(screens, list):
+            raise TypeError("screens is not an instance of list")
+        for a in screens:
+            if not isinstance(a, bool):
+                raise TypeError("array can only contain bool objects")
         self._call_method('disableVideoCapture',
                      in_p=[screens])
         
@@ -16342,18 +16495,18 @@ class IDisplay(Interface):
             Could not draw to screen.
         
         """
-        assert isinstance(screen_id, int), \
-                "screen_id is not an instance of int"
-        assert isinstance(address, str), \
-                "address is not an instance of str"
-        assert isinstance(x, int), \
-                "x is not an instance of int"
-        assert isinstance(y, int), \
-                "y is not an instance of int"
-        assert isinstance(width, int), \
-                "width is not an instance of int"
-        assert isinstance(height, int), \
-                "height is not an instance of int"
+        if not isinstance(screen_id, int):
+            raise TypeError("screen_id is not an instance of int")
+        if not isinstance(address, str):
+            raise TypeError("address is not an instance of str")
+        if not isinstance(x, int):
+            raise TypeError("x is not an instance of int")
+        if not isinstance(y, int):
+            raise TypeError("y is not an instance of int")
+        if not isinstance(width, int):
+            raise TypeError("width is not an instance of int")
+        if not isinstance(height, int):
+            raise TypeError("height is not an instance of int")
         self._call_method('drawToScreen',
                      in_p=[screen_id, address, x, y, width, height])
         
@@ -16376,8 +16529,8 @@ class IDisplay(Interface):
             Operation only valid for external frame buffers.
         
         """
-        assert isinstance(screen_id, int), \
-                "screen_id is not an instance of int"
+        if not isinstance(screen_id, int):
+            raise TypeError("screen_id is not an instance of int")
         self._call_method('resizeCompleted',
                      in_p=[screen_id])
         
@@ -16388,8 +16541,8 @@ class IDisplay(Interface):
             Pointer to VBOXVHWACMD containing the completed command.
 
         """
-        assert isinstance(command, str), \
-                "command is not an instance of str"
+        if not isinstance(command, str):
+            raise TypeError("command is not an instance of str")
         self._call_method('completeVHWACommand',
                      in_p=[command])
         
@@ -16415,16 +16568,16 @@ class IDisplay(Interface):
             The specified viewport data is invalid.
         
         """
-        assert isinstance(screen_id, int), \
-                "screen_id is not an instance of int"
-        assert isinstance(x, int), \
-                "x is not an instance of int"
-        assert isinstance(y, int), \
-                "y is not an instance of int"
-        assert isinstance(width, int), \
-                "width is not an instance of int"
-        assert isinstance(height, int), \
-                "height is not an instance of int"
+        if not isinstance(screen_id, int):
+            raise TypeError("screen_id is not an instance of int")
+        if not isinstance(x, int):
+            raise TypeError("x is not an instance of int")
+        if not isinstance(y, int):
+            raise TypeError("y is not an instance of int")
+        if not isinstance(width, int):
+            raise TypeError("width is not an instance of int")
+        if not isinstance(height, int):
+            raise TypeError("height is not an instance of int")
         self._call_method('viewportChanged',
                      in_p=[screen_id, x, y, width, height])
         
@@ -16715,8 +16868,8 @@ class INetworkAdapter(Interface):
             @a name is @c null or empty.
         
         """
-        assert isinstance(key, str), \
-                "key is not an instance of str"
+        if not isinstance(key, str):
+            raise TypeError("key is not an instance of str")
         value = self._call_method('getProperty',
                      in_p=[key])
         value = str(value)
@@ -16738,10 +16891,10 @@ class INetworkAdapter(Interface):
             @a name is @c null or empty.
         
         """
-        assert isinstance(key, str), \
-                "key is not an instance of str"
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if not isinstance(key, str):
+            raise TypeError("key is not an instance of str")
+        if not isinstance(value, str):
+            raise TypeError("value is not an instance of str")
         self._call_method('setProperty',
                      in_p=[key, value])
         
@@ -16770,8 +16923,8 @@ class INetworkAdapter(Interface):
             Values of returned properties.
 
         """
-        assert isinstance(names, str), \
-                "names is not an instance of str"
+        if not isinstance(names, str):
+            raise TypeError("names is not an instance of str")
         (return_names, return_values) = self._call_method('getProperties',
                      in_p=[names])
         return_names = [str(a) for a in return_names]
@@ -17020,10 +17173,10 @@ class IMachineDebugger(Interface):
             Reserved for future compression method indicator.
 
         """
-        assert isinstance(filename, str), \
-                "filename is not an instance of str"
-        assert isinstance(compression, str), \
-                "compression is not an instance of str"
+        if not isinstance(filename, str):
+            raise TypeError("filename is not an instance of str")
+        if not isinstance(compression, str):
+            raise TypeError("compression is not an instance of str")
         self._call_method('dumpGuestCore',
                      in_p=[filename, compression])
         
@@ -17040,10 +17193,10 @@ class IMachineDebugger(Interface):
             Reserved for future compression method indicator.
 
         """
-        assert isinstance(filename, str), \
-                "filename is not an instance of str"
-        assert isinstance(compression, str), \
-                "compression is not an instance of str"
+        if not isinstance(filename, str):
+            raise TypeError("filename is not an instance of str")
+        if not isinstance(compression, str):
+            raise TypeError("compression is not an instance of str")
         self._call_method('dumpHostProcessCore',
                      in_p=[filename, compression])
         
@@ -17063,10 +17216,10 @@ class IMachineDebugger(Interface):
             The into string.
 
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(args, str), \
-                "args is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(args, str):
+            raise TypeError("args is not an instance of str")
         info = self._call_method('info',
                      in_p=[name, args])
         info = str(info)
@@ -17086,8 +17239,8 @@ class IMachineDebugger(Interface):
           release logger, prefix the string with "release:".
 
         """
-        assert isinstance(settings, str), \
-                "settings is not an instance of str"
+        if not isinstance(settings, str):
+            raise TypeError("settings is not an instance of str")
         self._call_method('modifyLogGroups',
                      in_p=[settings])
         
@@ -17099,8 +17252,8 @@ class IMachineDebugger(Interface):
           release logger, prefix the string with "release:".
 
         """
-        assert isinstance(settings, str), \
-                "settings is not an instance of str"
+        if not isinstance(settings, str):
+            raise TypeError("settings is not an instance of str")
         self._call_method('modifyLogFlags',
                      in_p=[settings])
         
@@ -17112,8 +17265,8 @@ class IMachineDebugger(Interface):
           release logger, prefix the string with "release:".
 
         """
-        assert isinstance(settings, str), \
-                "settings is not an instance of str"
+        if not isinstance(settings, str):
+            raise TypeError("settings is not an instance of str")
         self._call_method('modifyLogDestinations',
                      in_p=[settings])
         
@@ -17133,10 +17286,10 @@ class IMachineDebugger(Interface):
             The bytes read.
 
         """
-        assert isinstance(address, int), \
-                "address is not an instance of int"
-        assert isinstance(size, int), \
-                "size is not an instance of int"
+        if not isinstance(address, int):
+            raise TypeError("address is not an instance of int")
+        if not isinstance(size, int):
+            raise TypeError("size is not an instance of int")
         bytes_p = self._call_method('readPhysicalMemory',
                      in_p=[address, size])
         bytes_p = [str(a) for a in bytes_p]
@@ -17158,12 +17311,15 @@ class IMachineDebugger(Interface):
             The bytes to write.
 
         """
-        assert isinstance(address, int), \
-                "address is not an instance of int"
-        assert isinstance(size, int), \
-                "size is not an instance of int"
-        assert isinstance(bytes_p, list), \
-                "bytes_p is not an instance of list"
+        if not isinstance(address, int):
+            raise TypeError("address is not an instance of int")
+        if not isinstance(size, int):
+            raise TypeError("size is not an instance of int")
+        if not isinstance(bytes_p, list):
+            raise TypeError("bytes_p is not an instance of list")
+        for a in bytes_p:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
         self._call_method('writePhysicalMemory',
                      in_p=[address, size, bytes_p])
         
@@ -17186,12 +17342,12 @@ class IMachineDebugger(Interface):
             The bytes read.
 
         """
-        assert isinstance(cpu_id, int), \
-                "cpu_id is not an instance of int"
-        assert isinstance(address, int), \
-                "address is not an instance of int"
-        assert isinstance(size, int), \
-                "size is not an instance of int"
+        if not isinstance(cpu_id, int):
+            raise TypeError("cpu_id is not an instance of int")
+        if not isinstance(address, int):
+            raise TypeError("address is not an instance of int")
+        if not isinstance(size, int):
+            raise TypeError("size is not an instance of int")
         bytes_p = self._call_method('readVirtualMemory',
                      in_p=[cpu_id, address, size])
         bytes_p = [str(a) for a in bytes_p]
@@ -17216,14 +17372,17 @@ class IMachineDebugger(Interface):
             The bytes to write.
 
         """
-        assert isinstance(cpu_id, int), \
-                "cpu_id is not an instance of int"
-        assert isinstance(address, int), \
-                "address is not an instance of int"
-        assert isinstance(size, int), \
-                "size is not an instance of int"
-        assert isinstance(bytes_p, list), \
-                "bytes_p is not an instance of list"
+        if not isinstance(cpu_id, int):
+            raise TypeError("cpu_id is not an instance of int")
+        if not isinstance(address, int):
+            raise TypeError("address is not an instance of int")
+        if not isinstance(size, int):
+            raise TypeError("size is not an instance of int")
+        if not isinstance(bytes_p, list):
+            raise TypeError("bytes_p is not an instance of list")
+        for a in bytes_p:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
         self._call_method('writeVirtualMemory',
                      in_p=[cpu_id, address, size, bytes_p])
         
@@ -17258,10 +17417,10 @@ class IMachineDebugger(Interface):
           but other format may be used for floating point registers (TBD).
 
         """
-        assert isinstance(cpu_id, int), \
-                "cpu_id is not an instance of int"
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(cpu_id, int):
+            raise TypeError("cpu_id is not an instance of int")
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         value = self._call_method('getRegister',
                      in_p=[cpu_id, name])
         value = str(value)
@@ -17284,8 +17443,8 @@ class IMachineDebugger(Interface):
           register was returned by <link to="IMachineDebugger::getRegister"/>.
 
         """
-        assert isinstance(cpu_id, int), \
-                "cpu_id is not an instance of int"
+        if not isinstance(cpu_id, int):
+            raise TypeError("cpu_id is not an instance of int")
         (names, values) = self._call_method('getRegisters',
                      in_p=[cpu_id])
         names = [str(a) for a in names]
@@ -17310,12 +17469,12 @@ class IMachineDebugger(Interface):
           the getters.
 
         """
-        assert isinstance(cpu_id, int), \
-                "cpu_id is not an instance of int"
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if not isinstance(cpu_id, int):
+            raise TypeError("cpu_id is not an instance of int")
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(value, str):
+            raise TypeError("value is not an instance of str")
         self._call_method('setRegister',
                      in_p=[cpu_id, name, value])
         
@@ -17337,12 +17496,18 @@ class IMachineDebugger(Interface):
           guidelines.
 
         """
-        assert isinstance(cpu_id, int), \
-                "cpu_id is not an instance of int"
-        assert isinstance(names, list), \
-                "names is not an instance of list"
-        assert isinstance(values, list), \
-                "values is not an instance of list"
+        if not isinstance(cpu_id, int):
+            raise TypeError("cpu_id is not an instance of int")
+        if not isinstance(names, list):
+            raise TypeError("names is not an instance of list")
+        for a in names:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
+        if not isinstance(values, list):
+            raise TypeError("values is not an instance of list")
+        for a in values:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
         self._call_method('setRegisters',
                      in_p=[cpu_id, names, values])
         
@@ -17359,8 +17524,8 @@ class IMachineDebugger(Interface):
             String containing the formatted stack dump.
 
         """
-        assert isinstance(cpu_id, int), \
-                "cpu_id is not an instance of int"
+        if not isinstance(cpu_id, int):
+            raise TypeError("cpu_id is not an instance of int")
         stack = self._call_method('dumpGuestStack',
                      in_p=[cpu_id])
         stack = str(stack)
@@ -17373,8 +17538,8 @@ class IMachineDebugger(Interface):
             The selection pattern. A bit similar to filename globbing.
 
         """
-        assert isinstance(pattern, str), \
-                "pattern is not an instance of str"
+        if not isinstance(pattern, str):
+            raise TypeError("pattern is not an instance of str")
         self._call_method('resetStats',
                      in_p=[pattern])
         
@@ -17385,8 +17550,8 @@ class IMachineDebugger(Interface):
             The selection pattern. A bit similar to filename globbing.
 
         """
-        assert isinstance(pattern, str), \
-                "pattern is not an instance of str"
+        if not isinstance(pattern, str):
+            raise TypeError("pattern is not an instance of str")
         self._call_method('dumpStats',
                      in_p=[pattern])
         
@@ -17403,10 +17568,10 @@ class IMachineDebugger(Interface):
             The XML document containing the statistics.
 
         """
-        assert isinstance(pattern, str), \
-                "pattern is not an instance of str"
-        assert isinstance(with_descriptions, bool), \
-                "with_descriptions is not an instance of bool"
+        if not isinstance(pattern, str):
+            raise TypeError("pattern is not an instance of str")
+        if not isinstance(with_descriptions, bool):
+            raise TypeError("with_descriptions is not an instance of bool")
         stats = self._call_method('getStats',
                      in_p=[pattern, with_descriptions])
         stats = str(stats)
@@ -17749,8 +17914,8 @@ class IUSBController(Interface):
             The virtual machine is not mutable.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         filter_p = self._call_method('createDeviceFilter',
                      in_p=[name])
         filter_p = IUSBDeviceFilter(filter_p)
@@ -17790,10 +17955,10 @@ class IUSBController(Interface):
             USB device filter already in list.
         
         """
-        assert isinstance(position, int), \
-                "position is not an instance of int"
-        assert isinstance(filter_p, IUSBDeviceFilter), \
-                "filter_p is not an instance of IUSBDeviceFilter"
+        if not isinstance(position, int):
+            raise TypeError("position is not an instance of int")
+        if not isinstance(filter_p, IUSBDeviceFilter):
+            raise TypeError("filter_p is not an instance of IUSBDeviceFilter")
         self._call_method('insertDeviceFilter',
                      in_p=[position, filter_p])
         
@@ -17820,8 +17985,8 @@ class IUSBController(Interface):
             USB device filter list empty or invalid @a position.
         
         """
-        assert isinstance(position, int), \
-                "position is not an instance of int"
+        if not isinstance(position, int):
+            raise TypeError("position is not an instance of int")
         filter_p = self._call_method('removeDeviceFilter',
                      in_p=[position])
         filter_p = IUSBDeviceFilter(filter_p)
@@ -18442,10 +18607,10 @@ class IVRDEServer(Interface):
             Value to assign to the key.
 
         """
-        assert isinstance(key, str), \
-                "key is not an instance of str"
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if not isinstance(key, str):
+            raise TypeError("key is not an instance of str")
+        if not isinstance(value, str):
+            raise TypeError("value is not an instance of str")
         self._call_method('setVRDEProperty',
                      in_p=[key, value])
         
@@ -18462,8 +18627,8 @@ class IVRDEServer(Interface):
             Value of the requested key.
 
         """
-        assert isinstance(key, str), \
-                "key is not an instance of str"
+        if not isinstance(key, str):
+            raise TypeError("key is not an instance of str")
         value = self._call_method('getVRDEProperty',
                      in_p=[key])
         value = str(value)
@@ -18632,10 +18797,10 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        assert isinstance(machine, IMachine), \
-                "machine is not an instance of IMachine"
-        assert isinstance(lock_type, LockType), \
-                "lock_type is not an instance of LockType"
+        if not isinstance(machine, IMachine):
+            raise TypeError("machine is not an instance of IMachine")
+        if not isinstance(lock_type, LockType):
+            raise TypeError("lock_type is not an instance of LockType")
         self._call_method('assignMachine',
                      in_p=[machine, lock_type])
         
@@ -18651,10 +18816,10 @@ class IInternalSessionControl(Interface):
             Session state prevents operation.
         
         """
-        assert isinstance(machine, IMachine), \
-                "machine is not an instance of IMachine"
-        assert isinstance(console, IConsole), \
-                "console is not an instance of IConsole"
+        if not isinstance(machine, IMachine):
+            raise TypeError("machine is not an instance of IMachine")
+        if not isinstance(console, IConsole):
+            raise TypeError("console is not an instance of IConsole")
         self._call_method('assignRemoteMachine',
                      in_p=[machine, console])
         
@@ -18672,8 +18837,8 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        assert isinstance(machine_state, MachineState), \
-                "machine_state is not an instance of MachineState"
+        if not isinstance(machine_state, MachineState):
+            raise TypeError("machine_state is not an instance of MachineState")
         self._call_method('updateMachineState',
                      in_p=[machine_state])
         
@@ -18703,10 +18868,10 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        assert isinstance(network_adapter, INetworkAdapter), \
-                "network_adapter is not an instance of INetworkAdapter"
-        assert isinstance(change_adapter, bool), \
-                "change_adapter is not an instance of bool"
+        if not isinstance(network_adapter, INetworkAdapter):
+            raise TypeError("network_adapter is not an instance of INetworkAdapter")
+        if not isinstance(change_adapter, bool):
+            raise TypeError("change_adapter is not an instance of bool")
         self._call_method('onNetworkAdapterChange',
                      in_p=[network_adapter, change_adapter])
         
@@ -18723,8 +18888,8 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        assert isinstance(serial_port, ISerialPort), \
-                "serial_port is not an instance of ISerialPort"
+        if not isinstance(serial_port, ISerialPort):
+            raise TypeError("serial_port is not an instance of ISerialPort")
         self._call_method('onSerialPortChange',
                      in_p=[serial_port])
         
@@ -18741,8 +18906,8 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        assert isinstance(parallel_port, IParallelPort), \
-                "parallel_port is not an instance of IParallelPort"
+        if not isinstance(parallel_port, IParallelPort):
+            raise TypeError("parallel_port is not an instance of IParallelPort")
         self._call_method('onParallelPortChange',
                      in_p=[parallel_port])
         
@@ -18776,10 +18941,10 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        assert isinstance(medium_attachment, IMediumAttachment), \
-                "medium_attachment is not an instance of IMediumAttachment"
-        assert isinstance(force, bool), \
-                "force is not an instance of bool"
+        if not isinstance(medium_attachment, IMediumAttachment):
+            raise TypeError("medium_attachment is not an instance of IMediumAttachment")
+        if not isinstance(force, bool):
+            raise TypeError("force is not an instance of bool")
         self._call_method('onMediumChange',
                      in_p=[medium_attachment, force])
         
@@ -18804,12 +18969,12 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        assert isinstance(medium_attachment, IMediumAttachment), \
-                "medium_attachment is not an instance of IMediumAttachment"
-        assert isinstance(remove, bool), \
-                "remove is not an instance of bool"
-        assert isinstance(silent, bool), \
-                "silent is not an instance of bool"
+        if not isinstance(medium_attachment, IMediumAttachment):
+            raise TypeError("medium_attachment is not an instance of IMediumAttachment")
+        if not isinstance(remove, bool):
+            raise TypeError("remove is not an instance of bool")
+        if not isinstance(silent, bool):
+            raise TypeError("silent is not an instance of bool")
         self._call_method('onStorageDeviceChange',
                      in_p=[medium_attachment, remove, silent])
         
@@ -18820,8 +18985,8 @@ class IInternalSessionControl(Interface):
             The new shared clipboard mode.
 
         """
-        assert isinstance(clipboard_mode, ClipboardMode), \
-                "clipboard_mode is not an instance of ClipboardMode"
+        if not isinstance(clipboard_mode, ClipboardMode):
+            raise TypeError("clipboard_mode is not an instance of ClipboardMode")
         self._call_method('onClipboardModeChange',
                      in_p=[clipboard_mode])
         
@@ -18832,8 +18997,8 @@ class IInternalSessionControl(Interface):
             The new mode for drag'n'drop.
 
         """
-        assert isinstance(drag_and_drop_mode, DragAndDropMode), \
-                "drag_and_drop_mode is not an instance of DragAndDropMode"
+        if not isinstance(drag_and_drop_mode, DragAndDropMode):
+            raise TypeError("drag_and_drop_mode is not an instance of DragAndDropMode")
         self._call_method('onDragAndDropModeChange',
                      in_p=[drag_and_drop_mode])
         
@@ -18847,10 +19012,10 @@ class IInternalSessionControl(Interface):
             Flag whether the CPU was added or removed
 
         """
-        assert isinstance(cpu, int), \
-                "cpu is not an instance of int"
-        assert isinstance(add, bool), \
-                "add is not an instance of bool"
+        if not isinstance(cpu, int):
+            raise TypeError("cpu is not an instance of int")
+        if not isinstance(add, bool):
+            raise TypeError("add is not an instance of bool")
         self._call_method('onCPUChange',
                      in_p=[cpu, add])
         
@@ -18861,8 +19026,8 @@ class IInternalSessionControl(Interface):
             The new CPU execution cap value. (1-100)
 
         """
-        assert isinstance(execution_cap, int), \
-                "execution_cap is not an instance of int"
+        if not isinstance(execution_cap, int):
+            raise TypeError("execution_cap is not an instance of int")
         self._call_method('onCPUExecutionCapChange',
                      in_p=[execution_cap])
         
@@ -18880,8 +19045,8 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        assert isinstance(restart, bool), \
-                "restart is not an instance of bool"
+        if not isinstance(restart, bool):
+            raise TypeError("restart is not an instance of bool")
         self._call_method('onVRDEServerChange',
                      in_p=[restart])
         
@@ -18916,8 +19081,8 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        assert isinstance(global_p, bool), \
-                "global_p is not an instance of bool"
+        if not isinstance(global_p, bool):
+            raise TypeError("global_p is not an instance of bool")
         self._call_method('onSharedFolderChange',
                      in_p=[global_p])
         
@@ -18941,12 +19106,12 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        assert isinstance(device, IUSBDevice), \
-                "device is not an instance of IUSBDevice"
-        assert isinstance(error, IVirtualBoxErrorInfo), \
-                "error is not an instance of IVirtualBoxErrorInfo"
-        assert isinstance(masked_interfaces, int), \
-                "masked_interfaces is not an instance of int"
+        if not isinstance(device, IUSBDevice):
+            raise TypeError("device is not an instance of IUSBDevice")
+        if not isinstance(error, IVirtualBoxErrorInfo):
+            raise TypeError("error is not an instance of IVirtualBoxErrorInfo")
+        if not isinstance(masked_interfaces, int):
+            raise TypeError("masked_interfaces is not an instance of int")
         self._call_method('onUSBDeviceAttach',
                      in_p=[device, error, masked_interfaces])
         
@@ -18968,10 +19133,10 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        assert isinstance(id_p, str), \
-                "id_p is not an instance of str"
-        assert isinstance(error, IVirtualBoxErrorInfo), \
-                "error is not an instance of IVirtualBoxErrorInfo"
+        if not isinstance(id_p, str):
+            raise TypeError("id_p is not an instance of str")
+        if not isinstance(error, IVirtualBoxErrorInfo):
+            raise TypeError("error is not an instance of IVirtualBoxErrorInfo")
         self._call_method('onUSBDeviceDetach',
                      in_p=[id_p, error])
         
@@ -18992,8 +19157,8 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        assert isinstance(check, bool), \
-                "check is not an instance of bool"
+        if not isinstance(check, bool):
+            raise TypeError("check is not an instance of bool")
         (can_show, win_id) = self._call_method('onShowWindow',
                      in_p=[check])
         can_show = bool(can_show)
@@ -19007,8 +19172,8 @@ class IInternalSessionControl(Interface):
             The bandwidth group which changed.
 
         """
-        assert isinstance(bandwidth_group, IBandwidthGroup), \
-                "bandwidth_group is not an instance of IBandwidthGroup"
+        if not isinstance(bandwidth_group, IBandwidthGroup):
+            raise TypeError("bandwidth_group is not an instance of IBandwidthGroup")
         self._call_method('onBandwidthGroupChange',
                      in_p=[bandwidth_group])
         
@@ -19038,14 +19203,14 @@ class IInternalSessionControl(Interface):
             Session type is not direct.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(value, str), \
-                "value is not an instance of str"
-        assert isinstance(flags, str), \
-                "flags is not an instance of str"
-        assert isinstance(is_setter, bool), \
-                "is_setter is not an instance of bool"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(value, str):
+            raise TypeError("value is not an instance of str")
+        if not isinstance(flags, str):
+            raise TypeError("flags is not an instance of str")
+        if not isinstance(is_setter, bool):
+            raise TypeError("is_setter is not an instance of bool")
         (ret_value, ret_timestamp, ret_flags) = self._call_method('accessGuestProperty',
                      in_p=[name, value, flags, is_setter])
         ret_value = str(ret_value)
@@ -19084,8 +19249,8 @@ class IInternalSessionControl(Interface):
             Session type is not direct.
         
         """
-        assert isinstance(patterns, str), \
-                "patterns is not an instance of str"
+        if not isinstance(patterns, str):
+            raise TypeError("patterns is not an instance of str")
         (keys, values, timestamps, flags) = self._call_method('enumerateGuestProperties',
                      in_p=[patterns])
         keys = [str(a) for a in keys]
@@ -19135,24 +19300,27 @@ class IInternalSessionControl(Interface):
             Session type is not direct.
         
         """
-        assert isinstance(medium_attachment, IMediumAttachment), \
-                "medium_attachment is not an instance of IMediumAttachment"
-        assert isinstance(source_idx, int), \
-                "source_idx is not an instance of int"
-        assert isinstance(target_idx, int), \
-                "target_idx is not an instance of int"
-        assert isinstance(source, IMedium), \
-                "source is not an instance of IMedium"
-        assert isinstance(target, IMedium), \
-                "target is not an instance of IMedium"
-        assert isinstance(merge_forward, bool), \
-                "merge_forward is not an instance of bool"
-        assert isinstance(parent_for_target, IMedium), \
-                "parent_for_target is not an instance of IMedium"
-        assert isinstance(children_to_reparent, list), \
-                "children_to_reparent is not an instance of list"
-        assert isinstance(progress, IProgress), \
-                "progress is not an instance of IProgress"
+        if not isinstance(medium_attachment, IMediumAttachment):
+            raise TypeError("medium_attachment is not an instance of IMediumAttachment")
+        if not isinstance(source_idx, int):
+            raise TypeError("source_idx is not an instance of int")
+        if not isinstance(target_idx, int):
+            raise TypeError("target_idx is not an instance of int")
+        if not isinstance(source, IMedium):
+            raise TypeError("source is not an instance of IMedium")
+        if not isinstance(target, IMedium):
+            raise TypeError("target is not an instance of IMedium")
+        if not isinstance(merge_forward, bool):
+            raise TypeError("merge_forward is not an instance of bool")
+        if not isinstance(parent_for_target, IMedium):
+            raise TypeError("parent_for_target is not an instance of IMedium")
+        if not isinstance(children_to_reparent, list):
+            raise TypeError("children_to_reparent is not an instance of list")
+        for a in children_to_reparent:
+            if not isinstance(a, IMedium):
+                raise TypeError("array can only contain IMedium objects")
+        if not isinstance(progress, IProgress):
+            raise TypeError("progress is not an instance of IProgress")
         self._call_method('onlineMergeMedium',
                      in_p=[medium_attachment, source_idx, target_idx, source, target, merge_forward, parent_for_target, children_to_reparent, progress])
         
@@ -19169,8 +19337,8 @@ class IInternalSessionControl(Interface):
             Session type is not direct.
         
         """
-        assert isinstance(enable, bool), \
-                "enable is not an instance of bool"
+        if not isinstance(enable, bool):
+            raise TypeError("enable is not an instance of bool")
         self._call_method('enableVMMStatistics',
                      in_p=[enable])
         
@@ -19655,10 +19823,16 @@ class IPerformanceCollector(Interface):
             Array of returned metric parameters.
 
         """
-        assert isinstance(metric_names, list), \
-                "metric_names is not an instance of list"
-        assert isinstance(objects, list), \
-                "objects is not an instance of list"
+        if not isinstance(metric_names, list):
+            raise TypeError("metric_names is not an instance of list")
+        for a in metric_names:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
+        if not isinstance(objects, list):
+            raise TypeError("objects is not an instance of list")
+        for a in objects:
+            if not isinstance(a, Interface):
+                raise TypeError("array can only contain Interface objects")
         metrics = self._call_method('getMetrics',
                      in_p=[metric_names, objects])
         metrics = [IPerformanceMetric(a) for a in metrics]
@@ -19694,14 +19868,20 @@ class IPerformanceCollector(Interface):
             Array of metrics that have been modified by the call to this method.
 
         """
-        assert isinstance(metric_names, list), \
-                "metric_names is not an instance of list"
-        assert isinstance(objects, list), \
-                "objects is not an instance of list"
-        assert isinstance(period, int), \
-                "period is not an instance of int"
-        assert isinstance(count, int), \
-                "count is not an instance of int"
+        if not isinstance(metric_names, list):
+            raise TypeError("metric_names is not an instance of list")
+        for a in metric_names:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
+        if not isinstance(objects, list):
+            raise TypeError("objects is not an instance of list")
+        for a in objects:
+            if not isinstance(a, Interface):
+                raise TypeError("array can only contain Interface objects")
+        if not isinstance(period, int):
+            raise TypeError("period is not an instance of int")
+        if not isinstance(count, int):
+            raise TypeError("count is not an instance of int")
         affected_metrics = self._call_method('setupMetrics',
                      in_p=[metric_names, objects, period, count])
         affected_metrics = [IPerformanceMetric(a) for a in affected_metrics]
@@ -19729,10 +19909,16 @@ class IPerformanceCollector(Interface):
             Array of metrics that have been modified by the call to this method.
 
         """
-        assert isinstance(metric_names, list), \
-                "metric_names is not an instance of list"
-        assert isinstance(objects, list), \
-                "objects is not an instance of list"
+        if not isinstance(metric_names, list):
+            raise TypeError("metric_names is not an instance of list")
+        for a in metric_names:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
+        if not isinstance(objects, list):
+            raise TypeError("objects is not an instance of list")
+        for a in objects:
+            if not isinstance(a, Interface):
+                raise TypeError("array can only contain Interface objects")
         affected_metrics = self._call_method('enableMetrics',
                      in_p=[metric_names, objects])
         affected_metrics = [IPerformanceMetric(a) for a in affected_metrics]
@@ -19760,10 +19946,16 @@ class IPerformanceCollector(Interface):
             Array of metrics that have been modified by the call to this method.
 
         """
-        assert isinstance(metric_names, list), \
-                "metric_names is not an instance of list"
-        assert isinstance(objects, list), \
-                "objects is not an instance of list"
+        if not isinstance(metric_names, list):
+            raise TypeError("metric_names is not an instance of list")
+        for a in metric_names:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
+        if not isinstance(objects, list):
+            raise TypeError("objects is not an instance of list")
+        for a in objects:
+            if not isinstance(a, Interface):
+                raise TypeError("array can only contain Interface objects")
         affected_metrics = self._call_method('disableMetrics',
                      in_p=[metric_names, objects])
         affected_metrics = [IPerformanceMetric(a) for a in affected_metrics]
@@ -19843,10 +20035,16 @@ class IPerformanceCollector(Interface):
           each metric.
 
         """
-        assert isinstance(metric_names, list), \
-                "metric_names is not an instance of list"
-        assert isinstance(objects, list), \
-                "objects is not an instance of list"
+        if not isinstance(metric_names, list):
+            raise TypeError("metric_names is not an instance of list")
+        for a in metric_names:
+            if not isinstance(a, str):
+                raise TypeError("array can only contain str objects")
+        if not isinstance(objects, list):
+            raise TypeError("objects is not an instance of list")
+        for a in objects:
+            if not isinstance(a, Interface):
+                raise TypeError("array can only contain Interface objects")
         (return_metric_names, return_objects, return_units, return_scales, return_sequence_numbers, return_data_indices, return_data_lengths, return_data) = self._call_method('queryMetricsData',
                      in_p=[metric_names, objects])
         return_metric_names = [str(a) for a in return_metric_names]
@@ -20033,16 +20231,16 @@ class INATEngine(Interface):
           establishing a new TCP connection.
 
         """
-        assert isinstance(mtu, int), \
-                "mtu is not an instance of int"
-        assert isinstance(sock_snd, int), \
-                "sock_snd is not an instance of int"
-        assert isinstance(sock_rcv, int), \
-                "sock_rcv is not an instance of int"
-        assert isinstance(tcp_wnd_snd, int), \
-                "tcp_wnd_snd is not an instance of int"
-        assert isinstance(tcp_wnd_rcv, int), \
-                "tcp_wnd_rcv is not an instance of int"
+        if not isinstance(mtu, int):
+            raise TypeError("mtu is not an instance of int")
+        if not isinstance(sock_snd, int):
+            raise TypeError("sock_snd is not an instance of int")
+        if not isinstance(sock_rcv, int):
+            raise TypeError("sock_rcv is not an instance of int")
+        if not isinstance(tcp_wnd_snd, int):
+            raise TypeError("tcp_wnd_snd is not an instance of int")
+        if not isinstance(tcp_wnd_rcv, int):
+            raise TypeError("tcp_wnd_rcv is not an instance of int")
         self._call_method('setNetworkSettings',
                      in_p=[mtu, sock_snd, sock_rcv, tcp_wnd_snd, tcp_wnd_rcv])
         
@@ -20095,18 +20293,18 @@ class INATEngine(Interface):
             The port number to forward.
 
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(proto, NATProtocol), \
-                "proto is not an instance of NATProtocol"
-        assert isinstance(host_ip, str), \
-                "host_ip is not an instance of str"
-        assert isinstance(host_port, int), \
-                "host_port is not an instance of int"
-        assert isinstance(guest_ip, str), \
-                "guest_ip is not an instance of str"
-        assert isinstance(guest_port, int), \
-                "guest_port is not an instance of int"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(proto, NATProtocol):
+            raise TypeError("proto is not an instance of NATProtocol")
+        if not isinstance(host_ip, str):
+            raise TypeError("host_ip is not an instance of str")
+        if not isinstance(host_port, int):
+            raise TypeError("host_port is not an instance of int")
+        if not isinstance(guest_ip, str):
+            raise TypeError("guest_ip is not an instance of str")
+        if not isinstance(guest_port, int):
+            raise TypeError("guest_port is not an instance of int")
         self._call_method('addRedirect',
                      in_p=[name, proto, host_ip, host_port, guest_ip, guest_port])
         
@@ -20117,8 +20315,8 @@ class INATEngine(Interface):
             The name of the rule to delete.
 
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         self._call_method('removeRedirect',
                      in_p=[name])
         
@@ -20298,12 +20496,12 @@ class IExtPackBase(Interface):
             The license text.
 
         """
-        assert isinstance(preferred_locale, str), \
-                "preferred_locale is not an instance of str"
-        assert isinstance(preferred_language, str), \
-                "preferred_language is not an instance of str"
-        assert isinstance(format_p, str), \
-                "format_p is not an instance of str"
+        if not isinstance(preferred_locale, str):
+            raise TypeError("preferred_locale is not an instance of str")
+        if not isinstance(preferred_language, str):
+            raise TypeError("preferred_language is not an instance of str")
+        if not isinstance(format_p, str):
+            raise TypeError("format_p is not an instance of str")
         license_text = self._call_method('queryLicense',
                      in_p=[preferred_locale, preferred_language, format_p])
         license_text = str(license_text)
@@ -20330,8 +20528,8 @@ class IExtPack(IExtPackBase):
             The queried interface.
 
         """
-        assert isinstance(obj_uuid, str), \
-                "obj_uuid is not an instance of str"
+        if not isinstance(obj_uuid, str):
+            raise TypeError("obj_uuid is not an instance of str")
         return_interface = self._call_method('queryObject',
                      in_p=[obj_uuid])
         return_interface = Interface(return_interface)
@@ -20369,10 +20567,10 @@ class IExtPackFile(IExtPackBase):
             Progress object for the operation.
 
         """
-        assert isinstance(replace, bool), \
-                "replace is not an instance of bool"
-        assert isinstance(display_info, str), \
-                "display_info is not an instance of str"
+        if not isinstance(replace, bool):
+            raise TypeError("replace is not an instance of bool")
+        if not isinstance(display_info, str):
+            raise TypeError("display_info is not an instance of str")
         progess = self._call_method('install',
                      in_p=[replace, display_info])
         progess = IProgress(progess)
@@ -20410,8 +20608,8 @@ class IExtPackManager(Interface):
             No extension pack matching @a name was found.
         
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         return_data = self._call_method('find',
                      in_p=[name])
         return_data = IExtPack(return_data)
@@ -20429,8 +20627,8 @@ class IExtPackManager(Interface):
             The interface of the extension pack file object.
 
         """
-        assert isinstance(path, str), \
-                "path is not an instance of str"
+        if not isinstance(path, str):
+            raise TypeError("path is not an instance of str")
         file_p = self._call_method('openExtPackFile',
                      in_p=[path])
         file_p = IExtPackFile(file_p)
@@ -20453,12 +20651,12 @@ class IExtPackManager(Interface):
             Progress object for the operation.
 
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(forced_removal, bool), \
-                "forced_removal is not an instance of bool"
-        assert isinstance(display_info, str), \
-                "display_info is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(forced_removal, bool):
+            raise TypeError("forced_removal is not an instance of bool")
+        if not isinstance(display_info, str):
+            raise TypeError("display_info is not an instance of str")
         progess = self._call_method('uninstall',
                      in_p=[name, forced_removal, display_info])
         progess = IProgress(progess)
@@ -20483,8 +20681,8 @@ class IExtPackManager(Interface):
             Array containing the plug-in modules (full paths).
 
         """
-        assert isinstance(frontend_name, str), \
-                "frontend_name is not an instance of str"
+        if not isinstance(frontend_name, str):
+            raise TypeError("frontend_name is not an instance of str")
         plug_in_modules = self._call_method('queryAllPlugInsForFrontend',
                      in_p=[frontend_name])
         plug_in_modules = [str(a) for a in plug_in_modules]
@@ -20500,8 +20698,8 @@ class IExtPackManager(Interface):
             Is the given extension pack loaded and usable.
 
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         usable = self._call_method('isExtPackUsable',
                      in_p=[name])
         usable = bool(usable)
@@ -20585,12 +20783,12 @@ class IBandwidthControl(Interface):
           entities attached to this group during one second.
 
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
-        assert isinstance(type_p, BandwidthGroupType), \
-                "type_p is not an instance of BandwidthGroupType"
-        assert isinstance(max_bytes_per_sec, int), \
-                "max_bytes_per_sec is not an instance of int"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
+        if not isinstance(type_p, BandwidthGroupType):
+            raise TypeError("type_p is not an instance of BandwidthGroupType")
+        if not isinstance(max_bytes_per_sec, int):
+            raise TypeError("max_bytes_per_sec is not an instance of int")
         self._call_method('createBandwidthGroup',
                      in_p=[name, type_p, max_bytes_per_sec])
         
@@ -20601,8 +20799,8 @@ class IBandwidthControl(Interface):
             Name of the bandwidth group to delete.
 
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         self._call_method('deleteBandwidthGroup',
                      in_p=[name])
         
@@ -20616,8 +20814,8 @@ class IBandwidthControl(Interface):
             Where to store the bandwidth group on success.
 
         """
-        assert isinstance(name, str), \
-                "name is not an instance of str"
+        if not isinstance(name, str):
+            raise TypeError("name is not an instance of str")
         bandwidth_group = self._call_method('getBandwidthGroup',
                      in_p=[name])
         bandwidth_group = IBandwidthGroup(bandwidth_group)
@@ -20681,8 +20879,8 @@ class IVirtualBoxClient(Interface):
             The machine object to check.
 
         """
-        assert isinstance(machine, IMachine), \
-                "machine is not an instance of IMachine"
+        if not isinstance(machine, IMachine):
+            raise TypeError("machine is not an instance of IMachine")
         self._call_method('checkMachineError',
                      in_p=[machine])
         
@@ -20722,8 +20920,11 @@ class IEventSource(Interface):
             Event source aggregating passed sources.
 
         """
-        assert isinstance(subordinates, list), \
-                "subordinates is not an instance of list"
+        if not isinstance(subordinates, list):
+            raise TypeError("subordinates is not an instance of list")
+        for a in subordinates:
+            if not isinstance(a, IEventSource):
+                raise TypeError("array can only contain IEventSource objects")
         result = self._call_method('createAggregator',
                      in_p=[subordinates])
         result = IEventSource(result)
@@ -20757,12 +20958,15 @@ class IEventSource(Interface):
           external code must call <link to="#eventProcessed"/>.
 
         """
-        assert isinstance(listener, IEventListener), \
-                "listener is not an instance of IEventListener"
-        assert isinstance(interesting, list), \
-                "interesting is not an instance of list"
-        assert isinstance(active, bool), \
-                "active is not an instance of bool"
+        if not isinstance(listener, IEventListener):
+            raise TypeError("listener is not an instance of IEventListener")
+        if not isinstance(interesting, list):
+            raise TypeError("interesting is not an instance of list")
+        for a in interesting:
+            if not isinstance(a, VBoxEventType):
+                raise TypeError("array can only contain VBoxEventType objects")
+        if not isinstance(active, bool):
+            raise TypeError("active is not an instance of bool")
         self._call_method('registerListener',
                      in_p=[listener, interesting, active])
         
@@ -20774,8 +20978,8 @@ class IEventSource(Interface):
             Listener to unregister.
 
         """
-        assert isinstance(listener, IEventListener), \
-                "listener is not an instance of IEventListener"
+        if not isinstance(listener, IEventListener):
+            raise TypeError("listener is not an instance of IEventListener")
         self._call_method('unregisterListener',
                      in_p=[listener])
         
@@ -20793,10 +20997,10 @@ class IEventSource(Interface):
             true if an event was delivered to all targets, or is non-waitable.
 
         """
-        assert isinstance(event, IEvent), \
-                "event is not an instance of IEvent"
-        assert isinstance(timeout, int), \
-                "timeout is not an instance of int"
+        if not isinstance(event, IEvent):
+            raise TypeError("event is not an instance of IEvent")
+        if not isinstance(timeout, int):
+            raise TypeError("timeout is not an instance of int")
         result = self._call_method('fireEvent',
                      in_p=[event, timeout])
         result = bool(result)
@@ -20821,10 +21025,10 @@ class IEventSource(Interface):
             Listener is not registered, or autounregistered.
         
         """
-        assert isinstance(listener, IEventListener), \
-                "listener is not an instance of IEventListener"
-        assert isinstance(timeout, int), \
-                "timeout is not an instance of int"
+        if not isinstance(listener, IEventListener):
+            raise TypeError("listener is not an instance of IEventListener")
+        if not isinstance(timeout, int):
+            raise TypeError("timeout is not an instance of int")
         event = self._call_method('getEvent',
                      in_p=[listener, timeout])
         event = IEvent(event)
@@ -20842,10 +21046,10 @@ class IEventSource(Interface):
             Which event.
 
         """
-        assert isinstance(listener, IEventListener), \
-                "listener is not an instance of IEventListener"
-        assert isinstance(event, IEvent), \
-                "event is not an instance of IEvent"
+        if not isinstance(listener, IEventListener):
+            raise TypeError("listener is not an instance of IEventListener")
+        if not isinstance(event, IEvent):
+            raise TypeError("event is not an instance of IEvent")
         self._call_method('eventProcessed',
                      in_p=[listener, event])
         
@@ -20871,8 +21075,8 @@ class IEventListener(Interface):
             Event available.
 
         """
-        assert isinstance(event, IEvent), \
-                "event is not an instance of IEvent"
+        if not isinstance(event, IEvent):
+            raise TypeError("event is not an instance of IEvent")
         self._call_method('handleEvent',
                      in_p=[event])
         
@@ -21002,8 +21206,8 @@ class IEvent(Interface):
             If this event was processed before timeout.
 
         """
-        assert isinstance(timeout, int), \
-                "timeout is not an instance of int"
+        if not isinstance(timeout, int):
+            raise TypeError("timeout is not an instance of int")
         result = self._call_method('waitProcessed',
                      in_p=[timeout])
         result = bool(result)
@@ -22214,8 +22418,8 @@ class IVetoEvent(IEvent):
             Reason for veto, could be null or empty string.
 
         """
-        assert isinstance(reason, str), \
-                "reason is not an instance of str"
+        if not isinstance(reason, str):
+            raise TypeError("reason is not an instance of str")
         self._call_method('addVeto',
                      in_p=[reason])
         

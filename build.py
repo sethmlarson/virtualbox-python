@@ -383,9 +383,14 @@ METHOD_DOC_RAISES = '''\
         '''
 
 METHOD_ASSERT_IN = '''\
-        assert isinstance(%(invar)s, %(invartype)s), \\
-                "%(invar)s is not an instance of %(invartype)s"'''
+        if not isinstance(%(invar)s, %(invartype)s):
+            raise TypeError("%(invar)s is not an instance of %(invartype)s")'''
 
+METHOD_ASSERT_ARRAY_IN = '''\
+        for a in %(invar)s:
+            if not isinstance(a, %(invartype)s):
+                raise TypeError("array can only contain %(invartype)s objects")'''
+            
 METHOD_CALL = '''\
         %(outvars)sself._call_method('%(name)s'%(in_p)s)'''
 
@@ -477,6 +482,9 @@ def process_interface_method(node):
                 invartype = atype
             func.append(METHOD_ASSERT_IN % dict(invar=name,
                                                 invartype=invartype))
+            if array:
+                func.append(METHOD_ASSERT_ARRAY_IN % dict(invar=name,
+                                                      invartype=atype))
         elif io == 'out':
             outvars.append(name)
             out_p.append((name, atype, array))
