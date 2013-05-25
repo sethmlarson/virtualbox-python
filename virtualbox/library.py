@@ -106,6 +106,7 @@ class Interface(object):
             raise errobj
         return ret
 
+
 class VBoxError(Exception): 
     """Generic VBoxError"""
     name = "undef"
