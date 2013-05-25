@@ -104,7 +104,7 @@ class EnumType(type):
 
 
 class Enum(object):
-    """Enum objects provides a contain for VirtualBox enumerations"""
+    """Enum objects provide a contain for VirtualBox enumerations"""
     lookup_value = {}
     __metaclass__ = EnumType
     def __init__(self, value=None):
