@@ -18,3 +18,14 @@ class TestVBox(unittest.TestCase):
         vbox.internal_networks
         vbox.generic_network_drivers
 
+    def test_method_out_safearray(self):
+        vbox = virtualbox.VirtualBox()
+        vbox.get_extra_data_keys()
+
+    def test_method_in_safearray(self):
+        vbox = virtualbox.VirthalBox()
+        vbox.get_machine_states(vbox.machines)
+
+
+
+

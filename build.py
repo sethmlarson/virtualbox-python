@@ -336,6 +336,8 @@ def process_interface_attribute(node):
     if readonly:
         doc_action = "Get"
     else:
+        if array:
+            print "TODO: %s %s get or set with array" % (name, atype)
         doc_action = "Get or set"
     rdoc = get_doc(node)
     if rdoc:
@@ -383,7 +385,7 @@ METHOD_CALL = '''\
         %(outvars)sself._call_method('%(name)s'%(in_p)s)'''
 
 METHOD_OUT_CONV = '''\
-        %(name)s = %(atype)s(%(name)s)'''
+        %(name)s = %(convfunc)s'''
 
 METHOD_RETURN = '''\
         %(retcmd)s'''
@@ -419,11 +421,12 @@ def process_interface_method(node):
             cdoc = get_doc(c)
             atype = c.getAttribute('type')
             cio = c.getAttribute('dir')
+            array = c.getAttribute('safearray')
             if cio in ['in', 'out']:
-                params.append((cname, cio, cdoc, atype))
+                params.append((cname, cio, cdoc, atype, array))
             elif cio == 'return':
-                params.append((cname, cio, cdoc, atype))
-                ret_param = (cname, cdoc, atype)
+                params.append((cname, cio, cdoc, atype, array))
+                ret_param = (cname, cdoc, atype, array)
             else:
                 raise Exception("Unknown param type '%s' for %s" % \
                         (cio, method_name))
@@ -433,7 +436,7 @@ def process_interface_method(node):
     #function doc
     doc = [method_doc]
     doc.append('')
-    for n, io, d, t in params: 
+    for n, io, d, t, _ in params: 
         ptype = type_to_name(t)
         if d:
             d = "\n            %s" % d
@@ -444,7 +447,7 @@ def process_interface_method(node):
     doc = "\n".join(doc)
 
     #function definition 
-    inparams = [pythonic_name(n) for n, io, _, _ in params if io == 'in']
+    inparams = [pythonic_name(n) for n, io, _, _, _ in params if io == 'in']
     inparams_raw = ", ".join(inparams)
     if inparams_raw:
         inparams = ", %s" % inparams_raw 
@@ -459,7 +462,7 @@ def process_interface_method(node):
     # prep METOD_CALL vars and insert ASSERT IN 
     outvars = []
     out_p = []
-    for n, io, d, t in params:
+    for n, io, d, t, array in params:
         name = pythonic_name(n)
         atype = type_to_name(t)
         if io == 'in':
@@ -467,14 +470,14 @@ def process_interface_method(node):
                                                 invartype=atype))
         elif io == 'out':
             outvars.append(name)
-            out_p.append((name, atype))
+            out_p.append((name, atype, array))
     
     if ret_param is not None:
-        n, _, t = ret_param
+        n, _, t, a = ret_param
         name = pythonic_name(n)
         atype = type_to_name(t)
         outvars.append(name)
-        out_p.append((name, atype))
+        out_p.append((name, atype, array))
 
     if inparams_raw:
         in_p = ",\n%sin_p=[%s]" % (" " * 21, inparams_raw)
@@ -489,20 +492,22 @@ def process_interface_method(node):
         outvars = "%s = " % (retvars)
     else:
         outvars = ''
+        retvars = ''
 
     func.append(METHOD_CALL % dict(outvars=outvars, name=method_name,
         in_p=in_p))
 
-    # build retcmd
-    if out_p:
-        retcmd = ["%s(%s)" % (atype, name) for name, atype in out_p]
-        retcmd = ", ".join(retcmd)
-        if len(out_p) > 1:
-            retcmd = "(%s)" % retcmd 
-        retcmd = "return %s\n" % retcmd
+    for name, atype, array in out_p:
+        if array:
+            convfunc = "[%s(a) for a in %s]" % (atype, name)
+        else:
+            convfunc = "%s(%s)" % (atype, name)
+        func.append(METHOD_OUT_CONV % dict(name=name, convfunc=convfunc))
+        
+    if retvars:
+        retcmd = "return %s\n" % retvars 
     else:
         retcmd = ''
-    
     func.append(METHOD_RETURN % dict(retcmd=retcmd))
         
     return func

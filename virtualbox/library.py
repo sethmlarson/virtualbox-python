@@ -2164,7 +2164,8 @@ class IVirtualBox(Interface):
                 "base_folder is not an instance of str"
         file_p = self._call_method('composeMachineFilename',
                      in_p=[name, group, create_flags, base_folder])
-        return str(file_p)
+        file_p = str(file_p)
+        return file_p
 
     def create_machine(self, settings_file, name, groups, os_type_id, flags):
         """Creates a new virtual machine by creating a machine settings file at
@@ -2271,7 +2272,8 @@ class IVirtualBox(Interface):
                 "flags is not an instance of str"
         machine = self._call_method('createMachine',
                      in_p=[settings_file, name, groups, os_type_id, flags])
-        return IMachine(machine)
+        machine = IMachine(machine)
+        return machine
 
     def open_machine(self, settings_file):
         """Opens a virtual machine from the existing settings file.
@@ -2296,7 +2298,8 @@ class IVirtualBox(Interface):
                 "settings_file is not an instance of str"
         machine = self._call_method('openMachine',
                      in_p=[settings_file])
-        return IMachine(machine)
+        machine = IMachine(machine)
+        return machine
 
     def register_machine(self, machine):
         """Registers the machine previously created using
@@ -2343,7 +2346,8 @@ class IVirtualBox(Interface):
                 "name_or_id is not an instance of str"
         machine = self._call_method('findMachine',
                      in_p=[name_or_id])
-        return IMachine(machine)
+        machine = IMachine(machine)
+        return machine
 
     def get_machines_by_groups(self, groups):
         """Gets all machine references which are in one of the specified groups.
@@ -2361,7 +2365,8 @@ class IVirtualBox(Interface):
                 "groups is not an instance of str"
         machines = self._call_method('getMachinesByGroups',
                      in_p=[groups])
-        return IMachine(machines)
+        machines = [IMachine(a) for a in machines]
+        return machines
 
     def get_machine_states(self, machines):
         """Gets the state of several machines in a single operation.
@@ -2377,7 +2382,8 @@ class IVirtualBox(Interface):
                 "machines is not an instance of IMachine"
         states = self._call_method('getMachineStates',
                      in_p=[machines])
-        return MachineState(states)
+        states = [MachineState(a) for a in states]
+        return states
 
     def create_appliance(self):
         """Creates a new appliance object, which represents an appliance in the Open Virtual Machine
@@ -2389,7 +2395,8 @@ class IVirtualBox(Interface):
 
         """
         appliance = self._call_method('createAppliance')
-        return IAppliance(appliance)
+        appliance = IAppliance(appliance)
+        return appliance
 
     def create_hard_disk(self, format_p, location):
         """Creates a new base medium object that will use the given storage
@@ -2444,7 +2451,8 @@ class IVirtualBox(Interface):
                 "location is not an instance of str"
         medium = self._call_method('createHardDisk',
                      in_p=[format_p, location])
-        return IMedium(medium)
+        medium = IMedium(medium)
+        return medium
 
     def open_medium(self, location, device_type, access_mode, force_new_uuid):
         """Finds existing media or opens a medium from an existing storage location.
@@ -2545,7 +2553,8 @@ class IVirtualBox(Interface):
                 "force_new_uuid is not an instance of bool"
         medium = self._call_method('openMedium',
                      in_p=[location, device_type, access_mode, force_new_uuid])
-        return IMedium(medium)
+        medium = IMedium(medium)
+        return medium
 
     def get_guest_os_type(self, id_p):
         """Returns an object describing the specified guest OS type.
@@ -2575,7 +2584,8 @@ class IVirtualBox(Interface):
                 "id_p is not an instance of str"
         type_p = self._call_method('getGuestOSType',
                      in_p=[id_p])
-        return IGuestOSType(type_p)
+        type_p = IGuestOSType(type_p)
+        return type_p
 
     def create_shared_folder(self, name, host_path, writable, automount):
         """Creates a new global shared folder by associating the given logical
@@ -2637,7 +2647,8 @@ class IVirtualBox(Interface):
 
         """
         keys = self._call_method('getExtraDataKeys')
-        return str(keys)
+        keys = [str(a) for a in keys]
+        return keys
 
     def get_extra_data(self, key):
         """Returns associated global extra data.
@@ -2662,7 +2673,8 @@ class IVirtualBox(Interface):
                 "key is not an instance of str"
         value = self._call_method('getExtraData',
                      in_p=[key])
-        return str(value)
+        value = str(value)
+        return value
 
     def set_extra_data(self, key, value):
         """Sets associated global extra data.
@@ -2739,7 +2751,8 @@ class IVirtualBox(Interface):
                 "name is not an instance of str"
         server = self._call_method('createDHCPServer',
                      in_p=[name])
-        return IDHCPServer(server)
+        server = IDHCPServer(server)
+        return server
 
     def find_dhcp_server_by_network_name(self, name):
         """Searches a DHCP server settings to be used for the given internal network name
@@ -2758,7 +2771,8 @@ class IVirtualBox(Interface):
                 "name is not an instance of str"
         server = self._call_method('findDHCPServerByNetworkName',
                      in_p=[name])
-        return IDHCPServer(server)
+        server = IDHCPServer(server)
+        return server
 
     def remove_dhcp_server(self, server):
         """Removes the DHCP server settings
@@ -2787,7 +2801,8 @@ class IVirtualBox(Interface):
                 "network_name is not an instance of str"
         network = self._call_method('createNATNetwork',
                      in_p=[network_name])
-        return INATNetwork(network)
+        network = INATNetwork(network)
+        return network
 
     def find_nat_network_by_name(self, network_name):
         """
@@ -2801,7 +2816,8 @@ class IVirtualBox(Interface):
                 "network_name is not an instance of str"
         network = self._call_method('findNATNetworkByName',
                      in_p=[network_name])
-        return INATNetwork(network)
+        network = INATNetwork(network)
+        return network
 
     def remove_nat_network(self, network):
         """
@@ -2842,7 +2858,10 @@ class IVirtualBox(Interface):
                 "version is not an instance of str"
         (url, file_p, result) = self._call_method('checkFirmwarePresent',
                      in_p=[firmware_type, version])
-        return (str(url), str(file_p), bool(result))
+        url = str(url)
+        file_p = str(file_p)
+        result = bool(result)
+        return (url, file_p, result)
 
 
 class IVFSExplorer(Interface):
@@ -2881,7 +2900,8 @@ class IVFSExplorer(Interface):
 
         """
         progress = self._call_method('update')
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def cd(self, dir_p):
         """Change the current directory level.
@@ -2897,7 +2917,8 @@ class IVFSExplorer(Interface):
                 "dir_p is not an instance of str"
         progress = self._call_method('cd',
                      in_p=[dir_p])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def cd_up(self):
         """Go one directory upwards from the current directory level.
@@ -2907,7 +2928,8 @@ class IVFSExplorer(Interface):
 
         """
         progress = self._call_method('cdUp')
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def entry_list(self):
         """Returns a list of files/directories after a call to <link to="#update"/>. The user is responsible for keeping this internal
@@ -2927,7 +2949,11 @@ class IVFSExplorer(Interface):
 
         """
         (names, types, sizes, modes) = self._call_method('entryList')
-        return (str(names), int(types), int(sizes), int(modes))
+        names = [str(a) for a in names]
+        types = [int(a) for a in types]
+        sizes = [int(a) for a in sizes]
+        modes = [int(a) for a in modes]
+        return (names, types, sizes, modes)
 
     def exists(self, names):
         """Checks if the given file list exists in the current directory
@@ -2944,7 +2970,8 @@ class IVFSExplorer(Interface):
                 "names is not an instance of str"
         exists = self._call_method('exists',
                      in_p=[names])
-        return str(exists)
+        exists = [str(a) for a in exists]
+        return exists
 
     def remove(self, names):
         """Deletes the given files in the current directory level.
@@ -2960,7 +2987,8 @@ class IVFSExplorer(Interface):
                 "names is not an instance of str"
         progress = self._call_method('remove',
                      in_p=[names])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
 
 class IAppliance(Interface):
@@ -3131,7 +3159,8 @@ class IAppliance(Interface):
                 "file_p is not an instance of str"
         progress = self._call_method('read',
                      in_p=[file_p])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def interpret(self):
         """Interprets the OVF data that was read when the appliance was constructed. After
@@ -3177,7 +3206,8 @@ class IAppliance(Interface):
                 "options is not an instance of ImportOptions"
         progress = self._call_method('importMachines',
                      in_p=[options])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def create_vfs_explorer(self, uri):
         """Returns a <link to="IVFSExplorer"/> object for the given URI.
@@ -3193,7 +3223,8 @@ class IAppliance(Interface):
                 "uri is not an instance of str"
         explorer = self._call_method('createVFSExplorer',
                      in_p=[uri])
-        return IVFSExplorer(explorer)
+        explorer = IVFSExplorer(explorer)
+        return explorer
 
     def write(self, format_p, manifest, path):
         """Writes the contents of the appliance exports into a new OVF file.
@@ -3229,7 +3260,8 @@ class IAppliance(Interface):
                 "path is not an instance of str"
         progress = self._call_method('write',
                      in_p=[format_p, manifest, path])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def get_warnings(self):
         """Returns textual warnings which occurred during execution of <link to="#interpret"/>.
@@ -3239,7 +3271,8 @@ class IAppliance(Interface):
 
         """
         warnings = self._call_method('getWarnings')
-        return str(warnings)
+        warnings = [str(a) for a in warnings]
+        return warnings
 
 
 class IVirtualSystemDescription(Interface):
@@ -3390,7 +3423,12 @@ class IVirtualSystemDescription(Interface):
 
         """
         (types, refs, ovf_values, v_box_values, extra_config_values) = self._call_method('getDescription')
-        return (VirtualSystemDescriptionType(types), str(refs), str(ovf_values), str(v_box_values), str(extra_config_values))
+        types = [VirtualSystemDescriptionType(a) for a in types]
+        refs = [str(a) for a in refs]
+        ovf_values = [str(a) for a in ovf_values]
+        v_box_values = [str(a) for a in v_box_values]
+        extra_config_values = [str(a) for a in extra_config_values]
+        return (types, refs, ovf_values, v_box_values, extra_config_values)
 
     def get_description_by_type(self, type_p):
         """This is the same as <link to="#getDescription"/> except that you can specify which types
@@ -3419,7 +3457,12 @@ class IVirtualSystemDescription(Interface):
                 "type_p is not an instance of VirtualSystemDescriptionType"
         (types, refs, ovf_values, v_box_values, extra_config_values) = self._call_method('getDescriptionByType',
                      in_p=[type_p])
-        return (VirtualSystemDescriptionType(types), str(refs), str(ovf_values), str(v_box_values), str(extra_config_values))
+        types = [VirtualSystemDescriptionType(a) for a in types]
+        refs = [str(a) for a in refs]
+        ovf_values = [str(a) for a in ovf_values]
+        v_box_values = [str(a) for a in v_box_values]
+        extra_config_values = [str(a) for a in extra_config_values]
+        return (types, refs, ovf_values, v_box_values, extra_config_values)
 
     def get_values_by_type(self, type_p, which):
         """This is the same as <link to="#getDescriptionByType"/> except that you can specify which
@@ -3442,7 +3485,8 @@ class IVirtualSystemDescription(Interface):
                 "which is not an instance of VirtualSystemDescriptionValueType"
         values = self._call_method('getValuesByType',
                      in_p=[type_p, which])
-        return str(values)
+        values = [str(a) for a in values]
+        return values
 
     def set_final_values(self, enabled, v_box_values, extra_config_values):
         """This method allows the appliance's user to change the configuration for the virtual
@@ -3548,7 +3592,8 @@ class IInternalMachineControl(Interface):
 
         """
         id_p = self._call_method('getIPCId')
-        return str(id_p)
+        id_p = str(id_p)
+        return id_p
 
     def begin_power_up(self, progress):
         """Tells VBoxSVC that <link to="IConsole::powerUp"/> is under ways and
@@ -3592,7 +3637,8 @@ class IInternalMachineControl(Interface):
 
         """
         progress = self._call_method('beginPoweringDown')
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def end_powering_down(self, result, err_msg):
         """Called by the VM process to inform the server that powering
@@ -3639,7 +3685,9 @@ class IInternalMachineControl(Interface):
                 "device is not an instance of IUSBDevice"
         (matched, masked_interfaces) = self._call_method('runUSBDeviceFilters',
                      in_p=[device])
-        return (bool(matched), int(masked_interfaces))
+        matched = bool(matched)
+        masked_interfaces = int(masked_interfaces)
+        return (matched, masked_interfaces)
 
     def capture_usb_device(self, id_p):
         """Requests a capture of the given host USB device.
@@ -3723,7 +3771,8 @@ class IInternalMachineControl(Interface):
                 "session is not an instance of ISession"
         progress = self._call_method('onSessionEnd',
                      in_p=[session])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def begin_saving_state(self):
         """Called by the VM process to inform the server it wants to
@@ -3738,7 +3787,9 @@ class IInternalMachineControl(Interface):
 
         """
         (progress, state_file_path) = self._call_method('beginSavingState')
-        return (IProgress(progress), str(state_file_path))
+        progress = IProgress(progress)
+        state_file_path = str(state_file_path)
+        return (progress, state_file_path)
 
     def end_saving_state(self, result, err_msg):
         """Called by the VM process to inform the server that saving
@@ -3829,7 +3880,8 @@ class IInternalMachineControl(Interface):
                 "f_taking_snapshot_online is not an instance of bool"
         state_file_path = self._call_method('beginTakingSnapshot',
                      in_p=[initiator, name, description, console_progress, f_taking_snapshot_online])
-        return str(state_file_path)
+        state_file_path = str(state_file_path)
+        return state_file_path
 
     def end_taking_snapshot(self, success):
         """Called by the VM process to inform the server that the snapshot
@@ -3884,7 +3936,9 @@ class IInternalMachineControl(Interface):
                 "delete_all_children is not an instance of bool"
         (machine_state, progress) = self._call_method('deleteSnapshot',
                      in_p=[initiator, start_id, end_id, delete_all_children])
-        return (MachineState(machine_state), IProgress(progress))
+        machine_state = MachineState(machine_state)
+        progress = IProgress(progress)
+        return (machine_state, progress)
 
     def finish_online_merge_medium(self, medium_attachment, source, target, merge_forward, parent_for_target, children_to_reparent):
         """Gets called by <link to="IInternalSessionControl::onlineMergeMedium"/>.
@@ -3946,7 +4000,9 @@ class IInternalMachineControl(Interface):
                 "snapshot is not an instance of ISnapshot"
         (machine_state, progress) = self._call_method('restoreSnapshot',
                      in_p=[initiator, snapshot])
-        return (MachineState(machine_state), IProgress(progress))
+        machine_state = MachineState(machine_state)
+        progress = IProgress(progress)
+        return (machine_state, progress)
 
     def pull_guest_properties(self):
         """Get the list of the guest properties matching a set of patterns along
@@ -3970,7 +4026,11 @@ class IInternalMachineControl(Interface):
 
         """
         (names, values, timestamps, flags) = self._call_method('pullGuestProperties')
-        return (str(names), str(values), int(timestamps), str(flags))
+        names = [str(a) for a in names]
+        values = [str(a) for a in values]
+        timestamps = [int(a) for a in timestamps]
+        flags = [str(a) for a in flags]
+        return (names, values, timestamps, flags)
 
     def push_guest_property(self, name, value, timestamp, flags):
         """Update a single guest property in IMachine.
@@ -4037,7 +4097,8 @@ class IInternalMachineControl(Interface):
                 "attachment is not an instance of IMediumAttachment"
         new_attachment = self._call_method('ejectMedium',
                      in_p=[attachment])
-        return IMediumAttachment(new_attachment)
+        new_attachment = IMediumAttachment(new_attachment)
+        return new_attachment
 
     def report_vm_statistics(self, valid_stats, cpu_user, cpu_kernel, cpu_idle, mem_total, mem_free, mem_balloon, mem_shared, mem_cache, paged_total, mem_alloc_total, mem_free_total, mem_balloon_total, mem_shared_total, vm_net_rx, vm_net_tx):
         """Passes statistics collected by VM (including guest statistics) to VBoxSVC.
@@ -4326,7 +4387,8 @@ class IPCIAddress(Interface):
 
         """
         result = self._call_method('asLong')
-        return int(result)
+        result = int(result)
+        return result
 
     def from_long(self, number):
         """Make PCI address from long.
@@ -5872,7 +5934,8 @@ class IMachine(Interface):
                 "environment is not an instance of str"
         progress = self._call_method('launchVMProcess',
                      in_p=[session, type_p, environment])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def set_boot_order(self, position, device):
         """Puts the given device to the specified position in
@@ -5935,7 +5998,8 @@ class IMachine(Interface):
                 "position is not an instance of int"
         device = self._call_method('getBootOrder',
                      in_p=[position])
-        return DeviceType(device)
+        device = DeviceType(device)
+        return device
 
     def attach_device(self, name, controller_port, device, type_p, medium):
         """Attaches a device and optionally mounts a medium to the given storage
@@ -6589,7 +6653,8 @@ class IMachine(Interface):
                 "device is not an instance of int"
         medium = self._call_method('getMedium',
                      in_p=[name, controller_port, device])
-        return IMedium(medium)
+        medium = IMedium(medium)
+        return medium
 
     def get_medium_attachments_of_controller(self, name):
         """Returns an array of medium attachments which are attached to the
@@ -6607,7 +6672,8 @@ class IMachine(Interface):
                 "name is not an instance of str"
         medium_attachments = self._call_method('getMediumAttachmentsOfController',
                      in_p=[name])
-        return IMediumAttachment(medium_attachments)
+        medium_attachments = [IMediumAttachment(a) for a in medium_attachments]
+        return medium_attachments
 
     def get_medium_attachment(self, name, controller_port, device):
         """Returns a medium attachment which corresponds to the controller with
@@ -6633,7 +6699,8 @@ class IMachine(Interface):
                 "device is not an instance of int"
         attachment = self._call_method('getMediumAttachment',
                      in_p=[name, controller_port, device])
-        return IMediumAttachment(attachment)
+        attachment = IMediumAttachment(attachment)
+        return attachment
 
     def attach_host_pci_device(self, host_address, desired_guest_address, try_to_unbind):
         """Attaches host PCI device with the given (host) PCI address to the
@@ -6721,7 +6788,8 @@ class IMachine(Interface):
                 "slot is not an instance of int"
         adapter = self._call_method('getNetworkAdapter',
                      in_p=[slot])
-        return INetworkAdapter(adapter)
+        adapter = INetworkAdapter(adapter)
+        return adapter
 
     def add_storage_controller(self, name, connection_type):
         """Adds a new storage controller (SCSI, SAS or SATA controller) to the
@@ -6756,7 +6824,8 @@ class IMachine(Interface):
                 "connection_type is not an instance of StorageBus"
         controller = self._call_method('addStorageController',
                      in_p=[name, connection_type])
-        return IStorageController(controller)
+        controller = IStorageController(controller)
+        return controller
 
     def get_storage_controller_by_name(self, name):
         """Returns a storage controller with the given name.
@@ -6773,7 +6842,8 @@ class IMachine(Interface):
                 "name is not an instance of str"
         storage_controller = self._call_method('getStorageControllerByName',
                      in_p=[name])
-        return IStorageController(storage_controller)
+        storage_controller = IStorageController(storage_controller)
+        return storage_controller
 
     def get_storage_controller_by_instance(self, instance):
         """Returns a storage controller with the given instance number.
@@ -6790,7 +6860,8 @@ class IMachine(Interface):
                 "instance is not an instance of int"
         storage_controller = self._call_method('getStorageControllerByInstance',
                      in_p=[instance])
-        return IStorageController(storage_controller)
+        storage_controller = IStorageController(storage_controller)
+        return storage_controller
 
     def remove_storage_controller(self, name):
         """Removes a storage controller from the machine with all devices attached to it.
@@ -6850,7 +6921,8 @@ class IMachine(Interface):
                 "slot is not an instance of int"
         port = self._call_method('getSerialPort',
                      in_p=[slot])
-        return ISerialPort(port)
+        port = ISerialPort(port)
+        return port
 
     def get_parallel_port(self, slot):
         """Returns the parallel port associated with the given slot.
@@ -6871,7 +6943,8 @@ class IMachine(Interface):
                 "slot is not an instance of int"
         port = self._call_method('getParallelPort',
                      in_p=[slot])
-        return IParallelPort(port)
+        port = IParallelPort(port)
+        return port
 
     def get_extra_data_keys(self):
         """Returns an array representing the machine-specific extra data keys
@@ -6882,7 +6955,8 @@ class IMachine(Interface):
 
         """
         keys = self._call_method('getExtraDataKeys')
-        return str(keys)
+        keys = [str(a) for a in keys]
+        return keys
 
     def get_extra_data(self, key):
         """Returns associated machine-specific extra data.
@@ -6907,7 +6981,8 @@ class IMachine(Interface):
                 "key is not an instance of str"
         value = self._call_method('getExtraData',
                      in_p=[key])
-        return str(value)
+        value = str(value)
+        return value
 
     def set_extra_data(self, key, value):
         """Sets associated machine-specific extra data.
@@ -6970,7 +7045,8 @@ class IMachine(Interface):
                 "property_p is not an instance of CPUPropertyType"
         value = self._call_method('getCPUProperty',
                      in_p=[property_p])
-        return bool(value)
+        value = bool(value)
+        return value
 
     def set_cpu_property(self, property_p, value):
         """Sets the virtual CPU boolean value of the specified property.
@@ -7025,7 +7101,11 @@ class IMachine(Interface):
                 "id_p is not an instance of int"
         (val_eax, val_ebx, val_ecx, val_edx) = self._call_method('getCPUIDLeaf',
                      in_p=[id_p])
-        return (int(val_eax), int(val_ebx), int(val_ecx), int(val_edx))
+        val_eax = int(val_eax)
+        val_ebx = int(val_ebx)
+        val_ecx = int(val_ecx)
+        val_edx = int(val_edx)
+        return (val_eax, val_ebx, val_ecx, val_edx)
 
     def set_cpuid_leaf(self, id_p, val_eax, val_ebx, val_ecx, val_edx):
         """Sets the virtual CPU cpuid information for the specified leaf. Note that these values
@@ -7111,7 +7191,8 @@ class IMachine(Interface):
                 "property_p is not an instance of HWVirtExPropertyType"
         value = self._call_method('getHWVirtExProperty',
                      in_p=[property_p])
-        return bool(value)
+        value = bool(value)
+        return value
 
     def set_hw_virt_ex_property(self, property_p, value):
         """Sets a new value for the specified hardware virtualization boolean property.
@@ -7264,7 +7345,8 @@ class IMachine(Interface):
                 "cleanup_mode is not an instance of CleanupMode"
         media = self._call_method('unregister',
                      in_p=[cleanup_mode])
-        return IMedium(media)
+        media = [IMedium(a) for a in media]
+        return media
 
     def delete_config(self, media):
         """Deletes the files associated with this machine from disk. If medium objects are passed
@@ -7317,7 +7399,8 @@ class IMachine(Interface):
                 "media is not an instance of IMedium"
         progress = self._call_method('deleteConfig',
                      in_p=[media])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def export_to(self, appliance, location):
         """Exports the machine to an OVF appliance. See <link to="IAppliance"/> for the
@@ -7339,7 +7422,8 @@ class IMachine(Interface):
                 "location is not an instance of str"
         description = self._call_method('exportTo',
                      in_p=[appliance, location])
-        return IVirtualSystemDescription(description)
+        description = IVirtualSystemDescription(description)
+        return description
 
     def find_snapshot(self, name_or_id):
         """Returns a snapshot of this machine with the given name or UUID.
@@ -7364,7 +7448,8 @@ class IMachine(Interface):
                 "name_or_id is not an instance of str"
         snapshot = self._call_method('findSnapshot',
                      in_p=[name_or_id])
-        return ISnapshot(snapshot)
+        snapshot = ISnapshot(snapshot)
+        return snapshot
 
     def create_shared_folder(self, name, host_path, writable, automount):
         """Creates a new permanent shared folder by associating the given logical
@@ -7439,7 +7524,8 @@ class IMachine(Interface):
         
         """
         can_show = self._call_method('canShowConsoleWindow')
-        return bool(can_show)
+        can_show = bool(can_show)
+        return can_show
 
     def show_console_window(self):
         """Activates the console window and brings it to foreground on
@@ -7468,7 +7554,8 @@ class IMachine(Interface):
         
         """
         win_id = self._call_method('showConsoleWindow')
-        return int(win_id)
+        win_id = int(win_id)
+        return win_id
 
     def get_guest_property(self, name):
         """Reads an entry from the machine's guest property store.
@@ -7496,7 +7583,10 @@ class IMachine(Interface):
                 "name is not an instance of str"
         (value, timestamp, flags) = self._call_method('getGuestProperty',
                      in_p=[name])
-        return (str(value), int(timestamp), str(flags))
+        value = str(value)
+        timestamp = int(timestamp)
+        flags = str(flags)
+        return (value, timestamp, flags)
 
     def get_guest_property_value(self, property_p):
         """Reads a value from the machine's guest property store.
@@ -7516,7 +7606,8 @@ class IMachine(Interface):
                 "property_p is not an instance of str"
         value = self._call_method('getGuestPropertyValue',
                      in_p=[property_p])
-        return str(value)
+        value = str(value)
+        return value
 
     def get_guest_property_timestamp(self, property_p):
         """Reads a property timestamp from the machine's guest property store.
@@ -7536,7 +7627,8 @@ class IMachine(Interface):
                 "property_p is not an instance of str"
         value = self._call_method('getGuestPropertyTimestamp',
                      in_p=[property_p])
-        return int(value)
+        value = int(value)
+        return value
 
     def set_guest_property(self, property_p, value, flags):
         """Sets, changes or deletes an entry in the machine's guest property
@@ -7650,7 +7742,11 @@ class IMachine(Interface):
                 "patterns is not an instance of str"
         (names, values, timestamps, flags) = self._call_method('enumerateGuestProperties',
                      in_p=[patterns])
-        return (str(names), str(values), int(timestamps), str(flags))
+        names = [str(a) for a in names]
+        values = [str(a) for a in values]
+        timestamps = [int(a) for a in timestamps]
+        flags = [str(a) for a in flags]
+        return (names, values, timestamps, flags)
 
     def query_saved_guest_screen_info(self, screen_id):
         """Returns the guest dimensions from the saved state.
@@ -7678,7 +7774,12 @@ class IMachine(Interface):
                 "screen_id is not an instance of int"
         (origin_x, origin_y, width, height, enabled) = self._call_method('querySavedGuestScreenInfo',
                      in_p=[screen_id])
-        return (int(origin_x), int(origin_y), int(width), int(height), bool(enabled))
+        origin_x = int(origin_x)
+        origin_y = int(origin_y)
+        width = int(width)
+        height = int(height)
+        enabled = bool(enabled)
+        return (origin_x, origin_y, width, height, enabled)
 
     def query_saved_thumbnail_size(self, screen_id):
         """Returns size in bytes and dimensions in pixels of a saved thumbnail bitmap from saved state.
@@ -7700,7 +7801,10 @@ class IMachine(Interface):
                 "screen_id is not an instance of int"
         (size, width, height) = self._call_method('querySavedThumbnailSize',
                      in_p=[screen_id])
-        return (int(size), int(width), int(height))
+        size = int(size)
+        width = int(width)
+        height = int(height)
+        return (size, width, height)
 
     def read_saved_thumbnail_to_array(self, screen_id, bgr):
         """Thumbnail is retrieved to an array of bytes in uncompressed 32-bit BGRA or RGBA format.
@@ -7728,7 +7832,10 @@ class IMachine(Interface):
                 "bgr is not an instance of bool"
         (width, height, data) = self._call_method('readSavedThumbnailToArray',
                      in_p=[screen_id, bgr])
-        return (int(width), int(height), str(data))
+        width = int(width)
+        height = int(height)
+        data = [str(a) for a in data]
+        return (width, height, data)
 
     def read_saved_thumbnail_png_to_array(self, screen_id):
         """Thumbnail in PNG format is retrieved to an array of bytes.
@@ -7750,7 +7857,10 @@ class IMachine(Interface):
                 "screen_id is not an instance of int"
         (width, height, data) = self._call_method('readSavedThumbnailPNGToArray',
                      in_p=[screen_id])
-        return (int(width), int(height), str(data))
+        width = int(width)
+        height = int(height)
+        data = [str(a) for a in data]
+        return (width, height, data)
 
     def query_saved_screenshot_png_size(self, screen_id):
         """Returns size in bytes and dimensions of a saved PNG image of screenshot from saved state.
@@ -7772,7 +7882,10 @@ class IMachine(Interface):
                 "screen_id is not an instance of int"
         (size, width, height) = self._call_method('querySavedScreenshotPNGSize',
                      in_p=[screen_id])
-        return (int(size), int(width), int(height))
+        size = int(size)
+        width = int(width)
+        height = int(height)
+        return (size, width, height)
 
     def read_saved_screenshot_png_to_array(self, screen_id):
         """Screenshot in PNG format is retrieved to an array of bytes.
@@ -7794,7 +7907,10 @@ class IMachine(Interface):
                 "screen_id is not an instance of int"
         (width, height, data) = self._call_method('readSavedScreenshotPNGToArray',
                      in_p=[screen_id])
-        return (int(width), int(height), str(data))
+        width = int(width)
+        height = int(height)
+        data = [str(a) for a in data]
+        return (width, height, data)
 
     def hot_plug_cpu(self, cpu):
         """Plugs a CPU into the machine.
@@ -7834,7 +7950,8 @@ class IMachine(Interface):
                 "cpu is not an instance of int"
         attached = self._call_method('getCPUStatus',
                      in_p=[cpu])
-        return bool(attached)
+        attached = bool(attached)
+        return attached
 
     def query_log_filename(self, idx):
         """Queries for the VM log file name of an given index. Returns an empty
@@ -7851,7 +7968,8 @@ class IMachine(Interface):
                 "idx is not an instance of int"
         filename = self._call_method('queryLogFilename',
                      in_p=[idx])
-        return str(filename)
+        filename = str(filename)
+        return filename
 
     def read_log(self, idx, offset, size):
         """Reads the VM log file. The chunk size is limited, so even if you
@@ -7881,7 +7999,8 @@ class IMachine(Interface):
                 "size is not an instance of int"
         data = self._call_method('readLog',
                      in_p=[idx, offset, size])
-        return str(data)
+        data = [str(a) for a in data]
+        return data
 
     def clone_to(self, target, mode, options):
         """Creates a clone of this machine, either as a full clone (which means
@@ -7921,7 +8040,8 @@ class IMachine(Interface):
                 "options is not an instance of CloneOptions"
         progress = self._call_method('cloneTo',
                      in_p=[target, mode, options])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
 
 class IVRDEServerInfo(Interface):
@@ -8284,7 +8404,8 @@ class IConsole(Interface):
         
         """
         progress = self._call_method('powerUp')
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def power_up_paused(self):
         """Identical to powerUp except that the VM will enter the
@@ -8307,7 +8428,8 @@ class IConsole(Interface):
         
         """
         progress = self._call_method('powerUpPaused')
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def power_down(self):
         """Initiates the power down procedure to stop the virtual machine
@@ -8325,7 +8447,8 @@ class IConsole(Interface):
         
         """
         progress = self._call_method('powerDown')
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def reset(self):
         """Resets the virtual machine.
@@ -8397,7 +8520,8 @@ class IConsole(Interface):
         
         """
         handled = self._call_method('getPowerButtonHandled')
-        return bool(handled)
+        handled = bool(handled)
+        return handled
 
     def get_guest_entered_acpi_mode(self):
         """Checks if the guest entered the ACPI mode G0 (working) or
@@ -8411,7 +8535,8 @@ class IConsole(Interface):
         
         """
         entered = self._call_method('getGuestEnteredACPIMode')
-        return bool(entered)
+        entered = bool(entered)
+        return entered
 
     def save_state(self):
         """Saves the current execution state of a running virtual machine
@@ -8457,7 +8582,8 @@ class IConsole(Interface):
         
         """
         progress = self._call_method('saveState')
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def adopt_saved_state(self, saved_state_file):
         """Associates the given saved state file to the virtual machine.
@@ -8534,7 +8660,8 @@ class IConsole(Interface):
                 "type_p is not an instance of DeviceType"
         activity = self._call_method('getDeviceActivity',
                      in_p=[type_p])
-        return DeviceActivity(activity)
+        activity = DeviceActivity(activity)
+        return activity
 
     def attach_usb_device(self, id_p):
         """Attaches a host USB device with the given UUID to the
@@ -8597,7 +8724,8 @@ class IConsole(Interface):
                 "id_p is not an instance of str"
         device = self._call_method('detachUSBDevice',
                      in_p=[id_p])
-        return IUSBDevice(device)
+        device = IUSBDevice(device)
+        return device
 
     def find_usb_device_by_address(self, name):
         """Searches for a USB device with the given host address.
@@ -8621,7 +8749,8 @@ class IConsole(Interface):
                 "name is not an instance of str"
         device = self._call_method('findUSBDeviceByAddress',
                      in_p=[name])
-        return IUSBDevice(device)
+        device = IUSBDevice(device)
+        return device
 
     def find_usb_device_by_id(self, id_p):
         """Searches for a USB device with the given UUID.
@@ -8644,7 +8773,8 @@ class IConsole(Interface):
                 "id_p is not an instance of str"
         device = self._call_method('findUSBDeviceById',
                      in_p=[id_p])
-        return IUSBDevice(device)
+        device = IUSBDevice(device)
+        return device
 
     def create_shared_folder(self, name, host_path, writable, automount):
         """Creates a transient new shared folder by associating the given logical
@@ -8742,7 +8872,8 @@ class IConsole(Interface):
                 "description is not an instance of str"
         progress = self._call_method('takeSnapshot',
                      in_p=[name, description])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def delete_snapshot(self, id_p):
         """Starts deleting the specified snapshot asynchronously.
@@ -8816,7 +8947,8 @@ class IConsole(Interface):
                 "id_p is not an instance of str"
         progress = self._call_method('deleteSnapshot',
                      in_p=[id_p])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def delete_snapshot_and_all_children(self, id_p):
         """Starts deleting the specified snapshot and all its children
@@ -8852,7 +8984,8 @@ class IConsole(Interface):
                 "id_p is not an instance of str"
         progress = self._call_method('deleteSnapshotAndAllChildren',
                      in_p=[id_p])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def delete_snapshot_range(self, start_id, end_id):
         """Starts deleting the specified snapshot range. This is limited to
@@ -8895,7 +9028,8 @@ class IConsole(Interface):
                 "end_id is not an instance of str"
         progress = self._call_method('deleteSnapshotRange',
                      in_p=[start_id, end_id])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def restore_snapshot(self, snapshot):
         """Starts resetting the machine's current state to the state contained
@@ -8936,7 +9070,8 @@ class IConsole(Interface):
                 "snapshot is not an instance of ISnapshot"
         progress = self._call_method('restoreSnapshot',
                      in_p=[snapshot])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def teleport(self, hostname, tcpport, password, max_downtime):
         """Teleport the VM to a different host machine or process.
@@ -8981,7 +9116,8 @@ class IConsole(Interface):
                 "max_downtime is not an instance of int"
         progress = self._call_method('teleport',
                      in_p=[hostname, tcpport, password, max_downtime])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
 
 class IHostNetworkInterface(Interface):
@@ -9263,7 +9399,8 @@ class IHost(Interface):
                 "cpu_id is not an instance of int"
         speed = self._call_method('getProcessorSpeed',
                      in_p=[cpu_id])
-        return int(speed)
+        speed = int(speed)
+        return speed
 
     def get_processor_feature(self, feature):
         """Query whether a CPU feature is supported or not.
@@ -9279,7 +9416,8 @@ class IHost(Interface):
                 "feature is not an instance of ProcessorFeature"
         supported = self._call_method('getProcessorFeature',
                      in_p=[feature])
-        return bool(supported)
+        supported = bool(supported)
+        return supported
 
     def get_processor_description(self, cpu_id):
         """Query the model string of a specified host CPU.
@@ -9299,7 +9437,8 @@ class IHost(Interface):
                 "cpu_id is not an instance of int"
         description = self._call_method('getProcessorDescription',
                      in_p=[cpu_id])
-        return str(description)
+        description = str(description)
+        return description
 
     def get_processor_cpuid_leaf(self, cpu_id, leaf, sub_leaf):
         """Returns the CPU cpuid information for the specified leaf.
@@ -9339,7 +9478,11 @@ class IHost(Interface):
                 "sub_leaf is not an instance of int"
         (val_eax, val_ebx, val_ecx, val_edx) = self._call_method('getProcessorCPUIDLeaf',
                      in_p=[cpu_id, leaf, sub_leaf])
-        return (int(val_eax), int(val_ebx), int(val_ecx), int(val_edx))
+        val_eax = int(val_eax)
+        val_ebx = int(val_ebx)
+        val_ecx = int(val_ecx)
+        val_edx = int(val_edx)
+        return (val_eax, val_ebx, val_ecx, val_edx)
 
     @property
     def memory_size(self):
@@ -9403,7 +9546,9 @@ class IHost(Interface):
         
         """
         (host_interface, progress) = self._call_method('createHostOnlyNetworkInterface')
-        return (IHostNetworkInterface(host_interface), IProgress(progress))
+        host_interface = IHostNetworkInterface(host_interface)
+        progress = IProgress(progress)
+        return (host_interface, progress)
 
     def remove_host_only_network_interface(self, id_p):
         """Removes the given Host Only Networking interface.
@@ -9422,7 +9567,8 @@ class IHost(Interface):
                 "id_p is not an instance of str"
         progress = self._call_method('removeHostOnlyNetworkInterface',
                      in_p=[id_p])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def create_usb_device_filter(self, name):
         """Creates a new USB device filter. All attributes except
@@ -9445,7 +9591,8 @@ class IHost(Interface):
                 "name is not an instance of str"
         filter_p = self._call_method('createUSBDeviceFilter',
                      in_p=[name])
-        return IHostUSBDeviceFilter(filter_p)
+        filter_p = IHostUSBDeviceFilter(filter_p)
+        return filter_p
 
     def insert_usb_device_filter(self, position, filter_p):
         """Inserts the given USB device to the specified position
@@ -9530,7 +9677,8 @@ class IHost(Interface):
                 "name is not an instance of str"
         drive = self._call_method('findHostDVDDrive',
                      in_p=[name])
-        return IMedium(drive)
+        drive = IMedium(drive)
+        return drive
 
     def find_host_floppy_drive(self, name):
         """Searches for a host floppy drive with the given @c name.
@@ -9549,7 +9697,8 @@ class IHost(Interface):
                 "name is not an instance of str"
         drive = self._call_method('findHostFloppyDrive',
                      in_p=[name])
-        return IMedium(drive)
+        drive = IMedium(drive)
+        return drive
 
     def find_host_network_interface_by_name(self, name):
         """Searches through all host network interfaces for an interface with
@@ -9569,7 +9718,8 @@ class IHost(Interface):
                 "name is not an instance of str"
         network_interface = self._call_method('findHostNetworkInterfaceByName',
                      in_p=[name])
-        return IHostNetworkInterface(network_interface)
+        network_interface = IHostNetworkInterface(network_interface)
+        return network_interface
 
     def find_host_network_interface_by_id(self, id_p):
         """Searches through all host network interfaces for an interface with
@@ -9589,7 +9739,8 @@ class IHost(Interface):
                 "id_p is not an instance of str"
         network_interface = self._call_method('findHostNetworkInterfaceById',
                      in_p=[id_p])
-        return IHostNetworkInterface(network_interface)
+        network_interface = IHostNetworkInterface(network_interface)
+        return network_interface
 
     def find_host_network_interfaces_of_type(self, type_p):
         """Searches through all host network interfaces and returns a list of interfaces of the specified type
@@ -9605,7 +9756,8 @@ class IHost(Interface):
                 "type_p is not an instance of HostNetworkInterfaceType"
         network_interfaces = self._call_method('findHostNetworkInterfacesOfType',
                      in_p=[type_p])
-        return IHostNetworkInterface(network_interfaces)
+        network_interfaces = [IHostNetworkInterface(a) for a in network_interfaces]
+        return network_interfaces
 
     def find_usb_device_by_id(self, id_p):
         """Searches for a USB device with the given UUID.
@@ -9628,7 +9780,8 @@ class IHost(Interface):
                 "id_p is not an instance of str"
         device = self._call_method('findUSBDeviceById',
                      in_p=[id_p])
-        return IHostUSBDevice(device)
+        device = IHostUSBDevice(device)
+        return device
 
     def find_usb_device_by_address(self, name):
         """Searches for a USB device with the given host address.
@@ -9652,7 +9805,8 @@ class IHost(Interface):
                 "name is not an instance of str"
         device = self._call_method('findUSBDeviceByAddress',
                      in_p=[name])
-        return IHostUSBDevice(device)
+        device = IHostUSBDevice(device)
+        return device
 
     def generate_mac_address(self):
         """Generates a valid Ethernet MAC address, 12 hexadecimal characters.
@@ -9662,7 +9816,8 @@ class IHost(Interface):
 
         """
         address = self._call_method('generateMACAddress')
-        return str(address)
+        address = str(address)
+        return address
 
 
 class ISystemProperties(Interface):
@@ -10111,7 +10266,8 @@ class ISystemProperties(Interface):
                 "chipset is not an instance of ChipsetType"
         max_network_adapters = self._call_method('getMaxNetworkAdapters',
                      in_p=[chipset])
-        return int(max_network_adapters)
+        max_network_adapters = int(max_network_adapters)
+        return max_network_adapters
 
     def get_max_network_adapters_of_type(self, chipset, type_p):
         """Maximum number of network adapters of a given attachment type,
@@ -10134,7 +10290,8 @@ class ISystemProperties(Interface):
                 "type_p is not an instance of NetworkAttachmentType"
         max_network_adapters = self._call_method('getMaxNetworkAdaptersOfType',
                      in_p=[chipset, type_p])
-        return int(max_network_adapters)
+        max_network_adapters = int(max_network_adapters)
+        return max_network_adapters
 
     def get_max_devices_per_port_for_storage_bus(self, bus):
         """Returns the maximum number of devices which can be attached to a port
@@ -10152,7 +10309,8 @@ class ISystemProperties(Interface):
                 "bus is not an instance of StorageBus"
         max_devices_per_port = self._call_method('getMaxDevicesPerPortForStorageBus',
                      in_p=[bus])
-        return int(max_devices_per_port)
+        max_devices_per_port = int(max_devices_per_port)
+        return max_devices_per_port
 
     def get_min_port_count_for_storage_bus(self, bus):
         """Returns the minimum number of ports the given storage bus supports.
@@ -10168,7 +10326,8 @@ class ISystemProperties(Interface):
                 "bus is not an instance of StorageBus"
         min_port_count = self._call_method('getMinPortCountForStorageBus',
                      in_p=[bus])
-        return int(min_port_count)
+        min_port_count = int(min_port_count)
+        return min_port_count
 
     def get_max_port_count_for_storage_bus(self, bus):
         """Returns the maximum number of ports the given storage bus supports.
@@ -10184,7 +10343,8 @@ class ISystemProperties(Interface):
                 "bus is not an instance of StorageBus"
         max_port_count = self._call_method('getMaxPortCountForStorageBus',
                      in_p=[bus])
-        return int(max_port_count)
+        max_port_count = int(max_port_count)
+        return max_port_count
 
     def get_max_instances_of_storage_bus(self, chipset, bus):
         """Returns the maximum number of storage bus instances which
@@ -10208,7 +10368,8 @@ class ISystemProperties(Interface):
                 "bus is not an instance of StorageBus"
         max_instances = self._call_method('getMaxInstancesOfStorageBus',
                      in_p=[chipset, bus])
-        return int(max_instances)
+        max_instances = int(max_instances)
+        return max_instances
 
     def get_device_types_for_storage_bus(self, bus):
         """Returns list of all the supported device types
@@ -10226,7 +10387,8 @@ class ISystemProperties(Interface):
                 "bus is not an instance of StorageBus"
         device_types = self._call_method('getDeviceTypesForStorageBus',
                      in_p=[bus])
-        return DeviceType(device_types)
+        device_types = [DeviceType(a) for a in device_types]
+        return device_types
 
     def get_default_io_cache_setting_for_storage_controller(self, controller_type):
         """Returns the default I/O cache setting for the
@@ -10243,7 +10405,8 @@ class ISystemProperties(Interface):
                 "controller_type is not an instance of StorageControllerType"
         enabled = self._call_method('getDefaultIoCacheSettingForStorageController',
                      in_p=[controller_type])
-        return bool(enabled)
+        enabled = bool(enabled)
+        return enabled
 
 
 class IGuestOSType(Interface):
@@ -10679,7 +10842,8 @@ class IGuestSession(Interface):
                 "flags is not an instance of CopyFileFlag"
         progress = self._call_method('copyFrom',
                      in_p=[source, dest, flags])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def copy_to(self, source, dest, flags):
         """Copies a file from host to the guest.
@@ -10708,7 +10872,8 @@ class IGuestSession(Interface):
                 "flags is not an instance of CopyFileFlag"
         progress = self._call_method('copyTo',
                      in_p=[source, dest, flags])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def directory_create(self, path, mode, flags):
         """Create a directory on the guest.
@@ -10786,7 +10951,8 @@ class IGuestSession(Interface):
                 "secure is not an instance of bool"
         directory = self._call_method('directoryCreateTemp',
                      in_p=[template_name, mode, path, secure])
-        return str(directory)
+        directory = str(directory)
+        return directory
 
     def directory_exists(self, path):
         """Checks whether a directory exists on the guest or not.
@@ -10805,7 +10971,8 @@ class IGuestSession(Interface):
                 "path is not an instance of str"
         exists = self._call_method('directoryExists',
                      in_p=[path])
-        return bool(exists)
+        exists = bool(exists)
+        return exists
 
     def directory_open(self, path, filter_p, flags):
         """Opens a directory and creates a <link to="IGuestDirectory"/> object that
@@ -10838,7 +11005,8 @@ class IGuestSession(Interface):
                 "flags is not an instance of DirectoryOpenFlag"
         directory = self._call_method('directoryOpen',
                      in_p=[path, filter_p, flags])
-        return IGuestDirectory(directory)
+        directory = IGuestDirectory(directory)
+        return directory
 
     def directory_query_info(self, path):
         """Queries information of a directory on the guest.
@@ -10860,7 +11028,8 @@ class IGuestSession(Interface):
                 "path is not an instance of str"
         info = self._call_method('directoryQueryInfo',
                      in_p=[path])
-        return IGuestFsObjInfo(info)
+        info = IGuestFsObjInfo(info)
+        return info
 
     def directory_remove(self, path):
         """Removes a guest directory if not empty.
@@ -10899,7 +11068,8 @@ class IGuestSession(Interface):
                 "flags is not an instance of DirectoryRemoveRecFlag"
         progress = self._call_method('directoryRemoveRecursive',
                      in_p=[path, flags])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def directory_rename(self, source, dest, flags):
         """Renames a directory on the guest.
@@ -10973,7 +11143,8 @@ class IGuestSession(Interface):
                 "name is not an instance of str"
         value = self._call_method('environmentGet',
                      in_p=[name])
-        return str(value)
+        value = str(value)
+        return value
 
     def environment_set(self, name, value):
         """Sets a session environment variable.
@@ -11061,7 +11232,8 @@ class IGuestSession(Interface):
                 "secure is not an instance of bool"
         file_p = self._call_method('fileCreateTemp',
                      in_p=[template_name, mode, path, secure])
-        return IGuestFile(file_p)
+        file_p = IGuestFile(file_p)
+        return file_p
 
     def file_exists(self, path):
         """Checks whether a file exists on the guest or not.
@@ -11080,7 +11252,8 @@ class IGuestSession(Interface):
                 "path is not an instance of str"
         exists = self._call_method('fileExists',
                      in_p=[path])
-        return bool(exists)
+        exists = bool(exists)
+        return exists
 
     def file_remove(self, path):
         """Removes a single file on the guest.
@@ -11141,7 +11314,8 @@ class IGuestSession(Interface):
                 "offset is not an instance of int"
         file_p = self._call_method('fileOpen',
                      in_p=[path, open_mode, disposition, creation_mode, offset])
-        return IGuestFile(file_p)
+        file_p = IGuestFile(file_p)
+        return file_p
 
     def file_query_info(self, path):
         """Queries information of a file on the guest.
@@ -11163,7 +11337,8 @@ class IGuestSession(Interface):
                 "path is not an instance of str"
         info = self._call_method('fileQueryInfo',
                      in_p=[path])
-        return IGuestFsObjInfo(info)
+        info = IGuestFsObjInfo(info)
+        return info
 
     def file_query_size(self, path):
         """Queries the size of a file on the guest.
@@ -11185,7 +11360,8 @@ class IGuestSession(Interface):
                 "path is not an instance of str"
         size = self._call_method('fileQuerySize',
                      in_p=[path])
-        return int(size)
+        size = int(size)
+        return size
 
     def file_rename(self, source, dest, flags):
         """Renames a file on the guest.
@@ -11298,7 +11474,8 @@ class IGuestSession(Interface):
                 "timeout_ms is not an instance of int"
         guest_process = self._call_method('processCreate',
                      in_p=[command, arguments, environment, flags, timeout_ms])
-        return IGuestProcess(guest_process)
+        guest_process = IGuestProcess(guest_process)
+        return guest_process
 
     def process_create_ex(self, command, arguments, environment, flags, timeout_ms, priority, affinity):
         """<para>Creates a new process running on the guest. Extended version for
@@ -11360,7 +11537,8 @@ class IGuestSession(Interface):
                 "affinity is not an instance of int"
         guest_process = self._call_method('processCreateEx',
                      in_p=[command, arguments, environment, flags, timeout_ms, priority, affinity])
-        return IGuestProcess(guest_process)
+        guest_process = IGuestProcess(guest_process)
+        return guest_process
 
     def process_get(self, pid):
         """Gets a certain guest process by its process ID (PID).
@@ -11376,7 +11554,8 @@ class IGuestSession(Interface):
                 "pid is not an instance of int"
         guest_process = self._call_method('processGet',
                      in_p=[pid])
-        return IGuestProcess(guest_process)
+        guest_process = IGuestProcess(guest_process)
+        return guest_process
 
     def symlink_create(self, source, target, type_p):
         """Creates a symbolic link on the guest.
@@ -11421,7 +11600,8 @@ class IGuestSession(Interface):
                 "symlink is not an instance of str"
         exists = self._call_method('symlinkExists',
                      in_p=[symlink])
-        return bool(exists)
+        exists = bool(exists)
+        return exists
 
     def symlink_read(self, symlink, flags):
         """Reads a symbolic link on the guest.
@@ -11445,7 +11625,8 @@ class IGuestSession(Interface):
                 "flags is not an instance of SymlinkReadFlag"
         target = self._call_method('symlinkRead',
                      in_p=[symlink, flags])
-        return str(target)
+        target = str(target)
+        return target
 
     def symlink_remove_directory(self, path):
         """Removes a symbolic link on the guest if it's a directory.
@@ -11499,7 +11680,8 @@ class IGuestSession(Interface):
                 "timeout_ms is not an instance of int"
         reason = self._call_method('waitFor',
                      in_p=[wait_for, timeout_ms])
-        return GuestSessionWaitResult(reason)
+        reason = GuestSessionWaitResult(reason)
+        return reason
 
     def wait_for_array(self, wait_for, timeout_ms):
         """Waits for one more events to happen.
@@ -11524,7 +11706,8 @@ class IGuestSession(Interface):
                 "timeout_ms is not an instance of int"
         reason = self._call_method('waitForArray',
                      in_p=[wait_for, timeout_ms])
-        return GuestSessionWaitResult(reason)
+        reason = GuestSessionWaitResult(reason)
+        return reason
 
 
 class IProcess(Interface):
@@ -11622,7 +11805,8 @@ class IProcess(Interface):
                 "timeout_ms is not an instance of int"
         reason = self._call_method('waitFor',
                      in_p=[wait_for, timeout_ms])
-        return ProcessWaitResult(reason)
+        reason = ProcessWaitResult(reason)
+        return reason
 
     def wait_for_array(self, wait_for, timeout_ms):
         """Waits for one more events to happen.
@@ -11647,7 +11831,8 @@ class IProcess(Interface):
                 "timeout_ms is not an instance of int"
         reason = self._call_method('waitForArray',
                      in_p=[wait_for, timeout_ms])
-        return ProcessWaitResult(reason)
+        reason = ProcessWaitResult(reason)
+        return reason
 
     def read(self, handle, to_read, timeout_ms):
         """Reads data from a running process.
@@ -11674,7 +11859,8 @@ class IProcess(Interface):
                 "timeout_ms is not an instance of int"
         data = self._call_method('read',
                      in_p=[handle, to_read, timeout_ms])
-        return str(data)
+        data = [str(a) for a in data]
+        return data
 
     def write(self, handle, flags, data, timeout_ms):
         """Writes data to a running process.
@@ -11707,7 +11893,8 @@ class IProcess(Interface):
                 "timeout_ms is not an instance of int"
         written = self._call_method('write',
                      in_p=[handle, flags, data, timeout_ms])
-        return int(written)
+        written = int(written)
+        return written
 
     def write_array(self, handle, flags, data, timeout_ms):
         """Writes data to a running process.
@@ -11741,7 +11928,8 @@ class IProcess(Interface):
                 "timeout_ms is not an instance of int"
         written = self._call_method('writeArray',
                      in_p=[handle, flags, data, timeout_ms])
-        return int(written)
+        written = int(written)
+        return written
 
     def terminate(self):
         """Terminates (kills) a running process.
@@ -11801,7 +11989,8 @@ class IDirectory(Interface):
         
         """
         obj_info = self._call_method('read')
-        return IFsObjInfo(obj_info)
+        obj_info = IFsObjInfo(obj_info)
+        return obj_info
 
 
 class IGuestDirectory(IDirectory):
@@ -11903,7 +12092,8 @@ class IFile(Interface):
         
         """
         obj_info = self._call_method('queryInfo')
-        return IFsObjInfo(obj_info)
+        obj_info = IFsObjInfo(obj_info)
+        return obj_info
 
     def read(self, to_read, timeout_ms):
         """Reads data from this file.
@@ -11928,7 +12118,8 @@ class IFile(Interface):
                 "timeout_ms is not an instance of int"
         data = self._call_method('read',
                      in_p=[to_read, timeout_ms])
-        return str(data)
+        data = [str(a) for a in data]
+        return data
 
     def read_at(self, offset, to_read, timeout_ms):
         """Reads data from an offset of this file.
@@ -11958,7 +12149,8 @@ class IFile(Interface):
                 "timeout_ms is not an instance of int"
         data = self._call_method('readAt',
                      in_p=[offset, to_read, timeout_ms])
-        return str(data)
+        data = [str(a) for a in data]
+        return data
 
     def seek(self, offset, whence):
         """Changes the read and write position of this file.
@@ -12016,7 +12208,8 @@ class IFile(Interface):
                 "timeout_ms is not an instance of int"
         written = self._call_method('write',
                      in_p=[data, timeout_ms])
-        return int(written)
+        written = int(written)
+        return written
 
     def write_at(self, offset, data, timeout_ms):
         """Writes bytes at a certain offset to this file.
@@ -12047,7 +12240,8 @@ class IFile(Interface):
                 "timeout_ms is not an instance of int"
         written = self._call_method('writeAt',
                      in_p=[offset, data, timeout_ms])
-        return int(written)
+        written = int(written)
+        return written
 
 
 class IGuestFile(IFile):
@@ -12375,7 +12569,20 @@ class IGuest(Interface):
 
         """
         (cpu_user, cpu_kernel, cpu_idle, mem_total, mem_free, mem_balloon, mem_shared, mem_cache, paged_total, mem_alloc_total, mem_free_total, mem_balloon_total, mem_shared_total) = self._call_method('internalGetStatistics')
-        return (int(cpu_user), int(cpu_kernel), int(cpu_idle), int(mem_total), int(mem_free), int(mem_balloon), int(mem_shared), int(mem_cache), int(paged_total), int(mem_alloc_total), int(mem_free_total), int(mem_balloon_total), int(mem_shared_total))
+        cpu_user = int(cpu_user)
+        cpu_kernel = int(cpu_kernel)
+        cpu_idle = int(cpu_idle)
+        mem_total = int(mem_total)
+        mem_free = int(mem_free)
+        mem_balloon = int(mem_balloon)
+        mem_shared = int(mem_shared)
+        mem_cache = int(mem_cache)
+        paged_total = int(paged_total)
+        mem_alloc_total = int(mem_alloc_total)
+        mem_free_total = int(mem_free_total)
+        mem_balloon_total = int(mem_balloon_total)
+        mem_shared_total = int(mem_shared_total)
+        return (cpu_user, cpu_kernel, cpu_idle, mem_total, mem_free, mem_balloon, mem_shared, mem_cache, paged_total, mem_alloc_total, mem_free_total, mem_balloon_total, mem_shared_total)
 
     def get_facility_status(self, facility):
         """Get the current status of a Guest Additions facility.
@@ -12394,7 +12601,9 @@ class IGuest(Interface):
                 "facility is not an instance of AdditionsFacilityType"
         (timestamp, status) = self._call_method('getFacilityStatus',
                      in_p=[facility])
-        return (int(timestamp), AdditionsFacilityStatus(status))
+        timestamp = int(timestamp)
+        status = AdditionsFacilityStatus(status)
+        return (timestamp, status)
 
     def get_additions_status(self, level):
         """Retrieve the current status of a certain Guest Additions run level.
@@ -12413,7 +12622,8 @@ class IGuest(Interface):
                 "level is not an instance of AdditionsRunLevelType"
         active = self._call_method('getAdditionsStatus',
                      in_p=[level])
-        return bool(active)
+        active = bool(active)
+        return active
 
     def set_credentials(self, user_name, password, domain, allow_interactive_logon):
         """Store login credentials that can be queried by guest operating
@@ -12495,7 +12705,8 @@ class IGuest(Interface):
                 "formats is not an instance of str"
         result_action = self._call_method('dragHGEnter',
                      in_p=[screen_id, y, x, default_action, allowed_actions, formats])
-        return DragAndDropAction(result_action)
+        result_action = DragAndDropAction(result_action)
+        return result_action
 
     def drag_hg_move(self, screen_id, x, y, default_action, allowed_actions, formats):
         """Informs the guest about a Drag and Drop move event.
@@ -12541,7 +12752,8 @@ class IGuest(Interface):
                 "formats is not an instance of str"
         result_action = self._call_method('dragHGMove',
                      in_p=[screen_id, x, y, default_action, allowed_actions, formats])
-        return DragAndDropAction(result_action)
+        result_action = DragAndDropAction(result_action)
+        return result_action
 
     def drag_hg_leave(self, screen_id):
         """Informs the guest about a Drag and Drop leave event.
@@ -12607,7 +12819,9 @@ class IGuest(Interface):
                 "formats is not an instance of str"
         (format_p, result_action) = self._call_method('dragHGDrop',
                      in_p=[screen_id, x, y, default_action, allowed_actions, formats])
-        return (str(format_p), DragAndDropAction(result_action))
+        format_p = str(format_p)
+        result_action = DragAndDropAction(result_action)
+        return (format_p, result_action)
 
     def drag_hg_put_data(self, screen_id, format_p, data):
         """Informs the guest about a drop data event.
@@ -12638,7 +12852,8 @@ class IGuest(Interface):
                 "data is not an instance of str"
         progress = self._call_method('dragHGPutData',
                      in_p=[screen_id, format_p, data])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def drag_gh_pending(self, screen_id):
         """Ask the guest if there is any Drag and Drop operation pending in the guest.
@@ -12667,7 +12882,10 @@ class IGuest(Interface):
                 "screen_id is not an instance of int"
         (formats, allowed_actions, default_action) = self._call_method('dragGHPending',
                      in_p=[screen_id])
-        return (str(formats), DragAndDropAction(allowed_actions), DragAndDropAction(default_action))
+        formats = [str(a) for a in formats]
+        allowed_actions = [DragAndDropAction(a) for a in allowed_actions]
+        default_action = DragAndDropAction(default_action)
+        return (formats, allowed_actions, default_action)
 
     def drag_gh_dropped(self, format_p, action):
         """Informs the guest that a drop event occured for a pending Drag and Drop event.
@@ -12693,7 +12911,8 @@ class IGuest(Interface):
                 "action is not an instance of DragAndDropAction"
         progress = self._call_method('dragGHDropped',
                      in_p=[format_p, action])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def drag_gh_get_data(self):
         """Fetch the data of a previously Drag and Drop event from the guest.
@@ -12708,7 +12927,8 @@ class IGuest(Interface):
         
         """
         data = self._call_method('dragGHGetData')
-        return str(data)
+        data = [str(a) for a in data]
+        return data
 
     def create_session(self, user, password, domain, session_name):
         """Creates a new guest session for controlling the guest.
@@ -12768,7 +12988,8 @@ class IGuest(Interface):
                 "session_name is not an instance of str"
         guest_session = self._call_method('createSession',
                      in_p=[user, password, domain, session_name])
-        return IGuestSession(guest_session)
+        guest_session = IGuestSession(guest_session)
+        return guest_session
 
     def find_session(self, session_name):
         """Finds guest sessions by their friendly name and returns an interface
@@ -12785,7 +13006,8 @@ class IGuest(Interface):
                 "session_name is not an instance of str"
         sessions = self._call_method('findSession',
                      in_p=[session_name])
-        return IGuestSession(sessions)
+        sessions = [IGuestSession(a) for a in sessions]
+        return sessions
 
     def update_guest_additions(self, source, flags):
         """Automatically updates already installed Guest Additions in a VM.
@@ -12825,7 +13047,8 @@ class IGuest(Interface):
                 "flags is not an instance of AdditionsUpdateFlag"
         progress = self._call_method('updateGuestAdditions',
                      in_p=[source, flags])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
 
 class IProgress(Interface):
@@ -13320,7 +13543,8 @@ class ISnapshot(Interface):
 
         """
         children_count = self._call_method('getChildrenCount')
-        return int(children_count)
+        children_count = int(children_count)
+        return children_count
 
 
 class IMediumAttachment(Interface):
@@ -14192,7 +14416,8 @@ class IMedium(Interface):
 
         """
         state = self._call_method('refreshState')
-        return MediumState(state)
+        state = MediumState(state)
+        return state
 
     def get_snapshot_ids(self, machine_id):
         """Returns an array of UUIDs of all snapshots of the given machine where
@@ -14221,7 +14446,8 @@ class IMedium(Interface):
                 "machine_id is not an instance of str"
         snapshot_ids = self._call_method('getSnapshotIds',
                      in_p=[machine_id])
-        return str(snapshot_ids)
+        snapshot_ids = [str(a) for a in snapshot_ids]
+        return snapshot_ids
 
     def lock_read(self):
         """Locks this medium for reading.
@@ -14276,7 +14502,8 @@ class IMedium(Interface):
         
         """
         state = self._call_method('lockRead')
-        return MediumState(state)
+        state = MediumState(state)
+        return state
 
     def unlock_read(self):
         """Cancels the read lock previously set by <link to="#lockRead"/>.
@@ -14294,7 +14521,8 @@ class IMedium(Interface):
         
         """
         state = self._call_method('unlockRead')
-        return MediumState(state)
+        state = MediumState(state)
+        return state
 
     def lock_write(self):
         """Locks this medium for writing.
@@ -14344,7 +14572,8 @@ class IMedium(Interface):
         
         """
         state = self._call_method('lockWrite')
-        return MediumState(state)
+        state = MediumState(state)
+        return state
 
     def unlock_write(self):
         """Cancels the write lock previously set by <link to="#lockWrite"/>.
@@ -14362,7 +14591,8 @@ class IMedium(Interface):
         
         """
         state = self._call_method('unlockWrite')
-        return MediumState(state)
+        state = MediumState(state)
+        return state
 
     def close(self):
         """Closes this medium.
@@ -14424,7 +14654,8 @@ class IMedium(Interface):
                 "name is not an instance of str"
         value = self._call_method('getProperty',
                      in_p=[name])
-        return str(value)
+        value = str(value)
+        return value
 
     def set_property(self, name, value):
         """Sets the value of the custom medium property with the given name.
@@ -14492,7 +14723,9 @@ class IMedium(Interface):
                 "names is not an instance of str"
         (return_names, return_values) = self._call_method('getProperties',
                      in_p=[names])
-        return (str(return_names), str(return_values))
+        return_names = [str(a) for a in return_names]
+        return_values = [str(a) for a in return_values]
+        return (return_names, return_values)
 
     def set_properties(self, names, values):
         """Sets values for a group of properties in one call.
@@ -14566,7 +14799,8 @@ class IMedium(Interface):
                 "variant is not an instance of MediumVariant"
         progress = self._call_method('createBaseStorage',
                      in_p=[logical_size, variant])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def delete_storage(self):
         """Starts deleting the storage unit of this medium.
@@ -14610,7 +14844,8 @@ class IMedium(Interface):
         
         """
         progress = self._call_method('deleteStorage')
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def create_diff_storage(self, target, variant):
         """Starts creating an empty differencing storage unit based on this
@@ -14652,7 +14887,8 @@ class IMedium(Interface):
                 "variant is not an instance of MediumVariant"
         progress = self._call_method('createDiffStorage',
                      in_p=[target, variant])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def merge_to(self, target):
         """Starts merging the contents of this medium and all intermediate
@@ -14734,7 +14970,8 @@ class IMedium(Interface):
                 "target is not an instance of IMedium"
         progress = self._call_method('mergeTo',
                      in_p=[target])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def clone_to(self, target, variant, parent):
         """Starts creating a clone of this medium in the format and at the
@@ -14790,7 +15027,8 @@ class IMedium(Interface):
                 "parent is not an instance of IMedium"
         progress = self._call_method('cloneTo',
                      in_p=[target, variant, parent])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def clone_to_base(self, target, variant):
         """Starts creating a clone of this medium in the format and at the
@@ -14840,7 +15078,8 @@ class IMedium(Interface):
                 "variant is not an instance of MediumVariant"
         progress = self._call_method('cloneToBase',
                      in_p=[target, variant])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def compact(self):
         """Starts compacting of this medium. This means that the medium is
@@ -14866,7 +15105,8 @@ class IMedium(Interface):
         
         """
         progress = self._call_method('compact')
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def resize(self, logical_size):
         """Starts resizing this medium. This means that the nominal size of the
@@ -14900,7 +15140,8 @@ class IMedium(Interface):
                 "logical_size is not an instance of int"
         progress = self._call_method('resize',
                      in_p=[logical_size])
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
     def reset(self):
         """Starts erasing the contents of this differencing medium.
@@ -14925,7 +15166,8 @@ class IMedium(Interface):
         
         """
         progress = self._call_method('reset')
-        return IProgress(progress)
+        progress = IProgress(progress)
+        return progress
 
 
 class IMediumFormat(Interface):
@@ -15010,7 +15252,9 @@ class IMediumFormat(Interface):
 
         """
         (extensions, types) = self._call_method('describeFileExtensions')
-        return (str(extensions), DeviceType(types))
+        extensions = [str(a) for a in extensions]
+        types = [DeviceType(a) for a in types]
+        return (extensions, types)
 
     def describe_properties(self):
         """Returns several arrays describing the properties supported by this
@@ -15043,7 +15287,12 @@ class IMediumFormat(Interface):
 
         """
         (names, descriptions, types, flags, defaults) = self._call_method('describeProperties')
-        return (str(names), str(descriptions), DataType(types), int(flags), str(defaults))
+        names = [str(a) for a in names]
+        descriptions = [str(a) for a in descriptions]
+        types = [DataType(a) for a in types]
+        flags = [int(a) for a in flags]
+        defaults = [str(a) for a in defaults]
+        return (names, descriptions, types, flags, defaults)
 
 
 class IKeyboard(Interface):
@@ -15086,7 +15335,8 @@ class IKeyboard(Interface):
                 "scancodes is not an instance of int"
         codes_stored = self._call_method('putScancodes',
                      in_p=[scancodes])
-        return int(codes_stored)
+        codes_stored = int(codes_stored)
+        return codes_stored
 
     def put_cad(self):
         """Sends the Ctrl-Alt-Del sequence to the keyboard. This
@@ -15558,7 +15808,8 @@ class IFramebuffer(Interface):
                 "height is not an instance of int"
         finished = self._call_method('requestResize',
                      in_p=[screen_id, pixel_format, vram, bits_per_pixel, bytes_per_line, width, height])
-        return bool(finished)
+        finished = bool(finished)
+        return finished
 
     def video_mode_supported(self, width, height, bpp):
         """Returns whether the frame buffer implementation is willing to
@@ -15586,7 +15837,8 @@ class IFramebuffer(Interface):
                 "bpp is not an instance of int"
         supported = self._call_method('videoModeSupported',
                      in_p=[width, height, bpp])
-        return bool(supported)
+        supported = bool(supported)
+        return supported
 
     def get_visible_region(self, rectangles, count):
         """Returns the visible region of this frame buffer.
@@ -15624,7 +15876,8 @@ class IFramebuffer(Interface):
                 "count is not an instance of int"
         count_copied = self._call_method('getVisibleRegion',
                      in_p=[rectangles, count])
-        return int(count_copied)
+        count_copied = int(count_copied)
+        return count_copied
 
     def set_visible_region(self, rectangles, count):
         """Suggests a new visible region to this frame buffer. This region
@@ -15801,7 +16054,10 @@ class IDisplay(Interface):
                 "screen_id is not an instance of int"
         (width, height, bits_per_pixel) = self._call_method('getScreenResolution',
                      in_p=[screen_id])
-        return (int(width), int(height), int(bits_per_pixel))
+        width = int(width)
+        height = int(height)
+        bits_per_pixel = int(bits_per_pixel)
+        return (width, height, bits_per_pixel)
 
     def set_framebuffer(self, screen_id, framebuffer):
         """Sets the framebuffer for given screen.
@@ -15834,7 +16090,10 @@ class IDisplay(Interface):
                 "screen_id is not an instance of int"
         (framebuffer, x_origin, y_origin) = self._call_method('getFramebuffer',
                      in_p=[screen_id])
-        return (IFramebuffer(framebuffer), int(x_origin), int(y_origin))
+        framebuffer = IFramebuffer(framebuffer)
+        x_origin = int(x_origin)
+        y_origin = int(y_origin)
+        return (framebuffer, x_origin, y_origin)
 
     def set_video_mode_hint(self, display, enabled, change_origin, origin_x, origin_y, width, height, bits_per_pixel):
         """Asks VirtualBox to request the given video mode from
@@ -15988,7 +16247,8 @@ class IDisplay(Interface):
                 "height is not an instance of int"
         screen_data = self._call_method('takeScreenShotToArray',
                      in_p=[screen_id, width, height])
-        return str(screen_data)
+        screen_data = [str(a) for a in screen_data]
+        return screen_data
 
     def take_screen_shot_png_to_array(self, screen_id, width, height):
         """Takes a guest screen shot of the requested size and returns it as
@@ -16021,7 +16281,8 @@ class IDisplay(Interface):
                 "height is not an instance of int"
         screen_data = self._call_method('takeScreenShotPNGToArray',
                      in_p=[screen_id, width, height])
-        return str(screen_data)
+        screen_data = [str(a) for a in screen_data]
+        return screen_data
 
     def enable_video_capture(self, screens):
         """Start/continue video capture.
@@ -16453,7 +16714,8 @@ class INetworkAdapter(Interface):
                 "key is not an instance of str"
         value = self._call_method('getProperty',
                      in_p=[key])
-        return str(value)
+        value = str(value)
+        return value
 
     def set_property(self, key, value):
         """Sets the value of the network attachment property with the given name.
@@ -16507,7 +16769,9 @@ class INetworkAdapter(Interface):
                 "names is not an instance of str"
         (return_names, return_values) = self._call_method('getProperties',
                      in_p=[names])
-        return (str(return_names), str(return_values))
+        return_names = [str(a) for a in return_names]
+        return_values = [str(a) for a in return_values]
+        return (return_names, return_values)
 
 
 class ISerialPort(Interface):
@@ -16800,7 +17064,8 @@ class IMachineDebugger(Interface):
                 "args is not an instance of str"
         info = self._call_method('info',
                      in_p=[name, args])
-        return str(info)
+        info = str(info)
+        return info
 
     def inject_nmi(self):
         """Inject an NMI into a running VT-x/AMD-V VM.
@@ -16869,7 +17134,8 @@ class IMachineDebugger(Interface):
                 "size is not an instance of int"
         bytes_p = self._call_method('readPhysicalMemory',
                      in_p=[address, size])
-        return str(bytes_p)
+        bytes_p = [str(a) for a in bytes_p]
+        return bytes_p
 
     def write_physical_memory(self, address, size, bytes_p):
         """Writes guest physical memory, access handles (MMIO++) are ignored.
@@ -16923,7 +17189,8 @@ class IMachineDebugger(Interface):
                 "size is not an instance of int"
         bytes_p = self._call_method('readVirtualMemory',
                      in_p=[cpu_id, address, size])
-        return str(bytes_p)
+        bytes_p = [str(a) for a in bytes_p]
+        return bytes_p
 
     def write_virtual_memory(self, cpu_id, address, size, bytes_p):
         """Writes guest virtual memory, access handles (MMIO++) are ignored.
@@ -16966,7 +17233,8 @@ class IMachineDebugger(Interface):
 
         """
         os = self._call_method('detectOS')
-        return str(os)
+        os = str(os)
+        return os
 
     def get_register(self, cpu_id, name):
         """Gets one register.
@@ -16991,7 +17259,8 @@ class IMachineDebugger(Interface):
                 "name is not an instance of str"
         value = self._call_method('getRegister',
                      in_p=[cpu_id, name])
-        return str(value)
+        value = str(value)
+        return value
 
     def get_registers(self, cpu_id):
         """Gets all the registers for the given CPU.
@@ -17014,7 +17283,9 @@ class IMachineDebugger(Interface):
                 "cpu_id is not an instance of int"
         (names, values) = self._call_method('getRegisters',
                      in_p=[cpu_id])
-        return (str(names), str(values))
+        names = [str(a) for a in names]
+        values = [str(a) for a in values]
+        return (names, values)
 
     def set_register(self, cpu_id, name, value):
         """Gets one register.
@@ -17087,7 +17358,8 @@ class IMachineDebugger(Interface):
                 "cpu_id is not an instance of int"
         stack = self._call_method('dumpGuestStack',
                      in_p=[cpu_id])
-        return str(stack)
+        stack = str(stack)
+        return stack
 
     def reset_stats(self, pattern):
         """Reset VM statistics.
@@ -17132,7 +17404,8 @@ class IMachineDebugger(Interface):
                 "with_descriptions is not an instance of bool"
         stats = self._call_method('getStats',
                      in_p=[pattern, with_descriptions])
-        return str(stats)
+        stats = str(stats)
+        return stats
 
     @property
     def single_step(self):
@@ -17475,7 +17748,8 @@ class IUSBController(Interface):
                 "name is not an instance of str"
         filter_p = self._call_method('createDeviceFilter',
                      in_p=[name])
-        return IUSBDeviceFilter(filter_p)
+        filter_p = IUSBDeviceFilter(filter_p)
+        return filter_p
 
     def insert_device_filter(self, position, filter_p):
         """Inserts the given USB device to the specified position
@@ -17545,7 +17819,8 @@ class IUSBController(Interface):
                 "position is not an instance of int"
         filter_p = self._call_method('removeDeviceFilter',
                      in_p=[position])
-        return IUSBDeviceFilter(filter_p)
+        filter_p = IUSBDeviceFilter(filter_p)
+        return filter_p
 
 
 class IUSBDevice(Interface):
@@ -18186,7 +18461,8 @@ class IVRDEServer(Interface):
                 "key is not an instance of str"
         value = self._call_method('getVRDEProperty',
                      in_p=[key])
-        return str(value)
+        value = str(value)
+        return value
 
 
 class ISharedFolder(Interface):
@@ -18316,7 +18592,8 @@ class IInternalSessionControl(Interface):
 
         """
         pid = self._call_method('getPID')
-        return int(pid)
+        pid = int(pid)
+        return pid
 
     def get_remote_console(self):
         """Returns the console object suitable for remote control.
@@ -18331,7 +18608,8 @@ class IInternalSessionControl(Interface):
         
         """
         console = self._call_method('getRemoteConsole')
-        return IConsole(console)
+        console = IConsole(console)
+        return console
 
     def assign_machine(self, machine, lock_type):
         """Assigns the machine object associated with this direct-type
@@ -18713,7 +18991,9 @@ class IInternalSessionControl(Interface):
                 "check is not an instance of bool"
         (can_show, win_id) = self._call_method('onShowWindow',
                      in_p=[check])
-        return (bool(can_show), int(win_id))
+        can_show = bool(can_show)
+        win_id = int(win_id)
+        return (can_show, win_id)
 
     def on_bandwidth_group_change(self, bandwidth_group):
         """Notification when one of the bandwidth groups change.
@@ -18763,7 +19043,10 @@ class IInternalSessionControl(Interface):
                 "is_setter is not an instance of bool"
         (ret_value, ret_timestamp, ret_flags) = self._call_method('accessGuestProperty',
                      in_p=[name, value, flags, is_setter])
-        return (str(ret_value), int(ret_timestamp), str(ret_flags))
+        ret_value = str(ret_value)
+        ret_timestamp = int(ret_timestamp)
+        ret_flags = str(ret_flags)
+        return (ret_value, ret_timestamp, ret_flags)
 
     def enumerate_guest_properties(self, patterns):
         """Return a list of the guest properties matching a set of patterns along
@@ -18800,7 +19083,11 @@ class IInternalSessionControl(Interface):
                 "patterns is not an instance of str"
         (keys, values, timestamps, flags) = self._call_method('enumerateGuestProperties',
                      in_p=[patterns])
-        return (str(keys), str(values), int(timestamps), str(flags))
+        keys = [str(a) for a in keys]
+        values = [str(a) for a in values]
+        timestamps = [int(a) for a in timestamps]
+        flags = [str(a) for a in flags]
+        return (keys, values, timestamps, flags)
 
     def online_merge_medium(self, medium_attachment, source_idx, target_idx, source, target, merge_forward, parent_for_target, children_to_reparent, progress):
         """Triggers online merging of a hard disk. Used internally when deleting
@@ -19369,7 +19656,8 @@ class IPerformanceCollector(Interface):
                 "objects is not an instance of Interface"
         metrics = self._call_method('getMetrics',
                      in_p=[metric_names, objects])
-        return IPerformanceMetric(metrics)
+        metrics = [IPerformanceMetric(a) for a in metrics]
+        return metrics
 
     def setup_metrics(self, metric_names, objects, period, count):
         """Sets parameters of specified base metrics for a set of objects. Returns
@@ -19411,7 +19699,8 @@ class IPerformanceCollector(Interface):
                 "count is not an instance of int"
         affected_metrics = self._call_method('setupMetrics',
                      in_p=[metric_names, objects, period, count])
-        return IPerformanceMetric(affected_metrics)
+        affected_metrics = [IPerformanceMetric(a) for a in affected_metrics]
+        return affected_metrics
 
     def enable_metrics(self, metric_names, objects):
         """Turns on collecting specified base metrics. Returns an array of
@@ -19441,7 +19730,8 @@ class IPerformanceCollector(Interface):
                 "objects is not an instance of Interface"
         affected_metrics = self._call_method('enableMetrics',
                      in_p=[metric_names, objects])
-        return IPerformanceMetric(affected_metrics)
+        affected_metrics = [IPerformanceMetric(a) for a in affected_metrics]
+        return affected_metrics
 
     def disable_metrics(self, metric_names, objects):
         """Turns off collecting specified base metrics. Returns an array of
@@ -19471,7 +19761,8 @@ class IPerformanceCollector(Interface):
                 "objects is not an instance of Interface"
         affected_metrics = self._call_method('disableMetrics',
                      in_p=[metric_names, objects])
-        return IPerformanceMetric(affected_metrics)
+        affected_metrics = [IPerformanceMetric(a) for a in affected_metrics]
+        return affected_metrics
 
     def query_metrics_data(self, metric_names, objects):
         """Queries collected metrics data for a set of objects.
@@ -19553,7 +19844,15 @@ class IPerformanceCollector(Interface):
                 "objects is not an instance of Interface"
         (return_metric_names, return_objects, return_units, return_scales, return_sequence_numbers, return_data_indices, return_data_lengths, return_data) = self._call_method('queryMetricsData',
                      in_p=[metric_names, objects])
-        return (str(return_metric_names), Interface(return_objects), str(return_units), int(return_scales), int(return_sequence_numbers), int(return_data_indices), int(return_data_lengths), int(return_data))
+        return_metric_names = [str(a) for a in return_metric_names]
+        return_objects = [Interface(a) for a in return_objects]
+        return_units = [str(a) for a in return_units]
+        return_scales = [int(a) for a in return_scales]
+        return_sequence_numbers = [int(a) for a in return_sequence_numbers]
+        return_data_indices = [int(a) for a in return_data_indices]
+        return_data_lengths = [int(a) for a in return_data_lengths]
+        return_data = [int(a) for a in return_data]
+        return (return_metric_names, return_objects, return_units, return_scales, return_sequence_numbers, return_data_indices, return_data_lengths, return_data)
 
 
 class INATEngine(Interface):
@@ -19758,7 +20057,12 @@ class INATEngine(Interface):
 
         """
         (mtu, sock_snd, sock_rcv, tcp_wnd_snd, tcp_wnd_rcv) = self._call_method('getNetworkSettings')
-        return (int(mtu), int(sock_snd), int(sock_rcv), int(tcp_wnd_snd), int(tcp_wnd_rcv))
+        mtu = int(mtu)
+        sock_snd = int(sock_snd)
+        sock_rcv = int(sock_rcv)
+        tcp_wnd_snd = int(tcp_wnd_snd)
+        tcp_wnd_rcv = int(tcp_wnd_rcv)
+        return (mtu, sock_snd, sock_rcv, tcp_wnd_snd, tcp_wnd_rcv)
 
     def add_redirect(self, name, proto, host_ip, host_port, guest_ip, guest_port):
         """Adds a new NAT port-forwarding rule.
@@ -19997,7 +20301,8 @@ class IExtPackBase(Interface):
                 "format_p is not an instance of str"
         license_text = self._call_method('queryLicense',
                      in_p=[preferred_locale, preferred_language, format_p])
-        return str(license_text)
+        license_text = str(license_text)
+        return license_text
 
 
 class IExtPack(IExtPackBase):
@@ -20024,7 +20329,8 @@ class IExtPack(IExtPackBase):
                 "obj_uuid is not an instance of str"
         return_interface = self._call_method('queryObject',
                      in_p=[obj_uuid])
-        return Interface(return_interface)
+        return_interface = Interface(return_interface)
+        return return_interface
 
 
 class IExtPackFile(IExtPackBase):
@@ -20064,7 +20370,8 @@ class IExtPackFile(IExtPackBase):
                 "display_info is not an instance of str"
         progess = self._call_method('install',
                      in_p=[replace, display_info])
-        return IProgress(progess)
+        progess = IProgress(progess)
+        return progess
 
 
 class IExtPackManager(Interface):
@@ -20102,7 +20409,8 @@ class IExtPackManager(Interface):
                 "name is not an instance of str"
         return_data = self._call_method('find',
                      in_p=[name])
-        return IExtPack(return_data)
+        return_data = IExtPack(return_data)
+        return return_data
 
     def open_ext_pack_file(self, path):
         """Attempts to open an extension pack file in preparation for
@@ -20120,7 +20428,8 @@ class IExtPackManager(Interface):
                 "path is not an instance of str"
         file_p = self._call_method('openExtPackFile',
                      in_p=[path])
-        return IExtPackFile(file_p)
+        file_p = IExtPackFile(file_p)
+        return file_p
 
     def uninstall(self, name, forced_removal, display_info):
         """Uninstalls an extension pack, removing all related files.
@@ -20147,7 +20456,8 @@ class IExtPackManager(Interface):
                 "display_info is not an instance of str"
         progess = self._call_method('uninstall',
                      in_p=[name, forced_removal, display_info])
-        return IProgress(progess)
+        progess = IProgress(progess)
+        return progess
 
     def cleanup(self):
         """Cleans up failed installs and uninstalls
@@ -20172,7 +20482,8 @@ class IExtPackManager(Interface):
                 "frontend_name is not an instance of str"
         plug_in_modules = self._call_method('queryAllPlugInsForFrontend',
                      in_p=[frontend_name])
-        return str(plug_in_modules)
+        plug_in_modules = [str(a) for a in plug_in_modules]
+        return plug_in_modules
 
     def is_ext_pack_usable(self, name):
         """Check if the given extension pack is loaded and usable.
@@ -20188,7 +20499,8 @@ class IExtPackManager(Interface):
                 "name is not an instance of str"
         usable = self._call_method('isExtPackUsable',
                      in_p=[name])
-        return bool(usable)
+        usable = bool(usable)
+        return usable
 
 
 class IBandwidthGroup(Interface):
@@ -20303,7 +20615,8 @@ class IBandwidthControl(Interface):
                 "name is not an instance of str"
         bandwidth_group = self._call_method('getBandwidthGroup',
                      in_p=[name])
-        return IBandwidthGroup(bandwidth_group)
+        bandwidth_group = IBandwidthGroup(bandwidth_group)
+        return bandwidth_group
 
     def get_all_bandwidth_groups(self):
         """Get all managed bandwidth groups.
@@ -20313,7 +20626,8 @@ class IBandwidthControl(Interface):
 
         """
         bandwidth_groups = self._call_method('getAllBandwidthGroups')
-        return IBandwidthGroup(bandwidth_groups)
+        bandwidth_groups = [IBandwidthGroup(a) for a in bandwidth_groups]
+        return bandwidth_groups
 
 
 class IVirtualBoxClient(Interface):
@@ -20388,7 +20702,8 @@ class IEventSource(Interface):
 
         """
         listener = self._call_method('createListener')
-        return IEventListener(listener)
+        listener = IEventListener(listener)
+        return listener
 
     def create_aggregator(self, subordinates):
         """Creates an aggregator event source, collecting events from multiple sources.
@@ -20406,7 +20721,8 @@ class IEventSource(Interface):
                 "subordinates is not an instance of IEventSource"
         result = self._call_method('createAggregator',
                      in_p=[subordinates])
-        return IEventSource(result)
+        result = IEventSource(result)
+        return result
 
     def register_listener(self, listener, interesting, active):
         """Register an event listener.
@@ -20478,7 +20794,8 @@ class IEventSource(Interface):
                 "timeout is not an instance of int"
         result = self._call_method('fireEvent',
                      in_p=[event, timeout])
-        return bool(result)
+        result = bool(result)
+        return result
 
     def get_event(self, listener, timeout):
         """Get events from this peer's event queue (for passive mode). Calling this method
@@ -20505,7 +20822,8 @@ class IEventSource(Interface):
                 "timeout is not an instance of int"
         event = self._call_method('getEvent',
                      in_p=[listener, timeout])
-        return IEvent(event)
+        event = IEvent(event)
+        return event
 
     def event_processed(self, listener, event):
         """Must be called for waitable events after a particular listener finished its
@@ -20683,7 +21001,8 @@ class IEvent(Interface):
                 "timeout is not an instance of int"
         result = self._call_method('waitProcessed',
                      in_p=[timeout])
-        return bool(result)
+        result = bool(result)
+        return result
 
 
 class IReusableEvent(IEvent):
@@ -21903,7 +22222,8 @@ class IVetoEvent(IEvent):
 
         """
         result = self._call_method('isVetoed')
-        return bool(result)
+        result = bool(result)
+        return result
 
     def get_vetos(self):
         """Current veto reason list, if size is 0 - no veto.
@@ -21913,7 +22233,8 @@ class IVetoEvent(IEvent):
 
         """
         result = self._call_method('getVetos')
-        return str(result)
+        result = [str(a) for a in result]
+        return result
 
 
 class IExtraDataCanChangeEvent(IVetoEvent):
