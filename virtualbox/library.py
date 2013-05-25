@@ -3,7 +3,8 @@
 # Source code by Michael Dorman 
 #                mjdorma+pyvbox@gmail.com
 #
-# Note: Commenting, and API structure generated from VirtualBox.xidl 
+# Note: Commenting, and API structure generation was carved from 
+#       VirtualBox project's VirtualBox.xidl Main API definition.
 #
 import sys
 import re
