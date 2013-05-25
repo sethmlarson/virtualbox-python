@@ -28,7 +28,6 @@ LIB_IMPORTS = """\
 # Note: Commenting, and API structure generation was carved from 
 #       VirtualBox project's VirtualBox.xidl Main API definition.
 #
-import sys
 import re
 try:
     import __builtin__ as builtin 
@@ -171,7 +170,7 @@ def get_doc(node):
 #
 RESULT = '''\
 class %(pname)s(VBoxError):
-    r"""%(doc)s"""
+    """%(doc)s"""
     name = '%(name)s'
     value = %(value)s
 vbox_error[%(value)s] = %(pname)s
