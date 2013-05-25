@@ -1,14 +1,16 @@
 Introduction to pyvbox 
 **********************
 
-What is pyvbox:
+What's in pyvbox:
 
 * A complete implementation of the VirtualBox Main API
-* Create a VirtualBox instance and explorer the potential of VirtualBox's
-  amazing COM API 
+* Create a VirtualBox instance and seamlessly explorer the potential of
+  the VirtualBox's amazing Main API 
+* Pythonic functions and names.
+* Introspection, documentation strings, getters and setters...
+
 
 Project hosting provided by `github.com`_.
-
 
 Install and run
 ===============
