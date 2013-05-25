@@ -30,7 +30,7 @@ LIB_IMPORTS = """\
 # A Pythonic VirtalBox Main API
 #
 # By Michael Dorman.
-# Email mjdorma+pyvbox@gmail.com
+# [mjdorma+pyvbox@gmail.com]
 #
 # Note: Commenting, and API structure generation was carved from 
 #       VirtualBox project's VirtualBox.xidl Main API definition.
