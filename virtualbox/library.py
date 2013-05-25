@@ -130,7 +130,6 @@ class Interface(object):
 
     def __init__(self, interface=None):
         if interface is None:
-            #TODO : 
             self._i = interface
         else:
             self._i = interface
