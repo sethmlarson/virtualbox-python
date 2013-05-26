@@ -20,7 +20,7 @@ Simply run the following::
     > python setup.py install
     > python setup.py test
 
-Exploring the interface example::
+Exploring the library::
     
     > ipython
     In [1]: import virtualbox
@@ -50,7 +50,7 @@ Listing machines::
      + win8
      + test_vm
 
-Start screen shot stop example::
+Start screen shot stop::
 
     > ipython
     In [1]: import virtualbox
