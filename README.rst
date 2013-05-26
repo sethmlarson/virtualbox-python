@@ -20,7 +20,37 @@ Simply run the following::
     > python setup.py install
     > python setup.py test
 
-Start stop example::
+Exploring the interface example::
+    
+    > ipython
+    In [1]: import virtualbox
+
+    In [2]: virtualbox?
+
+    In [3]: virtualbox.VirtualBox?
+
+    In [4]: virtualbox.library.IMachine?
+
+    In [5]: virtualbox.library.MachineState?
+
+    In [6]: virtualbox.library.MachineState.teleported?
+
+Listing machines::
+
+    > ipython
+    In [1]: import virtualbox
+
+    In [2]: vbox = virtualbox.VirtualBox()
+
+    In [3]: print "VM(s):\n + %s" % "\n + ".join([vm.name for vm in vbox.machines])
+    VM(s):
+     + filestore
+     + xpsp3
+     + win7
+     + win8
+     + test_vm
+
+Start screen shot stop example::
 
     > ipython
     In [1]: import virtualbox
@@ -51,18 +81,6 @@ Start stop example::
     
     In [12]: session.console.power_down()
 
-Exploring the interface example::
-    
-    >ipython
-    In [1]: virtualbox?
-
-    In [2]: virtualbox.VirtualBox?
-
-    In [3]: virtualbox.library.IMachine?
-
-    In [4]: virtualbox.library.MachineState?
-
-    In [5]: virtualbox.library.MachineState.teleported?
 
 
 Issues
