@@ -42,7 +42,7 @@ Listing machines::
 
     In [2]: vbox = virtualbox.VirtualBox()
 
-    In [3]: print "VM(s):\n + %s" % "\n + ".join([vm.name for vm in vbox.machines])
+    In [3]: print("VM(s):\n + %s" % "\n + ".join([vm.name for vm in vbox.machines]))
     VM(s):
      + filestore
      + xpsp3
@@ -61,7 +61,7 @@ Start screen shot stop::
 
     In [4]: vm = vbox.find_machine('test_vm')
 
-    In [5]: progress = vm.launch_vm_process(session, 'headless', '')
+    In [5]: progress = vm.launch_vm_process(session, 'gui', '')
 
     In [6]: h, w, d = session.console.display.get_screen_resolution(0)
 
