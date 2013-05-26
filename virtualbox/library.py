@@ -89,40 +89,44 @@ class EnumType(type):
     """EnumType is a metaclass for Enum. It is responsible for configuring
     the Enum class object's values defined in Enum.lookup_label"""
     def __init__(cls, name, bases, dct):
-        cls.value = None
-        cls.lookup_label = {v:k for k, v in cls.lookup_value.items()}
-        for name, v in cls.lookup_value.items():
-            setattr(cls, pythonic_name(name), cls(v))
+        cls._value = None
+        cls._lookup_label = {v:l for l, v, _ in cls._enums}
+        cls._lookup_doc = {v:d for _, v, d in cls._enums}
+        for l, v, _ in cls._enums:
+            setattr(cls, pythonic_name(l), cls(v))
 
     def __getitem__(cls, k):
         if not hasattr(cls, k):
             raise KeyError("%s has no key %s" % cls.__name__, k)
         return getattr(cls, k)
 
-    def __getattribute__(cls, k):
-        return type.__getattribute__(cls, k)
-
 
 class Enum(object):
     """Enum objects provide a container for VirtualBox enumerations"""
-    lookup_value = {}
+    _enums = {}
     __metaclass__ = EnumType
     def __init__(self, value=None):
-        self.value = value
+        if value not in self._lookup_label:
+            raise ValueError("Can not find enumeration where value=%s" % value)
+        self._value = value
+        self.__doc__ = self._lookup_doc[self._value]
 
     def __str__(self):
-        return self.lookup_label[self.value]
+        if self._value is None:
+            return "None"
+        return self._lookup_label[self._value]
 
     def __int__(self):
-        return self.value
+        return self._value
 
     def __repr__(self):
-        return "%s(%s)" % (self.__class__.__name__, self.value)
+        return "%s(%s)" % (self.__class__.__name__, self._value)
 
     def __eq__(self, k):
-        if isinstance(k, self.__class__):
-            return k.value == self.value
-        return False
+        return self.__cmp__(k) == 0
+
+    def __cmp__(self, k):
+        return cmp(int(self), int(k))
 
     def __getitem__(self, k):
         return self.__class__[k]
@@ -272,39 +276,63 @@ vbox_error[0x80BB000C] = VBoxErrorObjectInUse
 
 
 class SettingsVersion(Enum):
-    """(Settings version of VirtualBox settings files. This is written to
+    """Settings version of VirtualBox settings files. This is written to
       the "version" attribute of the root "VirtualBox" element in the settings
-      file XML and indicates which VirtualBox version wrote the file.)"""
-    uuid = 'd5b15ca7-3de7-46b2-a63a-ddcce42bfa3f'
-    lookup_value = {       'Future': 99999,
-        'Null': 0,
-        'v1_0': 1,
-        'v1_1': 2,
-        'v1_10': 12,
-        'v1_11': 13,
-        'v1_12': 14,
-        'v1_13': 15,
-        'v1_14': 16,
-        'v1_2': 3,
-        'v1_3': 5,
-        'v1_3pre': 4,
-        'v1_4': 6,
-        'v1_5': 7,
-        'v1_6': 8,
-        'v1_7': 9,
-        'v1_8': 10,
-        'v1_9': 11} 
+      file XML and indicates which VirtualBox version wrote the file."""
+    __uuid__ = 'd5b15ca7-3de7-46b2-a63a-ddcce42bfa3f'
+    _enums = [\
+        ('Null', 0, 
+         '''Null value, indicates invalid version.'''),
+        ('v1_0', 1, 
+         '''Legacy settings version, not currently supported.'''),
+        ('v1_1', 2, 
+         '''Legacy settings version, not currently supported.'''),
+        ('v1_2', 3, 
+         '''Legacy settings version, not currently supported.'''),
+        ('v1_3pre', 4, 
+         '''Legacy settings version, not currently supported.'''),
+        ('v1_3', 5, 
+         '''Settings version "1.3", written by VirtualBox 2.0.12.'''),
+        ('v1_4', 6, 
+         '''Intermediate settings version, understood by VirtualBox 2.1.x.'''),
+        ('v1_5', 7, 
+         '''Intermediate settings version, understood by VirtualBox 2.1.x.'''),
+        ('v1_6', 8, 
+         '''Settings version "1.6", written by VirtualBox 2.1.4 (at least).'''),
+        ('v1_7', 9, 
+         '''Settings version "1.7", written by VirtualBox 2.2.x and 3.0.x.'''),
+        ('v1_8', 10, 
+         '''Intermediate settings version "1.8", understood by VirtualBox 3.1.x.'''),
+        ('v1_9', 11, 
+         '''Settings version "1.9", written by VirtualBox 3.1.x.'''),
+        ('v1_10', 12, 
+         '''Settings version "1.10", written by VirtualBox 3.2.x.'''),
+        ('v1_11', 13, 
+         '''Settings version "1.11", written by VirtualBox 4.0.x.'''),
+        ('v1_12', 14, 
+         '''Settings version "1.12", written by VirtualBox 4.1.x.'''),
+        ('v1_13', 15, 
+         '''Settings version "1.13", written by VirtualBox 4.2.x.'''),
+        ('v1_14', 16, 
+         '''Settings version "1.14", written by VirtualBox 4.3.x.'''),
+        ('Future', 99999, 
+         '''Settings version greater than "1.13", written by a future VirtualBox version.'''),
+        ] 
 
 
 class AccessMode(Enum):
-    """(Access mode for opening files.)"""
-    uuid = '1da0007c-ddf7-4be8-bcac-d84a1558785f'
-    lookup_value = {       'ReadOnly': 1,
-        'ReadWrite': 2} 
+    """Access mode for opening files."""
+    __uuid__ = '1da0007c-ddf7-4be8-bcac-d84a1558785f'
+    _enums = [\
+        ('ReadOnly', 1, 
+         ''''''),
+        ('ReadWrite', 2, 
+         ''''''),
+        ] 
 
 
 class MachineState(Enum):
-    """(Virtual machine execution state.
+    """Virtual machine execution state.
 
       This enumeration represents possible values of the <link to="IMachine::state"/> attribute.
 
@@ -423,466 +451,854 @@ class MachineState(Enum):
         FirstOnline <= state <= LastOnline must be
         @c true. The same relates to transient states for which
         the condition FirstOnline <= state <= LastOnline must be
-        @c true.)"""
-    uuid = 'ec6c6a9e-113d-4ff4-b44f-0b69f21c97fe'
-    lookup_value = {       'Aborted': 4,
-        'DeletingSnapshot': 20,
-        'DeletingSnapshotOnline': 17,
-        'DeletingSnapshotPaused': 18,
-        'FaultTolerantSyncing': 16,
-        'FirstOnline': 5,
-        'FirstTransient': 8,
-        'LastOnline': 18,
-        'LastTransient': 21,
-        'LiveSnapshotting': 9,
-        'Null': 0,
-        'Paused': 6,
-        'PoweredOff': 1,
-        'Restoring': 13,
-        'RestoringSnapshot': 19,
-        'Running': 5,
-        'Saved': 2,
-        'Saving': 12,
-        'SettingUp': 21,
-        'Starting': 10,
-        'Stopping': 11,
-        'Stuck': 7,
-        'Teleported': 3,
-        'Teleporting': 8,
-        'TeleportingIn': 15,
-        'TeleportingPausedVM': 14} 
+        @c true."""
+    __uuid__ = 'ec6c6a9e-113d-4ff4-b44f-0b69f21c97fe'
+    _enums = [\
+        ('Null', 0, 
+         '''Null value (never used by the API).'''),
+        ('PoweredOff', 1, 
+         '''The machine is not running and has no saved execution state; it has
+        either never been started or been shut down successfully.'''),
+        ('Saved', 2, 
+         '''The machine is not currently running, but the execution state of the machine
+        has been saved to an external file when it was running, from where
+        it can be resumed.'''),
+        ('Teleported', 3, 
+         '''The machine was teleported to a different host (or process) and then
+        powered off. Take care when powering it on again may corrupt resources
+        it shares with the teleportation target (e.g. disk and network).'''),
+        ('Aborted', 4, 
+         '''The process running the machine has terminated abnormally. This may
+        indicate a crash of the VM process in host execution context, or
+        the VM process has been terminated externally.'''),
+        ('Running', 5, 
+         '''The machine is currently being executed.
+        <note internal="yes">
+          For whoever decides to touch this enum: In order to keep the
+          comparisons in the old source code valid, this state must immediately
+          precede the Paused state.
+          TODO: Lift this spectacularly wonderful restriction.'''),
+        ('Paused', 6, 
+         '''Execution of the machine has been paused.
+        <note internal="yes">
+          For whoever decides to touch this enum: In order to keep the
+          comparisons in the old source code valid, this state must immediately
+          follow the Running state.
+          TODO: Lift this spectacularly wonderful restriction.'''),
+        ('Stuck', 7, 
+         '''Execution of the machine has reached the "Guru Meditation"
+        condition. This indicates a severe error in the hypervisor itself.
+        <note internal="yes">
+          bird: Why this uncool name? Could we rename it to "GuruMeditation" or
+                "Guru", perhaps? Or are there some other VMM states that are
+                intended to be lumped in here as well?'''),
+        ('Teleporting', 8, 
+         '''The machine is about to be teleported to a different host or process.
+        It is possible to pause a machine in this state, but it will go to the
+        @c TeleportingPausedVM state and it will not be
+        possible to resume it again unless the teleportation fails.'''),
+        ('LiveSnapshotting', 9, 
+         '''A live snapshot is being taken. The machine is running normally, but
+        some of the runtime configuration options are inaccessible. Also, if
+        paused while in this state it will transition to
+        @c Saving and it will not be resume the
+        execution until the snapshot operation has completed.'''),
+        ('Starting', 10, 
+         '''Machine is being started after powering it on from a
+        zero execution state.'''),
+        ('Stopping', 11, 
+         '''Machine is being normally stopped powering it off, or after the guest OS
+        has initiated a shutdown sequence.'''),
+        ('Saving', 12, 
+         '''Machine is saving its execution state to a file, or an online
+        snapshot of the machine is being taken.'''),
+        ('Restoring', 13, 
+         '''Execution state of the machine is being restored from a file
+        after powering it on from the saved execution state.'''),
+        ('TeleportingPausedVM', 14, 
+         '''The machine is being teleported to another host or process, but it is
+        not running. This is the paused variant of the
+        @c state.'''),
+        ('TeleportingIn', 15, 
+         '''Teleporting the machine state in from another host or process.'''),
+        ('FaultTolerantSyncing', 16, 
+         '''The machine is being synced with a fault tolerant VM running elsewhere.'''),
+        ('DeletingSnapshotOnline', 17, 
+         '''Like @c DeletingSnapshot, but the merging of media is ongoing in
+        the background while the machine is running.'''),
+        ('DeletingSnapshotPaused', 18, 
+         '''Like @c DeletingSnapshotOnline, but the machine was paused when the
+        merging of differencing media was started.'''),
+        ('RestoringSnapshot', 19, 
+         '''A machine snapshot is being restored; this typically does not take long.'''),
+        ('DeletingSnapshot', 20, 
+         '''A machine snapshot is being deleted; this can take a long time since this
+        may require merging differencing media. This value indicates that the
+        machine is not running while the snapshot is being deleted.'''),
+        ('SettingUp', 21, 
+         '''Lengthy setup operation is in progress.'''),
+        ('FirstOnline', 5, 
+         '''Pseudo-state: first online state (for use in relational expressions).'''),
+        ('LastOnline', 18, 
+         '''Pseudo-state: last online state (for use in relational expressions).'''),
+        ('FirstTransient', 8, 
+         '''Pseudo-state: first transient state (for use in relational expressions).'''),
+        ('LastTransient', 21, 
+         '''Pseudo-state: last transient state (for use in relational expressions).'''),
+        ] 
 
 
 class SessionState(Enum):
-    """(Session state. This enumeration represents possible values of
+    """Session state. This enumeration represents possible values of
       <link to="IMachine::sessionState"/> and <link to="ISession::state"/>
-      attributes.)"""
-    uuid = 'cf2700c0-ea4b-47ae-9725-7810114b94d8'
-    lookup_value = {       'Locked': 2,
-        'Null': 0,
-        'Spawning': 3,
-        'Unlocked': 1,
-        'Unlocking': 4} 
+      attributes."""
+    __uuid__ = 'cf2700c0-ea4b-47ae-9725-7810114b94d8'
+    _enums = [\
+        ('Null', 0, 
+         '''Null value (never used by the API).'''),
+        ('Unlocked', 1, 
+         '''In <link to="IMachine::sessionState"/>, this means that the machine
+        is not locked for any sessions.
+
+        In <link to="ISession::state"/>, this means that no machine is
+        currently locked for this session.'''),
+        ('Locked', 2, 
+         '''In <link to="IMachine::sessionState"/>, this means that the machine
+        is currently locked for a session, whose process identifier can
+        then be found in the <link to="IMachine::sessionPID"/> attribute.
+
+        In <link to="ISession::state"/>, this means that a machine is
+        currently locked for this session, and the mutable machine object
+        can be found in the <link to="ISession::machine"/> attribute
+        (see <link to="IMachine::lockMachine"/> for details).'''),
+        ('Spawning', 3, 
+         '''A new process is being spawned for the machine as a result of
+        <link to="IMachine::launchVMProcess"/> call. This state also occurs
+        as a short transient state during an <link to="IMachine::lockMachine"/>
+        call.'''),
+        ('Unlocking', 4, 
+         '''The session is being unlocked.'''),
+        ] 
 
 
 class CPUPropertyType(Enum):
-    """(Virtual CPU property type. This enumeration represents possible values of the
-      IMachine get- and setCPUProperty methods.)"""
-    uuid = '24d356a6-2f45-4abd-b977-1cbe9c4701f5'
-    lookup_value = {       'LongMode': 3,
-        'Null': 0,
-        'PAE': 1,
-        'Synthetic': 2} 
+    """Virtual CPU property type. This enumeration represents possible values of the
+      IMachine get- and setCPUProperty methods."""
+    __uuid__ = '24d356a6-2f45-4abd-b977-1cbe9c4701f5'
+    _enums = [\
+        ('Null', 0, 
+         '''Null value (never used by the API).'''),
+        ('PAE', 1, 
+         '''This setting determines whether VirtualBox will expose the Physical Address
+        Extension (PAE) feature of the host CPU to the guest. Note that in case PAE
+        is not available, it will not be reported.'''),
+        ('Synthetic', 2, 
+         '''This setting determines whether VirtualBox will expose a synthetic CPU to the guest to allow
+        teleporting between host systems that differ significantly.'''),
+        ('LongMode', 3, 
+         '''This setting determines whether VirtualBox will advertice long mode
+        (i.e. 64-bit guest support) and let the guest enter it.'''),
+        ] 
 
 
 class HWVirtExPropertyType(Enum):
-    """(Hardware virtualization property type. This enumeration represents possible values
+    """Hardware virtualization property type. This enumeration represents possible values
       for the <link to="IMachine::getHWVirtExProperty"/> and
-      <link to="IMachine::setHWVirtExProperty"/> methods.)"""
-    uuid = '39463ecd-b4b8-401f-b168-76cfa87e11f0'
-    lookup_value = {       'Enabled': 1,
-        'Exclusive': 2,
-        'Force': 7,
-        'LargePages': 6,
-        'NestedPaging': 4,
-        'Null': 0,
-        'UnrestrictedExecution': 5,
-        'VPID': 3} 
+      <link to="IMachine::setHWVirtExProperty"/> methods."""
+    __uuid__ = '39463ecd-b4b8-401f-b168-76cfa87e11f0'
+    _enums = [\
+        ('Null', 0, 
+         '''Null value (never used by the API).'''),
+        ('Enabled', 1, 
+         '''Whether hardware virtualization (VT-x/AMD-V) is enabled at all. If
+        such extensions are not available, they will not be used.'''),
+        ('Exclusive', 2, 
+         '''Whether hardware virtualization is used exclusively by VirtualBox. When enabled,
+        VirtualBox assumes it can acquire full and exclusive access to the VT-x or AMD-V
+        feature of the host. To share these with other hypervisors, you must disable this property.'''),
+        ('VPID', 3, 
+         '''Whether VT-x VPID is enabled. If this extension is not available, it will not be used.'''),
+        ('NestedPaging', 4, 
+         '''Whether Nested Paging is enabled. If this extension is not available, it will not be used.'''),
+        ('UnrestrictedExecution', 5, 
+         '''Whether VT-x unrestricted execution is enabled. If this feature is not available, it will not be used.'''),
+        ('LargePages', 6, 
+         '''Whether large page allocation is enabled; requires nested paging and a 64-bit host.'''),
+        ('Force', 7, 
+         '''Whether the VM should fail to start if hardware virtualization (VT-x/AMD-V) cannot be used. If
+        not set, there will be an automatic fallback to software virtualization.'''),
+        ] 
 
 
 class FaultToleranceState(Enum):
-    """(Used with <link to="IMachine::faultToleranceState"/>.)"""
-    uuid = '5124f7ec-6b67-493c-9dee-ee45a44114e1'
-    lookup_value = {       'Inactive': 1,
-        'Master': 2,
-        'Standby': 3} 
+    """Used with <link to="IMachine::faultToleranceState"/>."""
+    __uuid__ = '5124f7ec-6b67-493c-9dee-ee45a44114e1'
+    _enums = [\
+        ('Inactive', 1, 
+         '''No fault tolerance enabled.'''),
+        ('Master', 2, 
+         '''Fault tolerant master VM.'''),
+        ('Standby', 3, 
+         '''Fault tolerant standby VM.'''),
+        ] 
 
 
 class LockType(Enum):
-    """(Used with <link to="IMachine::lockMachine"/>.)"""
-    uuid = '168a6a8e-12fd-4878-a1f9-38a750a56089'
-    lookup_value = {       'Shared': 1,
-        'VM': 3,
-        'Write': 2} 
+    """Used with <link to="IMachine::lockMachine"/>."""
+    __uuid__ = '168a6a8e-12fd-4878-a1f9-38a750a56089'
+    _enums = [\
+        ('Write', 2, 
+         '''Lock the machine for writing.'''),
+        ('Shared', 1, 
+         '''Request only a shared read lock for remote-controlling the machine.'''),
+        ('VM', 3, 
+         '''Lock the machine for writing, and create objects necessary for
+        running a VM in this process.'''),
+        ] 
 
 
 class SessionType(Enum):
-    """(Session type. This enumeration represents possible values of the
-      <link to="ISession::type"/> attribute.)"""
-    uuid = 'A13C02CB-0C2C-421E-8317-AC0E8AAA153A'
-    lookup_value = {       'Null': 0,
-        'Remote': 2,
-        'Shared': 3,
-        'WriteLock': 1} 
+    """Session type. This enumeration represents possible values of the
+      <link to="ISession::type"/> attribute."""
+    __uuid__ = 'A13C02CB-0C2C-421E-8317-AC0E8AAA153A'
+    _enums = [\
+        ('Null', 0, 
+         '''Null value (never used by the API).'''),
+        ('WriteLock', 1, 
+         '''Session has acquired an exclusive write lock on a machine
+        using <link to="IMachine::lockMachine"/>.'''),
+        ('Remote', 2, 
+         '''Session has launched a VM process using
+        <link to="IMachine::launchVMProcess"/>'''),
+        ('Shared', 3, 
+         '''Session has obtained a link to another session using
+        <link to="IMachine::lockMachine"/>'''),
+        ] 
 
 
 class DeviceType(Enum):
-    """(Device type.)"""
-    uuid = '6d9420f7-0b56-4636-99f9-7346f1b01e57'
-    lookup_value = {       'DVD': 2,
-        'Floppy': 1,
-        'HardDisk': 3,
-        'Network': 4,
-        'Null': 0,
-        'SharedFolder': 6,
-        'USB': 5} 
+    """Device type."""
+    __uuid__ = '6d9420f7-0b56-4636-99f9-7346f1b01e57'
+    _enums = [\
+        ('Null', 0, 
+         '''Null value, may also mean "no device" (not allowed for
+        <link to="IConsole::getDeviceActivity"/>).'''),
+        ('Floppy', 1, 
+         '''Floppy device.'''),
+        ('DVD', 2, 
+         '''CD/DVD-ROM device.'''),
+        ('HardDisk', 3, 
+         '''Hard disk device.'''),
+        ('Network', 4, 
+         '''Network device.'''),
+        ('USB', 5, 
+         '''USB device.'''),
+        ('SharedFolder', 6, 
+         '''Shared folder device.'''),
+        ] 
 
 
 class DeviceActivity(Enum):
-    """(Device activity for <link to="IConsole::getDeviceActivity"/>.)"""
-    uuid = '6FC8AEAA-130A-4eb5-8954-3F921422D707'
-    lookup_value = {       'Idle': 1,
-        'Null': 0,
-        'Reading': 2,
-        'Writing': 3} 
+    """Device activity for <link to="IConsole::getDeviceActivity"/>."""
+    __uuid__ = '6FC8AEAA-130A-4eb5-8954-3F921422D707'
+    _enums = [\
+        ('Null', 0, 
+         ''''''),
+        ('Idle', 1, 
+         ''''''),
+        ('Reading', 2, 
+         ''''''),
+        ('Writing', 3, 
+         ''''''),
+        ] 
 
 
 class ClipboardMode(Enum):
-    """(Host-Guest clipboard interchange mode.)"""
-    uuid = '33364716-4008-4701-8f14-be0fa3d62950'
-    lookup_value = {       'Bidirectional': 3,
-        'Disabled': 0,
-        'GuestToHost': 2,
-        'HostToGuest': 1} 
+    """Host-Guest clipboard interchange mode."""
+    __uuid__ = '33364716-4008-4701-8f14-be0fa3d62950'
+    _enums = [\
+        ('Disabled', 0, 
+         ''''''),
+        ('HostToGuest', 1, 
+         ''''''),
+        ('GuestToHost', 2, 
+         ''''''),
+        ('Bidirectional', 3, 
+         ''''''),
+        ] 
 
 
 class DragAndDropMode(Enum):
-    """(Drag'n'Drop interchange mode.)"""
-    uuid = 'b618ea0e-b6fb-4f8d-97f7-5e237e49b547'
-    lookup_value = {       'Bidirectional': 3,
-        'Disabled': 0,
-        'GuestToHost': 2,
-        'HostToGuest': 1} 
+    """Drag'n'Drop interchange mode."""
+    __uuid__ = 'b618ea0e-b6fb-4f8d-97f7-5e237e49b547'
+    _enums = [\
+        ('Disabled', 0, 
+         ''''''),
+        ('HostToGuest', 1, 
+         ''''''),
+        ('GuestToHost', 2, 
+         ''''''),
+        ('Bidirectional', 3, 
+         ''''''),
+        ] 
 
 
 class Scope(Enum):
-    """(Scope of the operation.
+    """Scope of the operation.
 
       A generic enumeration used in various methods to define the action or
-      argument scope.)"""
-    uuid = '7c91096e-499e-4eca-9f9b-9001438d7855'
-    lookup_value = {       'Global': 0,
-        'Machine': 1,
-        'Session': 2} 
+      argument scope."""
+    __uuid__ = '7c91096e-499e-4eca-9f9b-9001438d7855'
+    _enums = [\
+        ('Global', 0, 
+         ''''''),
+        ('Machine', 1, 
+         ''''''),
+        ('Session', 2, 
+         ''''''),
+        ] 
 
 
 class BIOSBootMenuMode(Enum):
-    """(BIOS boot menu mode.)"""
-    uuid = 'ae4fb9f7-29d2-45b4-b2c7-d579603135d5'
-    lookup_value = {       'Disabled': 0,
-        'MenuOnly': 1,
-        'MessageAndMenu': 2} 
+    """BIOS boot menu mode."""
+    __uuid__ = 'ae4fb9f7-29d2-45b4-b2c7-d579603135d5'
+    _enums = [\
+        ('Disabled', 0, 
+         ''''''),
+        ('MenuOnly', 1, 
+         ''''''),
+        ('MessageAndMenu', 2, 
+         ''''''),
+        ] 
 
 
 class ProcessorFeature(Enum):
-    """(CPU features.)"""
-    uuid = '64c38e6b-8bcf-45ad-ac03-9b406287c5bf'
-    lookup_value = {       'HWVirtEx': 0,
-        'LongMode': 2,
-        'NestedPaging': 3,
-        'PAE': 1} 
+    """CPU features."""
+    __uuid__ = '64c38e6b-8bcf-45ad-ac03-9b406287c5bf'
+    _enums = [\
+        ('HWVirtEx', 0, 
+         ''''''),
+        ('PAE', 1, 
+         ''''''),
+        ('LongMode', 2, 
+         ''''''),
+        ('NestedPaging', 3, 
+         ''''''),
+        ] 
 
 
 class FirmwareType(Enum):
-    """(Firmware type.)"""
-    uuid = 'b903f264-c230-483e-ac74-2b37ce60d371'
-    lookup_value = {       'BIOS': 1,
-        'EFI': 2,
-        'EFI32': 3,
-        'EFI64': 4,
-        'EFIDUAL': 5} 
+    """Firmware type."""
+    __uuid__ = 'b903f264-c230-483e-ac74-2b37ce60d371'
+    _enums = [\
+        ('BIOS', 1, 
+         '''BIOS Firmware.'''),
+        ('EFI', 2, 
+         '''EFI Firmware, bitness detected basing on OS type.'''),
+        ('EFI32', 3, 
+         '''Efi firmware, 32-bit.'''),
+        ('EFI64', 4, 
+         '''Efi firmware, 64-bit.'''),
+        ('EFIDUAL', 5, 
+         '''Efi firmware, combined 32 and 64-bit.'''),
+        ] 
 
 
 class PointingHIDType(Enum):
-    """(Type of pointing device used in a virtual machine.)"""
-    uuid = 'e44b2f7b-72ba-44fb-9e53-2186014f0d17'
-    lookup_value = {       'ComboMouse': 5,
-        'None': 1,
-        'PS2Mouse': 2,
-        'USBMouse': 3,
-        'USBTablet': 4} 
+    """Type of pointing device used in a virtual machine."""
+    __uuid__ = 'e44b2f7b-72ba-44fb-9e53-2186014f0d17'
+    _enums = [\
+        ('None', 1, 
+         '''No mouse.'''),
+        ('PS2Mouse', 2, 
+         '''PS/2 auxiliary device, a.k.a. mouse.'''),
+        ('USBMouse', 3, 
+         '''USB mouse (relative pointer).'''),
+        ('USBTablet', 4, 
+         '''USB tablet (absolute pointer).'''),
+        ('ComboMouse', 5, 
+         '''Combined device, working as PS/2 or USB mouse, depending on guest behavior.
+      Using of such device can have negative performance implications.'''),
+        ] 
 
 
 class KeyboardHIDType(Enum):
-    """(Type of keyboard device used in a virtual machine.)"""
-    uuid = '383e43d7-5c7c-4ec8-9cb8-eda1bccd6699'
-    lookup_value = {       'ComboKeyboard': 4,
-        'None': 1,
-        'PS2Keyboard': 2,
-        'USBKeyboard': 3} 
+    """Type of keyboard device used in a virtual machine."""
+    __uuid__ = '383e43d7-5c7c-4ec8-9cb8-eda1bccd6699'
+    _enums = [\
+        ('None', 1, 
+         '''No keyboard.'''),
+        ('PS2Keyboard', 2, 
+         '''PS/2 keyboard.'''),
+        ('USBKeyboard', 3, 
+         '''USB keyboard.'''),
+        ('ComboKeyboard', 4, 
+         '''Combined device, working as PS/2 or USB keyboard, depending on guest behavior.
+      Using of such device can have negative performance implications.'''),
+        ] 
 
 
 class VFSType(Enum):
-    """(Virtual file systems supported by VFSExplorer.)"""
-    uuid = '813999ba-b949-48a8-9230-aadc6285e2f2'
-    lookup_value = {       'Cloud': 2,
-        'File': 1,
-        'S3': 3,
-        'WebDav': 4} 
+    """Virtual file systems supported by VFSExplorer."""
+    __uuid__ = '813999ba-b949-48a8-9230-aadc6285e2f2'
+    _enums = [\
+        ('File', 1, 
+         ''''''),
+        ('Cloud', 2, 
+         ''''''),
+        ('S3', 3, 
+         ''''''),
+        ('WebDav', 4, 
+         ''''''),
+        ] 
 
 
 class VFSFileType(Enum):
-    """(File types known by VFSExplorer.)"""
-    uuid = '714333cd-44e2-415f-a245-d378fa9b1242'
-    lookup_value = {       'DevBlock': 5,
-        'DevChar': 3,
-        'Directory': 4,
-        'Fifo': 2,
-        'File': 6,
-        'Socket': 8,
-        'SymLink': 7,
-        'Unknown': 1,
-        'WhiteOut': 9} 
+    """File types known by VFSExplorer."""
+    __uuid__ = '714333cd-44e2-415f-a245-d378fa9b1242'
+    _enums = [\
+        ('Unknown', 1, 
+         ''''''),
+        ('Fifo', 2, 
+         ''''''),
+        ('DevChar', 3, 
+         ''''''),
+        ('Directory', 4, 
+         ''''''),
+        ('DevBlock', 5, 
+         ''''''),
+        ('File', 6, 
+         ''''''),
+        ('SymLink', 7, 
+         ''''''),
+        ('Socket', 8, 
+         ''''''),
+        ('WhiteOut', 9, 
+         ''''''),
+        ] 
 
 
 class ImportOptions(Enum):
-    """(Import options, used with <link to="IAppliance::importMachines"/>.)"""
-    uuid = '0a981523-3b20-4004-8ee3-dfd322202ace'
-    lookup_value = {       'KeepAllMACs': 1,
-        'KeepNATMACs': 2} 
+    """Import options, used with <link to="IAppliance::importMachines"/>."""
+    __uuid__ = '0a981523-3b20-4004-8ee3-dfd322202ace'
+    _enums = [\
+        ('KeepAllMACs', 1, 
+         '''Don't generate new MAC addresses of the attached network adapters.'''),
+        ('KeepNATMACs', 2, 
+         '''Don't generate new MAC addresses of the attached network adapters when they are using NAT.'''),
+        ] 
 
 
 class VirtualSystemDescriptionType(Enum):
-    """(Used with <link to="IVirtualSystemDescription"/> to describe the type of
-    a configuration value.)"""
-    uuid = '303c0900-a746-4612-8c67-79003e91f459'
-    lookup_value = {       'CDROM': 20,
-        'CPU': 12,
-        'Description': 9,
-        'Floppy': 19,
-        'HardDiskControllerIDE': 14,
-        'HardDiskControllerSAS': 17,
-        'HardDiskControllerSATA': 15,
-        'HardDiskControllerSCSI': 16,
-        'HardDiskImage': 18,
-        'Ignore': 1,
-        'License': 10,
-        'Memory': 13,
-        'Miscellaneous': 11,
-        'Name': 3,
-        'NetworkAdapter': 21,
-        'OS': 2,
-        'Product': 4,
-        'ProductUrl': 7,
-        'SettingsFile': 24,
-        'SoundCard': 23,
-        'USBController': 22,
-        'Vendor': 5,
-        'VendorUrl': 8,
-        'Version': 6} 
+    """Used with <link to="IVirtualSystemDescription"/> to describe the type of
+    a configuration value."""
+    __uuid__ = '303c0900-a746-4612-8c67-79003e91f459'
+    _enums = [\
+        ('Ignore', 1, 
+         ''''''),
+        ('OS', 2, 
+         ''''''),
+        ('Name', 3, 
+         ''''''),
+        ('Product', 4, 
+         ''''''),
+        ('Vendor', 5, 
+         ''''''),
+        ('Version', 6, 
+         ''''''),
+        ('ProductUrl', 7, 
+         ''''''),
+        ('VendorUrl', 8, 
+         ''''''),
+        ('Description', 9, 
+         ''''''),
+        ('License', 10, 
+         ''''''),
+        ('Miscellaneous', 11, 
+         ''''''),
+        ('CPU', 12, 
+         ''''''),
+        ('Memory', 13, 
+         ''''''),
+        ('HardDiskControllerIDE', 14, 
+         ''''''),
+        ('HardDiskControllerSATA', 15, 
+         ''''''),
+        ('HardDiskControllerSCSI', 16, 
+         ''''''),
+        ('HardDiskControllerSAS', 17, 
+         ''''''),
+        ('HardDiskImage', 18, 
+         ''''''),
+        ('Floppy', 19, 
+         ''''''),
+        ('CDROM', 20, 
+         ''''''),
+        ('NetworkAdapter', 21, 
+         ''''''),
+        ('USBController', 22, 
+         ''''''),
+        ('SoundCard', 23, 
+         ''''''),
+        ('SettingsFile', 24, 
+         '''Not used/implemented right now, will be added later in 4.1.x.'''),
+        ] 
 
 
 class VirtualSystemDescriptionValueType(Enum):
-    """(Used with <link to="IVirtualSystemDescription::getValuesByType"/> to describe the value
-    type to fetch.)"""
-    uuid = '56d9403f-3425-4118-9919-36f2a9b8c77c'
-    lookup_value = {       'Auto': 3,
-        'ExtraConfig': 4,
-        'Original': 2,
-        'Reference': 1} 
+    """Used with <link to="IVirtualSystemDescription::getValuesByType"/> to describe the value
+    type to fetch."""
+    __uuid__ = '56d9403f-3425-4118-9919-36f2a9b8c77c'
+    _enums = [\
+        ('Reference', 1, 
+         ''''''),
+        ('Original', 2, 
+         ''''''),
+        ('Auto', 3, 
+         ''''''),
+        ('ExtraConfig', 4, 
+         ''''''),
+        ] 
 
 
 class GraphicsControllerType(Enum):
-    """(Graphics controller type, used with <link to="IMachine::unregister"/>.)"""
-    uuid = '79c96ca0-9f39-4900-948e-68c41cbe127a'
-    lookup_value = {       'Null': 0,
-        'VBoxVGA': 1} 
+    """Graphics controller type, used with <link to="IMachine::unregister"/>."""
+    __uuid__ = '79c96ca0-9f39-4900-948e-68c41cbe127a'
+    _enums = [\
+        ('Null', 0, 
+         '''Reserved value, invalid.'''),
+        ('VBoxVGA', 1, 
+         '''Default VirtualBox VGA device.'''),
+        ] 
 
 
 class CleanupMode(Enum):
-    """(Cleanup mode, used with <link to="IMachine::unregister"/>.)"""
-    uuid = '67897c50-7cca-47a9-83f6-ce8fd8eb5441'
-    lookup_value = {       'DetachAllReturnHardDisksOnly': 3,
-        'DetachAllReturnNone': 2,
-        'Full': 4,
-        'UnregisterOnly': 1} 
+    """Cleanup mode, used with <link to="IMachine::unregister"/>."""
+    __uuid__ = '67897c50-7cca-47a9-83f6-ce8fd8eb5441'
+    _enums = [\
+        ('UnregisterOnly', 1, 
+         '''Unregister only the machine, but neither delete snapshots nor detach media.'''),
+        ('DetachAllReturnNone', 2, 
+         '''Delete all snapshots and detach all media but return none; this will keep all media registered.'''),
+        ('DetachAllReturnHardDisksOnly', 3, 
+         '''Delete all snapshots, detach all media and return hard disks for closing, but not removable media.'''),
+        ('Full', 4, 
+         '''Delete all snapshots, detach all media and return all media for closing.'''),
+        ] 
 
 
 class CloneMode(Enum):
-    """(Clone mode, used with <link to="IMachine::cloneTo"/>.)"""
-    uuid = 'A7A159FE-5096-4B8D-8C3C-D033CB0B35A8'
-    lookup_value = {       'AllStates': 3,
-        'MachineAndChildStates': 2,
-        'MachineState': 1} 
+    """Clone mode, used with <link to="IMachine::cloneTo"/>."""
+    __uuid__ = 'A7A159FE-5096-4B8D-8C3C-D033CB0B35A8'
+    _enums = [\
+        ('MachineState', 1, 
+         '''Clone the state of the selected machine.'''),
+        ('MachineAndChildStates', 2, 
+         '''Clone the state of the selected machine and its child snapshots if present.'''),
+        ('AllStates', 3, 
+         '''Clone all states (including all snapshots) of the machine, regardless of the machine object used.'''),
+        ] 
 
 
 class CloneOptions(Enum):
-    """(Clone options, used with <link to="IMachine::cloneTo"/>.)"""
-    uuid = '22243f8e-96ab-497c-8cf0-f40a566c630b'
-    lookup_value = {       'KeepAllMACs': 2,
-        'KeepDiskNames': 4,
-        'KeepNATMACs': 3,
-        'Link': 1} 
+    """Clone options, used with <link to="IMachine::cloneTo"/>."""
+    __uuid__ = '22243f8e-96ab-497c-8cf0-f40a566c630b'
+    _enums = [\
+        ('Link', 1, 
+         '''Create a clone VM where all virtual disks are linked to the original VM.'''),
+        ('KeepAllMACs', 2, 
+         '''Don't generate new MAC addresses of the attached network adapters.'''),
+        ('KeepNATMACs', 3, 
+         '''Don't generate new MAC addresses of the attached network adapters when they are using NAT.'''),
+        ('KeepDiskNames', 4, 
+         '''Don't change the disk names.'''),
+        ] 
 
 
 class AutostopType(Enum):
-    """(Autostop types, used with <link to="IMachine::autostopType"/>.)"""
-    uuid = '6bb96740-cf34-470d-aab2-2cd48ea2e10e'
-    lookup_value = {       'AcpiShutdown': 4,
-        'Disabled': 1,
-        'PowerOff': 3,
-        'SaveState': 2} 
+    """Autostop types, used with <link to="IMachine::autostopType"/>."""
+    __uuid__ = '6bb96740-cf34-470d-aab2-2cd48ea2e10e'
+    _enums = [\
+        ('Disabled', 1, 
+         '''Stopping the VM during system shutdown is disabled.'''),
+        ('SaveState', 2, 
+         '''The state of the VM will be saved when the system shuts down.'''),
+        ('PowerOff', 3, 
+         '''The VM is powered off when the system shuts down.'''),
+        ('AcpiShutdown', 4, 
+         '''An ACPI shutdown event is generated.'''),
+        ] 
 
 
 class HostNetworkInterfaceMediumType(Enum):
-    """(Type of encapsulation. Ethernet encapsulation includes both wired and
+    """Type of encapsulation. Ethernet encapsulation includes both wired and
       wireless Ethernet connections.
-      <link to="IHostNetworkInterface"/>)"""
-    uuid = '1aa54aaf-2497-45a2-bfb1-8eb225e93d5b'
-    lookup_value = {       'Ethernet': 1,
-        'PPP': 2,
-        'SLIP': 3,
-        'Unknown': 0} 
+      <link to="IHostNetworkInterface"/>"""
+    __uuid__ = '1aa54aaf-2497-45a2-bfb1-8eb225e93d5b'
+    _enums = [\
+        ('Unknown', 0, 
+         '''The type of interface cannot be determined.'''),
+        ('Ethernet', 1, 
+         '''Ethernet frame encapsulation.'''),
+        ('PPP', 2, 
+         '''Point-to-point protocol encapsulation.'''),
+        ('SLIP', 3, 
+         '''Serial line IP encapsulation.'''),
+        ] 
 
 
 class HostNetworkInterfaceStatus(Enum):
-    """(Current status of the interface.
-      <link to="IHostNetworkInterface"/>)"""
-    uuid = 'CC474A69-2710-434B-8D99-C38E5D5A6F41'
-    lookup_value = {       'Down': 2,
-        'Unknown': 0,
-        'Up': 1} 
+    """Current status of the interface.
+      <link to="IHostNetworkInterface"/>"""
+    __uuid__ = 'CC474A69-2710-434B-8D99-C38E5D5A6F41'
+    _enums = [\
+        ('Unknown', 0, 
+         '''The state of interface cannot be determined.'''),
+        ('Up', 1, 
+         '''The interface is fully operational.'''),
+        ('Down', 2, 
+         '''The interface is not functioning.'''),
+        ] 
 
 
 class HostNetworkInterfaceType(Enum):
-    """(Network interface type.)"""
-    uuid = '67431b00-9946-48a2-bc02-b25c5919f4f3'
-    lookup_value = {       'Bridged': 1,
-        'HostOnly': 2} 
+    """Network interface type."""
+    __uuid__ = '67431b00-9946-48a2-bc02-b25c5919f4f3'
+    _enums = [\
+        ('Bridged', 1, 
+         ''''''),
+        ('HostOnly', 2, 
+         ''''''),
+        ] 
 
 
 class AdditionsFacilityType(Enum):
-    """(Guest Additions facility IDs.)"""
-    uuid = '98f7f957-89fb-49b6-a3b1-31e3285eb1d8'
-    lookup_value = {       'All': 2147483646,
-        'AutoLogon': 90,
-        'Graphics': 1100,
-        'None': 0,
-        'Seamless': 1000,
-        'VBoxGuestDriver': 20,
-        'VBoxService': 100,
-        'VBoxTrayClient': 101} 
+    """Guest Additions facility IDs."""
+    __uuid__ = '98f7f957-89fb-49b6-a3b1-31e3285eb1d8'
+    _enums = [\
+        ('None', 0, 
+         '''No/invalid facility.'''),
+        ('VBoxGuestDriver', 20, 
+         '''VirtualBox base driver (VBoxGuest).'''),
+        ('AutoLogon', 90, 
+         '''Auto-logon modules (VBoxGINA, VBoxCredProv, pam_vbox).'''),
+        ('VBoxService', 100, 
+         '''VirtualBox system service (VBoxService).'''),
+        ('VBoxTrayClient', 101, 
+         '''VirtualBox desktop integration (VBoxTray on Windows, VBoxClient on non-Windows).'''),
+        ('Seamless', 1000, 
+         '''Seamless guest desktop integration.'''),
+        ('Graphics', 1100, 
+         '''Guest graphics mode. If not enabled, seamless rendering will not work, resize hints
+        are not immediately acted on and guest display resizes are probably not initiated by
+        the guest additions.'''),
+        ('All', 2147483646, 
+         '''All facilities selected.'''),
+        ] 
 
 
 class AdditionsFacilityClass(Enum):
-    """(Guest Additions facility classes.)"""
-    uuid = '446451b2-c88d-4e5d-84c9-91bc7f533f5f'
-    lookup_value = {       'All': 2147483646,
-        'Driver': 10,
-        'Feature': 100,
-        'None': 0,
-        'Program': 50,
-        'Service': 30,
-        'ThirdParty': 999} 
+    """Guest Additions facility classes."""
+    __uuid__ = '446451b2-c88d-4e5d-84c9-91bc7f533f5f'
+    _enums = [\
+        ('None', 0, 
+         '''No/invalid class.'''),
+        ('Driver', 10, 
+         '''Driver.'''),
+        ('Service', 30, 
+         '''System service.'''),
+        ('Program', 50, 
+         '''Program.'''),
+        ('Feature', 100, 
+         '''Feature.'''),
+        ('ThirdParty', 999, 
+         '''Third party.'''),
+        ('All', 2147483646, 
+         '''All facility classes selected.'''),
+        ] 
 
 
 class AdditionsFacilityStatus(Enum):
-    """(Guest Additions facility states.)"""
-    uuid = 'ce06f9e1-394e-4fe9-9368-5a88c567dbde'
-    lookup_value = {       'Active': 50,
-        'Failed': 800,
-        'Inactive': 0,
-        'Init': 30,
-        'Paused': 1,
-        'PreInit': 20,
-        'Terminated': 101,
-        'Terminating': 100,
-        'Unknown': 999} 
+    """Guest Additions facility states."""
+    __uuid__ = 'ce06f9e1-394e-4fe9-9368-5a88c567dbde'
+    _enums = [\
+        ('Inactive', 0, 
+         '''Facility is not active.'''),
+        ('Paused', 1, 
+         '''Facility has been paused.'''),
+        ('PreInit', 20, 
+         '''Facility is preparing to initialize.'''),
+        ('Init', 30, 
+         '''Facility is initializing.'''),
+        ('Active', 50, 
+         '''Facility is up and running.'''),
+        ('Terminating', 100, 
+         '''Facility is shutting down.'''),
+        ('Terminated', 101, 
+         '''Facility successfully shut down.'''),
+        ('Failed', 800, 
+         '''Facility failed to start.'''),
+        ('Unknown', 999, 
+         '''Facility status is unknown.'''),
+        ] 
 
 
 class AdditionsRunLevelType(Enum):
-    """(Guest Additions run level type.)"""
-    uuid = 'a25417ee-a9dd-4f5b-b0dc-377860087754'
-    lookup_value = {       'Desktop': 3,
-        'None': 0,
-        'System': 1,
-        'Userland': 2} 
+    """Guest Additions run level type."""
+    __uuid__ = 'a25417ee-a9dd-4f5b-b0dc-377860087754'
+    _enums = [\
+        ('None', 0, 
+         '''Guest Additions are not loaded.'''),
+        ('System', 1, 
+         '''Guest drivers are loaded.'''),
+        ('Userland', 2, 
+         '''Common components (such as application services) are loaded.'''),
+        ('Desktop', 3, 
+         '''Per-user desktop components are loaded.'''),
+        ] 
 
 
 class AdditionsUpdateFlag(Enum):
-    """(Guest Additions update flags.)"""
-    uuid = '726a818d-18d6-4389-94e8-3e9e6826171a'
-    lookup_value = {       'None': 0,
-        'WaitForUpdateStartOnly': 1} 
+    """Guest Additions update flags."""
+    __uuid__ = '726a818d-18d6-4389-94e8-3e9e6826171a'
+    _enums = [\
+        ('None', 0, 
+         '''No flag set.'''),
+        ('WaitForUpdateStartOnly', 1, 
+         '''Starts the regular updating process and waits until the
+        actual Guest Additions update inside the guest was started.
+        This can be necessary due to needed interaction with the guest
+        OS during the installation phase.'''),
+        ] 
 
 
 class GuestSessionStatus(Enum):
-    """(Guest session status. This enumeration represents possible values of
-      the <link to="IGuestSession::status"/> attribute.)"""
-    uuid = 'ac2669da-4624-44f2-85b5-0b0bfb8d8673'
-    lookup_value = {       'Down': 600,
-        'Error': 800,
-        'Started': 100,
-        'Starting': 10,
-        'Terminated': 500,
-        'Terminating': 480,
-        'TimedOutAbnormally': 513,
-        'TimedOutKilled': 512,
-        'Undefined': 0} 
+    """Guest session status. This enumeration represents possible values of
+      the <link to="IGuestSession::status"/> attribute."""
+    __uuid__ = 'ac2669da-4624-44f2-85b5-0b0bfb8d8673'
+    _enums = [\
+        ('Undefined', 0, 
+         '''Guest session is in an undefined state.'''),
+        ('Starting', 10, 
+         '''Guest session is being started.'''),
+        ('Started', 100, 
+         '''Guest session has been started.'''),
+        ('Terminating', 480, 
+         '''Guest session is being terminated.'''),
+        ('Terminated', 500, 
+         '''Guest session terminated normally.'''),
+        ('TimedOutKilled', 512, 
+         '''Guest session timed out and was killed.'''),
+        ('TimedOutAbnormally', 513, 
+         '''Guest session timed out and was not killed successfully.'''),
+        ('Down', 600, 
+         '''Service/OS is stopping, guest session was killed.'''),
+        ('Error', 800, 
+         '''Something went wrong.'''),
+        ] 
 
 
 class GuestSessionWaitForFlag(Enum):
-    """(Guest session waiting flags. Multiple flags can be combined.)"""
-    uuid = 'bb7a372a-f635-4e11-a81a-e707f3a52ef5'
-    lookup_value = {       'None': 0,
-        'Start': 1,
-        'Status': 4,
-        'Terminate': 2} 
+    """Guest session waiting flags. Multiple flags can be combined."""
+    __uuid__ = 'bb7a372a-f635-4e11-a81a-e707f3a52ef5'
+    _enums = [\
+        ('None', 0, 
+         '''No waiting flags specified. Do not use this.'''),
+        ('Start', 1, 
+         '''Wait for the guest session being started.'''),
+        ('Terminate', 2, 
+         '''Wait for the guest session being terminated.'''),
+        ('Status', 4, 
+         '''Wait for the next guest session status change.'''),
+        ] 
 
 
 class GuestSessionWaitResult(Enum):
-    """(Guest session waiting results. Depending on the session waiting flags (for
+    """Guest session waiting results. Depending on the session waiting flags (for
       more information see <link to="GuestSessionWaitForFlag"/>) the waiting result
       can vary based on the session's current status.
 
       To wait for a guest session to terminate after it has been
       created by <link to="IGuest::createSession"/> one would specify
-      GuestSessionWaitResult_Terminate.)"""
-    uuid = 'c0f6a8a5-fdb6-42bf-a582-56c6f82bcd2d'
-    lookup_value = {       'Error': 4,
-        'None': 0,
-        'Start': 1,
-        'Status': 3,
-        'Terminate': 2,
-        'Timeout': 5,
-        'WaitFlagNotSupported': 6} 
+      GuestSessionWaitResult_Terminate."""
+    __uuid__ = 'c0f6a8a5-fdb6-42bf-a582-56c6f82bcd2d'
+    _enums = [\
+        ('None', 0, 
+         '''No result was returned. Not being used.'''),
+        ('Start', 1, 
+         '''The guest session has been started.'''),
+        ('Terminate', 2, 
+         '''The guest session has been terminated.'''),
+        ('Status', 3, 
+         '''The guest session has changed its status. The status then can
+        be retrieved via <link to="IGuestSession::status"/>.'''),
+        ('Error', 4, 
+         '''Error while executing the process.'''),
+        ('Timeout', 5, 
+         '''The waiting operation timed out. This also will happen
+        when no event has been occured matching the
+        current waiting flags in a <link to="IGuestSession::waitFor"/> call.'''),
+        ('WaitFlagNotSupported', 6, 
+         '''A waiting flag specified in the <link to="IGuestSession::waitFor"/> call
+        is not supported by the guest.'''),
+        ] 
 
 
 class FileSeekType(Enum):
-    """(File seeking types.)"""
-    uuid = '1b73f4f3-3515-4073-a506-76878d9e2541'
-    lookup_value = {       'Current': 1,
-        'Set': 0} 
+    """File seeking types."""
+    __uuid__ = '1b73f4f3-3515-4073-a506-76878d9e2541'
+    _enums = [\
+        ('Set', 0, 
+         '''Seek from the start of the file.'''),
+        ('Current', 1, 
+         '''Seek from the current file position.'''),
+        ] 
 
 
 class ProcessInputFlag(Enum):
-    """(Guest process input flags.)"""
-    uuid = '5d38c1dd-2604-4ddf-92e5-0c0cdd3bdbd5'
-    lookup_value = {       'EndOfFile': 1,
-        'None': 0} 
+    """Guest process input flags."""
+    __uuid__ = '5d38c1dd-2604-4ddf-92e5-0c0cdd3bdbd5'
+    _enums = [\
+        ('None', 0, 
+         '''No flag set.'''),
+        ('EndOfFile', 1, 
+         '''End of file (input) reached.'''),
+        ] 
 
 
 class ProcessOutputFlag(Enum):
-    """(Guest process output flags for specifying which
-      type of output to retrieve.)"""
-    uuid = '9979e85a-52bb-40b7-870c-57115e27e0f1'
-    lookup_value = {       'None': 0,
-        'StdErr': 1} 
+    """Guest process output flags for specifying which
+      type of output to retrieve."""
+    __uuid__ = '9979e85a-52bb-40b7-870c-57115e27e0f1'
+    _enums = [\
+        ('None', 0, 
+         '''No flags set. Get output from stdout.'''),
+        ('StdErr', 1, 
+         '''Get output from stderr.'''),
+        ] 
 
 
 class ProcessWaitForFlag(Enum):
-    """(Process waiting flags. Multiple flags can be combined.)"""
-    uuid = '23b550c7-78e1-437e-98f0-65fd9757bcd2'
-    lookup_value = {       'None': 0,
-        'Start': 1,
-        'StdErr': 16,
-        'StdIn': 4,
-        'StdOut': 8,
-        'Terminate': 2} 
+    """Process waiting flags. Multiple flags can be combined."""
+    __uuid__ = '23b550c7-78e1-437e-98f0-65fd9757bcd2'
+    _enums = [\
+        ('None', 0, 
+         '''No waiting flags specified. Do not use this.'''),
+        ('Start', 1, 
+         '''Wait for the process being started.'''),
+        ('Terminate', 2, 
+         '''Wait for the process being terminated.'''),
+        ('StdIn', 4, 
+         '''Wait for stdin becoming available.'''),
+        ('StdOut', 8, 
+         '''Wait for data becoming available on stdout.'''),
+        ('StdErr', 16, 
+         '''Wait for data becoming available on stderr.'''),
+        ] 
 
 
 class ProcessWaitResult(Enum):
-    """(Process waiting results. Depending on the process waiting flags (for
+    """Process waiting results. Depending on the process waiting flags (for
       more information see <link to="ProcessWaitForFlag"/>) the waiting result
       can vary based on the processes' current status.
 
@@ -893,298 +1309,534 @@ class ProcessWaitResult(Enum):
       If a guest process has been started with ProcessCreateFlag_WaitForStdOut
       a client can wait with ProcessWaitResult_StdOut for new data to arrive on
       stdout; same applies for ProcessCreateFlag_WaitForStdErr and
-      ProcessWaitResult_StdErr.)"""
-    uuid = '40719cbe-f192-4fe9-a231-6697b3c8e2b4'
-    lookup_value = {       'Error': 4,
-        'None': 0,
-        'Start': 1,
-        'Status': 3,
-        'StdErr': 8,
-        'StdIn': 6,
-        'StdOut': 7,
-        'Terminate': 2,
-        'Timeout': 5,
-        'WaitFlagNotSupported': 9} 
+      ProcessWaitResult_StdErr."""
+    __uuid__ = '40719cbe-f192-4fe9-a231-6697b3c8e2b4'
+    _enums = [\
+        ('None', 0, 
+         '''No result was returned. Not being used.'''),
+        ('Start', 1, 
+         '''The process has been started.'''),
+        ('Terminate', 2, 
+         '''The process has been terminated.'''),
+        ('Status', 3, 
+         '''The process has changed its status. The status then can
+        be retrieved via <link to="IProcess::status"/>.'''),
+        ('Error', 4, 
+         '''Error while executing the process.'''),
+        ('Timeout', 5, 
+         '''The waiting operation timed out. This also will happen
+        when no event has been occured matching the
+        current waiting flags in a <link to="IProcess::waitFor"/> call.'''),
+        ('StdIn', 6, 
+         '''The process signalled that stdin became available for writing
+        and that the process awaits input now.'''),
+        ('StdOut', 7, 
+         '''Data on stdout became available for reading.'''),
+        ('StdErr', 8, 
+         '''Data on stderr became available for reading.'''),
+        ('WaitFlagNotSupported', 9, 
+         '''A waiting flag specified in the <link to="IProcess::waitFor"/> call
+        is not supported by the guest.'''),
+        ] 
 
 
 class CopyFileFlag(Enum):
-    """(File copying flags.)"""
-    uuid = '23f79fdf-738a-493d-b80b-42d607c9b916'
-    lookup_value = {       'FollowLinks': 4,
-        'None': 0,
-        'Recursive': 1,
-        'Update': 2} 
+    """File copying flags."""
+    __uuid__ = '23f79fdf-738a-493d-b80b-42d607c9b916'
+    _enums = [\
+        ('None', 0, 
+         '''No flag set.'''),
+        ('Recursive', 1, 
+         '''Copy directories recursively.'''),
+        ('Update', 2, 
+         '''Only copy when the source file is newer than the destination file or when the destination file is missing.'''),
+        ('FollowLinks', 4, 
+         '''Follow symbolic links.'''),
+        ] 
 
 
 class DirectoryCreateFlag(Enum):
-    """(Directory creation flags.)"""
-    uuid = 'bd721b0e-ced5-4f79-b368-249897c32a36'
-    lookup_value = {       'None': 0,
-        'Parents': 1} 
+    """Directory creation flags."""
+    __uuid__ = 'bd721b0e-ced5-4f79-b368-249897c32a36'
+    _enums = [\
+        ('None', 0, 
+         '''No flag set.'''),
+        ('Parents', 1, 
+         '''No error if existing, make parent directories as needed.'''),
+        ] 
 
 
 class DirectoryRemoveRecFlag(Enum):
-    """(Directory recursive removement flags.)"""
-    uuid = '455aabf0-7692-48f6-9061-f21579b65769'
-    lookup_value = {       'ContentAndDir': 1,
-        'ContentOnly': 2,
-        'None': 0} 
+    """Directory recursive removement flags."""
+    __uuid__ = '455aabf0-7692-48f6-9061-f21579b65769'
+    _enums = [\
+        ('None', 0, 
+         '''No flag set.'''),
+        ('ContentAndDir', 1, 
+         '''Delete the content of the directory and the directory itself.'''),
+        ('ContentOnly', 2, 
+         '''Only delete the content of the directory, omit the directory it self.'''),
+        ] 
 
 
 class PathRenameFlag(Enum):
-    """(Path renaming flags.)"""
-    uuid = 'f3baa09f-c758-453d-b91c-c7787d76351d'
-    lookup_value = {       'NoReplace': 1,
-        'NoSymlinks': 4,
-        'None': 0,
-        'Replace': 2} 
+    """Path renaming flags."""
+    __uuid__ = 'f3baa09f-c758-453d-b91c-c7787d76351d'
+    _enums = [\
+        ('None', 0, 
+         '''No flag set.'''),
+        ('NoReplace', 1, 
+         '''Do not replace anything.'''),
+        ('Replace', 2, 
+         '''This will replace attempt any target which isn't a directory.'''),
+        ('NoSymlinks', 4, 
+         '''Don't allow symbolic links as part of the path.'''),
+        ] 
 
 
 class ProcessCreateFlag(Enum):
-    """(Guest process execution flags.)"""
-    uuid = '35192799-bfde-405d-9bea-c735ab9998e4'
-    lookup_value = {       'ExpandArguments': 64,
-        'Hidden': 4,
-        'IgnoreOrphanedProcesses': 2,
-        'NoProfile': 8,
-        'None': 0,
-        'WaitForProcessStartOnly': 1,
-        'WaitForStdErr': 32,
-        'WaitForStdOut': 16} 
+    """Guest process execution flags."""
+    __uuid__ = '35192799-bfde-405d-9bea-c735ab9998e4'
+    _enums = [\
+        ('None', 0, 
+         '''No flag set.'''),
+        ('WaitForProcessStartOnly', 1, 
+         '''Only use the specified timeout value to wait for starting the guest process - the guest
+        process itself then uses an infinite timeout.'''),
+        ('IgnoreOrphanedProcesses', 2, 
+         '''Do not report an error when executed processes are still alive when VBoxService or the guest OS is shutting down.'''),
+        ('Hidden', 4, 
+         '''Do not show the started process according to the guest OS guidelines.'''),
+        ('NoProfile', 8, 
+         '''Do not use the user's profile data when exeuting a process. Only available for Windows guests.'''),
+        ('WaitForStdOut', 16, 
+         '''The guest process waits until all data from stdout is read out.'''),
+        ('WaitForStdErr', 32, 
+         '''The guest process waits until all data from stderr is read out.'''),
+        ('ExpandArguments', 64, 
+         '''Expands environment variables in process arguments.'''),
+        ] 
 
 
 class ProcessPriority(Enum):
-    """(Process priorities.)"""
-    uuid = 'ee8cac50-e232-49fe-806b-d1214d9c2e49'
-    lookup_value = {       'Default': 1,
-        'Invalid': 0} 
+    """Process priorities."""
+    __uuid__ = 'ee8cac50-e232-49fe-806b-d1214d9c2e49'
+    _enums = [\
+        ('Invalid', 0, 
+         '''Invalid priority, do not use.'''),
+        ('Default', 1, 
+         '''Default process priority determined by the OS.'''),
+        ] 
 
 
 class SymlinkType(Enum):
-    """(Symbolic link types.)"""
-    uuid = '37794668-f8f1-4714-98a5-6f8fa2ed0118'
-    lookup_value = {       'Directory': 1,
-        'File': 2,
-        'Unknown': 0} 
+    """Symbolic link types."""
+    __uuid__ = '37794668-f8f1-4714-98a5-6f8fa2ed0118'
+    _enums = [\
+        ('Unknown', 0, 
+         '''It is not known what is being targeted.'''),
+        ('Directory', 1, 
+         '''The link targets a directory.'''),
+        ('File', 2, 
+         '''The link targets a file (or whatever else).'''),
+        ] 
 
 
 class SymlinkReadFlag(Enum):
-    """(Symbolic link reading flags.)"""
-    uuid = 'b7fe2b9d-790e-4b25-8adf-1ca33026931f'
-    lookup_value = {       'NoSymlinks': 1,
-        'None': 0} 
+    """Symbolic link reading flags."""
+    __uuid__ = 'b7fe2b9d-790e-4b25-8adf-1ca33026931f'
+    _enums = [\
+        ('None', 0, 
+         '''No flags set.'''),
+        ('NoSymlinks', 1, 
+         '''Don't allow symbolic links as part of the path.'''),
+        ] 
 
 
 class ProcessStatus(Enum):
-    """(Process execution statuses.)"""
-    uuid = '4d52368f-5b48-4bfe-b486-acf89139b52f'
-    lookup_value = {       'Down': 600,
-        'Error': 800,
-        'Paused': 110,
-        'Started': 100,
-        'Starting': 10,
-        'TerminatedAbnormally': 511,
-        'TerminatedNormally': 500,
-        'TerminatedSignal': 510,
-        'Terminating': 480,
-        'TimedOutAbnormally': 513,
-        'TimedOutKilled': 512,
-        'Undefined': 0} 
+    """Process execution statuses."""
+    __uuid__ = '4d52368f-5b48-4bfe-b486-acf89139b52f'
+    _enums = [\
+        ('Undefined', 0, 
+         '''Process is in an undefined state.'''),
+        ('Starting', 10, 
+         '''Process is being started.'''),
+        ('Started', 100, 
+         '''Process has been started.'''),
+        ('Paused', 110, 
+         '''Process has been paused.'''),
+        ('Terminating', 480, 
+         '''Process is being terminated.'''),
+        ('TerminatedNormally', 500, 
+         '''Process terminated normally.'''),
+        ('TerminatedSignal', 510, 
+         '''Process terminated via signal.'''),
+        ('TerminatedAbnormally', 511, 
+         '''Process terminated abnormally.'''),
+        ('TimedOutKilled', 512, 
+         '''Process timed out and was killed.'''),
+        ('TimedOutAbnormally', 513, 
+         '''Process timed out and was not killed successfully.'''),
+        ('Down', 600, 
+         '''Service/OS is stopping, process was killed.'''),
+        ('Error', 800, 
+         '''Something went wrong.'''),
+        ] 
 
 
 class ProcessInputStatus(Enum):
-    """(Process input statuses.)"""
-    uuid = 'a4a0ef9c-29cc-4805-9803-c8215ae9da6c'
-    lookup_value = {       'Available': 10,
-        'Broken': 1,
-        'Overflow': 100,
-        'Undefined': 0,
-        'Written': 50} 
+    """Process input statuses."""
+    __uuid__ = 'a4a0ef9c-29cc-4805-9803-c8215ae9da6c'
+    _enums = [\
+        ('Undefined', 0, 
+         '''Undefined state.'''),
+        ('Broken', 1, 
+         '''Input pipe is broken.'''),
+        ('Available', 10, 
+         '''Input pipe became available for writing.'''),
+        ('Written', 50, 
+         '''Data has been successfully written.'''),
+        ('Overflow', 100, 
+         '''Too much input data supplied, data overflow.'''),
+        ] 
 
 
 class FileStatus(Enum):
-    """(File statuses.)"""
-    uuid = '8c86468b-b97b-4080-8914-e29f5b0abd2c'
-    lookup_value = {       'Closed': 200,
-        'Closing': 150,
-        'Down': 600,
-        'Error': 800,
-        'Open': 100,
-        'Opening': 10,
-        'Undefined': 0} 
+    """File statuses."""
+    __uuid__ = '8c86468b-b97b-4080-8914-e29f5b0abd2c'
+    _enums = [\
+        ('Undefined', 0, 
+         '''File is in an undefined state.'''),
+        ('Opening', 10, 
+         '''Guest file is opening.'''),
+        ('Open', 100, 
+         '''Guest file has been successfully opened.'''),
+        ('Closing', 150, 
+         '''Guest file closing.'''),
+        ('Closed', 200, 
+         '''Guest file has been closed.'''),
+        ('Down', 600, 
+         '''Service/OS is stopping, guest file was closed.'''),
+        ('Error', 800, 
+         '''Something went wrong.'''),
+        ] 
 
 
 class FsObjType(Enum):
-    """(File system object type.)"""
-    uuid = 'a1ed437c-b3c3-4ca2-b19c-4239d658d5e8'
-    lookup_value = {       'DevBlock': 11,
-        'DevChar': 10,
-        'Directory': 50,
-        'FIFO': 1,
-        'File': 80,
-        'Socket': 200,
-        'Symlink': 100,
-        'Undefined': 0,
-        'Whiteout': 400} 
+    """File system object type."""
+    __uuid__ = 'a1ed437c-b3c3-4ca2-b19c-4239d658d5e8'
+    _enums = [\
+        ('Undefined', 0, 
+         '''Type is undefined / unknown.'''),
+        ('FIFO', 1, 
+         '''Named pipe.'''),
+        ('DevChar', 10, 
+         '''Character device.'''),
+        ('DevBlock', 11, 
+         '''Block device.'''),
+        ('Directory', 50, 
+         '''Directory.'''),
+        ('File', 80, 
+         '''File.'''),
+        ('Symlink', 100, 
+         '''Symlink.'''),
+        ('Socket', 200, 
+         '''Socket.'''),
+        ('Whiteout', 400, 
+         '''Whiteout.'''),
+        ] 
 
 
 class DragAndDropAction(Enum):
-    """(Possible actions within an Drag and Drop operation.)"""
-    uuid = '47f3b162-c107-4fcd-bfa7-54b8135c441e'
-    lookup_value = {       'Copy': 1,
-        'Ignore': 0,
-        'Link': 3,
-        'Move': 2} 
+    """Possible actions within an Drag and Drop operation."""
+    __uuid__ = '47f3b162-c107-4fcd-bfa7-54b8135c441e'
+    _enums = [\
+        ('Ignore', 0, 
+         '''Do nothing.'''),
+        ('Copy', 1, 
+         '''Copy the item to the target.'''),
+        ('Move', 2, 
+         '''Move the item to the target.'''),
+        ('Link', 3, 
+         '''Link the item from within the target.'''),
+        ] 
 
 
 class DirectoryOpenFlag(Enum):
-    """(Directory open flags.)"""
-    uuid = '5138837a-8fd2-4194-a1b0-08f7bc3949d0'
-    lookup_value = {       'NoSymlinks': 1,
-        'None': 0} 
+    """Directory open flags."""
+    __uuid__ = '5138837a-8fd2-4194-a1b0-08f7bc3949d0'
+    _enums = [\
+        ('None', 0, 
+         '''No flag set.'''),
+        ('NoSymlinks', 1, 
+         '''Don't allow symbolic links as part of the path.'''),
+        ] 
 
 
 class MediumState(Enum):
-    """(Virtual medium state.
-      <link to="IMedium"/>)"""
-    uuid = 'ef41e980-e012-43cd-9dea-479d4ef14d13'
-    lookup_value = {       'Created': 1,
-        'Creating': 5,
-        'Deleting': 6,
-        'Inaccessible': 4,
-        'LockedRead': 2,
-        'LockedWrite': 3,
-        'NotCreated': 0} 
+    """Virtual medium state.
+      <link to="IMedium"/>"""
+    __uuid__ = 'ef41e980-e012-43cd-9dea-479d4ef14d13'
+    _enums = [\
+        ('NotCreated', 0, 
+         '''Associated medium storage does not exist (either was not created yet or
+        was deleted).'''),
+        ('Created', 1, 
+         '''Associated storage exists and accessible; this gets set if the
+        accessibility check performed by <link to="IMedium::refreshState"/>
+        was successful.'''),
+        ('LockedRead', 2, 
+         '''Medium is locked for reading (see <link to="IMedium::lockRead"/>),
+        no data modification is possible.'''),
+        ('LockedWrite', 3, 
+         '''Medium is locked for writing (see <link to="IMedium::lockWrite"/>),
+        no concurrent data reading or modification is possible.'''),
+        ('Inaccessible', 4, 
+         '''Medium accessibility check (see <link to="IMedium::refreshState"/>) has
+        not yet been performed, or else, associated medium storage is not
+        accessible. In the first case, <link to="IMedium::lastAccessError"/>
+        is empty, in the second case, it describes the error that occurred.'''),
+        ('Creating', 5, 
+         '''Associated medium storage is being created.'''),
+        ('Deleting', 6, 
+         '''Associated medium storage is being deleted.'''),
+        ] 
 
 
 class MediumType(Enum):
-    """(Virtual medium type. For each <link to="IMedium"/>, this defines how the medium is
+    """Virtual medium type. For each <link to="IMedium"/>, this defines how the medium is
       attached to a virtual machine (see <link to="IMediumAttachment"/>) and what happens
       when a snapshot (see <link to="ISnapshot"/>) is taken of a virtual machine which has
-      the medium attached. At the moment DVD and floppy media are always of type "writethrough".)"""
-    uuid = 'fe663fb5-c244-4e1b-9d81-c628b417dd04'
-    lookup_value = {       'Immutable': 1,
-        'MultiAttach': 5,
-        'Normal': 0,
-        'Readonly': 4,
-        'Shareable': 3,
-        'Writethrough': 2} 
+      the medium attached. At the moment DVD and floppy media are always of type "writethrough"."""
+    __uuid__ = 'fe663fb5-c244-4e1b-9d81-c628b417dd04'
+    _enums = [\
+        ('Normal', 0, 
+         '''Normal medium (attached directly or indirectly, preserved
+        when taking snapshots).'''),
+        ('Immutable', 1, 
+         '''Immutable medium (attached indirectly, changes are wiped out
+        the next time the virtual machine is started).'''),
+        ('Writethrough', 2, 
+         '''Write through medium (attached directly, ignored when
+        taking snapshots).'''),
+        ('Shareable', 3, 
+         '''Allow using this medium concurrently by several machines.
+        Present since VirtualBox 3.2.0, and accepted since 3.2.8.'''),
+        ('Readonly', 4, 
+         '''A readonly medium, which can of course be used by several machines.
+        Present and accepted since VirtualBox 4.0.'''),
+        ('MultiAttach', 5, 
+         '''A medium which is indirectly attached, so that one base medium can
+        be used for several VMs which have their own differencing medium to
+        store their modifications. In some sense a variant of Immutable
+        with unset AutoReset flag in each differencing medium.
+        Present and accepted since VirtualBox 4.0.'''),
+        ] 
 
 
 class MediumVariant(Enum):
-    """(Virtual medium image variant. More than one flag may be set.
-      <link to="IMedium"/>)"""
-    uuid = '80685b6b-e42f-497d-8271-e77bf3c61ada'
-    lookup_value = {       'Diff': 131072,
-        'Fixed': 65536,
-        'NoCreateDir': 1073741824,
-        'Standard': 0,
-        'VmdkESX': 8,
-        'VmdkRawDisk': 2,
-        'VmdkSplit2G': 1,
-        'VmdkStreamOptimized': 4} 
+    """Virtual medium image variant. More than one flag may be set.
+      <link to="IMedium"/>"""
+    __uuid__ = '80685b6b-e42f-497d-8271-e77bf3c61ada'
+    _enums = [\
+        ('Standard', 0, 
+         '''No particular variant requested, results in using the backend default.'''),
+        ('VmdkSplit2G', 1, 
+         '''VMDK image split in chunks of less than 2GByte.'''),
+        ('VmdkRawDisk', 2, 
+         '''VMDK image representing a raw disk.'''),
+        ('VmdkStreamOptimized', 4, 
+         '''VMDK streamOptimized image. Special import/export format which is
+        read-only/append-only.'''),
+        ('VmdkESX', 8, 
+         '''VMDK format variant used on ESX products.'''),
+        ('Fixed', 65536, 
+         '''Fixed image. Only allowed for base images.'''),
+        ('Diff', 131072, 
+         '''Differencing image. Only allowed for child images.'''),
+        ('NoCreateDir', 1073741824, 
+         '''Special flag which suppresses automatic creation of the subdirectory.
+        Only used when passing the medium variant as an input parameter.'''),
+        ] 
 
 
 class DataType(Enum):
-    """()"""
-    uuid = 'd90ea51e-a3f1-4a01-beb1-c1723c0d3ba7'
-    lookup_value = {       'Int32': 0,
-        'Int8': 1,
-        'String': 2} 
+    """"""
+    __uuid__ = 'd90ea51e-a3f1-4a01-beb1-c1723c0d3ba7'
+    _enums = [\
+        ('Int32', 0, 
+         ''''''),
+        ('Int8', 1, 
+         ''''''),
+        ('String', 2, 
+         ''''''),
+        ] 
 
 
 class DataFlags(Enum):
-    """()"""
-    uuid = '86884dcf-1d6b-4f1b-b4bf-f5aa44959d60'
-    lookup_value = {       'Array': 4,
-        'Expert': 2,
-        'FlagMask': 7,
-        'Mandatory': 1,
-        'None': 0} 
+    """"""
+    __uuid__ = '86884dcf-1d6b-4f1b-b4bf-f5aa44959d60'
+    _enums = [\
+        ('None', 0, 
+         ''''''),
+        ('Mandatory', 1, 
+         ''''''),
+        ('Expert', 2, 
+         ''''''),
+        ('Array', 4, 
+         ''''''),
+        ('FlagMask', 7, 
+         ''''''),
+        ] 
 
 
 class MediumFormatCapabilities(Enum):
-    """(Medium format capability flags.)"""
-    uuid = '7342ba79-7ce0-4d94-8f86-5ed5a185d9bd'
-    lookup_value = {       'Asynchronous': 32,
-        'CapabilityMask': 1023,
-        'CreateDynamic': 4,
-        'CreateFixed': 2,
-        'CreateSplit2G': 8,
-        'Differencing': 16,
-        'File': 64,
-        'Properties': 128,
-        'TcpNetworking': 256,
-        'Uuid': 1,
-        'VFS': 512} 
+    """Medium format capability flags."""
+    __uuid__ = '7342ba79-7ce0-4d94-8f86-5ed5a185d9bd'
+    _enums = [\
+        ('Uuid', 1, 
+         '''Supports UUIDs as expected by VirtualBox code.'''),
+        ('CreateFixed', 2, 
+         '''Supports creating fixed size images, allocating all space instantly.'''),
+        ('CreateDynamic', 4, 
+         '''Supports creating dynamically growing images, allocating space on
+        demand.'''),
+        ('CreateSplit2G', 8, 
+         '''Supports creating images split in chunks of a bit less than 2 GBytes.'''),
+        ('Differencing', 16, 
+         '''Supports being used as a format for differencing media (see <link to="IMedium::createDiffStorage"/>).'''),
+        ('Asynchronous', 32, 
+         '''Supports asynchronous I/O operations for at least some configurations.'''),
+        ('File', 64, 
+         '''The format backend operates on files (the <link to="IMedium::location"/>
+        attribute of the medium specifies a file used to store medium
+        data; for a list of supported file extensions see
+        <link to="IMediumFormat::describeFileExtensions"/>).'''),
+        ('Properties', 128, 
+         '''The format backend uses the property interface to configure the storage
+        location and properties (the <link to="IMediumFormat::describeProperties"/>
+        method is used to get access to properties supported by the given medium format).'''),
+        ('TcpNetworking', 256, 
+         '''The format backend uses the TCP networking interface for network access.'''),
+        ('VFS', 512, 
+         '''The format backend supports virtual filesystem functionality.'''),
+        ('CapabilityMask', 1023, 
+         ''''''),
+        ] 
 
 
 class MouseButtonState(Enum):
-    """(Mouse button state.)"""
-    uuid = '9ee094b8-b28a-4d56-a166-973cb588d7f8'
-    lookup_value = {       'LeftButton': 1,
-        'MiddleButton': 4,
-        'MouseStateMask': 127,
-        'RightButton': 2,
-        'WheelDown': 16,
-        'WheelUp': 8,
-        'XButton1': 32,
-        'XButton2': 64} 
+    """Mouse button state."""
+    __uuid__ = '9ee094b8-b28a-4d56-a166-973cb588d7f8'
+    _enums = [\
+        ('LeftButton', 1, 
+         ''''''),
+        ('RightButton', 2, 
+         ''''''),
+        ('MiddleButton', 4, 
+         ''''''),
+        ('WheelUp', 8, 
+         ''''''),
+        ('WheelDown', 16, 
+         ''''''),
+        ('XButton1', 32, 
+         ''''''),
+        ('XButton2', 64, 
+         ''''''),
+        ('MouseStateMask', 127, 
+         ''''''),
+        ] 
 
 
 class FramebufferPixelFormat(Enum):
-    """(Format of the video memory buffer. Constants represented by this enum can
+    """Format of the video memory buffer. Constants represented by this enum can
       be used to test for particular values of <link to="IFramebuffer::pixelFormat"/>. See also <link to="IFramebuffer::requestResize"/>.
 
-      See also www.fourcc.org for more information about FOURCC pixel formats.)"""
-    uuid = '7acfd5ed-29e3-45e3-8136-73c9224f3d2d'
-    lookup_value = {       'FOURCC_RGB': 843204434,
-        'Opaque': 0} 
+      See also www.fourcc.org for more information about FOURCC pixel formats."""
+    __uuid__ = '7acfd5ed-29e3-45e3-8136-73c9224f3d2d'
+    _enums = [\
+        ('Opaque', 0, 
+         '''Unknown buffer format (the user may not assume any particular format of
+        the buffer).'''),
+        ('FOURCC_RGB', 843204434, 
+         '''Basic RGB format (<link to="IFramebuffer::bitsPerPixel"/> determines the
+        bit layout).'''),
+        ] 
 
 
 class NetworkAttachmentType(Enum):
-    """(Network attachment type.)"""
-    uuid = '2ac4bc71-6b82-417a-acd1-f7426d2570d6'
-    lookup_value = {       'Bridged': 2,
-        'Generic': 5,
-        'HostOnly': 4,
-        'Internal': 3,
-        'NAT': 1,
-        'Null': 0} 
+    """Network attachment type."""
+    __uuid__ = '2ac4bc71-6b82-417a-acd1-f7426d2570d6'
+    _enums = [\
+        ('Null', 0, 
+         '''Null value, also means "not attached".'''),
+        ('NAT', 1, 
+         ''''''),
+        ('Bridged', 2, 
+         ''''''),
+        ('Internal', 3, 
+         ''''''),
+        ('HostOnly', 4, 
+         ''''''),
+        ('Generic', 5, 
+         ''''''),
+        ] 
 
 
 class NetworkAdapterType(Enum):
-    """(Network adapter type.)"""
-    uuid = '3c2281e4-d952-4e87-8c7d-24379cb6a81c'
-    lookup_value = {       'Am79C970A': 1,
-        'Am79C973': 2,
-        'I82540EM': 3,
-        'I82543GC': 4,
-        'I82545EM': 5,
-        'Null': 0,
-        'Virtio': 6} 
+    """Network adapter type."""
+    __uuid__ = '3c2281e4-d952-4e87-8c7d-24379cb6a81c'
+    _enums = [\
+        ('Null', 0, 
+         '''Null value (never used by the API).'''),
+        ('Am79C970A', 1, 
+         '''AMD PCNet-PCI II network card (Am79C970A).'''),
+        ('Am79C973', 2, 
+         '''AMD PCNet-FAST III network card (Am79C973).'''),
+        ('I82540EM', 3, 
+         '''Intel PRO/1000 MT Desktop network card (82540EM).'''),
+        ('I82543GC', 4, 
+         '''Intel PRO/1000 T Server network card (82543GC).'''),
+        ('I82545EM', 5, 
+         '''Intel PRO/1000 MT Server network card (82545EM).'''),
+        ('Virtio', 6, 
+         '''Virtio network device.'''),
+        ] 
 
 
 class NetworkAdapterPromiscModePolicy(Enum):
-    """(The promiscuous mode policy of an interface.)"""
-    uuid = 'c963768a-376f-4c85-8d84-d8ced4b7269e'
-    lookup_value = {       'AllowAll': 3,
-        'AllowNetwork': 2,
-        'Deny': 1} 
+    """The promiscuous mode policy of an interface."""
+    __uuid__ = 'c963768a-376f-4c85-8d84-d8ced4b7269e'
+    _enums = [\
+        ('Deny', 1, 
+         '''Deny promiscuous mode requests.'''),
+        ('AllowNetwork', 2, 
+         '''Allow promicuous mode, but restrict the scope it to the internal
+        network so that it only applies to other VMs.'''),
+        ('AllowAll', 3, 
+         '''Allow promicuous mode, include unrelated traffic going over the wire
+        and internally on the host.'''),
+        ] 
 
 
 class PortMode(Enum):
-    """(The PortMode enumeration represents possible communication modes for
-      the virtual serial port device.)"""
-    uuid = '533b5fe3-0185-4197-86a7-17e37dd39d76'
-    lookup_value = {       'Disconnected': 0,
-        'HostDevice': 2,
-        'HostPipe': 1,
-        'RawFile': 3} 
+    """The PortMode enumeration represents possible communication modes for
+      the virtual serial port device."""
+    __uuid__ = '533b5fe3-0185-4197-86a7-17e37dd39d76'
+    _enums = [\
+        ('Disconnected', 0, 
+         '''Virtual device is not attached to any real host device.'''),
+        ('HostPipe', 1, 
+         '''Virtual device is attached to a host pipe.'''),
+        ('HostDevice', 2, 
+         '''Virtual device is attached to a host device.'''),
+        ('RawFile', 3, 
+         '''Virtual device is attached to a raw file.'''),
+        ] 
 
 
 class USBDeviceState(Enum):
-    """(USB device state. This enumeration represents all possible states
+    """USB device state. This enumeration represents all possible states
       of the USB device physically attached to the host computer regarding
       its state on the host computer and availability to guest computers
       (all currently running virtual machines).
@@ -1214,192 +1866,355 @@ class USBDeviceState(Enum):
         device state is USBDeviceState_Held.
       
 
-      <link to="IHostUSBDevice"/>, <link to="IHostUSBDeviceFilter"/>)"""
-    uuid = 'b99a2e65-67fb-4882-82fd-f3e5e8193ab4'
-    lookup_value = {       'Available': 3,
-        'Busy': 2,
-        'Captured': 5,
-        'Held': 4,
-        'NotSupported': 0,
-        'Unavailable': 1} 
+      <link to="IHostUSBDevice"/>, <link to="IHostUSBDeviceFilter"/>"""
+    __uuid__ = 'b99a2e65-67fb-4882-82fd-f3e5e8193ab4'
+    _enums = [\
+        ('NotSupported', 0, 
+         '''Not supported by the VirtualBox server, not available to guests.'''),
+        ('Unavailable', 1, 
+         '''Being used by the host computer exclusively,
+        not available to guests.'''),
+        ('Busy', 2, 
+         '''Being used by the host computer, potentially available to guests.'''),
+        ('Available', 3, 
+         '''Not used by the host computer, available to guests (the host computer
+        can also start using the device at any time).'''),
+        ('Held', 4, 
+         '''Held by the VirtualBox server (ignored by the host computer),
+        available to guests.'''),
+        ('Captured', 5, 
+         '''Captured by one of the guest computers, not available
+        to anybody else.'''),
+        ] 
 
 
 class USBDeviceFilterAction(Enum):
-    """(Actions for host USB device filters.
-      <link to="IHostUSBDeviceFilter"/>, <link to="USBDeviceState"/>)"""
-    uuid = 'cbc30a49-2f4e-43b5-9da6-121320475933'
-    lookup_value = {       'Hold': 2,
-        'Ignore': 1,
-        'Null': 0} 
+    """Actions for host USB device filters.
+      <link to="IHostUSBDeviceFilter"/>, <link to="USBDeviceState"/>"""
+    __uuid__ = 'cbc30a49-2f4e-43b5-9da6-121320475933'
+    _enums = [\
+        ('Null', 0, 
+         '''Null value (never used by the API).'''),
+        ('Ignore', 1, 
+         '''Ignore the matched USB device.'''),
+        ('Hold', 2, 
+         '''Hold the matched USB device.'''),
+        ] 
 
 
 class AudioDriverType(Enum):
-    """(Host audio driver type.)"""
-    uuid = '4bcc3d73-c2fe-40db-b72f-0c2ca9d68496'
-    lookup_value = {       'ALSA': 3,
-        'CoreAudio': 5,
-        'DirectSound': 4,
-        'MMPM': 6,
-        'Null': 0,
-        'OSS': 2,
-        'Pulse': 7,
-        'SolAudio': 8,
-        'WinMM': 1} 
+    """Host audio driver type."""
+    __uuid__ = '4bcc3d73-c2fe-40db-b72f-0c2ca9d68496'
+    _enums = [\
+        ('Null', 0, 
+         '''Null value, also means "dummy audio driver".'''),
+        ('WinMM', 1, 
+         '''Windows multimedia (Windows hosts only).'''),
+        ('OSS', 2, 
+         '''Open Sound System (Linux hosts only).'''),
+        ('ALSA', 3, 
+         '''Advanced Linux Sound Architecture (Linux hosts only).'''),
+        ('DirectSound', 4, 
+         '''DirectSound (Windows hosts only).'''),
+        ('CoreAudio', 5, 
+         '''CoreAudio (Mac hosts only).'''),
+        ('MMPM', 6, 
+         '''Reserved for historical reasons.'''),
+        ('Pulse', 7, 
+         '''PulseAudio (Linux hosts only).'''),
+        ('SolAudio', 8, 
+         '''Solaris audio (Solaris hosts only).'''),
+        ] 
 
 
 class AudioControllerType(Enum):
-    """(Virtual audio controller type.)"""
-    uuid = '7afd395c-42c3-444e-8788-3ce80292f36c'
-    lookup_value = {       'AC97': 0,
-        'HDA': 2,
-        'SB16': 1} 
+    """Virtual audio controller type."""
+    __uuid__ = '7afd395c-42c3-444e-8788-3ce80292f36c'
+    _enums = [\
+        ('AC97', 0, 
+         ''''''),
+        ('SB16', 1, 
+         ''''''),
+        ('HDA', 2, 
+         ''''''),
+        ] 
 
 
 class AuthType(Enum):
-    """(VirtualBox authentication type.)"""
-    uuid = '7eef6ef6-98c2-4dc2-ab35-10d2b292028d'
-    lookup_value = {       'External': 1,
-        'Guest': 2,
-        'Null': 0} 
+    """VirtualBox authentication type."""
+    __uuid__ = '7eef6ef6-98c2-4dc2-ab35-10d2b292028d'
+    _enums = [\
+        ('Null', 0, 
+         '''Null value, also means "no authentication".'''),
+        ('External', 1, 
+         ''''''),
+        ('Guest', 2, 
+         ''''''),
+        ] 
 
 
 class StorageBus(Enum):
-    """(The bus type of the storage controller (IDE, SATA, SCSI, SAS or Floppy);
-      see <link to="IStorageController::bus"/>.)"""
-    uuid = 'eee67ab3-668d-4ef5-91e0-7025fe4a0d7a'
-    lookup_value = {       'Floppy': 4,
-        'IDE': 1,
-        'Null': 0,
-        'SAS': 5,
-        'SATA': 2,
-        'SCSI': 3} 
+    """The bus type of the storage controller (IDE, SATA, SCSI, SAS or Floppy);
+      see <link to="IStorageController::bus"/>."""
+    __uuid__ = 'eee67ab3-668d-4ef5-91e0-7025fe4a0d7a'
+    _enums = [\
+        ('Null', 0, 
+         '''@c null value. Never used by the API.'''),
+        ('IDE', 1, 
+         ''''''),
+        ('SATA', 2, 
+         ''''''),
+        ('SCSI', 3, 
+         ''''''),
+        ('Floppy', 4, 
+         ''''''),
+        ('SAS', 5, 
+         ''''''),
+        ] 
 
 
 class StorageControllerType(Enum):
-    """(The exact variant of storage controller hardware presented
-      to the guest; see <link to="IStorageController::controllerType"/>.)"""
-    uuid = '8a412b8a-f43e-4456-bd37-b474f0879a58'
-    lookup_value = {       'BusLogic': 2,
-        'I82078': 7,
-        'ICH6': 6,
-        'IntelAhci': 3,
-        'LsiLogic': 1,
-        'LsiLogicSas': 8,
-        'Null': 0,
-        'PIIX3': 4,
-        'PIIX4': 5} 
+    """The exact variant of storage controller hardware presented
+      to the guest; see <link to="IStorageController::controllerType"/>."""
+    __uuid__ = '8a412b8a-f43e-4456-bd37-b474f0879a58'
+    _enums = [\
+        ('Null', 0, 
+         '''@c null value. Never used by the API.'''),
+        ('LsiLogic', 1, 
+         '''A SCSI controller of the LsiLogic variant.'''),
+        ('BusLogic', 2, 
+         '''A SCSI controller of the BusLogic variant.'''),
+        ('IntelAhci', 3, 
+         '''An Intel AHCI SATA controller; this is the only variant for SATA.'''),
+        ('PIIX3', 4, 
+         '''An IDE controller of the PIIX3 variant.'''),
+        ('PIIX4', 5, 
+         '''An IDE controller of the PIIX4 variant.'''),
+        ('ICH6', 6, 
+         '''An IDE controller of the ICH6 variant.'''),
+        ('I82078', 7, 
+         '''A floppy disk controller; this is the only variant for floppy drives.'''),
+        ('LsiLogicSas', 8, 
+         '''A variant of the LsiLogic controller using SAS.'''),
+        ] 
 
 
 class ChipsetType(Enum):
-    """(Type of emulated chipset (mostly southbridge).)"""
-    uuid = '8b4096a8-a7c3-4d3b-bbb1-05a0a51ec394'
-    lookup_value = {       'ICH9': 2,
-        'Null': 0,
-        'PIIX3': 1} 
+    """Type of emulated chipset (mostly southbridge)."""
+    __uuid__ = '8b4096a8-a7c3-4d3b-bbb1-05a0a51ec394'
+    _enums = [\
+        ('Null', 0, 
+         '''@c null value. Never used by the API.'''),
+        ('PIIX3', 1, 
+         '''A PIIX3 (PCI IDE ISA Xcelerator) chipset.'''),
+        ('ICH9', 2, 
+         '''A ICH9 (I/O Controller Hub) chipset.'''),
+        ] 
 
 
 class NATAliasMode(Enum):
-    """(<desc/>)"""
-    uuid = '67772168-50d9-11df-9669-7fb714ee4fa1'
-    lookup_value = {       'AliasLog': 1,
-        'AliasProxyOnly': 2,
-        'AliasUseSamePorts': 4} 
+    """<desc/>"""
+    __uuid__ = '67772168-50d9-11df-9669-7fb714ee4fa1'
+    _enums = [\
+        ('AliasLog', 1, 
+         '''<desc/>'''),
+        ('AliasProxyOnly', 2, 
+         '''<desc/>'''),
+        ('AliasUseSamePorts', 4, 
+         '''<desc/>'''),
+        ] 
 
 
 class NATProtocol(Enum):
-    """(Protocol definitions used with NAT port-forwarding rules.)"""
-    uuid = 'e90164be-eb03-11de-94af-fff9b1c1b19f'
-    lookup_value = {       'TCP': 1,
-        'UDP': 0} 
+    """Protocol definitions used with NAT port-forwarding rules."""
+    __uuid__ = 'e90164be-eb03-11de-94af-fff9b1c1b19f'
+    _enums = [\
+        ('UDP', 0, 
+         '''Port-forwarding uses UDP protocol.'''),
+        ('TCP', 1, 
+         '''Port-forwarding uses TCP protocol.'''),
+        ] 
 
 
 class BandwidthGroupType(Enum):
-    """(Type of a bandwidth control group.)"""
-    uuid = '1d92b67d-dc69-4be9-ad4c-93a01e1e0c8e'
-    lookup_value = {       'Disk': 1,
-        'Network': 2,
-        'Null': 0} 
+    """Type of a bandwidth control group."""
+    __uuid__ = '1d92b67d-dc69-4be9-ad4c-93a01e1e0c8e'
+    _enums = [\
+        ('Null', 0, 
+         '''Null type, must be first.'''),
+        ('Disk', 1, 
+         '''The bandwidth group controls disk I/O.'''),
+        ('Network', 2, 
+         '''The bandwidth group controls network I/O.'''),
+        ] 
 
 
 class VBoxEventType(Enum):
-    """(Type of an event.
-      See <link to="IEvent"/> for an introduction to VirtualBox event handling.)"""
-    uuid = 'c51645b3-7108-4dce-b5a3-bbf5e4f69ed2'
-    lookup_value = {       'Any': 1,
-        'InputEvent': 5,
-        'Invalid': 0,
-        'Last': 91,
-        'LastWildcard': 31,
-        'MachineEvent': 3,
-        'OnAdditionsStateChanged': 47,
-        'OnBandwidthGroupChanged': 69,
-        'OnCPUChanged': 60,
-        'OnCPUExecutionCapChanged': 63,
-        'OnCanShowWindow': 58,
-        'OnClipboardModeChanged': 72,
-        'OnDragAndDropModeChanged': 73,
-        'OnEventSourceChanged': 62,
-        'OnExtraDataCanChange': 35,
-        'OnExtraDataChanged': 34,
-        'OnGuestFileOffsetChanged': 88,
-        'OnGuestFileRead': 89,
-        'OnGuestFileRegistered': 86,
-        'OnGuestFileStateChanged': 87,
-        'OnGuestFileWrite': 90,
-        'OnGuestKeyboard': 64,
-        'OnGuestMonitorChanged': 70,
-        'OnGuestMouse': 65,
-        'OnGuestProcessInputNotify': 84,
-        'OnGuestProcessOutput': 85,
-        'OnGuestProcessRegistered': 82,
-        'OnGuestProcessStateChanged': 83,
-        'OnGuestPropertyChanged': 42,
-        'OnGuestSessionRegistered': 81,
-        'OnGuestSessionStateChanged': 80,
-        'OnHostPCIDevicePlug': 67,
-        'OnKeyboardLedsChanged': 45,
-        'OnMachineDataChanged': 33,
-        'OnMachineRegistered': 37,
-        'OnMachineStateChanged': 32,
-        'OnMediumChanged': 52,
-        'OnMediumRegistered': 36,
-        'OnMouseCapabilityChanged': 44,
-        'OnMousePointerShapeChanged': 43,
-        'OnNATNetworkAlter': 76,
-        'OnNATNetworkChanged': 74,
-        'OnNATNetworkCreationDeletion': 77,
-        'OnNATNetworkPortForward': 79,
-        'OnNATNetworkSetting': 78,
-        'OnNATNetworkStartStop': 75,
-        'OnNATRedirect': 66,
-        'OnNetworkAdapterChanged': 48,
-        'OnParallelPortChanged': 50,
-        'OnRuntimeError': 57,
-        'OnSerialPortChanged': 49,
-        'OnSessionStateChanged': 38,
-        'OnSharedFolderChanged': 56,
-        'OnShowWindow': 59,
-        'OnSnapshotChanged': 41,
-        'OnSnapshotDeleted': 40,
-        'OnSnapshotTaken': 39,
-        'OnStateChanged': 46,
-        'OnStorageControllerChanged': 51,
-        'OnStorageDeviceChanged': 71,
-        'OnUSBControllerChanged': 54,
-        'OnUSBDeviceStateChanged': 55,
-        'OnVBoxSVCAvailabilityChanged': 68,
-        'OnVRDEServerChanged': 53,
-        'OnVRDEServerInfoChanged': 61,
-        'SnapshotEvent': 4,
-        'Vetoable': 2} 
+    """Type of an event.
+      See <link to="IEvent"/> for an introduction to VirtualBox event handling."""
+    __uuid__ = 'c51645b3-7108-4dce-b5a3-bbf5e4f69ed2'
+    _enums = [\
+        ('Invalid', 0, 
+         '''Invalid event, must be first.'''),
+        ('Any', 1, 
+         '''Wildcard for all events.
+        Events of this type are never delivered, and only used in
+        <link to="IEventSource::registerListener"/> call to simplify registration.'''),
+        ('Vetoable', 2, 
+         '''Wildcard for all vetoable events. Events of this type are never delivered, and only
+        used in <link to="IEventSource::registerListener"/> call to simplify registration.'''),
+        ('MachineEvent', 3, 
+         '''Wildcard for all machine events. Events of this type are never delivered, and only used in
+        <link to="IEventSource::registerListener"/> call to simplify registration.'''),
+        ('SnapshotEvent', 4, 
+         '''Wildcard for all snapshot events. Events of this type are never delivered, and only used in
+        <link to="IEventSource::registerListener"/> call to simplify registration.'''),
+        ('InputEvent', 5, 
+         '''Wildcard for all input device (keyboard, mouse) events.
+        Events of this type are never delivered, and only used in
+        <link to="IEventSource::registerListener"/> call to simplify registration.'''),
+        ('LastWildcard', 31, 
+         '''Last wildcard.'''),
+        ('OnMachineStateChanged', 32, 
+         '''See <link to="IMachineStateChangedEvent">IMachineStateChangedEvent</link>.'''),
+        ('OnMachineDataChanged', 33, 
+         '''See <link to="IMachineDataChangedEvent">IMachineDataChangedEvent</link>.'''),
+        ('OnExtraDataChanged', 34, 
+         '''See <link to="IExtraDataChangedEvent">IExtraDataChangedEvent</link>.'''),
+        ('OnExtraDataCanChange', 35, 
+         '''See <link to="IExtraDataCanChangeEvent">IExtraDataCanChangeEvent</link>.'''),
+        ('OnMediumRegistered', 36, 
+         '''See <link to="IMediumRegisteredEvent">IMediumRegisteredEvent</link>.'''),
+        ('OnMachineRegistered', 37, 
+         '''See <link to="IMachineRegisteredEvent">IMachineRegisteredEvent</link>.'''),
+        ('OnSessionStateChanged', 38, 
+         '''See <link to="ISessionStateChangedEvent">ISessionStateChangedEvent</link>.'''),
+        ('OnSnapshotTaken', 39, 
+         '''See <link to="ISnapshotTakenEvent">ISnapshotTakenEvent</link>.'''),
+        ('OnSnapshotDeleted', 40, 
+         '''See <link to="ISnapshotDeletedEvent">ISnapshotDeletedEvent</link>.'''),
+        ('OnSnapshotChanged', 41, 
+         '''See <link to="ISnapshotChangedEvent">ISnapshotChangedEvent</link>.'''),
+        ('OnGuestPropertyChanged', 42, 
+         '''See <link to="IGuestPropertyChangedEvent">IGuestPropertyChangedEvent</link>.'''),
+        ('OnMousePointerShapeChanged', 43, 
+         '''See <link to="IMousePointerShapeChangedEvent">IMousePointerShapeChangedEvent</link>.'''),
+        ('OnMouseCapabilityChanged', 44, 
+         '''See <link to="IMouseCapabilityChangedEvent">IMouseCapabilityChangedEvent</link>.'''),
+        ('OnKeyboardLedsChanged', 45, 
+         '''See <link to="IKeyboardLedsChangedEvent">IKeyboardLedsChangedEvent</link>.'''),
+        ('OnStateChanged', 46, 
+         '''See <link to="IStateChangedEvent">IStateChangedEvent</link>.'''),
+        ('OnAdditionsStateChanged', 47, 
+         '''See <link to="IAdditionsStateChangedEvent">IAdditionsStateChangedEvent</link>.'''),
+        ('OnNetworkAdapterChanged', 48, 
+         '''See <link to="INetworkAdapterChangedEvent">INetworkAdapterChangedEvent</link>.'''),
+        ('OnSerialPortChanged', 49, 
+         '''See <link to="ISerialPortChangedEvent">ISerialPortChangedEvent</link>.'''),
+        ('OnParallelPortChanged', 50, 
+         '''See <link to="IParallelPortChangedEvent">IParallelPortChangedEvent</link>.'''),
+        ('OnStorageControllerChanged', 51, 
+         '''See <link to="IStorageControllerChangedEvent">IStorageControllerChangedEvent</link>.'''),
+        ('OnMediumChanged', 52, 
+         '''See <link to="IMediumChangedEvent">IMediumChangedEvent</link>.'''),
+        ('OnVRDEServerChanged', 53, 
+         '''See <link to="IVRDEServerChangedEvent">IVRDEServerChangedEvent</link>.'''),
+        ('OnUSBControllerChanged', 54, 
+         '''See <link to="IUSBControllerChangedEvent">IUSBControllerChangedEvent</link>.'''),
+        ('OnUSBDeviceStateChanged', 55, 
+         '''See <link to="IUSBDeviceStateChangedEvent">IUSBDeviceStateChangedEvent</link>.'''),
+        ('OnSharedFolderChanged', 56, 
+         '''See <link to="ISharedFolderChangedEvent">ISharedFolderChangedEvent</link>.'''),
+        ('OnRuntimeError', 57, 
+         '''See <link to="IRuntimeErrorEvent">IRuntimeErrorEvent</link>.'''),
+        ('OnCanShowWindow', 58, 
+         '''See <link to="ICanShowWindowEvent">ICanShowWindowEvent</link>.'''),
+        ('OnShowWindow', 59, 
+         '''See <link to="IShowWindowEvent">IShowWindowEvent</link>.'''),
+        ('OnCPUChanged', 60, 
+         '''See <link to="ICPUChangedEvent">ICPUChangedEvent</link>.'''),
+        ('OnVRDEServerInfoChanged', 61, 
+         '''See <link to="IVRDEServerInfoChangedEvent">IVRDEServerInfoChangedEvent</link>.'''),
+        ('OnEventSourceChanged', 62, 
+         '''See <link to="IEventSourceChangedEvent">IEventSourceChangedEvent</link>.'''),
+        ('OnCPUExecutionCapChanged', 63, 
+         '''See <link to="ICPUExecutionCapChangedEvent">ICPUExecutionCapChangedEvent</link>.'''),
+        ('OnGuestKeyboard', 64, 
+         '''See <link to="IGuestKeyboardEvent">IGuestKeyboardEvent</link>.'''),
+        ('OnGuestMouse', 65, 
+         '''See <link to="IGuestMouseEvent">IGuestMouseEvent</link>.'''),
+        ('OnNATRedirect', 66, 
+         '''See <link to="INATRedirectEvent">INATRedirectEvent</link>.'''),
+        ('OnHostPCIDevicePlug', 67, 
+         '''See <link to="IHostPCIDevicePlugEvent">IHostPCIDevicePlugEvent</link>.'''),
+        ('OnVBoxSVCAvailabilityChanged', 68, 
+         '''See <link to="IVBoxSVCAvailabilityChangedEvent">IVBoxSVCAvailablityChangedEvent</link>.'''),
+        ('OnBandwidthGroupChanged', 69, 
+         '''See <link to="IBandwidthGroupChangedEvent">IBandwidthGroupChangedEvent</link>.'''),
+        ('OnGuestMonitorChanged', 70, 
+         '''See <link to="IGuestMonitorChangedEvent">IGuestMonitorChangedEvent</link>.'''),
+        ('OnStorageDeviceChanged', 71, 
+         '''See <link to="IStorageDeviceChangedEvent">IStorageDeviceChangedEvent</link>.'''),
+        ('OnClipboardModeChanged', 72, 
+         '''See <link to="IClipboardModeChangedEvent">IClipboardModeChangedEvent</link>.'''),
+        ('OnDragAndDropModeChanged', 73, 
+         '''See <link to="IDragAndDropModeChangedEvent">IDragAndDropModeChangedEvent</link>.'''),
+        ('OnNATNetworkChanged', 74, 
+         '''See <link to="INATNetworkChangedEvent">INATNetworkChangedEvent</link>.'''),
+        ('OnNATNetworkStartStop', 75, 
+         '''See <link to="INATNetworkStartStopEvent">INATNetworkStartStopEvent</link>.'''),
+        ('OnNATNetworkAlter', 76, 
+         '''See <link to="INATNetworkAlterEvent">INATNetworkAlterEvent</link>.'''),
+        ('OnNATNetworkCreationDeletion', 77, 
+         '''See <link to="INATNetworkCreationDeletionEvent">INATNetworkCreationDeletionEvent</link>.'''),
+        ('OnNATNetworkSetting', 78, 
+         '''See <link to="INATNetworkSettingEvent">INATNetworkSettingEvent</link>.'''),
+        ('OnNATNetworkPortForward', 79, 
+         '''See <link to="INATNetworkPortForwardEvent">INATNetworkPortForwardEvent</link>.'''),
+        ('OnGuestSessionStateChanged', 80, 
+         '''See <link to="IGuestSessionStateChangedEvent">IGuestSessionStateChangedEvent</link>.'''),
+        ('OnGuestSessionRegistered', 81, 
+         '''See <link to="IGuestSessionRegisteredEvent">IGuestSessionRegisteredEvent</link>.'''),
+        ('OnGuestProcessRegistered', 82, 
+         '''See <link to="IGuestProcessRegisteredEvent">IGuestProcessRegisteredEvent</link>.'''),
+        ('OnGuestProcessStateChanged', 83, 
+         '''See <link to="IGuestProcessStateChangedEvent">IGuestProcessStateChangedEvent</link>.'''),
+        ('OnGuestProcessInputNotify', 84, 
+         '''See <link to="IGuestProcessInputNotifyEvent">IGuestProcessInputNotifyEvent</link>.'''),
+        ('OnGuestProcessOutput', 85, 
+         '''See <link to="IGuestProcessOutputEvent">IGuestProcessOutputEvent</link>.'''),
+        ('OnGuestFileRegistered', 86, 
+         '''See <link to="IGuestFileRegisteredEvent">IGuestFileRegisteredEvent</link>.'''),
+        ('OnGuestFileStateChanged', 87, 
+         '''See <link to="IGuestFileStateChangedEvent">IGuestFileStateChangedEvent</link>.'''),
+        ('OnGuestFileOffsetChanged', 88, 
+         '''See <link to="IGuestFileOffsetChangedEvent">IGuestFileOffsetChangedEvent</link>.'''),
+        ('OnGuestFileRead', 89, 
+         '''See <link to="IGuestFileReadEvent">IGuestFileReadEvent</link>.
+
+        <note internal="yes">For performance reasons this is a separate event to
+          not unnecessarily overflow the event queue.'''),
+        ('OnGuestFileWrite', 90, 
+         '''See <link to="IGuestFileWriteEvent">IGuestFileWriteEvent</link>.
+
+        <note internal="yes">For performance reasons this is a separate event to
+          not unnecessarily overflow the event queue.'''),
+        ('Last', 91, 
+         '''Must be last event, used for iterations and structures relying on numerical event values.'''),
+        ] 
 
 
 class GuestMonitorChangedEventType(Enum):
-    """(How the guest monitor has been changed.)"""
-    uuid = 'ef172985-7e36-4297-95be-e46396968d66'
-    lookup_value = {       'Disabled': 1,
-        'Enabled': 0,
-        'NewOrigin': 2} 
+    """How the guest monitor has been changed."""
+    __uuid__ = 'ef172985-7e36-4297-95be-e46396968d66'
+    _enums = [\
+        ('Enabled', 0, 
+         '''The guest monitor has been enabled by the guest.'''),
+        ('Disabled', 1, 
+         '''The guest monitor has been disabled by the guest.'''),
+        ('NewOrigin', 2, 
+         '''The guest monitor origin has changed in the guest.'''),
+        ] 
 
 
 class IVirtualBoxErrorInfo(Interface):
@@ -1431,8 +2246,8 @@ class IVirtualBoxErrorInfo(Interface):
       is the previous error and so on, up to the first error (which is the last
       in the chain).
     """
-    uuid = 'c1bcc6d5-7966-481d-ab0b-d0ed73e28135'
-    wsmap = 'managed'
+    __uuid__ = 'c1bcc6d5-7966-481d-ab0b-d0ed73e28135'
+    __wsmap__ = 'managed'
     
     @property
     def result_code(self):
@@ -1514,8 +2329,8 @@ class INATNetwork(Interface):
         port-forwanding rules. so perhaps we should support only single instance of NAT
         network.
     """
-    uuid = '03DFD6F7-1B78-48A3-8345-C785281E9523'
-    wsmap = 'managed'
+    __uuid__ = '03DFD6F7-1B78-48A3-8345-C785281E9523'
+    __wsmap__ = 'managed'
     
     @property
     def network_name(self):
@@ -1733,8 +2548,8 @@ class IDHCPServer(Interface):
       To enumerate all the DHCP servers on the host, use the
       <link to="IVirtualBox::DHCPServers"/> attribute.
     """
-    uuid = '6cfe387c-74fb-4ca7-bff6-973bec8af7a3'
-    wsmap = 'managed'
+    __uuid__ = '6cfe387c-74fb-4ca7-bff6-973bec8af7a3'
+    __wsmap__ = 'managed'
     
     @property
     def enabled(self):
@@ -1870,8 +2685,8 @@ class IVirtualBox(Interface):
       To enumerate all the virtual machines on the host, use the
       <link to="IVirtualBox::machines"/> attribute.
     """
-    uuid = 'fafa4e17-1ee2-4905-a10e-fe7c18bf5554'
-    wsmap = 'managed'
+    __uuid__ = 'fafa4e17-1ee2-4905-a10e-fe7c18bf5554'
+    __wsmap__ = 'managed'
     
     @property
     def version(self):
@@ -2888,8 +3703,8 @@ class IVFSExplorer(Interface):
       S3. For a list of supported types see <link to="VFSType"/>.
       An instance of this is returned by <link to="IAppliance::createVFSExplorer"/>.
     """
-    uuid = '003d7f92-d38e-487f-b790-8c5e8631cb2f'
-    wsmap = 'managed'
+    __uuid__ = '003d7f92-d38e-487f-b790-8c5e8631cb2f'
+    __wsmap__ = 'managed'
     
     @property
     def path(self):
@@ -3088,8 +3903,8 @@ class IAppliance(Interface):
             Finally, call <link to="#write"/> with a path specification to have the OVF
                 file written.
     """
-    uuid = '3059cf9e-25c7-4f0b-9fa5-3c42e441670b'
-    wsmap = 'managed'
+    __uuid__ = '3059cf9e-25c7-4f0b-9fa5-3c42e441670b'
+    __wsmap__ = 'managed'
     
     @property
     def path(self):
@@ -3310,8 +4125,8 @@ class IVirtualSystemDescription(Interface):
       VirtualBox virtual machines. See <link to="IAppliance"/> for the steps required to
       import an OVF into VirtualBox.
     """
-    uuid = 'd7525e6c-531a-4c51-8e04-41235083a3d8'
-    wsmap = 'managed'
+    __uuid__ = 'd7525e6c-531a-4c51-8e04-41235083a3d8'
+    __wsmap__ = 'managed'
     
     @property
     def count(self):
@@ -3590,8 +4405,8 @@ class IInternalMachineControl(Interface):
     Updates the flag whether the saved state file is removed on a
         machine state change from Saved to PoweredOff.
     """
-    uuid = 'dca36a92-703c-4649-98a4-f40c1ef0c336'
-    wsmap = 'suppress'
+    __uuid__ = 'dca36a92-703c-4649-98a4-f40c1ef0c336'
+    __wsmap__ = 'suppress'
     
     def set_remove_saved_state_file(self, remove):
         """Updates the flag whether the saved state file is removed on a
@@ -4232,8 +5047,8 @@ class IBIOSSettings(Interface):
     The IBIOSSettings interface represents BIOS settings of the virtual
         machine. This is used only in the <link to="IMachine::BIOSSettings"/> attribute.
     """
-    uuid = '38b54279-dc35-4f5e-a431-835b867c6b5e'
-    wsmap = 'managed'
+    __uuid__ = '38b54279-dc35-4f5e-a431-835b867c6b5e'
+    __wsmap__ = 'managed'
     
     @property
     def logo_fade_in(self):
@@ -4373,8 +5188,8 @@ class IPCIAddress(Interface):
     """
     Address on the PCI bus.
     """
-    uuid = 'D88B324F-DB19-4D3B-A1A9-BF5B127199A8'
-    wsmap = 'struct'
+    __uuid__ = 'D88B324F-DB19-4D3B-A1A9-BF5B127199A8'
+    __wsmap__ = 'struct'
     
     @property
     def bus(self):
@@ -4444,8 +5259,8 @@ class IPCIDeviceAttachment(Interface):
     """
     Information about PCI attachments.
     """
-    uuid = '91f33d6f-e621-4f70-a77e-15f0e3c714d5'
-    wsmap = 'struct'
+    __uuid__ = '91f33d6f-e621-4f70-a77e-15f0e3c714d5'
+    __wsmap__ = 'struct'
     
     @property
     def name(self):
@@ -4516,8 +5331,8 @@ class IMachine(Interface):
 
       <link to="ISession"/>, <link to="IConsole"/>
     """
-    uuid = '258f4e55-40f6-4804-a162-60c302a34d99'
-    wsmap = 'managed'
+    __uuid__ = '258f4e55-40f6-4804-a162-60c302a34d99'
+    __wsmap__ = 'managed'
     
     @property
     def parent(self):
@@ -8093,8 +8908,8 @@ class IVRDEServerInfo(Interface):
     Contains information about the remote desktop (VRDE) server capabilities and status.
       This is used in the <link to="IConsole::VRDEServerInfo"/> attribute.
     """
-    uuid = '714434a1-58c3-4aab-9049-7652c5df113b'
-    wsmap = 'struct'
+    __uuid__ = '714434a1-58c3-4aab-9049-7652c5df113b'
+    __wsmap__ = 'struct'
     
     @property
     def active(self):
@@ -8240,8 +9055,8 @@ class IConsole(Interface):
 
       <link to="ISession"/>
     """
-    uuid = 'db7ab4ca-2a3f-4183-9243-c1208da92392'
-    wsmap = 'managed'
+    __uuid__ = 'db7ab4ca-2a3f-4183-9243-c1208da92392'
+    __wsmap__ = 'managed'
     
     @property
     def machine(self):
@@ -9171,8 +9986,8 @@ class IHostNetworkInterface(Interface):
       separated by colons.
       For example, fe80:0000:0000:0000:021e:c2ff:fed2:b030.
     """
-    uuid = '87a4153d-6889-4dd6-9654-2e9ff0ae8dec'
-    wsmap = 'managed'
+    __uuid__ = '87a4153d-6889-4dd6-9654-2e9ff0ae8dec'
+    __wsmap__ = 'managed'
     
     @property
     def name(self):
@@ -9337,8 +10152,8 @@ class IHost(Interface):
       and so on) and also allows for manipulating some of the host's hardware,
       such as global USB device filters and host interface networking.
     """
-    uuid = '30678943-32df-4830-b413-931b25ac86a0'
-    wsmap = 'managed'
+    __uuid__ = '30678943-32df-4830-b413-931b25ac86a0'
+    __wsmap__ = 'managed'
     
     @property
     def dvd_drives(self):
@@ -9873,8 +10688,8 @@ class ISystemProperties(Interface):
       and parameters. Most of the properties are read-only, but some can be
       changed by a user.
     """
-    uuid = '413ea94c-efd9-491e-81fc-5df0c4d864bb'
-    wsmap = 'managed'
+    __uuid__ = '413ea94c-efd9-491e-81fc-5df0c4d864bb'
+    __wsmap__ = 'managed'
     
     @property
     def min_guest_ram(self):
@@ -10455,8 +11270,8 @@ class ISystemProperties(Interface):
 
 class IGuestOSType(Interface):
     """"""
-    uuid = '6d968f9a-858b-4c50-bf17-241f069e94c2'
-    wsmap = 'struct'
+    __uuid__ = '6d968f9a-858b-4c50-bf17-241f069e94c2'
+    __wsmap__ = 'struct'
     
     @property
     def family_id(self):
@@ -10679,8 +11494,8 @@ class IAdditionsFacility(Interface):
     """
     Structure representing a Guest Additions facility.
     """
-    uuid = '54992946-6af1-4e49-98ec-58b558b7291e'
-    wsmap = 'struct'
+    __uuid__ = '54992946-6af1-4e49-98ec-58b558b7291e'
+    __wsmap__ = 'struct'
     
     @property
     def class_type(self):
@@ -10746,8 +11561,8 @@ class IGuestSession(Interface):
       guest session, one can specify a per-process environment block when using
       one of the both above mentioned process creation calls.
     """
-    uuid = 'c8e8607b-5e67-4073-8f14-146515d0c1ff'
-    wsmap = 'managed'
+    __uuid__ = 'c8e8607b-5e67-4073-8f14-146515d0c1ff'
+    __wsmap__ = 'managed'
     
     @property
     def user(self):
@@ -11806,8 +12621,8 @@ class IProcess(Interface):
     """
     Abstract parent interface for processes handled by VirtualBox.
     """
-    uuid = '5a4fe06d-8cb1-40ff-ac9e-9676e32f706e'
-    wsmap = 'managed'
+    __uuid__ = '5a4fe06d-8cb1-40ff-ac9e-9676e32f706e'
+    __wsmap__ = 'managed'
     
     @property
     def arguments(self):
@@ -12047,16 +12862,16 @@ class IGuestProcess(IProcess):
     Implementation of the <link to="IProcess"/> object
       for processes on the guest.
     """
-    uuid = 'dfa39a36-5d43-4840-a025-67ea956b3111'
-    wsmap = 'managed'
+    __uuid__ = 'dfa39a36-5d43-4840-a025-67ea956b3111'
+    __wsmap__ = 'managed'
     
 
 class IDirectory(Interface):
     """
     Abstract parent interface for directories handled by VirtualBox.
     """
-    uuid = '1b70dd03-26d7-483a-8877-89bbb0f87b70'
-    wsmap = 'managed'
+    __uuid__ = '1b70dd03-26d7-483a-8877-89bbb0f87b70'
+    __wsmap__ = 'managed'
     
     @property
     def directory_name(self):
@@ -12102,16 +12917,16 @@ class IGuestDirectory(IDirectory):
     Implementation of the <link to="IDirectory"/> object
       for directories on the guest.
     """
-    uuid = 'af4a8ce0-0725-42b7-8826-46e3c7ba7357'
-    wsmap = 'managed'
+    __uuid__ = 'af4a8ce0-0725-42b7-8826-46e3c7ba7357'
+    __wsmap__ = 'managed'
     
 
 class IFile(Interface):
     """
     Abstract parent interface for files handled by VirtualBox.
     """
-    uuid = 'ceb895d7-8b2d-4a39-8f7c-7d2270f341d5'
-    wsmap = 'managed'
+    __uuid__ = 'ceb895d7-8b2d-4a39-8f7c-7d2270f341d5'
+    __wsmap__ = 'managed'
     
     @property
     def creation_mode(self):
@@ -12359,8 +13174,8 @@ class IGuestFile(IFile):
     Implementation of the <link to="IFile"/> object
       for files on the guest.
     """
-    uuid = '60661aec-145f-4d11-b80e-8ea151598093'
-    wsmap = 'managed'
+    __uuid__ = '60661aec-145f-4d11-b80e-8ea151598093'
+    __wsmap__ = 'managed'
     
 
 class IFsObjInfo(Interface):
@@ -12368,8 +13183,8 @@ class IFsObjInfo(Interface):
     Abstract parent interface for VirtualBox file system object information.
       This can be information about a file or a directory, for example.
     """
-    uuid = '4047ba30-7006-4966-ae86-94164e5e20eb'
-    wsmap = 'managed'
+    __uuid__ = '4047ba30-7006-4966-ae86-94164e5e20eb'
+    __wsmap__ = 'managed'
     
     @property
     def access_time(self):
@@ -12531,8 +13346,8 @@ class IGuestFsObjInfo(IFsObjInfo):
     Represents the guest implementation of the
       <link to="IFsObjInfo"/> object.
     """
-    uuid = 'd5cf678e-3484-4e4a-ac55-329e15462e18'
-    wsmap = 'managed'
+    __uuid__ = 'd5cf678e-3484-4e4a-ac55-329e15462e18'
+    __wsmap__ = 'managed'
     
 
 class IGuest(Interface):
@@ -12545,8 +13360,8 @@ class IGuest(Interface):
       Guest Additions are installed and other OS-specific virtual machine
       properties.
     """
-    uuid = '19c32350-0618-4ede-b0c3-2b4311bf0d9b'
-    wsmap = 'managed'
+    __uuid__ = '19c32350-0618-4ede-b0c3-2b4311bf0d9b'
+    __wsmap__ = 'managed'
     
     @property
     def os_type_id(self):
@@ -13222,8 +14037,8 @@ class IProgress(Interface):
         for the completion of the whole task via
         <link to="#waitForCompletion"/>.
     """
-    uuid = 'c20238e4-3221-4d3f-8891-81ce92d9f913'
-    wsmap = 'managed'
+    __uuid__ = 'c20238e4-3221-4d3f-8891-81ce92d9f913'
+    __wsmap__ = 'managed'
     
     @property
     def id_p(self):
@@ -13573,8 +14388,8 @@ class ISnapshot(Interface):
       it then contains a so-called "zero execution state", representing a
       machine that is powered off.
     """
-    uuid = '0472823b-c6e7-472a-8e9f-d732e86b8463'
-    wsmap = 'managed'
+    __uuid__ = '0472823b-c6e7-472a-8e9f-d732e86b8463'
+    __wsmap__ = 'managed'
     
     @property
     def id_p(self):
@@ -13858,8 +14673,8 @@ Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
       without losing the contents of the differencing hard disk actually
       attached to the machine in place of it.
     """
-    uuid = '5ee464d6-0613-4331-b154-7ce12170ef9f'
-    wsmap = 'struct'
+    __uuid__ = '5ee464d6-0613-4331-b154-7ce12170ef9f'
+    __wsmap__ = 'struct'
     
     @property
     def medium(self):
@@ -14110,8 +14925,8 @@ class IMedium(Interface):
       that, you may call any of the methods that create a new hard disk storage
       unit and they will use the generated UUID and file name.
     """
-    uuid = '86fd6208-4c8c-40c2-a4e3-f6b47ac6ef07'
-    wsmap = 'managed'
+    __uuid__ = '86fd6208-4c8c-40c2-a4e3-f6b47ac6ef07'
+    __wsmap__ = 'managed'
     
     @property
     def id_p(self):
@@ -15340,8 +16155,8 @@ class IMediumFormat(Interface):
 
         <link to="IMedium"/>
     """
-    uuid = '6238e1cf-a17d-4ec1-8172-418bfb22b93a'
-    wsmap = 'managed'
+    __uuid__ = '6238e1cf-a17d-4ec1-8172-418bfb22b93a'
+    __wsmap__ = 'managed'
     
     @property
     def id_p(self):
@@ -15455,8 +16270,8 @@ class IKeyboard(Interface):
       Use this interface to send keystrokes or the Ctrl-Alt-Del sequence
       to the virtual machine.
     """
-    uuid = 'f6916ec5-a881-4237-898f-7de58cf88672'
-    wsmap = 'managed'
+    __uuid__ = 'f6916ec5-a881-4237-898f-7de58cf88672'
+    __wsmap__ = 'managed'
     
     def put_scancode(self, scancode):
         """Sends a scancode to the keyboard.
@@ -15521,8 +16336,8 @@ class IMouse(Interface):
       Through this interface, the virtual machine's virtual mouse can be
       controlled.
     """
-    uuid = '05044a52-7811-4f00-ae3a-0ab7ff707b10'
-    wsmap = 'managed'
+    __uuid__ = '05044a52-7811-4f00-ae3a-0ab7ff707b10'
+    __wsmap__ = 'managed'
     
     @property
     def absolute_supported(self):
@@ -15697,8 +16512,8 @@ class IFramebuffer(Interface):
     """
     Address of the start byte of the frame buffer.
     """
-    uuid = 'e3f122c0-adab-4fc9-a8dc-da112fb48428'
-    wsmap = 'suppress'
+    __uuid__ = 'e3f122c0-adab-4fc9-a8dc-da112fb48428'
+    __wsmap__ = 'suppress'
     
     @property
     def address(self):
@@ -16114,8 +16929,8 @@ class IFramebufferOverlay(IFramebuffer):
       width though, after setting it, as it may be adjusted (increased) to
       make it more suitable for the front end.
     """
-    uuid = '0bcc1c7e-e415-47d2-bfdb-e4c705fb0f47'
-    wsmap = 'suppress'
+    __uuid__ = '0bcc1c7e-e415-47d2-bfdb-e4c705fb0f47'
+    __wsmap__ = 'suppress'
     
     @property
     def x(self):
@@ -16190,8 +17005,8 @@ class IDisplay(Interface):
       IFramebuffer interface. Examples of the output target are a window on
       the host computer or an RDP session's display on a remote computer.
     """
-    uuid = '0598a3df-3dc0-43c7-a79c-237fb5bb633d'
-    wsmap = 'managed'
+    __uuid__ = '0598a3df-3dc0-43c7-a79c-237fb5bb633d'
+    __wsmap__ = 'managed'
     
     def get_screen_resolution(self, screen_id):
         """Queries display width, height and color depth for given screen.
@@ -16597,8 +17412,8 @@ class INetworkAdapter(Interface):
         represented by the <link to="NetworkAttachmentType"/> enumeration;
         see the <link to="#attachmentType"/> attribute.
     """
-    uuid = 'efa0f965-63c7-4c60-afdf-b1cc9943b9c0'
-    wsmap = 'managed'
+    __uuid__ = 'efa0f965-63c7-4c60-afdf-b1cc9943b9c0'
+    __wsmap__ = 'managed'
     
     @property
     def adapter_type(self):
@@ -16959,8 +17774,8 @@ class ISerialPort(Interface):
 
       <link to="IMachine::getSerialPort"/>
     """
-    uuid = '937f6970-5103-4745-b78e-d28dcf1479a8'
-    wsmap = 'managed'
+    __uuid__ = '937f6970-5103-4745-b78e-d28dcf1479a8'
+    __wsmap__ = 'managed'
     
     @property
     def slot(self):
@@ -17082,8 +17897,8 @@ class IParallelPort(Interface):
 
       <link to="IMachine::getParallelPort"/>
     """
-    uuid = '0c925f06-dd10-4b77-8de8-294d738c3214'
-    wsmap = 'managed'
+    __uuid__ = '0c925f06-dd10-4b77-8de8-294d738c3214'
+    __wsmap__ = 'managed'
     
     @property
     def slot(self):
@@ -17161,8 +17976,8 @@ class IMachineDebugger(Interface):
 
         See include/VBox/dbgfcorefmt.h for details on the file format.
     """
-    uuid = '1eeeb3c2-0089-4448-878e-414aee00e03b'
-    wsmap = 'managed'
+    __uuid__ = '1eeeb3c2-0089-4448-878e-414aee00e03b'
+    __wsmap__ = 'managed'
     
     def dump_guest_core(self, filename, compression):
         """Takes a core dump of the guest.
@@ -17812,8 +18627,8 @@ class IUSBController(Interface):
         not contain any USB controller. Can only be changed when
         the VM is powered off.
     """
-    uuid = '01e6f13a-0580-452f-a40f-74e32a5e4921'
-    wsmap = 'managed'
+    __uuid__ = '01e6f13a-0580-452f-a40f-74e32a5e4921'
+    __wsmap__ = 'managed'
     
     @property
     def enabled(self):
@@ -18005,8 +18820,8 @@ class IUSBDevice(Interface):
       <link to="IConsole::USBDevices"/> attribute which lists all USB devices
       attached to a running virtual machine's USB controller.
     """
-    uuid = 'f8967b0b-4483-400f-92b5-8b675d98a85b'
-    wsmap = 'managed'
+    __uuid__ = 'f8967b0b-4483-400f-92b5-8b675d98a85b'
+    __wsmap__ = 'managed'
     
     @property
     def id_p(self):
@@ -18181,8 +18996,8 @@ class IUSBDeviceFilter(Interface):
       <link to="IUSBController::deviceFilters"/>,
         <link to="IHostUSBDeviceFilter"/>
     """
-    uuid = 'd6831fb4-1a94-4c2c-96ef-8d0d6192066d'
-    wsmap = 'managed'
+    __uuid__ = 'd6831fb4-1a94-4c2c-96ef-8d0d6192066d'
+    __wsmap__ = 'managed'
     
     @property
     def name(self):
@@ -18375,8 +19190,8 @@ class IHostUSBDevice(IUSBDevice):
       <link to="IHost::USBDevices"/>,
         <link to="IHost::USBDeviceFilters"/>
     """
-    uuid = '173b4b44-d268-4334-a00d-b6521c9a740a'
-    wsmap = 'managed'
+    __uuid__ = '173b4b44-d268-4334-a00d-b6521c9a740a'
+    __wsmap__ = 'managed'
     
     @property
     def state(self):
@@ -18405,8 +19220,8 @@ class IHostUSBDeviceFilter(IUSBDeviceFilter):
 
       <link to="IHost::USBDeviceFilters"/>
     """
-    uuid = '4cc70246-d74a-400f-8222-3900489c0374'
-    wsmap = 'managed'
+    __uuid__ = '4cc70246-d74a-400f-8222-3900489c0374'
+    __wsmap__ = 'managed'
     
     @property
     def action(self):
@@ -18429,8 +19244,8 @@ class IAudioAdapter(Interface):
     The IAudioAdapter interface represents the virtual audio adapter of
         the virtual machine. Used in <link to="IMachine::audioAdapter"/>.
     """
-    uuid = '921873db-5f3f-4b69-91f9-7be9e535a2cb'
-    wsmap = 'managed'
+    __uuid__ = '921873db-5f3f-4b69-91f9-7be9e535a2cb'
+    __wsmap__ = 'managed'
     
     @property
     def enabled(self):
@@ -18483,8 +19298,8 @@ class IVRDEServer(Interface):
     """
     Flag if VRDE server is enabled.
     """
-    uuid = 'd38de40a-c2c1-4e95-b5a4-167b05f5694c'
-    wsmap = 'managed'
+    __uuid__ = 'd38de40a-c2c1-4e95-b5a4-167b05f5694c'
+    __wsmap__ = 'managed'
     
     @property
     def enabled(self):
@@ -18687,8 +19502,8 @@ class ISharedFolder(Interface):
         Global shared folders are not implemented in the current version of the
         product.
     """
-    uuid = '8388da11-b559-4574-a5b7-2bd7acd5cef8'
-    wsmap = 'struct'
+    __uuid__ = '8388da11-b559-4574-a5b7-2bd7acd5cef8'
+    __wsmap__ = 'struct'
     
     @property
     def name(self):
@@ -18755,8 +19570,8 @@ class IInternalSessionControl(Interface):
     """
     PID of the process that has created this Session object.
     """
-    uuid = '0ba8d8b3-204b-448e-99c2-242eaa666ea8'
-    wsmap = 'suppress'
+    __uuid__ = '0ba8d8b3-204b-448e-99c2-242eaa666ea8'
+    __wsmap__ = 'suppress'
     
     def get_pid(self):
         """PID of the process that has created this Session object.
@@ -19401,8 +20216,8 @@ class ISession(Interface):
           is called. A managed object reference to that session object can be retrieved by
           calling <link to="IWebsessionManager::getSessionObject"/>.
     """
-    uuid = '12F4DCDB-12B2-4EC1-B7CD-DDD9F6C5BF4D'
-    wsmap = 'managed'
+    __uuid__ = '12F4DCDB-12B2-4EC1-B7CD-DDD9F6C5BF4D'
+    __wsmap__ = 'managed'
     
     @property
     def state(self):
@@ -19484,8 +20299,8 @@ class IStorageController(Interface):
         Depending on these settings, the guest operating system might see
         significantly different virtual hardware.
     """
-    uuid = 'a1556333-09b6-46d9-bfb7-fc239b7fbe1e'
-    wsmap = 'managed'
+    __uuid__ = 'a1556333-09b6-46d9-bfb7-fc239b7fbe1e'
+    __wsmap__ = 'managed'
     
     @property
     def name(self):
@@ -19619,8 +20434,8 @@ class IPerformanceMetric(Interface):
     The IPerformanceMetric interface represents parameters of the given
       performance metric.
     """
-    uuid = '2a1a60ae-9345-4019-ad53-d34ba41cbfe9'
-    wsmap = 'managed'
+    __uuid__ = '2a1a60ae-9345-4019-ad53-d34ba41cbfe9'
+    __wsmap__ = 'managed'
     
     @property
     def metric_name(self):
@@ -19793,8 +20608,8 @@ class IPerformanceCollector(Interface):
         
           Python: bindings/xpcom/python/sample/shellcommon.py
     """
-    uuid = 'e22e1acb-ac4a-43bb-a31c-17321659b0c6'
-    wsmap = 'managed'
+    __uuid__ = 'e22e1acb-ac4a-43bb-a31c-17321659b0c6'
+    __wsmap__ = 'managed'
     
     @property
     def metric_names(self):
@@ -20067,8 +20882,8 @@ class INATEngine(Interface):
       allows for changing NAT behavior such as port-forwarding rules. This interface is
       used in the <link to="INetworkAdapter::NATEngine"/> attribute.
     """
-    uuid = '26451b99-3b2d-4dcb-8e4b-d63654218175'
-    wsmap = 'managed'
+    __uuid__ = '26451b99-3b2d-4dcb-8e4b-d63654218175'
+    __wsmap__ = 'managed'
     
     @property
     def network(self):
@@ -20329,8 +21144,8 @@ class IExtPackPlugIn(Interface):
     Interface for keeping information about a plug-in that ships with an
       extension pack.
     """
-    uuid = '58000040-e718-4746-bbce-4b86d96da461'
-    wsmap = 'suppress'
+    __uuid__ = '58000040-e718-4746-bbce-4b86d96da461'
+    __wsmap__ = 'suppress'
     
     @property
     def name(self):
@@ -20370,8 +21185,8 @@ class IExtPackBase(Interface):
     Interface for querying information about an extension pack as well as
       accessing COM objects within it.
     """
-    uuid = 'f79b75d8-2890-4f34-ffff-ffffa144e82c'
-    wsmap = 'suppress'
+    __uuid__ = 'f79b75d8-2890-4f34-ffff-ffffa144e82c'
+    __wsmap__ = 'suppress'
     
     @property
     def name(self):
@@ -20516,8 +21331,8 @@ class IExtPack(IExtPackBase):
     Interface for querying information about an extension pack as well as
       accessing COM objects within it.
     """
-    uuid = '431685da-3618-4ebc-b038-833ba829b4b2'
-    wsmap = 'suppress'
+    __uuid__ = '431685da-3618-4ebc-b038-833ba829b4b2'
+    __wsmap__ = 'suppress'
     
     def query_object(self, obj_uuid):
         """Queries the IUnknown interface to an object in the extension pack
@@ -20545,8 +21360,8 @@ class IExtPackFile(IExtPackBase):
       by <link to="IExtPackManager::openExtPackFile"/>. This provides the base
       extension pack information with the addition of the file name.
     """
-    uuid = 'b6b49f55-efcc-4f08-b486-56e8d8afb10b'
-    wsmap = 'suppress'
+    __uuid__ = 'b6b49f55-efcc-4f08-b486-56e8d8afb10b'
+    __wsmap__ = 'suppress'
     
     @property
     def file_path(self):
@@ -20587,8 +21402,8 @@ class IExtPackManager(Interface):
       TODO: Describe extension packs, how they are managed and how to create
             one.
     """
-    uuid = '3295e6ce-b051-47b2-9514-2c588bfe7554'
-    wsmap = 'suppress'
+    __uuid__ = '3295e6ce-b051-47b2-9514-2c588bfe7554'
+    __wsmap__ = 'suppress'
     
     @property
     def installed_ext_packs(self):
@@ -20713,8 +21528,8 @@ class IBandwidthGroup(Interface):
     """
     Represents one bandwidth group.
     """
-    uuid = 'badea2d7-0261-4146-89f0-6a57cc34833d'
-    wsmap = 'managed'
+    __uuid__ = 'badea2d7-0261-4146-89f0-6a57cc34833d'
+    __wsmap__ = 'managed'
     
     @property
     def name(self):
@@ -20761,8 +21576,8 @@ class IBandwidthControl(Interface):
     Controls the bandwidth groups of one machine used to cap I/O done by a VM.
       This includes network and disk I/O.
     """
-    uuid = 'e2eb3930-d2f4-4f87-be17-0707e30f019f'
-    wsmap = 'managed'
+    __uuid__ = 'e2eb3930-d2f4-4f87-be17-0707e30f019f'
+    __wsmap__ = 'managed'
     
     @property
     def num_groups(self):
@@ -20845,8 +21660,8 @@ class IVirtualBoxClient(Interface):
       via the webservice). Once the session logic is redesigned this might
       change.
     """
-    uuid = 'd191281f-b0cb-4d83-a8fa-0d9fd6ba234c'
-    wsmap = 'suppress'
+    __uuid__ = 'd191281f-b0cb-4d83-a8fa-0d9fd6ba234c'
+    __wsmap__ = 'suppress'
     
     @property
     def virtual_box(self):
@@ -20898,8 +21713,8 @@ class IEventSource(Interface):
 
       See <link to="IEvent"/> for an introduction to VirtualBox event handling.
     """
-    uuid = '9b6e1aee-35f3-4f4d-b5bb-ed0ecefd8538'
-    wsmap = 'managed'
+    __uuid__ = '9b6e1aee-35f3-4f4d-b5bb-ed0ecefd8538'
+    __wsmap__ = 'managed'
     
     def create_listener(self):
         """Creates a new listener object, useful for passive mode.
@@ -21063,8 +21878,8 @@ class IEventListener(Interface):
       it was registered.
       See <link to="IEvent"/> for an introduction to VirtualBox event handling.
     """
-    uuid = '67099191-32e7-4f6c-85ee-422304c71b90'
-    wsmap = 'managed'
+    __uuid__ = '67099191-32e7-4f6c-85ee-422304c71b90'
+    __wsmap__ = 'managed'
     
     def handle_event(self, event):
         """Handle event callback for active listeners. It is not called for
@@ -21158,8 +21973,8 @@ class IEvent(Interface):
       or the event processing loop is to check the <link to="#type"/> attribute of the event and
       then cast to the appropriate specific interface using @c QueryInterface().
     """
-    uuid = '0ca2adba-8f30-401b-a8cd-fe31dbe839c0'
-    wsmap = 'managed'
+    __uuid__ = '0ca2adba-8f30-401b-a8cd-fe31dbe839c0'
+    __wsmap__ = 'managed'
     
     @property
     def type_p(self):
@@ -21221,8 +22036,8 @@ class IReusableEvent(IEvent):
     """
     Base abstract interface for all reusable events.
     """
-    uuid = '69bfb134-80f6-4266-8e20-16371f68fa25'
-    wsmap = 'managed'
+    __uuid__ = '69bfb134-80f6-4266-8e20-16371f68fa25'
+    __wsmap__ = 'managed'
     
     @property
     def generation(self):
@@ -21244,8 +22059,8 @@ class IMachineEvent(IEvent):
     """
     Base abstract interface for all machine events.
     """
-    uuid = '92ed7b1a-0d96-40ed-ae46-a564d484325e'
-    wsmap = 'managed'
+    __uuid__ = '92ed7b1a-0d96-40ed-ae46-a564d484325e'
+    __wsmap__ = 'managed'
     id = VBoxEventType.machine_event
     @property
     def machine_id(self):
@@ -21260,8 +22075,8 @@ class IMachineStateChangedEvent(IMachineEvent):
     """
     Machine state change event.
     """
-    uuid = '5748F794-48DF-438D-85EB-98FFD70D18C9'
-    wsmap = 'managed'
+    __uuid__ = '5748F794-48DF-438D-85EB-98FFD70D18C9'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_machine_state_changed
     @property
     def state(self):
@@ -21276,8 +22091,8 @@ class IMachineDataChangedEvent(IMachineEvent):
     """
     Any of the settings of the given machine has changed.
     """
-    uuid = 'abe94809-2e88-4436-83d7-50f3e64d0503'
-    wsmap = 'managed'
+    __uuid__ = 'abe94809-2e88-4436-83d7-50f3e64d0503'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_machine_data_changed
     @property
     def temporary(self):
@@ -21296,8 +22111,8 @@ class IMediumRegisteredEvent(IEvent):
     The given medium was registered or unregistered
       within this VirtualBox installation.
     """
-    uuid = '53fac49a-b7f1-4a5a-a4ef-a11dd9c2a458'
-    wsmap = 'managed'
+    __uuid__ = '53fac49a-b7f1-4a5a-a4ef-a11dd9c2a458'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_medium_registered
     @property
     def medium_id(self):
@@ -21330,8 +22145,8 @@ class IMachineRegisteredEvent(IMachineEvent):
     The given machine was registered or unregistered
       within this VirtualBox installation.
     """
-    uuid = 'c354a762-3ff2-4f2e-8f09-07382ee25088'
-    wsmap = 'managed'
+    __uuid__ = 'c354a762-3ff2-4f2e-8f09-07382ee25088'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_machine_registered
     @property
     def registered(self):
@@ -21348,8 +22163,8 @@ class ISessionStateChangedEvent(IMachineEvent):
     The state of the session for the given machine was changed.
       <link to="IMachine::sessionState"/>
     """
-    uuid = '714a3eef-799a-4489-86cd-fe8e45b2ff8e'
-    wsmap = 'managed'
+    __uuid__ = '714a3eef-799a-4489-86cd-fe8e45b2ff8e'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_session_state_changed
     @property
     def state(self):
@@ -21364,8 +22179,8 @@ class IGuestPropertyChangedEvent(IMachineEvent):
     """
     Notification when a guest property has changed.
     """
-    uuid = '3f63597a-26f1-4edb-8dd2-6bddd0912368'
-    wsmap = 'managed'
+    __uuid__ = '3f63597a-26f1-4edb-8dd2-6bddd0912368'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_guest_property_changed
     @property
     def name(self):
@@ -21396,8 +22211,8 @@ class ISnapshotEvent(IMachineEvent):
     """
     Base interface for all snapshot events.
     """
-    uuid = '21637b0e-34b8-42d3-acfb-7e96daf77c22'
-    wsmap = 'managed'
+    __uuid__ = '21637b0e-34b8-42d3-acfb-7e96daf77c22'
+    __wsmap__ = 'managed'
     id = VBoxEventType.snapshot_event
     @property
     def snapshot_id(self):
@@ -21413,8 +22228,8 @@ class ISnapshotTakenEvent(ISnapshotEvent):
     A new snapshot of the machine has been taken.
       <link to="ISnapshot"/>
     """
-    uuid = 'd27c0b3d-6038-422c-b45e-6d4a0503d9f1'
-    wsmap = 'managed'
+    __uuid__ = 'd27c0b3d-6038-422c-b45e-6d4a0503d9f1'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_snapshot_taken
 
 class ISnapshotDeletedEvent(ISnapshotEvent):
@@ -21429,8 +22244,8 @@ class ISnapshotDeletedEvent(ISnapshotEvent):
 
       <link to="ISnapshot"/>
     """
-    uuid = 'c48f3401-4a9e-43f4-b7a7-54bd285e22f4'
-    wsmap = 'managed'
+    __uuid__ = 'c48f3401-4a9e-43f4-b7a7-54bd285e22f4'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_snapshot_deleted
 
 class ISnapshotChangedEvent(ISnapshotEvent):
@@ -21438,8 +22253,8 @@ class ISnapshotChangedEvent(ISnapshotEvent):
     Snapshot properties (name and/or description) have been changed.
       <link to="ISnapshot"/>
     """
-    uuid = '07541941-8079-447a-a33e-47a69c7980db'
-    wsmap = 'managed'
+    __uuid__ = '07541941-8079-447a-a33e-47a69c7980db'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_snapshot_changed
 
 class IMousePointerShapeChangedEvent(IEvent):
@@ -21447,8 +22262,8 @@ class IMousePointerShapeChangedEvent(IEvent):
     Notification when the guest mouse pointer shape has
       changed. The new shape data is given.
     """
-    uuid = 'a6dcf6e8-416b-4181-8c4a-45ec95177aef'
-    wsmap = 'managed'
+    __uuid__ = 'a6dcf6e8-416b-4181-8c4a-45ec95177aef'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_mouse_pointer_shape_changed
     @property
     def visible(self):
@@ -21537,8 +22352,8 @@ class IMouseCapabilityChangedEvent(IEvent):
     Notification when the mouse capabilities reported by the
       guest have changed. The new capabilities are passed.
     """
-    uuid = 'd633ad48-820c-4207-b46c-6bd3596640d5'
-    wsmap = 'managed'
+    __uuid__ = 'd633ad48-820c-4207-b46c-6bd3596640d5'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_mouse_capability_changed
     @property
     def supports_absolute(self):
@@ -21570,8 +22385,8 @@ class IKeyboardLedsChangedEvent(IEvent):
     Notification when the guest OS executes the KBD_CMD_SET_LEDS command
       to alter the state of the keyboard LEDs.
     """
-    uuid = '6DDEF35E-4737-457B-99FC-BC52C851A44F'
-    wsmap = 'managed'
+    __uuid__ = '6DDEF35E-4737-457B-99FC-BC52C851A44F'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_keyboard_leds_changed
     @property
     def num_lock(self):
@@ -21603,8 +22418,8 @@ class IStateChangedEvent(IEvent):
     Notification when the execution state of the machine has changed.
       The new state is given.
     """
-    uuid = '4376693C-CF37-453B-9289-3B0F521CAF27'
-    wsmap = 'managed'
+    __uuid__ = '4376693C-CF37-453B-9289-3B0F521CAF27'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_state_changed
     @property
     def state(self):
@@ -21621,8 +22436,8 @@ class IAdditionsStateChangedEvent(IEvent):
       Interested callees should query IGuest attributes to
       find out what has changed.
     """
-    uuid = 'D70F7915-DA7C-44C8-A7AC-9F173490446A'
-    wsmap = 'managed'
+    __uuid__ = 'D70F7915-DA7C-44C8-A7AC-9F173490446A'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_additions_state_changed
 
 class INetworkAdapterChangedEvent(IEvent):
@@ -21632,8 +22447,8 @@ class INetworkAdapterChangedEvent(IEvent):
       changes. Interested callees should use INetworkAdapter methods and
       attributes to find out what has changed.
     """
-    uuid = '08889892-1EC6-4883-801D-77F56CFD0103'
-    wsmap = 'managed'
+    __uuid__ = '08889892-1EC6-4883-801D-77F56CFD0103'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_network_adapter_changed
     @property
     def network_adapter(self):
@@ -21651,8 +22466,8 @@ class ISerialPortChangedEvent(IEvent):
       Interested callees should use ISerialPort methods and attributes
       to find out what has changed.
     """
-    uuid = '3BA329DC-659C-488B-835C-4ECA7AE71C6C'
-    wsmap = 'managed'
+    __uuid__ = '3BA329DC-659C-488B-835C-4ECA7AE71C6C'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_serial_port_changed
     @property
     def serial_port(self):
@@ -21670,8 +22485,8 @@ class IParallelPortChangedEvent(IEvent):
       changes. Interested callees should use ISerialPort methods and
       attributes to find out what has changed.
     """
-    uuid = '813C99FC-9849-4F47-813E-24A75DC85615'
-    wsmap = 'managed'
+    __uuid__ = '813C99FC-9849-4F47-813E-24A75DC85615'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_parallel_port_changed
     @property
     def parallel_port(self):
@@ -21688,8 +22503,8 @@ class IStorageControllerChangedEvent(IEvent):
       <link to="IMachine::mediumAttachments">medium attachment</link>
       changes.
     """
-    uuid = '715212BF-DA59-426E-8230-3831FAA52C56'
-    wsmap = 'managed'
+    __uuid__ = '715212BF-DA59-426E-8230-3831FAA52C56'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_storage_controller_changed
 
 class IMediumChangedEvent(IEvent):
@@ -21698,8 +22513,8 @@ class IMediumChangedEvent(IEvent):
       <link to="IMachine::mediumAttachments">medium attachment</link>
       changes.
     """
-    uuid = '0FE2DA40-5637-472A-9736-72019EABD7DE'
-    wsmap = 'managed'
+    __uuid__ = '0FE2DA40-5637-472A-9736-72019EABD7DE'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_medium_changed
     @property
     def medium_attachment(self):
@@ -21714,8 +22529,8 @@ class IClipboardModeChangedEvent(IEvent):
     """
     Notification when the shared clipboard mode changes.
     """
-    uuid = 'cac21692-7997-4595-a731-3a509db604e5'
-    wsmap = 'managed'
+    __uuid__ = 'cac21692-7997-4595-a731-3a509db604e5'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_clipboard_mode_changed
     @property
     def clipboard_mode(self):
@@ -21730,8 +22545,8 @@ class IDragAndDropModeChangedEvent(IEvent):
     """
     Notification when the drag'n'drop mode changes.
     """
-    uuid = 'e90b8850-ac8e-4dff-8059-4100ae2c3c3d'
-    wsmap = 'managed'
+    __uuid__ = 'e90b8850-ac8e-4dff-8059-4100ae2c3c3d'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_drag_and_drop_mode_changed
     @property
     def drag_and_drop_mode(self):
@@ -21746,8 +22561,8 @@ class ICPUChangedEvent(IEvent):
     """
     Notification when a CPU changes.
     """
-    uuid = '4da2dec7-71b2-4817-9a64-4ed12c17388e'
-    wsmap = 'managed'
+    __uuid__ = '4da2dec7-71b2-4817-9a64-4ed12c17388e'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_cpu_changed
     @property
     def cpu(self):
@@ -21770,8 +22585,8 @@ class ICPUExecutionCapChangedEvent(IEvent):
     """
     Notification when the CPU execution cap changes.
     """
-    uuid = 'dfa7e4f5-b4a4-44ce-85a8-127ac5eb59dc'
-    wsmap = 'managed'
+    __uuid__ = 'dfa7e4f5-b4a4-44ce-85a8-127ac5eb59dc'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_cpu_execution_cap_changed
     @property
     def execution_cap(self):
@@ -21786,8 +22601,8 @@ class IGuestKeyboardEvent(IEvent):
     """
     Notification when guest keyboard event happens.
     """
-    uuid = '88394258-7006-40d4-b339-472ee3801844'
-    wsmap = 'managed'
+    __uuid__ = '88394258-7006-40d4-b339-472ee3801844'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_guest_keyboard
     @property
     def scancodes(self):
@@ -21802,8 +22617,8 @@ class IGuestMouseEvent(IReusableEvent):
     """
     Notification when guest mouse event happens.
     """
-    uuid = '1f85d35c-c524-40ff-8e98-307000df0992'
-    wsmap = 'managed'
+    __uuid__ = '1f85d35c-c524-40ff-8e98-307000df0992'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_guest_mouse
     @property
     def absolute(self):
@@ -21858,8 +22673,8 @@ class IGuestSessionEvent(IEvent):
     """
     Base abstract interface for all guest session events.
     """
-    uuid = 'b9acd33f-647d-45ac-8fe9-f49b3183ba37'
-    wsmap = 'managed'
+    __uuid__ = 'b9acd33f-647d-45ac-8fe9-f49b3183ba37'
+    __wsmap__ = 'managed'
     
     @property
     def session(self):
@@ -21874,8 +22689,8 @@ class IGuestSessionStateChangedEvent(IGuestSessionEvent):
     """
     Notification when a guest session changed its state.
     """
-    uuid = '327e3c00-ee61-462f-aed3-0dff6cbf9904'
-    wsmap = 'managed'
+    __uuid__ = '327e3c00-ee61-462f-aed3-0dff6cbf9904'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_guest_session_state_changed
     @property
     def id_p(self):
@@ -21910,8 +22725,8 @@ class IGuestSessionRegisteredEvent(IGuestSessionEvent):
     """
     Notification when a guest session was registered or unregistered.
     """
-    uuid = 'b79de686-eabd-4fa6-960a-f1756c99ea1c'
-    wsmap = 'managed'
+    __uuid__ = 'b79de686-eabd-4fa6-960a-f1756c99ea1c'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_guest_session_registered
     @property
     def registered(self):
@@ -21927,8 +22742,8 @@ class IGuestProcessEvent(IGuestSessionEvent):
     """
     Base abstract interface for all guest process events.
     """
-    uuid = '2405f0e5-6588-40a3-9b0a-68c05ba52c4b'
-    wsmap = 'managed'
+    __uuid__ = '2405f0e5-6588-40a3-9b0a-68c05ba52c4b'
+    __wsmap__ = 'managed'
     
     @property
     def process(self):
@@ -21951,8 +22766,8 @@ class IGuestProcessRegisteredEvent(IGuestProcessEvent):
     """
     Notification when a guest process was registered or unregistered.
     """
-    uuid = '1d89e2b3-c6ea-45b6-9d43-dc6f70cc9f02'
-    wsmap = 'managed'
+    __uuid__ = '1d89e2b3-c6ea-45b6-9d43-dc6f70cc9f02'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_guest_process_registered
     @property
     def registered(self):
@@ -21968,8 +22783,8 @@ class IGuestProcessStateChangedEvent(IGuestProcessEvent):
     """
     Notification when a guest process changed its state.
     """
-    uuid = 'c365fb7b-4430-499f-92c8-8bed814a567a'
-    wsmap = 'managed'
+    __uuid__ = 'c365fb7b-4430-499f-92c8-8bed814a567a'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_guest_process_state_changed
     @property
     def status(self):
@@ -21996,8 +22811,8 @@ class IGuestProcessIOEvent(IGuestProcessEvent):
     """
     Base abstract interface for all guest process input/output (IO) events.
     """
-    uuid = '9ea9227c-e9bb-49b3-bfc7-c5171e93ef38'
-    wsmap = 'managed'
+    __uuid__ = '9ea9227c-e9bb-49b3-bfc7-c5171e93ef38'
+    __wsmap__ = 'managed'
     
     @property
     def handle(self):
@@ -22022,8 +22837,8 @@ class IGuestProcessInputNotifyEvent(IGuestProcessIOEvent):
     Notification when a guest process' stdin became available.
       This event is right now not implemented!
     """
-    uuid = '0de887f2-b7db-4616-aac6-cfb94d89ba78'
-    wsmap = 'managed'
+    __uuid__ = '0de887f2-b7db-4616-aac6-cfb94d89ba78'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_guest_process_input_notify
     @property
     def status(self):
@@ -22038,8 +22853,8 @@ class IGuestProcessOutputEvent(IGuestProcessIOEvent):
     """
     Notification when there is guest process output available for reading.
     """
-    uuid = 'd3d5f1ee-bcb2-4905-a7ab-cc85448a742b'
-    wsmap = 'managed'
+    __uuid__ = 'd3d5f1ee-bcb2-4905-a7ab-cc85448a742b'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_guest_process_output
     @property
     def data(self):
@@ -22054,8 +22869,8 @@ class IGuestFileEvent(IGuestSessionEvent):
     """
     Base abstract interface for all guest file events.
     """
-    uuid = 'c8adb7b0-057d-4391-b928-f14b06b710c5'
-    wsmap = 'managed'
+    __uuid__ = 'c8adb7b0-057d-4391-b928-f14b06b710c5'
+    __wsmap__ = 'managed'
     
     @property
     def file_p(self):
@@ -22070,8 +22885,8 @@ class IGuestFileRegisteredEvent(IGuestFileEvent):
     """
     Notification when a guest file was registered or unregistered.
     """
-    uuid = 'd0d93830-70a2-487e-895e-d3fc9679f7b3'
-    wsmap = 'managed'
+    __uuid__ = 'd0d93830-70a2-487e-895e-d3fc9679f7b3'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_guest_file_registered
     @property
     def registered(self):
@@ -22087,8 +22902,8 @@ class IGuestFileStateChangedEvent(IGuestFileEvent):
     """
     Notification when a guest file changed its state.
     """
-    uuid = 'd37fe88f-0979-486c-baa1-3abb144dc82d'
-    wsmap = 'managed'
+    __uuid__ = 'd37fe88f-0979-486c-baa1-3abb144dc82d'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_guest_file_state_changed
     @property
     def status(self):
@@ -22115,8 +22930,8 @@ class IGuestFileIOEvent(IGuestFileEvent):
     """
     Base abstract interface for all guest file input/output (IO) events.
     """
-    uuid = 'b5191a7c-9536-4ef8-820e-3b0e17e5bbc8'
-    wsmap = 'managed'
+    __uuid__ = 'b5191a7c-9536-4ef8-820e-3b0e17e5bbc8'
+    __wsmap__ = 'managed'
     
     @property
     def offset(self):
@@ -22139,16 +22954,16 @@ class IGuestFileOffsetChangedEvent(IGuestFileIOEvent):
     """
     Notification when a guest file changed its current offset.
     """
-    uuid = 'e8f79a21-1207-4179-94cf-ca250036308f'
-    wsmap = 'managed'
+    __uuid__ = 'e8f79a21-1207-4179-94cf-ca250036308f'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_guest_file_offset_changed
 
 class IGuestFileReadEvent(IGuestFileIOEvent):
     """
     Notification when data has been read from a guest file.
     """
-    uuid = '4ee3cbcb-486f-40db-9150-deee3fd24189'
-    wsmap = 'managed'
+    __uuid__ = '4ee3cbcb-486f-40db-9150-deee3fd24189'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_guest_file_read
     @property
     def data(self):
@@ -22163,8 +22978,8 @@ class IGuestFileWriteEvent(IGuestFileIOEvent):
     """
     Notification when data has been written to a guest file.
     """
-    uuid = 'e062a915-3cf5-4c0a-bc90-9b8d4cc94d89'
-    wsmap = 'managed'
+    __uuid__ = 'e062a915-3cf5-4c0a-bc90-9b8d4cc94d89'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_guest_file_write
 
 class IVRDEServerChangedEvent(IEvent):
@@ -22174,8 +22989,8 @@ class IVRDEServerChangedEvent(IEvent):
       Interested callees should use IVRDEServer methods and attributes to
       find out what has changed.
     """
-    uuid = 'a06fd66a-3188-4c8c-8756-1395e8cb691c'
-    wsmap = 'managed'
+    __uuid__ = 'a06fd66a-3188-4c8c-8756-1395e8cb691c'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_vrde_server_changed
 
 class IVRDEServerInfoChangedEvent(IEvent):
@@ -22184,8 +22999,8 @@ class IVRDEServerInfoChangedEvent(IEvent):
       should use <link to="IConsole::VRDEServerInfo">IVRDEServerInfo</link>
       attributes to find out what is the current status.
     """
-    uuid = 'dd6a1080-e1b7-4339-a549-f0878115596e'
-    wsmap = 'managed'
+    __uuid__ = 'dd6a1080-e1b7-4339-a549-f0878115596e'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_vrde_server_info_changed
 
 class IUSBControllerChangedEvent(IEvent):
@@ -22195,8 +23010,8 @@ class IUSBControllerChangedEvent(IEvent):
       Interested callees should use IUSBController methods and attributes to
       find out what has changed.
     """
-    uuid = '93BADC0C-61D9-4940-A084-E6BB29AF3D83'
-    wsmap = 'managed'
+    __uuid__ = '93BADC0C-61D9-4940-A084-E6BB29AF3D83'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_usb_controller_changed
 
 class IUSBDeviceStateChangedEvent(IEvent):
@@ -22219,8 +23034,8 @@ class IUSBDeviceStateChangedEvent(IEvent):
       doesn't change and the @a error parameter represents the error
       message describing the failure.
     """
-    uuid = '806da61b-6679-422a-b629-51b06b0c6d93'
-    wsmap = 'managed'
+    __uuid__ = '806da61b-6679-422a-b629-51b06b0c6d93'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_usb_device_state_changed
     @property
     def device(self):
@@ -22259,8 +23074,8 @@ class ISharedFolderChangedEvent(IEvent):
       should use query the corresponding collections to find out what has
       changed.
     """
-    uuid = 'B66349B5-3534-4239-B2DE-8E1535D94C0B'
-    wsmap = 'managed'
+    __uuid__ = 'B66349B5-3534-4239-B2DE-8E1535D94C0B'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_shared_folder_changed
     @property
     def scope(self):
@@ -22321,8 +23136,8 @@ class IRuntimeErrorEvent(IEvent):
         "VDIStorageFull"
         "3DSupportIncompatibleAdditions"
     """
-    uuid = '883DD18B-0721-4CDE-867C-1A82ABAF914C'
-    wsmap = 'managed'
+    __uuid__ = '883DD18B-0721-4CDE-867C-1A82ABAF914C'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_runtime_error
     @property
     def fatal(self):
@@ -22353,8 +23168,8 @@ class IEventSourceChangedEvent(IEvent):
     """
     Notification when an event source state changes (listener added or removed).
     """
-    uuid = 'e7932cb8-f6d4-4ab6-9cbf-558eb8959a6a'
-    wsmap = 'managed'
+    __uuid__ = 'e7932cb8-f6d4-4ab6-9cbf-558eb8959a6a'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_event_source_changed
     @property
     def listener(self):
@@ -22378,8 +23193,8 @@ class IExtraDataChangedEvent(IEvent):
     Notification when machine specific or global extra data
       has changed.
     """
-    uuid = '024F00CE-6E0B-492A-A8D0-968472A94DC7'
-    wsmap = 'managed'
+    __uuid__ = '024F00CE-6E0B-492A-A8D0-968472A94DC7'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_extra_data_changed
     @property
     def machine_id(self):
@@ -22411,8 +23226,8 @@ class IVetoEvent(IEvent):
     """
     Base abstract interface for veto events.
     """
-    uuid = '9a1a4130-69fe-472f-ac10-c6fa25d75007'
-    wsmap = 'managed'
+    __uuid__ = '9a1a4130-69fe-472f-ac10-c6fa25d75007'
+    __wsmap__ = 'managed'
     
     def add_veto(self, reason):
         """Adds a veto on this event.
@@ -22455,8 +23270,8 @@ class IExtraDataCanChangeEvent(IVetoEvent):
       either the given machine or (if @c null) global extra data.
       This gives the chance to veto against changes.
     """
-    uuid = '245d88bd-800a-40f8-87a6-170d02249a55'
-    wsmap = 'managed'
+    __uuid__ = '245d88bd-800a-40f8-87a6-170d02249a55'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_extra_data_can_change
     @property
     def machine_id(self):
@@ -22496,8 +23311,8 @@ class ICanShowWindowEvent(IVetoEvent):
       remain valid at least until the next
       <link to="IConsole::state">machine state</link> change.
     """
-    uuid = 'adf292b0-92c9-4a77-9d35-e058b39fe0b9'
-    wsmap = 'managed'
+    __uuid__ = 'adf292b0-92c9-4a77-9d35-e058b39fe0b9'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_can_show_window
 
 class IShowWindowEvent(IEvent):
@@ -22528,8 +23343,8 @@ class IShowWindowEvent(IEvent):
       window is now active and in foreground, to indicate that no
       further action is required on the caller's side.
     """
-    uuid = 'B0A0904D-2F05-4D28-855F-488F96BAD2B2'
-    wsmap = 'managed'
+    __uuid__ = 'B0A0904D-2F05-4D28-855F-488F96BAD2B2'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_show_window
     @property
     def win_id(self):
@@ -22553,8 +23368,8 @@ class INATRedirectEvent(IMachineEvent):
     """
     Notification when NAT redirect rule added or removed.
     """
-    uuid = '24eef068-c380-4510-bc7c-19314a7352f1'
-    wsmap = 'managed'
+    __uuid__ = '24eef068-c380-4510-bc7c-19314a7352f1'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_nat_redirect
     @property
     def slot(self):
@@ -22629,8 +23444,8 @@ class IHostPCIDevicePlugEvent(IMachineEvent):
 
       <link to="IMachine::detachHostPCIDevice"/>
     """
-    uuid = 'a0bad6df-d612-47d3-89d4-db3992533948'
-    wsmap = 'managed'
+    __uuid__ = 'a0bad6df-d612-47d3-89d4-db3992533948'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_host_pci_device_plug
     @property
     def plugged(self):
@@ -22671,8 +23486,8 @@ class IVBoxSVCAvailabilityChangedEvent(IEvent):
     Notification when VBoxSVC becomes unavailable (due to a crash or similar
       unexpected circumstances) or available again.
     """
-    uuid = '97c78fcd-d4fc-485f-8613-5af88bfcfcdc'
-    wsmap = 'managed'
+    __uuid__ = '97c78fcd-d4fc-485f-8613-5af88bfcfcdc'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_v_box_svc_availability_changed
     @property
     def available(self):
@@ -22687,8 +23502,8 @@ class IBandwidthGroupChangedEvent(IEvent):
     """
     Notification when one of the bandwidth groups changed
     """
-    uuid = '334df94a-7556-4cbc-8c04-043096b02d82'
-    wsmap = 'managed'
+    __uuid__ = '334df94a-7556-4cbc-8c04-043096b02d82'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_bandwidth_group_changed
     @property
     def bandwidth_group(self):
@@ -22703,8 +23518,8 @@ class IGuestMonitorChangedEvent(IEvent):
     """
     Notification when the guest enables one of its monitors.
     """
-    uuid = '0f7b8a22-c71f-4a36-8e5f-a77d01d76090'
-    wsmap = 'managed'
+    __uuid__ = '0f7b8a22-c71f-4a36-8e5f-a77d01d76090'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_guest_monitor_changed
     @property
     def change_type(self):
@@ -22765,8 +23580,8 @@ class IStorageDeviceChangedEvent(IEvent):
       <link to="IMachine::mediumAttachments">storage device</link>
       is attached or removed.
     """
-    uuid = '232e9151-ae84-4b8e-b0f3-5c20c35caac9'
-    wsmap = 'managed'
+    __uuid__ = '232e9151-ae84-4b8e-b0f3-5c20c35caac9'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_storage_device_changed
     @property
     def storage_device(self):
@@ -22795,8 +23610,8 @@ class IStorageDeviceChangedEvent(IEvent):
 
 class INATNetworkChangedEvent(IEvent):
     """"""
-    uuid = '101ae042-1a29-4a19-92cf-02285773f3b5'
-    wsmap = 'managed'
+    __uuid__ = '101ae042-1a29-4a19-92cf-02285773f3b5'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_nat_network_changed
     @property
     def network_name(self):
@@ -22809,8 +23624,8 @@ class INATNetworkStartStopEvent(INATNetworkChangedEvent):
     """
     IsStartEvent is true when NAT network is started and false on stopping.
     """
-    uuid = '269d8f6b-fa1e-4cee-91c7-6d8496bea3c1'
-    wsmap = 'managed'
+    __uuid__ = '269d8f6b-fa1e-4cee-91c7-6d8496bea3c1'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_nat_network_start_stop
     @property
     def start_event(self):
@@ -22823,14 +23638,14 @@ class INATNetworkStartStopEvent(INATNetworkChangedEvent):
 
 class INATNetworkAlterEvent(INATNetworkChangedEvent):
     """"""
-    uuid = '3f5a0822-163a-43b1-ad16-8d58b0ef6e75'
-    wsmap = 'managed'
+    __uuid__ = '3f5a0822-163a-43b1-ad16-8d58b0ef6e75'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_nat_network_alter
 
 class INATNetworkCreationDeletionEvent(INATNetworkAlterEvent):
     """"""
-    uuid = '8d984a7e-b855-40b8-ab0c-44d3515b4528'
-    wsmap = 'managed'
+    __uuid__ = '8d984a7e-b855-40b8-ab0c-44d3515b4528'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_nat_network_creation_deletion
     @property
     def creation_event(self):
@@ -22841,8 +23656,8 @@ class INATNetworkCreationDeletionEvent(INATNetworkAlterEvent):
 
 class INATNetworkSettingEvent(INATNetworkAlterEvent):
     """"""
-    uuid = '9db3a9e6-7f29-4aae-a627-5a282c83092c'
-    wsmap = 'managed'
+    __uuid__ = '9db3a9e6-7f29-4aae-a627-5a282c83092c'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_nat_network_setting
     @property
     def enabled(self):
@@ -22877,8 +23692,8 @@ class INATNetworkSettingEvent(INATNetworkAlterEvent):
 
 class INATNetworkPortForwardEvent(INATNetworkAlterEvent):
     """"""
-    uuid = '2514881b-23d0-430a-a7ff-7ed7f05534bc'
-    wsmap = 'managed'
+    __uuid__ = '2514881b-23d0-430a-a7ff-7ed7f05534bc'
+    __wsmap__ = 'managed'
     id = VBoxEventType.on_nat_network_port_forward
     @property
     def create(self):

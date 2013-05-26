@@ -63,40 +63,44 @@ class EnumType(type):
     """EnumType is a metaclass for Enum. It is responsible for configuring
     the Enum class object's values defined in Enum.lookup_label"""
     def __init__(cls, name, bases, dct):
-        cls.value = None
-        cls.lookup_label = {v:k for k, v in cls.lookup_value.items()}
-        for name, v in cls.lookup_value.items():
-            setattr(cls, pythonic_name(name), cls(v))
+        cls._value = None
+        cls._lookup_label = {v:l for l, v, _ in cls._enums}
+        cls._lookup_doc = {v:d for _, v, d in cls._enums}
+        for l, v, _ in cls._enums:
+            setattr(cls, pythonic_name(l), cls(v))
 
     def __getitem__(cls, k):
         if not hasattr(cls, k):
             raise KeyError("%s has no key %s" % cls.__name__, k)
         return getattr(cls, k)
 
-    def __getattribute__(cls, k):
-        return type.__getattribute__(cls, k)
-
 
 class Enum(object):
     """Enum objects provide a container for VirtualBox enumerations"""
-    lookup_value = {}
+    _enums = {}
     __metaclass__ = EnumType
     def __init__(self, value=None):
-        self.value = value
+        if value not in self._lookup_label:
+            raise ValueError("Can not find enumeration where value=%s" % value)
+        self._value = value
+        self.__doc__ = self._lookup_doc[self._value]
 
     def __str__(self):
-        return self.lookup_label[self.value]
+        if self._value is None:
+            return "None"
+        return self._lookup_label[self._value]
 
     def __int__(self):
-        return self.value
+        return self._value
 
     def __repr__(self):
-        return "%s(%s)" % (self.__class__.__name__, self.value)
+        return "%s(%s)" % (self.__class__.__name__, self._value)
 
     def __eq__(self, k):
-        if isinstance(k, self.__class__):
-            return k.value == self.value
-        return False
+        return self.__cmp__(k) == 0
+
+    def __cmp__(self, k):
+        return cmp(int(self), int(k))
 
     def __getitem__(self, k):
         return self.__class__[k]
@@ -211,21 +215,22 @@ def process_result(node):
 ###########################################################
 ENUM_DEFINE = '''\
 class %(name)s(Enum):
-    """(%(doc)s)"""
-    uuid = %(uuid)s
-    lookup_value = %(lookup_value)s '''
+    """%(doc)s"""
+    __uuid__ = %(uuid)s
+    _enums = %(enums)s '''
 ENUM_VALUE = """\
     %(name)s.%(label)s = Enum(%(doc)svalue=%(value)s)"""
 
+ENUM_ROW = """\
+        ('%(label)s', %(value)s, 
+         '''%(doc)s'''),"""
 
 def process_enum(node):
     name = node.getAttribute('name')
     uuid = "'%s'" % node.getAttribute('uuid')
     code = []
     enum_doc = get_doc(node)
-    lookup = {}
-    lookup_value = {}
-    lookup_label = {}
+    enums = ['[\\']
     for child in node.childNodes:
         tagname = getattr(child, 'tagName', None)
         if tagname != 'const':
@@ -237,16 +242,13 @@ def process_enum(node):
             value = int(value[2:], 16)
         else:
             value = int(value)
-        lookup_value[label] = value
-        lookup_label[value] = label
-        lookup[label] = (value, doc)
-        #code.append(ENUM_VALUE % dict(name=name, label=label,
-        #                              value=value, doc=doc))
-    lookup_label = pprint.pformat(lookup_label, width=4, indent=8)
-    lookup_value = pprint.pformat(lookup_value, width=4, indent=8)
-    code.append(ENUM_DEFINE % dict(name=name, doc=enum_doc, 
-                                   uuid=uuid, lookup_value=lookup_value))
+        enums.append(ENUM_ROW % dict(label=label, value=value, doc=doc))
+    enums.append('        ]')
+    enums = "\n".join(enums)
 
+    #lookup = pprint.pformat(enums, width=4, indent=8)
+    code.append(ENUM_DEFINE % dict(name=name, doc=enum_doc, 
+                                   uuid=uuid, enums=enums))
     python_name = pythonic_name(name)
     code.append('\n')
     return "\n".join(code)
@@ -260,8 +262,8 @@ def process_enum(node):
 CLASS_DEF = '''\
 class %(name)s(%(extends)s):
     """%(doc)s"""
-    uuid = '%(uuid)s'
-    wsmap = '%(wsmap)s'
+    __uuid__ = '%(uuid)s'
+    __wsmap__ = '%(wsmap)s'
     %(event_id)s'''
 
 CLASSES = {'IVirtualBox':"@virtualbox.org/VirtualBox;1",
