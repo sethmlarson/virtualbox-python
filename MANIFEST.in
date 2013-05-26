@@ -1,0 +1,4 @@
+include *.rst
+include distribute_setup.py
+recursive-include tests *.py
+
