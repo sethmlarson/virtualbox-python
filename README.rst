@@ -20,7 +20,7 @@ Simply run the following::
     > python setup.py install
     > python setup.py test
 
-Example::
+Start stop example::
 
     > ipython
     In [1]: import virtualbox
@@ -45,8 +45,24 @@ Example::
 
     In [10]: session.state
     Out[10]: SessionState(2)
+
+    In [11]: session.state >= 2
+    Out[11]: True
     
-    In [11]: session.console.power_down()
+    In [12]: session.console.power_down()
+
+Exploring the interface example::
+    
+    >ipython
+    In [1]: virtualbox?
+
+    In [2]: virtualbox.VirtualBox?
+
+    In [3]: virtualbox.library.IMachine?
+
+    In [4]: virtualbox.library.MachineState?
+
+    In [5]: virtualbox.library.MachineState.teleported?
 
 
 Issues
@@ -62,9 +78,8 @@ Compatibility
 =============
 
 *pyvbox* utilises the VirtualBox project's vboxapi to gain access to the
-underlying COM API primitives, which makes pyvbox compatible on systems where
-vboxapi is installed and functioning.  
-
+underlying COM API primitives.  Therefore, pyvbox is compatible on systems
+which have a running vboxapi.
 
 Change log
 ==========
