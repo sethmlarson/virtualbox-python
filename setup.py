@@ -39,8 +39,7 @@ setup(
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Other Audience',
         'License :: OSI Approved :: Apache Software License',
-        'Operating System :: Microsoft :: Windows',
-        'Operating System :: POSIX :: Linux',
+        'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
@@ -49,7 +48,7 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: Implementation :: CPython',
         'Topic :: Security',
-        'Topic :: System :: Monitoring'
+        'Topic :: Scientific/Engineering :: Visualization'
     ],
     test_suite="tests",
     tests_require=tests_require
