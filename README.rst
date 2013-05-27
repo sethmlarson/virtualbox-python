@@ -105,7 +105,10 @@ which have a running vboxapi.
 Change log
 ==========
 
-version 0.0.0 (10/05/2013)
+version 0.0.1 (27/05/2013)
+* packaged
+
+version 0.0.0 (20/05/2013)
 
 * builder 
 * library primitives 
