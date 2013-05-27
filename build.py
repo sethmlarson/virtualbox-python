@@ -329,6 +329,7 @@ known_types = {'wstring':'str',
                'unsigned short':'int',
                '$unknown':'Interface'}
 
+python_types = ['str', 'bool', 'int']
 
 def type_to_name(t):
     if t in known_types:
@@ -358,10 +359,16 @@ def process_interface_attribute(node):
     pname = pythonic_name(name)
     if array:
         callname = "_call_method('get%s')" % (name[0].upper() + name[1:])
-        retval = "[%s(a) for a in ret]" % ntype
+        if ntype not in python_types:
+            retval = "[%s(a) for a in ret]" % ntype
+        else:
+            retval = 'ret'
     else:
         callname = "_get_attr('%s')" % name
-        retval = "%s(ret)" % (ntype)
+        if ntype not in python_types:
+            retval = "%s(ret)" % (ntype)
+        else:
+            retval = 'ret'
     code.append(ATTR_GET % dict(name=name, pname=pname, callname=callname,
                 ntype=ntype, doc=doc, doc_action=doc_action,
                 retval=retval))
@@ -519,6 +526,9 @@ def process_interface_method(node):
         in_p=in_p))
 
     for name, atype, array in out_p:
+        if atype in python_types:
+            continue
+
         if array:
             convfunc = "[%s(a) for a in %s]" % (atype, name)
         else:

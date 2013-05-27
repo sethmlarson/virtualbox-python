@@ -2265,7 +2265,7 @@ class IVirtualBoxErrorInfo(Interface):
           In XPCOM, it is the same as nsIException::result.
         """
         ret = self._get_attr('resultCode')
-        return int(ret) 
+        return ret 
 
     @property
     def result_detail(self):
@@ -2274,7 +2274,7 @@ class IVirtualBoxErrorInfo(Interface):
         actual error usage. By default this attribute is not being used.
         """
         ret = self._get_attr('resultDetail')
-        return int(ret) 
+        return ret 
 
     @property
     def interface_id(self):
@@ -2286,7 +2286,7 @@ class IVirtualBoxErrorInfo(Interface):
           In XPCOM, there is no equivalent.
         """
         ret = self._get_attr('interfaceID')
-        return str(ret) 
+        return ret 
 
     @property
     def component(self):
@@ -2297,7 +2297,7 @@ class IVirtualBoxErrorInfo(Interface):
           In XPCOM, there is no equivalent.
         """
         ret = self._get_attr('component')
-        return str(ret) 
+        return ret 
 
     @property
     def text(self):
@@ -2308,7 +2308,7 @@ class IVirtualBoxErrorInfo(Interface):
           In XPCOM, it is the same as nsIException::message.
         """
         ret = self._get_attr('text')
-        return str(ret) 
+        return ret 
 
     @property
     def next_p(self):
@@ -2341,7 +2341,7 @@ class INATNetwork(Interface):
         network.
         """
         ret = self._get_attr('NetworkName')
-        return str(ret) 
+        return ret 
 
     @network_name.setter
     def network_name(self, value):
@@ -2353,7 +2353,7 @@ class INATNetwork(Interface):
     def enabled(self):
         """Get or set bool value for 'enabled'"""
         ret = self._get_attr('enabled')
-        return bool(ret) 
+        return ret 
 
     @enabled.setter
     def enabled(self, value):
@@ -2370,7 +2370,7 @@ class INATNetwork(Interface):
         will be ignored (because new assignment could break existing rules).
         """
         ret = self._get_attr('network')
-        return str(ret) 
+        return ret 
 
     @network.setter
     def network(self, value):
@@ -2385,7 +2385,7 @@ class INATNetwork(Interface):
         network attribute (low address of network + 1).
         """
         ret = self._get_attr('gateway')
-        return str(ret) 
+        return ret 
 
     @property
     def i_pv6_enabled(self):
@@ -2393,7 +2393,7 @@ class INATNetwork(Interface):
         This attribute define whether gateway will support IPv6 or not.
         """
         ret = self._get_attr('IPv6Enabled')
-        return bool(ret) 
+        return ret 
 
     @i_pv6_enabled.setter
     def i_pv6_enabled(self, value):
@@ -2407,7 +2407,7 @@ class INATNetwork(Interface):
         This a CIDR IPv6 defining prefix for link-local addresses autoconfiguration     within network. Note: ignored if attribute ipv6enabled is false.
         """
         ret = self._get_attr('IPv6Prefix')
-        return str(ret) 
+        return ret 
 
     @i_pv6_prefix.setter
     def i_pv6_prefix(self, value):
@@ -2419,7 +2419,7 @@ class INATNetwork(Interface):
     def advertise_default_i_pv6_route_enabled(self):
         """Get or set bool value for 'advertiseDefaultIPv6RouteEnabled'"""
         ret = self._get_attr('advertiseDefaultIPv6RouteEnabled')
-        return bool(ret) 
+        return ret 
 
     @advertise_default_i_pv6_route_enabled.setter
     def advertise_default_i_pv6_route_enabled(self, value):
@@ -2431,7 +2431,7 @@ class INATNetwork(Interface):
     def need_dhcp_server(self):
         """Get or set bool value for 'needDhcpServer'"""
         ret = self._get_attr('needDhcpServer')
-        return bool(ret) 
+        return ret 
 
     @need_dhcp_server.setter
     def need_dhcp_server(self, value):
@@ -2453,7 +2453,7 @@ class INATNetwork(Interface):
       "name:protocolid:[host ip]:host port:[guest ip]:guest port".
         """
         ret = self._call_method('getPortForwardRules4')
-        return [str(a) for a in ret] 
+        return ret 
 
     @property
     def port_forward_rules6(self):
@@ -2462,7 +2462,7 @@ class INATNetwork(Interface):
       following format: "name:protocolid:[host ip]:host port:[guest ip]:guest port".
         """
         ret = self._call_method('getPortForwardRules6')
-        return [str(a) for a in ret] 
+        return ret 
 
     def add_port_forward_rule(self, is_ipv6, rule_name, proto, host_ip, host_port, guest_ip, guest_port):
         """Protocol handled with the rule.
@@ -2557,7 +2557,7 @@ class IDHCPServer(Interface):
         specifies if the DHCP server is enabled
         """
         ret = self._get_attr('enabled')
-        return bool(ret) 
+        return ret 
 
     @enabled.setter
     def enabled(self, value):
@@ -2571,7 +2571,7 @@ class IDHCPServer(Interface):
         specifies server IP
         """
         ret = self._get_attr('IPAddress')
-        return str(ret) 
+        return ret 
 
     @property
     def network_mask(self):
@@ -2579,7 +2579,7 @@ class IDHCPServer(Interface):
         specifies server network mask
         """
         ret = self._get_attr('networkMask')
-        return str(ret) 
+        return ret 
 
     @property
     def network_name(self):
@@ -2587,7 +2587,7 @@ class IDHCPServer(Interface):
         specifies internal network name the server is used for
         """
         ret = self._get_attr('networkName')
-        return str(ret) 
+        return ret 
 
     @property
     def lower_ip(self):
@@ -2595,7 +2595,7 @@ class IDHCPServer(Interface):
         specifies from IP address in server address range
         """
         ret = self._get_attr('lowerIP')
-        return str(ret) 
+        return ret 
 
     @property
     def upper_ip(self):
@@ -2603,7 +2603,7 @@ class IDHCPServer(Interface):
         specifies to IP address in server address range
         """
         ret = self._get_attr('upperIP')
-        return str(ret) 
+        return ret 
 
     def set_configuration(self, ip_address, network_mask, from_ip_address, to_ip_address):
         """configures the server
@@ -2701,7 +2701,7 @@ class IVirtualBox(Interface):
         just like the prerelease build type tag.
         """
         ret = self._get_attr('version')
-        return str(ret) 
+        return ret 
 
     @property
     def version_normalized(self):
@@ -2711,7 +2711,7 @@ class IVirtualBox(Interface):
         See <link to="#version"/>.
         """
         ret = self._get_attr('versionNormalized')
-        return str(ret) 
+        return ret 
 
     @property
     def revision(self):
@@ -2719,7 +2719,7 @@ class IVirtualBox(Interface):
         The internal build revision number of the product.
         """
         ret = self._get_attr('revision')
-        return int(ret) 
+        return ret 
 
     @property
     def package_type(self):
@@ -2731,7 +2731,7 @@ class IVirtualBox(Interface):
         this.
         """
         ret = self._get_attr('packageType')
-        return str(ret) 
+        return ret 
 
     @property
     def api_version(self):
@@ -2745,7 +2745,7 @@ class IVirtualBox(Interface):
         numbers of the package version.
         """
         ret = self._get_attr('APIVersion')
-        return str(ret) 
+        return ret 
 
     @property
     def home_folder(self):
@@ -2763,7 +2763,7 @@ class IVirtualBox(Interface):
         expressly indicated).
         """
         ret = self._get_attr('homeFolder')
-        return str(ret) 
+        return ret 
 
     @property
     def settings_file_path(self):
@@ -2773,7 +2773,7 @@ class IVirtualBox(Interface):
         <link to="#homeFolder"/> plus /VirtualBox.xml.
         """
         ret = self._get_attr('settingsFilePath')
-        return str(ret) 
+        return ret 
 
     @property
     def host(self):
@@ -2809,7 +2809,7 @@ class IVirtualBox(Interface):
         is a valid result).
         """
         ret = self._call_method('getMachineGroups')
-        return [str(a) for a in ret] 
+        return ret 
 
     @property
     def hard_disks(self):
@@ -2912,7 +2912,7 @@ class IVirtualBox(Interface):
         Names of all internal networks.
         """
         ret = self._call_method('getInternalNetworks')
-        return [str(a) for a in ret] 
+        return ret 
 
     @property
     def generic_network_drivers(self):
@@ -2920,7 +2920,7 @@ class IVirtualBox(Interface):
         Names of all generic network drivers.
         """
         ret = self._call_method('getGenericNetworkDrivers')
-        return [str(a) for a in ret] 
+        return ret 
 
     def compose_machine_filename(self, name, group, create_flags, base_folder):
         """Returns a recommended full path of the settings file name for a new virtual
@@ -2987,7 +2987,6 @@ class IVirtualBox(Interface):
             raise TypeError("base_folder can only be an instance of type str")
         file_p = self._call_method('composeMachineFilename',
                      in_p=[name, group, create_flags, base_folder])
-        file_p = str(file_p)
         return file_p
 
     def create_machine(self, settings_file, name, groups, os_type_id, flags):
@@ -3479,7 +3478,6 @@ class IVirtualBox(Interface):
 
         """
         keys = self._call_method('getExtraDataKeys')
-        keys = [str(a) for a in keys]
         return keys
 
     def get_extra_data(self, key):
@@ -3505,7 +3503,6 @@ class IVirtualBox(Interface):
             raise TypeError("key can only be an instance of type str")
         value = self._call_method('getExtraData',
                      in_p=[key])
-        value = str(value)
         return value
 
     def set_extra_data(self, key, value):
@@ -3690,9 +3687,6 @@ class IVirtualBox(Interface):
             raise TypeError("version can only be an instance of type str")
         (url, file_p, result) = self._call_method('checkFirmwarePresent',
                      in_p=[firmware_type, version])
-        url = str(url)
-        file_p = str(file_p)
-        result = bool(result)
         return (url, file_p, result)
 
 
@@ -3712,7 +3706,7 @@ class IVFSExplorer(Interface):
         Returns the current path in the virtual file system.
         """
         ret = self._get_attr('path')
-        return str(ret) 
+        return ret 
 
     @property
     def type_p(self):
@@ -3781,10 +3775,6 @@ class IVFSExplorer(Interface):
 
         """
         (names, types, sizes, modes) = self._call_method('entryList')
-        names = [str(a) for a in names]
-        types = [int(a) for a in types]
-        sizes = [int(a) for a in sizes]
-        modes = [int(a) for a in modes]
         return (names, types, sizes, modes)
 
     def exists(self, names):
@@ -3805,7 +3795,6 @@ class IVFSExplorer(Interface):
                 raise TypeError("array can only contain objects of type str")
         exists = self._call_method('exists',
                      in_p=[names])
-        exists = [str(a) for a in exists]
         return exists
 
     def remove(self, names):
@@ -3915,7 +3904,7 @@ class IAppliance(Interface):
           This attribute is empty until one of these methods has been called.
         """
         ret = self._get_attr('path')
-        return str(ret) 
+        return ret 
 
     @property
     def disks(self):
@@ -3955,7 +3944,7 @@ class IAppliance(Interface):
             Compression (optional string equalling "gzip" if the image is gzip-compressed)
         """
         ret = self._call_method('getDisks')
-        return [str(a) for a in ret] 
+        return ret 
 
     @property
     def virtual_system_descriptions(self):
@@ -3976,7 +3965,7 @@ class IAppliance(Interface):
         succeeded.
         """
         ret = self._call_method('getMachines')
-        return [str(a) for a in ret] 
+        return ret 
 
     def read(self, file_p):
         """Reads an OVF file into the appliance object.
@@ -4112,7 +4101,6 @@ class IAppliance(Interface):
 
         """
         warnings = self._call_method('getWarnings')
-        warnings = [str(a) for a in warnings]
         return warnings
 
 
@@ -4134,7 +4122,7 @@ class IVirtualSystemDescription(Interface):
         Return the number of virtual system description entries.
         """
         ret = self._get_attr('count')
-        return int(ret) 
+        return ret 
 
     def get_description(self):
         """Returns information about the virtual system as arrays of instruction items. In each array, the
@@ -4265,10 +4253,6 @@ class IVirtualSystemDescription(Interface):
         """
         (types, refs, ovf_values, v_box_values, extra_config_values) = self._call_method('getDescription')
         types = [VirtualSystemDescriptionType(a) for a in types]
-        refs = [str(a) for a in refs]
-        ovf_values = [str(a) for a in ovf_values]
-        v_box_values = [str(a) for a in v_box_values]
-        extra_config_values = [str(a) for a in extra_config_values]
         return (types, refs, ovf_values, v_box_values, extra_config_values)
 
     def get_description_by_type(self, type_p):
@@ -4299,10 +4283,6 @@ class IVirtualSystemDescription(Interface):
         (types, refs, ovf_values, v_box_values, extra_config_values) = self._call_method('getDescriptionByType',
                      in_p=[type_p])
         types = [VirtualSystemDescriptionType(a) for a in types]
-        refs = [str(a) for a in refs]
-        ovf_values = [str(a) for a in ovf_values]
-        v_box_values = [str(a) for a in v_box_values]
-        extra_config_values = [str(a) for a in extra_config_values]
         return (types, refs, ovf_values, v_box_values, extra_config_values)
 
     def get_values_by_type(self, type_p, which):
@@ -4326,7 +4306,6 @@ class IVirtualSystemDescription(Interface):
             raise TypeError("which can only be an instance of type VirtualSystemDescriptionValueType")
         values = self._call_method('getValuesByType',
                      in_p=[type_p, which])
-        values = [str(a) for a in values]
         return values
 
     def set_final_values(self, enabled, v_box_values, extra_config_values):
@@ -4442,7 +4421,6 @@ class IInternalMachineControl(Interface):
 
         """
         id_p = self._call_method('getIPCId')
-        id_p = str(id_p)
         return id_p
 
     def begin_power_up(self, progress):
@@ -4535,8 +4513,6 @@ class IInternalMachineControl(Interface):
             raise TypeError("device can only be an instance of type IUSBDevice")
         (matched, masked_interfaces) = self._call_method('runUSBDeviceFilters',
                      in_p=[device])
-        matched = bool(matched)
-        masked_interfaces = int(masked_interfaces)
         return (matched, masked_interfaces)
 
     def capture_usb_device(self, id_p):
@@ -4638,7 +4614,6 @@ class IInternalMachineControl(Interface):
         """
         (progress, state_file_path) = self._call_method('beginSavingState')
         progress = IProgress(progress)
-        state_file_path = str(state_file_path)
         return (progress, state_file_path)
 
     def end_saving_state(self, result, err_msg):
@@ -4730,7 +4705,6 @@ class IInternalMachineControl(Interface):
             raise TypeError("f_taking_snapshot_online can only be an instance of type bool")
         state_file_path = self._call_method('beginTakingSnapshot',
                      in_p=[initiator, name, description, console_progress, f_taking_snapshot_online])
-        state_file_path = str(state_file_path)
         return state_file_path
 
     def end_taking_snapshot(self, success):
@@ -4879,10 +4853,6 @@ class IInternalMachineControl(Interface):
 
         """
         (names, values, timestamps, flags) = self._call_method('pullGuestProperties')
-        names = [str(a) for a in names]
-        values = [str(a) for a in values]
-        timestamps = [int(a) for a in timestamps]
-        flags = [str(a) for a in flags]
         return (names, values, timestamps, flags)
 
     def push_guest_property(self, name, value, timestamp, flags):
@@ -5056,7 +5026,7 @@ class IBIOSSettings(Interface):
         Fade in flag for BIOS logo animation.
         """
         ret = self._get_attr('logoFadeIn')
-        return bool(ret) 
+        return ret 
 
     @logo_fade_in.setter
     def logo_fade_in(self, value):
@@ -5070,7 +5040,7 @@ class IBIOSSettings(Interface):
         Fade out flag for BIOS logo animation.
         """
         ret = self._get_attr('logoFadeOut')
-        return bool(ret) 
+        return ret 
 
     @logo_fade_out.setter
     def logo_fade_out(self, value):
@@ -5084,7 +5054,7 @@ class IBIOSSettings(Interface):
         BIOS logo display time in milliseconds (0 = default).
         """
         ret = self._get_attr('logoDisplayTime')
-        return int(ret) 
+        return ret 
 
     @logo_display_time.setter
     def logo_display_time(self, value):
@@ -5099,7 +5069,7 @@ class IBIOSSettings(Interface):
         means the default image is shown on boot.
         """
         ret = self._get_attr('logoImagePath')
-        return str(ret) 
+        return ret 
 
     @logo_image_path.setter
     def logo_image_path(self, value):
@@ -5127,7 +5097,7 @@ class IBIOSSettings(Interface):
         ACPI support flag.
         """
         ret = self._get_attr('ACPIEnabled')
-        return bool(ret) 
+        return ret 
 
     @acpi_enabled.setter
     def acpi_enabled(self, value):
@@ -5142,7 +5112,7 @@ class IBIOSSettings(Interface):
         and support IRQs above 15.
         """
         ret = self._get_attr('IOAPICEnabled')
-        return bool(ret) 
+        return ret 
 
     @ioapic_enabled.setter
     def ioapic_enabled(self, value):
@@ -5160,7 +5130,7 @@ class IBIOSSettings(Interface):
         time synchronization honors this offset.
         """
         ret = self._get_attr('timeOffset')
-        return int(ret) 
+        return ret 
 
     @time_offset.setter
     def time_offset(self, value):
@@ -5175,7 +5145,7 @@ class IBIOSSettings(Interface):
         PXE trace information to the release log.
         """
         ret = self._get_attr('PXEDebugEnabled')
-        return bool(ret) 
+        return ret 
 
     @pxe_debug_enabled.setter
     def pxe_debug_enabled(self, value):
@@ -5197,7 +5167,7 @@ class IPCIAddress(Interface):
         Bus number.
         """
         ret = self._get_attr('bus')
-        return int(ret) 
+        return ret 
 
     @bus.setter
     def bus(self, value):
@@ -5211,7 +5181,7 @@ class IPCIAddress(Interface):
         Device number.
         """
         ret = self._get_attr('device')
-        return int(ret) 
+        return ret 
 
     @device.setter
     def device(self, value):
@@ -5225,7 +5195,7 @@ class IPCIAddress(Interface):
         Device function number.
         """
         ret = self._get_attr('devFunction')
-        return int(ret) 
+        return ret 
 
     @dev_function.setter
     def dev_function(self, value):
@@ -5240,7 +5210,6 @@ class IPCIAddress(Interface):
 
         """
         result = self._call_method('asLong')
-        result = int(result)
         return result
 
     def from_long(self, number):
@@ -5268,7 +5237,7 @@ class IPCIDeviceAttachment(Interface):
         Device name.
         """
         ret = self._get_attr('name')
-        return str(ret) 
+        return ret 
 
     @property
     def is_physical_device(self):
@@ -5276,7 +5245,7 @@ class IPCIDeviceAttachment(Interface):
         If this is physical or virtual device.
         """
         ret = self._get_attr('isPhysicalDevice')
-        return bool(ret) 
+        return ret 
 
     @property
     def host_address(self):
@@ -5284,7 +5253,7 @@ class IPCIDeviceAttachment(Interface):
         Address of device on the host, applicable only to host devices.
         """
         ret = self._get_attr('hostAddress')
-        return int(ret) 
+        return ret 
 
     @property
     def guest_address(self):
@@ -5292,7 +5261,7 @@ class IPCIDeviceAttachment(Interface):
         Address of device on the guest.
         """
         ret = self._get_attr('guestAddress')
-        return int(ret) 
+        return ret 
 
 
 class IMachine(Interface):
@@ -5385,7 +5354,7 @@ class IMachine(Interface):
           future releases.
         """
         ret = self._get_attr('accessible')
-        return bool(ret) 
+        return ret 
 
     @property
     def access_error(self):
@@ -5441,7 +5410,7 @@ class IMachine(Interface):
         used a generic ".xml" extension.)
         """
         ret = self._get_attr('name')
-        return str(ret) 
+        return ret 
 
     @name.setter
     def name(self, value):
@@ -5460,7 +5429,7 @@ class IMachine(Interface):
         settings, versions of the installed software and so on).
         """
         ret = self._get_attr('description')
-        return str(ret) 
+        return ret 
 
     @description.setter
     def description(self, value):
@@ -5474,7 +5443,7 @@ class IMachine(Interface):
         UUID of the virtual machine.
         """
         ret = self._get_attr('id')
-        return str(ret) 
+        return ret 
 
     @property
     def groups(self):
@@ -5487,7 +5456,7 @@ class IMachine(Interface):
         "/group/subgroup/subsubgroup" is a valid result).
         """
         ret = self._call_method('getGroups')
-        return [str(a) for a in ret] 
+        return ret 
 
     @groups.setter
     def groups(self, value):
@@ -5508,7 +5477,7 @@ class IMachine(Interface):
           installed to the guest OS.
         """
         ret = self._get_attr('OSTypeId')
-        return str(ret) 
+        return ret 
 
     @os_type_id.setter
     def os_type_id(self, value):
@@ -5522,7 +5491,7 @@ class IMachine(Interface):
         Hardware version identifier. Internal use only for now.
         """
         ret = self._get_attr('hardwareVersion')
-        return str(ret) 
+        return ret 
 
     @hardware_version.setter
     def hardware_version(self, value):
@@ -5540,7 +5509,7 @@ class IMachine(Interface):
         cloned or teleported.
         """
         ret = self._get_attr('hardwareUUID')
-        return str(ret) 
+        return ret 
 
     @hardware_uuid.setter
     def hardware_uuid(self, value):
@@ -5554,7 +5523,7 @@ class IMachine(Interface):
         Number of virtual CPUs in the VM.
         """
         ret = self._get_attr('CPUCount')
-        return int(ret) 
+        return ret 
 
     @cpu_count.setter
     def cpu_count(self, value):
@@ -5569,7 +5538,7 @@ class IMachine(Interface):
         hotplugging for this machine.
         """
         ret = self._get_attr('CPUHotPlugEnabled')
-        return bool(ret) 
+        return ret 
 
     @cpu_hot_plug_enabled.setter
     def cpu_hot_plug_enabled(self, value):
@@ -5585,7 +5554,7 @@ class IMachine(Interface):
         is 1 - 100. 100 (the default) implies no limit.
         """
         ret = self._get_attr('CPUExecutionCap')
-        return int(ret) 
+        return ret 
 
     @cpu_execution_cap.setter
     def cpu_execution_cap(self, value):
@@ -5599,7 +5568,7 @@ class IMachine(Interface):
         System memory size in megabytes.
         """
         ret = self._get_attr('memorySize')
-        return int(ret) 
+        return ret 
 
     @memory_size.setter
     def memory_size(self, value):
@@ -5613,7 +5582,7 @@ class IMachine(Interface):
         Memory balloon size in megabytes.
         """
         ret = self._get_attr('memoryBalloonSize')
-        return int(ret) 
+        return ret 
 
     @memory_balloon_size.setter
     def memory_balloon_size(self, value):
@@ -5628,7 +5597,7 @@ class IMachine(Interface):
         fusion for this machine (64-bit hosts only).
         """
         ret = self._get_attr('pageFusionEnabled')
-        return bool(ret) 
+        return ret 
 
     @page_fusion_enabled.setter
     def page_fusion_enabled(self, value):
@@ -5656,7 +5625,7 @@ class IMachine(Interface):
         Video memory size in megabytes.
         """
         ret = self._get_attr('VRAMSize')
-        return int(ret) 
+        return ret 
 
     @vram_size.setter
     def vram_size(self, value):
@@ -5671,7 +5640,7 @@ class IMachine(Interface):
         use of the 3D graphics support available on the host.
         """
         ret = self._get_attr('accelerate3DEnabled')
-        return bool(ret) 
+        return ret 
 
     @accelerate3_d_enabled.setter
     def accelerate3_d_enabled(self, value):
@@ -5686,7 +5655,7 @@ class IMachine(Interface):
         use of the 2D video acceleration support available on the host.
         """
         ret = self._get_attr('accelerate2DVideoEnabled')
-        return bool(ret) 
+        return ret 
 
     @accelerate2_d_video_enabled.setter
     def accelerate2_d_video_enabled(self, value):
@@ -5703,7 +5672,7 @@ class IMachine(Interface):
           Guest Additions installed.
         """
         ret = self._get_attr('monitorCount')
-        return int(ret) 
+        return ret 
 
     @monitor_count.setter
     def monitor_count(self, value):
@@ -5718,7 +5687,7 @@ class IMachine(Interface):
         record VM session.
         """
         ret = self._get_attr('VideoCaptureEnabled')
-        return bool(ret) 
+        return ret 
 
     @video_capture_enabled.setter
     def video_capture_enabled(self, value):
@@ -5733,7 +5702,7 @@ class IMachine(Interface):
         enabled.
         """
         ret = self._call_method('getVideoCaptureScreens')
-        return [bool(a) for a in ret] 
+        return ret 
 
     @video_capture_screens.setter
     def video_capture_screens(self, value):
@@ -5748,7 +5717,7 @@ class IMachine(Interface):
         the recorded content.
         """
         ret = self._get_attr('VideoCaptureFile')
-        return str(ret) 
+        return ret 
 
     @video_capture_file.setter
     def video_capture_file(self, value):
@@ -5762,7 +5731,7 @@ class IMachine(Interface):
         This setting determines the horizontal resolution of the recorded video.
         """
         ret = self._get_attr('VideoCaptureWidth')
-        return int(ret) 
+        return ret 
 
     @video_capture_width.setter
     def video_capture_width(self, value):
@@ -5776,7 +5745,7 @@ class IMachine(Interface):
         This setting determines the vertical resolution of the recorded video.
         """
         ret = self._get_attr('VideoCaptureHeight')
-        return int(ret) 
+        return ret 
 
     @video_capture_height.setter
     def video_capture_height(self, value):
@@ -5792,7 +5761,7 @@ class IMachine(Interface):
         cost of an increased file size.
         """
         ret = self._get_attr('VideoCaptureRate')
-        return int(ret) 
+        return ret 
 
     @video_capture_rate.setter
     def video_capture_rate(self, value):
@@ -5809,7 +5778,7 @@ class IMachine(Interface):
         file size.
         """
         ret = self._get_attr('VideoCaptureFps')
-        return int(ret) 
+        return ret 
 
     @video_capture_fps.setter
     def video_capture_fps(self, value):
@@ -5881,7 +5850,7 @@ class IMachine(Interface):
         Default is false.
         """
         ret = self._get_attr('HPETEnabled')
-        return bool(ret) 
+        return ret 
 
     @hpet_enabled.setter
     def hpet_enabled(self, value):
@@ -5936,7 +5905,7 @@ class IMachine(Interface):
           when necessary.
         """
         ret = self._get_attr('snapshotFolder')
-        return str(ret) 
+        return ret 
 
     @snapshot_folder.setter
     def snapshot_folder(self, value):
@@ -5956,7 +5925,7 @@ class IMachine(Interface):
     def emulated_usb_webcamera_enabled(self):
         """Get or set bool value for 'emulatedUSBWebcameraEnabled'"""
         ret = self._get_attr('emulatedUSBWebcameraEnabled')
-        return bool(ret) 
+        return ret 
 
     @emulated_usb_webcamera_enabled.setter
     def emulated_usb_webcamera_enabled(self, value):
@@ -5968,7 +5937,7 @@ class IMachine(Interface):
     def emulated_usb_card_reader_enabled(self):
         """Get or set bool value for 'emulatedUSBCardReaderEnabled'"""
         ret = self._get_attr('emulatedUSBCardReaderEnabled')
-        return bool(ret) 
+        return ret 
 
     @emulated_usb_card_reader_enabled.setter
     def emulated_usb_card_reader_enabled(self, value):
@@ -6018,7 +5987,7 @@ class IMachine(Interface):
         Full name of the file containing machine settings data.
         """
         ret = self._get_attr('settingsFilePath')
-        return str(ret) 
+        return ret 
 
     @property
     def settings_modified(self):
@@ -6042,7 +6011,7 @@ class IMachine(Interface):
           the value is set to @c false (and then follows to normal rules).
         """
         ret = self._get_attr('settingsModified')
-        return bool(ret) 
+        return ret 
 
     @property
     def session_state(self):
@@ -6065,7 +6034,7 @@ class IMachine(Interface):
         attribute is an empty string.
         """
         ret = self._get_attr('sessionType')
-        return str(ret) 
+        return ret 
 
     @property
     def session_pid(self):
@@ -6077,7 +6046,7 @@ class IMachine(Interface):
         Unlocking by the time this property is read.
         """
         ret = self._get_attr('sessionPID')
-        return int(ret) 
+        return ret 
 
     @property
     def state(self):
@@ -6094,7 +6063,7 @@ class IMachine(Interface):
         in milliseconds since 1970-01-01 UTC.
         """
         ret = self._get_attr('lastStateChange')
-        return int(ret) 
+        return ret 
 
     @property
     def state_file_path(self):
@@ -6106,7 +6075,7 @@ class IMachine(Interface):
           an empty string.
         """
         ret = self._get_attr('stateFilePath')
-        return str(ret) 
+        return ret 
 
     @property
     def log_folder(self):
@@ -6118,7 +6087,7 @@ class IMachine(Interface):
         in the current version).
         """
         ret = self._get_attr('logFolder')
-        return str(ret) 
+        return ret 
 
     @property
     def current_snapshot(self):
@@ -6140,7 +6109,7 @@ class IMachine(Interface):
         machine doesn't have any snapshots.
         """
         ret = self._get_attr('snapshotCount')
-        return int(ret) 
+        return ret 
 
     @property
     def current_state_modified(self):
@@ -6174,7 +6143,7 @@ class IMachine(Interface):
           always @c false.
         """
         ret = self._get_attr('currentStateModified')
-        return bool(ret) 
+        return ret 
 
     @property
     def shared_folders(self):
@@ -6227,7 +6196,7 @@ class IMachine(Interface):
         <link to="IGuestPropertyChangedEvent"/> signal.
         """
         ret = self._get_attr('guestPropertyNotificationPatterns')
-        return str(ret) 
+        return ret 
 
     @guest_property_notification_patterns.setter
     def guest_property_notification_patterns(self, value):
@@ -6246,7 +6215,7 @@ class IMachine(Interface):
         on. (bird: This doesn't work yet ) -->
         """
         ret = self._get_attr('teleporterEnabled')
-        return bool(ret) 
+        return ret 
 
     @teleporter_enabled.setter
     def teleporter_enabled(self, value):
@@ -6265,7 +6234,7 @@ class IMachine(Interface):
         incoming teleportations.
         """
         ret = self._get_attr('teleporterPort')
-        return int(ret) 
+        return ret 
 
     @teleporter_port.setter
     def teleporter_port(self, value):
@@ -6280,7 +6249,7 @@ class IMachine(Interface):
         string, it will listen on all addresses.
         """
         ret = self._get_attr('teleporterAddress')
-        return str(ret) 
+        return ret 
 
     @teleporter_address.setter
     def teleporter_address(self, value):
@@ -6299,7 +6268,7 @@ class IMachine(Interface):
         password. Setting a hashed password is currently not supported.
         """
         ret = self._get_attr('teleporterPassword')
-        return str(ret) 
+        return ret 
 
     @teleporter_password.setter
     def teleporter_password(self, value):
@@ -6330,7 +6299,7 @@ class IMachine(Interface):
         communication.
         """
         ret = self._get_attr('faultTolerancePort')
-        return int(ret) 
+        return ret 
 
     @fault_tolerance_port.setter
     def fault_tolerance_port(self, value):
@@ -6344,7 +6313,7 @@ class IMachine(Interface):
         The address the fault tolerance source or target.
         """
         ret = self._get_attr('faultToleranceAddress')
-        return str(ret) 
+        return ret 
 
     @fault_tolerance_address.setter
     def fault_tolerance_address(self, value):
@@ -6360,7 +6329,7 @@ class IMachine(Interface):
         choosing the wrong standby VM.
         """
         ret = self._get_attr('faultTolerancePassword')
-        return str(ret) 
+        return ret 
 
     @fault_tolerance_password.setter
     def fault_tolerance_password(self, value):
@@ -6374,7 +6343,7 @@ class IMachine(Interface):
         The interval in ms used for syncing the state between source and target.
         """
         ret = self._get_attr('faultToleranceSyncInterval')
-        return int(ret) 
+        return ret 
 
     @fault_tolerance_sync_interval.setter
     def fault_tolerance_sync_interval(self, value):
@@ -6390,7 +6359,7 @@ class IMachine(Interface):
         the time in UTC.
         """
         ret = self._get_attr('RTCUseUTC')
-        return bool(ret) 
+        return ret 
 
     @rtc_use_utc.setter
     def rtc_use_utc(self, value):
@@ -6405,7 +6374,7 @@ class IMachine(Interface):
         will be enabled.
         """
         ret = self._get_attr('IOCacheEnabled')
-        return bool(ret) 
+        return ret 
 
     @io_cache_enabled.setter
     def io_cache_enabled(self, value):
@@ -6419,7 +6388,7 @@ class IMachine(Interface):
         Maximum size of the I/O cache in MB.
         """
         ret = self._get_attr('IOCacheSize')
-        return int(ret) 
+        return ret 
 
     @io_cache_size.setter
     def io_cache_size(self, value):
@@ -6457,7 +6426,7 @@ class IMachine(Interface):
         always enabled.
         """
         ret = self._get_attr('tracingEnabled')
-        return bool(ret) 
+        return ret 
 
     @tracing_enabled.setter
     def tracing_enabled(self, value):
@@ -6480,7 +6449,7 @@ class IMachine(Interface):
         example.
         """
         ret = self._get_attr('tracingConfig')
-        return str(ret) 
+        return ret 
 
     @tracing_config.setter
     def tracing_config(self, value):
@@ -6501,7 +6470,7 @@ class IMachine(Interface):
         to get any pointers to these.
         """
         ret = self._get_attr('allowTracingToAccessVM')
-        return bool(ret) 
+        return ret 
 
     @allow_tracing_to_access_vm.setter
     def allow_tracing_to_access_vm(self, value):
@@ -6515,7 +6484,7 @@ class IMachine(Interface):
         Enables autostart of the VM during system boot.
         """
         ret = self._get_attr('autostartEnabled')
-        return bool(ret) 
+        return ret 
 
     @autostart_enabled.setter
     def autostart_enabled(self, value):
@@ -6529,7 +6498,7 @@ class IMachine(Interface):
         Number of seconds to wait until the VM should be started during system boot.
         """
         ret = self._get_attr('autostartDelay')
-        return int(ret) 
+        return ret 
 
     @autostart_delay.setter
     def autostart_delay(self, value):
@@ -6567,7 +6536,7 @@ class IMachine(Interface):
         <link to="IMachine::launchVMProcess"/>.
         """
         ret = self._get_attr('defaultFrontend')
-        return str(ret) 
+        return ret 
 
     @default_frontend.setter
     def default_frontend(self, value):
@@ -7808,7 +7777,6 @@ class IMachine(Interface):
 
         """
         keys = self._call_method('getExtraDataKeys')
-        keys = [str(a) for a in keys]
         return keys
 
     def get_extra_data(self, key):
@@ -7834,7 +7802,6 @@ class IMachine(Interface):
             raise TypeError("key can only be an instance of type str")
         value = self._call_method('getExtraData',
                      in_p=[key])
-        value = str(value)
         return value
 
     def set_extra_data(self, key, value):
@@ -7898,7 +7865,6 @@ class IMachine(Interface):
             raise TypeError("property_p can only be an instance of type CPUPropertyType")
         value = self._call_method('getCPUProperty',
                      in_p=[property_p])
-        value = bool(value)
         return value
 
     def set_cpu_property(self, property_p, value):
@@ -7954,10 +7920,6 @@ class IMachine(Interface):
             raise TypeError("id_p can only be an instance of type int")
         (val_eax, val_ebx, val_ecx, val_edx) = self._call_method('getCPUIDLeaf',
                      in_p=[id_p])
-        val_eax = int(val_eax)
-        val_ebx = int(val_ebx)
-        val_ecx = int(val_ecx)
-        val_edx = int(val_edx)
         return (val_eax, val_ebx, val_ecx, val_edx)
 
     def set_cpuid_leaf(self, id_p, val_eax, val_ebx, val_ecx, val_edx):
@@ -8044,7 +8006,6 @@ class IMachine(Interface):
             raise TypeError("property_p can only be an instance of type HWVirtExPropertyType")
         value = self._call_method('getHWVirtExProperty',
                      in_p=[property_p])
-        value = bool(value)
         return value
 
     def set_hw_virt_ex_property(self, property_p, value):
@@ -8380,7 +8341,6 @@ class IMachine(Interface):
         
         """
         can_show = self._call_method('canShowConsoleWindow')
-        can_show = bool(can_show)
         return can_show
 
     def show_console_window(self):
@@ -8410,7 +8370,6 @@ class IMachine(Interface):
         
         """
         win_id = self._call_method('showConsoleWindow')
-        win_id = int(win_id)
         return win_id
 
     def get_guest_property(self, name):
@@ -8439,9 +8398,6 @@ class IMachine(Interface):
             raise TypeError("name can only be an instance of type str")
         (value, timestamp, flags) = self._call_method('getGuestProperty',
                      in_p=[name])
-        value = str(value)
-        timestamp = int(timestamp)
-        flags = str(flags)
         return (value, timestamp, flags)
 
     def get_guest_property_value(self, property_p):
@@ -8462,7 +8418,6 @@ class IMachine(Interface):
             raise TypeError("property_p can only be an instance of type str")
         value = self._call_method('getGuestPropertyValue',
                      in_p=[property_p])
-        value = str(value)
         return value
 
     def get_guest_property_timestamp(self, property_p):
@@ -8483,7 +8438,6 @@ class IMachine(Interface):
             raise TypeError("property_p can only be an instance of type str")
         value = self._call_method('getGuestPropertyTimestamp',
                      in_p=[property_p])
-        value = int(value)
         return value
 
     def set_guest_property(self, property_p, value, flags):
@@ -8598,10 +8552,6 @@ class IMachine(Interface):
             raise TypeError("patterns can only be an instance of type str")
         (names, values, timestamps, flags) = self._call_method('enumerateGuestProperties',
                      in_p=[patterns])
-        names = [str(a) for a in names]
-        values = [str(a) for a in values]
-        timestamps = [int(a) for a in timestamps]
-        flags = [str(a) for a in flags]
         return (names, values, timestamps, flags)
 
     def query_saved_guest_screen_info(self, screen_id):
@@ -8630,11 +8580,6 @@ class IMachine(Interface):
             raise TypeError("screen_id can only be an instance of type int")
         (origin_x, origin_y, width, height, enabled) = self._call_method('querySavedGuestScreenInfo',
                      in_p=[screen_id])
-        origin_x = int(origin_x)
-        origin_y = int(origin_y)
-        width = int(width)
-        height = int(height)
-        enabled = bool(enabled)
         return (origin_x, origin_y, width, height, enabled)
 
     def query_saved_thumbnail_size(self, screen_id):
@@ -8657,9 +8602,6 @@ class IMachine(Interface):
             raise TypeError("screen_id can only be an instance of type int")
         (size, width, height) = self._call_method('querySavedThumbnailSize',
                      in_p=[screen_id])
-        size = int(size)
-        width = int(width)
-        height = int(height)
         return (size, width, height)
 
     def read_saved_thumbnail_to_array(self, screen_id, bgr):
@@ -8688,9 +8630,6 @@ class IMachine(Interface):
             raise TypeError("bgr can only be an instance of type bool")
         (width, height, data) = self._call_method('readSavedThumbnailToArray',
                      in_p=[screen_id, bgr])
-        width = int(width)
-        height = int(height)
-        data = [str(a) for a in data]
         return (width, height, data)
 
     def read_saved_thumbnail_png_to_array(self, screen_id):
@@ -8713,9 +8652,6 @@ class IMachine(Interface):
             raise TypeError("screen_id can only be an instance of type int")
         (width, height, data) = self._call_method('readSavedThumbnailPNGToArray',
                      in_p=[screen_id])
-        width = int(width)
-        height = int(height)
-        data = [str(a) for a in data]
         return (width, height, data)
 
     def query_saved_screenshot_png_size(self, screen_id):
@@ -8738,9 +8674,6 @@ class IMachine(Interface):
             raise TypeError("screen_id can only be an instance of type int")
         (size, width, height) = self._call_method('querySavedScreenshotPNGSize',
                      in_p=[screen_id])
-        size = int(size)
-        width = int(width)
-        height = int(height)
         return (size, width, height)
 
     def read_saved_screenshot_png_to_array(self, screen_id):
@@ -8763,9 +8696,6 @@ class IMachine(Interface):
             raise TypeError("screen_id can only be an instance of type int")
         (width, height, data) = self._call_method('readSavedScreenshotPNGToArray',
                      in_p=[screen_id])
-        width = int(width)
-        height = int(height)
-        data = [str(a) for a in data]
         return (width, height, data)
 
     def hot_plug_cpu(self, cpu):
@@ -8806,7 +8736,6 @@ class IMachine(Interface):
             raise TypeError("cpu can only be an instance of type int")
         attached = self._call_method('getCPUStatus',
                      in_p=[cpu])
-        attached = bool(attached)
         return attached
 
     def query_log_filename(self, idx):
@@ -8824,7 +8753,6 @@ class IMachine(Interface):
             raise TypeError("idx can only be an instance of type int")
         filename = self._call_method('queryLogFilename',
                      in_p=[idx])
-        filename = str(filename)
         return filename
 
     def read_log(self, idx, offset, size):
@@ -8855,7 +8783,6 @@ class IMachine(Interface):
             raise TypeError("size can only be an instance of type int")
         data = self._call_method('readLog',
                      in_p=[idx, offset, size])
-        data = [str(a) for a in data]
         return data
 
     def clone_to(self, target, mode, options):
@@ -8917,7 +8844,7 @@ class IVRDEServerInfo(Interface):
         Whether the remote desktop connection is active.
         """
         ret = self._get_attr('active')
-        return bool(ret) 
+        return ret 
 
     @property
     def port(self):
@@ -8928,7 +8855,7 @@ class IVRDEServerInfo(Interface):
         server has not yet been started.
         """
         ret = self._get_attr('port')
-        return int(ret) 
+        return ret 
 
     @property
     def number_of_clients(self):
@@ -8936,7 +8863,7 @@ class IVRDEServerInfo(Interface):
         How many times a client connected.
         """
         ret = self._get_attr('numberOfClients')
-        return int(ret) 
+        return ret 
 
     @property
     def begin_time(self):
@@ -8944,7 +8871,7 @@ class IVRDEServerInfo(Interface):
         When the last connection was established, in milliseconds since 1970-01-01 UTC.
         """
         ret = self._get_attr('beginTime')
-        return int(ret) 
+        return ret 
 
     @property
     def end_time(self):
@@ -8953,7 +8880,7 @@ class IVRDEServerInfo(Interface):
         connection is still active, in milliseconds since 1970-01-01 UTC.
         """
         ret = self._get_attr('endTime')
-        return int(ret) 
+        return ret 
 
     @property
     def bytes_sent(self):
@@ -8961,7 +8888,7 @@ class IVRDEServerInfo(Interface):
         How many bytes were sent in last or current, if still active, connection.
         """
         ret = self._get_attr('bytesSent')
-        return int(ret) 
+        return ret 
 
     @property
     def bytes_sent_total(self):
@@ -8969,7 +8896,7 @@ class IVRDEServerInfo(Interface):
         How many bytes were sent in all connections.
         """
         ret = self._get_attr('bytesSentTotal')
-        return int(ret) 
+        return ret 
 
     @property
     def bytes_received(self):
@@ -8977,7 +8904,7 @@ class IVRDEServerInfo(Interface):
         How many bytes were received in last or current, if still active, connection.
         """
         ret = self._get_attr('bytesReceived')
-        return int(ret) 
+        return ret 
 
     @property
     def bytes_received_total(self):
@@ -8985,7 +8912,7 @@ class IVRDEServerInfo(Interface):
         How many bytes were received in all connections.
         """
         ret = self._get_attr('bytesReceivedTotal')
-        return int(ret) 
+        return ret 
 
     @property
     def user(self):
@@ -8993,7 +8920,7 @@ class IVRDEServerInfo(Interface):
         Login user name supplied by the client.
         """
         ret = self._get_attr('user')
-        return str(ret) 
+        return ret 
 
     @property
     def domain(self):
@@ -9001,7 +8928,7 @@ class IVRDEServerInfo(Interface):
         Login domain name supplied by the client.
         """
         ret = self._get_attr('domain')
-        return str(ret) 
+        return ret 
 
     @property
     def client_name(self):
@@ -9009,7 +8936,7 @@ class IVRDEServerInfo(Interface):
         The client name supplied by the client.
         """
         ret = self._get_attr('clientName')
-        return str(ret) 
+        return ret 
 
     @property
     def client_ip(self):
@@ -9017,7 +8944,7 @@ class IVRDEServerInfo(Interface):
         The IP address of the client.
         """
         ret = self._get_attr('clientIP')
-        return str(ret) 
+        return ret 
 
     @property
     def client_version(self):
@@ -9025,7 +8952,7 @@ class IVRDEServerInfo(Interface):
         The client software version number.
         """
         ret = self._get_attr('clientVersion')
-        return int(ret) 
+        return ret 
 
     @property
     def encryption_style(self):
@@ -9035,7 +8962,7 @@ class IVRDEServerInfo(Interface):
         1 - X509 certificates were sent to client.
         """
         ret = self._get_attr('encryptionStyle')
-        return int(ret) 
+        return ret 
 
 
 class IConsole(Interface):
@@ -9205,7 +9132,7 @@ class IConsole(Interface):
         are already connected to the host clipboard.
         """
         ret = self._get_attr('useHostClipboard')
-        return bool(ret) 
+        return ret 
 
     @use_host_clipboard.setter
     def use_host_clipboard(self, value):
@@ -9379,7 +9306,6 @@ class IConsole(Interface):
         
         """
         handled = self._call_method('getPowerButtonHandled')
-        handled = bool(handled)
         return handled
 
     def get_guest_entered_acpi_mode(self):
@@ -9394,7 +9320,6 @@ class IConsole(Interface):
         
         """
         entered = self._call_method('getGuestEnteredACPIMode')
-        entered = bool(entered)
         return entered
 
     def save_state(self):
@@ -9995,7 +9920,7 @@ class IHostNetworkInterface(Interface):
         Returns the host network interface name.
         """
         ret = self._get_attr('name')
-        return str(ret) 
+        return ret 
 
     @property
     def id_p(self):
@@ -10003,7 +9928,7 @@ class IHostNetworkInterface(Interface):
         Returns the interface UUID.
         """
         ret = self._get_attr('id')
-        return str(ret) 
+        return ret 
 
     @property
     def network_name(self):
@@ -10011,7 +9936,7 @@ class IHostNetworkInterface(Interface):
         Returns the name of a virtual network the interface gets attached to.
         """
         ret = self._get_attr('networkName')
-        return str(ret) 
+        return ret 
 
     @property
     def dhcp_enabled(self):
@@ -10019,7 +9944,7 @@ class IHostNetworkInterface(Interface):
         Specifies whether the DHCP is enabled for the interface.
         """
         ret = self._get_attr('DHCPEnabled')
-        return bool(ret) 
+        return ret 
 
     @property
     def ip_address(self):
@@ -10027,7 +9952,7 @@ class IHostNetworkInterface(Interface):
         Returns the IP V4 address of the interface.
         """
         ret = self._get_attr('IPAddress')
-        return str(ret) 
+        return ret 
 
     @property
     def network_mask(self):
@@ -10035,7 +9960,7 @@ class IHostNetworkInterface(Interface):
         Returns the network mask of the interface.
         """
         ret = self._get_attr('networkMask')
-        return str(ret) 
+        return ret 
 
     @property
     def ipv6_supported(self):
@@ -10043,7 +9968,7 @@ class IHostNetworkInterface(Interface):
         Specifies whether the IP V6 is supported/enabled for the interface.
         """
         ret = self._get_attr('IPV6Supported')
-        return bool(ret) 
+        return ret 
 
     @property
     def ipv6_address(self):
@@ -10051,7 +9976,7 @@ class IHostNetworkInterface(Interface):
         Returns the IP V6 address of the interface.
         """
         ret = self._get_attr('IPV6Address')
-        return str(ret) 
+        return ret 
 
     @property
     def ipv6_network_mask_prefix_length(self):
@@ -10059,7 +9984,7 @@ class IHostNetworkInterface(Interface):
         Returns the length IP V6 network mask prefix of the interface.
         """
         ret = self._get_attr('IPV6NetworkMaskPrefixLength')
-        return int(ret) 
+        return ret 
 
     @property
     def hardware_address(self):
@@ -10067,7 +9992,7 @@ class IHostNetworkInterface(Interface):
         Returns the hardware address. For Ethernet it is MAC address.
         """
         ret = self._get_attr('hardwareAddress')
-        return str(ret) 
+        return ret 
 
     @property
     def medium_type(self):
@@ -10224,7 +10149,7 @@ class IHost(Interface):
         Number of (logical) CPUs installed in the host system.
         """
         ret = self._get_attr('processorCount')
-        return int(ret) 
+        return ret 
 
     @property
     def processor_online_count(self):
@@ -10232,7 +10157,7 @@ class IHost(Interface):
         Number of (logical) CPUs online in the host system.
         """
         ret = self._get_attr('processorOnlineCount')
-        return int(ret) 
+        return ret 
 
     @property
     def processor_core_count(self):
@@ -10240,7 +10165,7 @@ class IHost(Interface):
         Number of physical processor cores installed in the host system.
         """
         ret = self._get_attr('processorCoreCount')
-        return int(ret) 
+        return ret 
 
     def get_processor_speed(self, cpu_id):
         """Query the (approximate) maximum speed of a specified host CPU in
@@ -10258,7 +10183,6 @@ class IHost(Interface):
             raise TypeError("cpu_id can only be an instance of type int")
         speed = self._call_method('getProcessorSpeed',
                      in_p=[cpu_id])
-        speed = int(speed)
         return speed
 
     def get_processor_feature(self, feature):
@@ -10275,7 +10199,6 @@ class IHost(Interface):
             raise TypeError("feature can only be an instance of type ProcessorFeature")
         supported = self._call_method('getProcessorFeature',
                      in_p=[feature])
-        supported = bool(supported)
         return supported
 
     def get_processor_description(self, cpu_id):
@@ -10296,7 +10219,6 @@ class IHost(Interface):
             raise TypeError("cpu_id can only be an instance of type int")
         description = self._call_method('getProcessorDescription',
                      in_p=[cpu_id])
-        description = str(description)
         return description
 
     def get_processor_cpuid_leaf(self, cpu_id, leaf, sub_leaf):
@@ -10337,10 +10259,6 @@ class IHost(Interface):
             raise TypeError("sub_leaf can only be an instance of type int")
         (val_eax, val_ebx, val_ecx, val_edx) = self._call_method('getProcessorCPUIDLeaf',
                      in_p=[cpu_id, leaf, sub_leaf])
-        val_eax = int(val_eax)
-        val_ebx = int(val_ebx)
-        val_ecx = int(val_ecx)
-        val_edx = int(val_edx)
         return (val_eax, val_ebx, val_ecx, val_edx)
 
     @property
@@ -10349,7 +10267,7 @@ class IHost(Interface):
         Amount of system memory in megabytes installed in the host system.
         """
         ret = self._get_attr('memorySize')
-        return int(ret) 
+        return ret 
 
     @property
     def memory_available(self):
@@ -10357,7 +10275,7 @@ class IHost(Interface):
         Available system memory in the host system.
         """
         ret = self._get_attr('memoryAvailable')
-        return int(ret) 
+        return ret 
 
     @property
     def operating_system(self):
@@ -10365,7 +10283,7 @@ class IHost(Interface):
         Name of the host system's operating system.
         """
         ret = self._get_attr('operatingSystem')
-        return str(ret) 
+        return ret 
 
     @property
     def os_version(self):
@@ -10373,7 +10291,7 @@ class IHost(Interface):
         Host operating system's version string.
         """
         ret = self._get_attr('OSVersion')
-        return str(ret) 
+        return ret 
 
     @property
     def utc_time(self):
@@ -10381,7 +10299,7 @@ class IHost(Interface):
         Returns the current host time in milliseconds since 1970-01-01 UTC.
         """
         ret = self._get_attr('UTCTime')
-        return int(ret) 
+        return ret 
 
     @property
     def acceleration3_d_available(self):
@@ -10389,7 +10307,7 @@ class IHost(Interface):
         Returns @c true when the host supports 3D hardware acceleration.
         """
         ret = self._get_attr('acceleration3DAvailable')
-        return bool(ret) 
+        return ret 
 
     def create_host_only_network_interface(self):
         """Creates a new adapter for Host Only Networking.
@@ -10675,7 +10593,6 @@ class IHost(Interface):
 
         """
         address = self._call_method('generateMACAddress')
-        address = str(address)
         return address
 
 
@@ -10697,7 +10614,7 @@ class ISystemProperties(Interface):
         Minimum guest system memory in Megabytes.
         """
         ret = self._get_attr('minGuestRAM')
-        return int(ret) 
+        return ret 
 
     @property
     def max_guest_ram(self):
@@ -10705,7 +10622,7 @@ class ISystemProperties(Interface):
         Maximum guest system memory in Megabytes.
         """
         ret = self._get_attr('maxGuestRAM')
-        return int(ret) 
+        return ret 
 
     @property
     def min_guest_vram(self):
@@ -10713,7 +10630,7 @@ class ISystemProperties(Interface):
         Minimum guest video memory in Megabytes.
         """
         ret = self._get_attr('minGuestVRAM')
-        return int(ret) 
+        return ret 
 
     @property
     def max_guest_vram(self):
@@ -10721,7 +10638,7 @@ class ISystemProperties(Interface):
         Maximum guest video memory in Megabytes.
         """
         ret = self._get_attr('maxGuestVRAM')
-        return int(ret) 
+        return ret 
 
     @property
     def min_guest_cpu_count(self):
@@ -10729,7 +10646,7 @@ class ISystemProperties(Interface):
         Minimum CPU count.
         """
         ret = self._get_attr('minGuestCPUCount')
-        return int(ret) 
+        return ret 
 
     @property
     def max_guest_cpu_count(self):
@@ -10737,7 +10654,7 @@ class ISystemProperties(Interface):
         Maximum CPU count.
         """
         ret = self._get_attr('maxGuestCPUCount')
-        return int(ret) 
+        return ret 
 
     @property
     def max_guest_monitors(self):
@@ -10745,7 +10662,7 @@ class ISystemProperties(Interface):
         Maximum of monitors which could be connected.
         """
         ret = self._get_attr('maxGuestMonitors')
-        return int(ret) 
+        return ret 
 
     @property
     def info_vd_size(self):
@@ -10754,7 +10671,7 @@ class ISystemProperties(Interface):
       does not reflect the limits of any virtual disk image format.
         """
         ret = self._get_attr('infoVDSize')
-        return int(ret) 
+        return ret 
 
     @property
     def serial_port_count(self):
@@ -10763,7 +10680,7 @@ class ISystemProperties(Interface):
         <link to="IMachine"/> instance.
         """
         ret = self._get_attr('serialPortCount')
-        return int(ret) 
+        return ret 
 
     @property
     def parallel_port_count(self):
@@ -10772,7 +10689,7 @@ class ISystemProperties(Interface):
         <link to="IMachine"/> instance.
         """
         ret = self._get_attr('parallelPortCount')
-        return int(ret) 
+        return ret 
 
     @property
     def max_boot_position(self):
@@ -10783,7 +10700,7 @@ class ISystemProperties(Interface):
         <link to="IMachine::setBootOrder"/>
         """
         ret = self._get_attr('maxBootPosition')
-        return int(ret) 
+        return ret 
 
     @property
     def default_machine_folder(self):
@@ -10809,7 +10726,7 @@ class ISystemProperties(Interface):
           <link to="IVirtualBox::openMachine"/>
         """
         ret = self._get_attr('defaultMachineFolder')
-        return str(ret) 
+        return ret 
 
     @default_machine_folder.setter
     def default_machine_folder(self, value):
@@ -10877,7 +10794,7 @@ class ISystemProperties(Interface):
           <link to="IVirtualBox::createHardDisk"/>
         """
         ret = self._get_attr('defaultHardDiskFormat')
-        return str(ret) 
+        return ret 
 
     @default_hard_disk_format.setter
     def default_hard_disk_format(self, value):
@@ -10893,7 +10810,7 @@ class ISystemProperties(Interface):
       bytes.
         """
         ret = self._get_attr('freeDiskSpaceWarning')
-        return int(ret) 
+        return ret 
 
     @free_disk_space_warning.setter
     def free_disk_space_warning(self, value):
@@ -10908,7 +10825,7 @@ class ISystemProperties(Interface):
       intensive operation is expected to go below) the given percentage.
         """
         ret = self._get_attr('freeDiskSpacePercentWarning')
-        return int(ret) 
+        return ret 
 
     @free_disk_space_percent_warning.setter
     def free_disk_space_percent_warning(self, value):
@@ -10924,7 +10841,7 @@ class ISystemProperties(Interface):
       bytes.
         """
         ret = self._get_attr('freeDiskSpaceError')
-        return int(ret) 
+        return ret 
 
     @free_disk_space_error.setter
     def free_disk_space_error(self, value):
@@ -10939,7 +10856,7 @@ class ISystemProperties(Interface):
       intensive operation is expected to go below) the given percentage.
         """
         ret = self._get_attr('freeDiskSpacePercentError')
-        return int(ret) 
+        return ret 
 
     @free_disk_space_percent_error.setter
     def free_disk_space_percent_error(self, value):
@@ -10969,7 +10886,7 @@ class ISystemProperties(Interface):
           initial value.
         """
         ret = self._get_attr('VRDEAuthLibrary')
-        return str(ret) 
+        return ret 
 
     @vrde_auth_library.setter
     def vrde_auth_library(self, value):
@@ -11004,7 +10921,7 @@ class ISystemProperties(Interface):
           initial value.
         """
         ret = self._get_attr('webServiceAuthLibrary')
-        return str(ret) 
+        return ret 
 
     @web_service_auth_library.setter
     def web_service_auth_library(self, value):
@@ -11026,7 +10943,7 @@ class ISystemProperties(Interface):
         implement one, please refer to the VirtualBox SDK.
         """
         ret = self._get_attr('defaultVRDEExtPack')
-        return str(ret) 
+        return ret 
 
     @default_vrde_ext_pack.setter
     def default_vrde_ext_pack(self, value):
@@ -11040,7 +10957,7 @@ class ISystemProperties(Interface):
         This value specifies how many old release log files are kept.
         """
         ret = self._get_attr('logHistoryCount')
-        return int(ret) 
+        return ret 
 
     @log_history_count.setter
     def log_history_count(self, value):
@@ -11064,7 +10981,7 @@ class ISystemProperties(Interface):
         be a filesystem path or something else.
         """
         ret = self._get_attr('autostartDatabasePath')
-        return str(ret) 
+        return ret 
 
     @autostart_database_path.setter
     def autostart_database_path(self, value):
@@ -11079,7 +10996,7 @@ class ISystemProperties(Interface):
         the location is not known in this installation.
         """
         ret = self._get_attr('defaultAdditionsISO')
-        return str(ret) 
+        return ret 
 
     @default_additions_iso.setter
     def default_additions_iso(self, value):
@@ -11102,7 +11019,7 @@ class ISystemProperties(Interface):
         passed to <link to="IMachine::launchVMProcess"/>.
         """
         ret = self._get_attr('defaultFrontend')
-        return str(ret) 
+        return ret 
 
     @default_frontend.setter
     def default_frontend(self, value):
@@ -11125,7 +11042,6 @@ class ISystemProperties(Interface):
             raise TypeError("chipset can only be an instance of type ChipsetType")
         max_network_adapters = self._call_method('getMaxNetworkAdapters',
                      in_p=[chipset])
-        max_network_adapters = int(max_network_adapters)
         return max_network_adapters
 
     def get_max_network_adapters_of_type(self, chipset, type_p):
@@ -11149,7 +11065,6 @@ class ISystemProperties(Interface):
             raise TypeError("type_p can only be an instance of type NetworkAttachmentType")
         max_network_adapters = self._call_method('getMaxNetworkAdaptersOfType',
                      in_p=[chipset, type_p])
-        max_network_adapters = int(max_network_adapters)
         return max_network_adapters
 
     def get_max_devices_per_port_for_storage_bus(self, bus):
@@ -11168,7 +11083,6 @@ class ISystemProperties(Interface):
             raise TypeError("bus can only be an instance of type StorageBus")
         max_devices_per_port = self._call_method('getMaxDevicesPerPortForStorageBus',
                      in_p=[bus])
-        max_devices_per_port = int(max_devices_per_port)
         return max_devices_per_port
 
     def get_min_port_count_for_storage_bus(self, bus):
@@ -11185,7 +11099,6 @@ class ISystemProperties(Interface):
             raise TypeError("bus can only be an instance of type StorageBus")
         min_port_count = self._call_method('getMinPortCountForStorageBus',
                      in_p=[bus])
-        min_port_count = int(min_port_count)
         return min_port_count
 
     def get_max_port_count_for_storage_bus(self, bus):
@@ -11202,7 +11115,6 @@ class ISystemProperties(Interface):
             raise TypeError("bus can only be an instance of type StorageBus")
         max_port_count = self._call_method('getMaxPortCountForStorageBus',
                      in_p=[bus])
-        max_port_count = int(max_port_count)
         return max_port_count
 
     def get_max_instances_of_storage_bus(self, chipset, bus):
@@ -11227,7 +11139,6 @@ class ISystemProperties(Interface):
             raise TypeError("bus can only be an instance of type StorageBus")
         max_instances = self._call_method('getMaxInstancesOfStorageBus',
                      in_p=[chipset, bus])
-        max_instances = int(max_instances)
         return max_instances
 
     def get_device_types_for_storage_bus(self, bus):
@@ -11264,7 +11175,6 @@ class ISystemProperties(Interface):
             raise TypeError("controller_type can only be an instance of type StorageControllerType")
         enabled = self._call_method('getDefaultIoCacheSettingForStorageController',
                      in_p=[controller_type])
-        enabled = bool(enabled)
         return enabled
 
 
@@ -11279,7 +11189,7 @@ class IGuestOSType(Interface):
         Guest OS family identifier string.
         """
         ret = self._get_attr('familyId')
-        return str(ret) 
+        return ret 
 
     @property
     def family_description(self):
@@ -11287,7 +11197,7 @@ class IGuestOSType(Interface):
         Human readable description of the guest OS family.
         """
         ret = self._get_attr('familyDescription')
-        return str(ret) 
+        return ret 
 
     @property
     def id_p(self):
@@ -11295,7 +11205,7 @@ class IGuestOSType(Interface):
         Guest OS identifier string.
         """
         ret = self._get_attr('id')
-        return str(ret) 
+        return ret 
 
     @property
     def description(self):
@@ -11303,7 +11213,7 @@ class IGuestOSType(Interface):
         Human readable description of the guest OS.
         """
         ret = self._get_attr('description')
-        return str(ret) 
+        return ret 
 
     @property
     def is64_bit(self):
@@ -11311,7 +11221,7 @@ class IGuestOSType(Interface):
         Returns @c true if the given OS is 64-bit
         """
         ret = self._get_attr('is64Bit')
-        return bool(ret) 
+        return ret 
 
     @property
     def recommended_ioapic(self):
@@ -11319,7 +11229,7 @@ class IGuestOSType(Interface):
         Returns @c true if IO APIC recommended for this OS type.
         """
         ret = self._get_attr('recommendedIOAPIC')
-        return bool(ret) 
+        return ret 
 
     @property
     def recommended_virt_ex(self):
@@ -11327,7 +11237,7 @@ class IGuestOSType(Interface):
         Returns @c true if VT-x or AMD-V recommended for this OS type.
         """
         ret = self._get_attr('recommendedVirtEx')
-        return bool(ret) 
+        return ret 
 
     @property
     def recommended_ram(self):
@@ -11335,7 +11245,7 @@ class IGuestOSType(Interface):
         Recommended RAM size in Megabytes.
         """
         ret = self._get_attr('recommendedRAM')
-        return int(ret) 
+        return ret 
 
     @property
     def recommended_vram(self):
@@ -11343,7 +11253,7 @@ class IGuestOSType(Interface):
         Recommended video RAM size in Megabytes.
         """
         ret = self._get_attr('recommendedVRAM')
-        return int(ret) 
+        return ret 
 
     @property
     def recommended2_d_video_acceleration(self):
@@ -11351,7 +11261,7 @@ class IGuestOSType(Interface):
         Returns @c true if 2D video acceleration is recommended for this OS type.
         """
         ret = self._get_attr('recommended2DVideoAcceleration')
-        return bool(ret) 
+        return ret 
 
     @property
     def recommended3_d_acceleration(self):
@@ -11359,7 +11269,7 @@ class IGuestOSType(Interface):
         Returns @c true if 3D acceleration is recommended for this OS type.
         """
         ret = self._get_attr('recommended3DAcceleration')
-        return bool(ret) 
+        return ret 
 
     @property
     def recommended_hdd(self):
@@ -11367,7 +11277,7 @@ class IGuestOSType(Interface):
         Recommended hard disk size in bytes.
         """
         ret = self._get_attr('recommendedHDD')
-        return int(ret) 
+        return ret 
 
     @property
     def adapter_type(self):
@@ -11383,7 +11293,7 @@ class IGuestOSType(Interface):
         Returns @c true if using PAE is recommended for this OS type.
         """
         ret = self._get_attr('recommendedPAE')
-        return bool(ret) 
+        return ret 
 
     @property
     def recommended_dvd_storage_controller(self):
@@ -11431,7 +11341,7 @@ class IGuestOSType(Interface):
         Returns @c true if using USB Human Interface Devices, such as keyboard and mouse recommended.
         """
         ret = self._get_attr('recommendedUSBHID')
-        return bool(ret) 
+        return ret 
 
     @property
     def recommended_hpet(self):
@@ -11439,7 +11349,7 @@ class IGuestOSType(Interface):
         Returns @c true if using HPET is recommended for this OS type.
         """
         ret = self._get_attr('recommendedHPET')
-        return bool(ret) 
+        return ret 
 
     @property
     def recommended_usb_tablet(self):
@@ -11447,7 +11357,7 @@ class IGuestOSType(Interface):
         Returns @c true if using a USB Tablet is recommended.
         """
         ret = self._get_attr('recommendedUSBTablet')
-        return bool(ret) 
+        return ret 
 
     @property
     def recommended_rtc_use_utc(self):
@@ -11455,7 +11365,7 @@ class IGuestOSType(Interface):
         Returns @c true if the RTC of this VM should be set to UTC
         """
         ret = self._get_attr('recommendedRTCUseUTC')
-        return bool(ret) 
+        return ret 
 
     @property
     def recommended_chipset(self):
@@ -11479,7 +11389,7 @@ class IGuestOSType(Interface):
         Returns @c true a floppy drive is recommended for this OS type.
         """
         ret = self._get_attr('recommendedFloppy')
-        return bool(ret) 
+        return ret 
 
     @property
     def recommended_usb(self):
@@ -11487,7 +11397,7 @@ class IGuestOSType(Interface):
         Returns @c true a USB controller is recommended for this OS type.
         """
         ret = self._get_attr('recommendedUSB')
-        return bool(ret) 
+        return ret 
 
 
 class IAdditionsFacility(Interface):
@@ -11512,7 +11422,7 @@ class IAdditionsFacility(Interface):
         in milliseconds since 1970-01-01 UTC.
         """
         ret = self._get_attr('lastUpdated')
-        return int(ret) 
+        return ret 
 
     @property
     def name(self):
@@ -11520,7 +11430,7 @@ class IAdditionsFacility(Interface):
         The facility's friendly name.
         """
         ret = self._get_attr('name')
-        return str(ret) 
+        return ret 
 
     @property
     def status(self):
@@ -11571,7 +11481,7 @@ class IGuestSession(Interface):
         users on the guest.
         """
         ret = self._get_attr('user')
-        return str(ret) 
+        return ret 
 
     @property
     def domain(self):
@@ -11580,7 +11490,7 @@ class IGuestSession(Interface):
         users on the guest.
         """
         ret = self._get_attr('domain')
-        return str(ret) 
+        return ret 
 
     @property
     def name(self):
@@ -11588,7 +11498,7 @@ class IGuestSession(Interface):
         Returns the session's friendly name.
         """
         ret = self._get_attr('name')
-        return str(ret) 
+        return ret 
 
     @property
     def id_p(self):
@@ -11596,7 +11506,7 @@ class IGuestSession(Interface):
         Returns the internal session ID.
         """
         ret = self._get_attr('id')
-        return int(ret) 
+        return ret 
 
     @property
     def timeout(self):
@@ -11604,7 +11514,7 @@ class IGuestSession(Interface):
         Returns the session timeout (in ms).
         """
         ret = self._get_attr('timeout')
-        return int(ret) 
+        return ret 
 
     @timeout.setter
     def timeout(self, value):
@@ -11626,7 +11536,7 @@ class IGuestSession(Interface):
         Returns the current session environment.
         """
         ret = self._call_method('getEnvironment')
-        return [str(a) for a in ret] 
+        return ret 
 
     @environment.setter
     def environment(self, value):
@@ -11819,7 +11729,6 @@ class IGuestSession(Interface):
             raise TypeError("secure can only be an instance of type bool")
         directory = self._call_method('directoryCreateTemp',
                      in_p=[template_name, mode, path, secure])
-        directory = str(directory)
         return directory
 
     def directory_exists(self, path):
@@ -11839,7 +11748,6 @@ class IGuestSession(Interface):
             raise TypeError("path can only be an instance of type str")
         exists = self._call_method('directoryExists',
                      in_p=[path])
-        exists = bool(exists)
         return exists
 
     def directory_open(self, path, filter_p, flags):
@@ -12020,7 +11928,6 @@ class IGuestSession(Interface):
             raise TypeError("name can only be an instance of type str")
         value = self._call_method('environmentGet',
                      in_p=[name])
-        value = str(value)
         return value
 
     def environment_set(self, name, value):
@@ -12129,7 +12036,6 @@ class IGuestSession(Interface):
             raise TypeError("path can only be an instance of type str")
         exists = self._call_method('fileExists',
                      in_p=[path])
-        exists = bool(exists)
         return exists
 
     def file_remove(self, path):
@@ -12237,7 +12143,6 @@ class IGuestSession(Interface):
             raise TypeError("path can only be an instance of type str")
         size = self._call_method('fileQuerySize',
                      in_p=[path])
-        size = int(size)
         return size
 
     def file_rename(self, source, dest, flags):
@@ -12501,7 +12406,6 @@ class IGuestSession(Interface):
             raise TypeError("symlink can only be an instance of type str")
         exists = self._call_method('symlinkExists',
                      in_p=[symlink])
-        exists = bool(exists)
         return exists
 
     def symlink_read(self, symlink, flags):
@@ -12529,7 +12433,6 @@ class IGuestSession(Interface):
                 raise TypeError("array can only contain objects of type SymlinkReadFlag")
         target = self._call_method('symlinkRead',
                      in_p=[symlink, flags])
-        target = str(target)
         return target
 
     def symlink_remove_directory(self, path):
@@ -12630,7 +12533,7 @@ class IProcess(Interface):
         The arguments this process is using for execution.
         """
         ret = self._call_method('getArguments')
-        return [str(a) for a in ret] 
+        return ret 
 
     @property
     def environment(self):
@@ -12638,7 +12541,7 @@ class IProcess(Interface):
         The environment block this process is using during execution.
         """
         ret = self._call_method('getEnvironment')
-        return [str(a) for a in ret] 
+        return ret 
 
     @property
     def event_source(self):
@@ -12654,7 +12557,7 @@ class IProcess(Interface):
         Full path of the actual executable image.
         """
         ret = self._get_attr('executablePath')
-        return str(ret) 
+        return ret 
 
     @property
     def exit_code(self):
@@ -12663,7 +12566,7 @@ class IProcess(Interface):
         terminated normally.
         """
         ret = self._get_attr('exitCode')
-        return int(ret) 
+        return ret 
 
     @property
     def name(self):
@@ -12671,7 +12574,7 @@ class IProcess(Interface):
         The friendly name of this process.
         """
         ret = self._get_attr('name')
-        return str(ret) 
+        return ret 
 
     @property
     def pid(self):
@@ -12679,7 +12582,7 @@ class IProcess(Interface):
         The process ID (PID).
         """
         ret = self._get_attr('PID')
-        return int(ret) 
+        return ret 
 
     @property
     def status(self):
@@ -12769,7 +12672,6 @@ class IProcess(Interface):
             raise TypeError("timeout_ms can only be an instance of type int")
         data = self._call_method('read',
                      in_p=[handle, to_read, timeout_ms])
-        data = [str(a) for a in data]
         return data
 
     def write(self, handle, flags, data, timeout_ms):
@@ -12806,7 +12708,6 @@ class IProcess(Interface):
             raise TypeError("timeout_ms can only be an instance of type int")
         written = self._call_method('write',
                      in_p=[handle, flags, data, timeout_ms])
-        written = int(written)
         return written
 
     def write_array(self, handle, flags, data, timeout_ms):
@@ -12847,7 +12748,6 @@ class IProcess(Interface):
             raise TypeError("timeout_ms can only be an instance of type int")
         written = self._call_method('writeArray',
                      in_p=[handle, flags, data, timeout_ms])
-        written = int(written)
         return written
 
     def terminate(self):
@@ -12879,7 +12779,7 @@ class IDirectory(Interface):
         Full path of directory.
         """
         ret = self._get_attr('directoryName')
-        return str(ret) 
+        return ret 
 
     @property
     def filter_p(self):
@@ -12887,7 +12787,7 @@ class IDirectory(Interface):
         The open filter.
         """
         ret = self._get_attr('filter')
-        return str(ret) 
+        return ret 
 
     def close(self):
         """Closes this directory. After closing operations like reading the next
@@ -12934,7 +12834,7 @@ class IFile(Interface):
         The creation mode.
         """
         ret = self._get_attr('creationMode')
-        return int(ret) 
+        return ret 
 
     @property
     def disposition(self):
@@ -12942,7 +12842,7 @@ class IFile(Interface):
         The disposition mode.
         """
         ret = self._get_attr('disposition')
-        return int(ret) 
+        return ret 
 
     @property
     def event_source(self):
@@ -12958,7 +12858,7 @@ class IFile(Interface):
         Full path of the actual file name of this file.
         """
         ret = self._get_attr('fileName')
-        return str(ret) 
+        return ret 
 
     @property
     def initial_size(self):
@@ -12966,7 +12866,7 @@ class IFile(Interface):
         The initial size in bytes when opened.
         """
         ret = self._get_attr('initialSize')
-        return int(ret) 
+        return ret 
 
     @property
     def open_mode(self):
@@ -12974,7 +12874,7 @@ class IFile(Interface):
         The open mode.
         """
         ret = self._get_attr('openMode')
-        return int(ret) 
+        return ret 
 
     @property
     def offset(self):
@@ -12982,7 +12882,7 @@ class IFile(Interface):
         Current read/write offset in bytes.
         """
         ret = self._get_attr('offset')
-        return int(ret) 
+        return ret 
 
     @property
     def status(self):
@@ -13037,7 +12937,6 @@ class IFile(Interface):
             raise TypeError("timeout_ms can only be an instance of type int")
         data = self._call_method('read',
                      in_p=[to_read, timeout_ms])
-        data = [str(a) for a in data]
         return data
 
     def read_at(self, offset, to_read, timeout_ms):
@@ -13068,7 +12967,6 @@ class IFile(Interface):
             raise TypeError("timeout_ms can only be an instance of type int")
         data = self._call_method('readAt',
                      in_p=[offset, to_read, timeout_ms])
-        data = [str(a) for a in data]
         return data
 
     def seek(self, offset, whence):
@@ -13130,7 +13028,6 @@ class IFile(Interface):
             raise TypeError("timeout_ms can only be an instance of type int")
         written = self._call_method('write',
                      in_p=[data, timeout_ms])
-        written = int(written)
         return written
 
     def write_at(self, offset, data, timeout_ms):
@@ -13165,7 +13062,6 @@ class IFile(Interface):
             raise TypeError("timeout_ms can only be an instance of type int")
         written = self._call_method('writeAt',
                      in_p=[offset, data, timeout_ms])
-        written = int(written)
         return written
 
 
@@ -13192,7 +13088,7 @@ class IFsObjInfo(Interface):
         Time of last access (st_atime).
         """
         ret = self._get_attr('accessTime')
-        return int(ret) 
+        return ret 
 
     @property
     def allocated_size(self):
@@ -13200,7 +13096,7 @@ class IFsObjInfo(Interface):
         Disk allocation size (st_blocks * DEV_BSIZE).
         """
         ret = self._get_attr('allocatedSize')
-        return int(ret) 
+        return ret 
 
     @property
     def birth_time(self):
@@ -13208,7 +13104,7 @@ class IFsObjInfo(Interface):
         Time of file birth (st_birthtime).
         """
         ret = self._get_attr('birthTime')
-        return int(ret) 
+        return ret 
 
     @property
     def change_time(self):
@@ -13216,7 +13112,7 @@ class IFsObjInfo(Interface):
         Time of last status change (st_ctime).
         """
         ret = self._get_attr('changeTime')
-        return int(ret) 
+        return ret 
 
     @property
     def device_number(self):
@@ -13224,7 +13120,7 @@ class IFsObjInfo(Interface):
         The device number of a character or block device type object (st_rdev).
         """
         ret = self._get_attr('deviceNumber')
-        return int(ret) 
+        return ret 
 
     @property
     def file_attributes(self):
@@ -13232,7 +13128,7 @@ class IFsObjInfo(Interface):
         File attributes. Not implemented yet.
         """
         ret = self._get_attr('fileAttributes')
-        return str(ret) 
+        return ret 
 
     @property
     def generation_id(self):
@@ -13240,7 +13136,7 @@ class IFsObjInfo(Interface):
         The current generation number (st_gen).
         """
         ret = self._get_attr('generationId')
-        return int(ret) 
+        return ret 
 
     @property
     def gid(self):
@@ -13248,7 +13144,7 @@ class IFsObjInfo(Interface):
         The group the filesystem object is assigned (st_gid).
         """
         ret = self._get_attr('GID')
-        return int(ret) 
+        return ret 
 
     @property
     def group_name(self):
@@ -13256,7 +13152,7 @@ class IFsObjInfo(Interface):
         The group name.
         """
         ret = self._get_attr('groupName')
-        return str(ret) 
+        return ret 
 
     @property
     def hard_links(self):
@@ -13264,7 +13160,7 @@ class IFsObjInfo(Interface):
         Number of hard links to this filesystem object (st_nlink).
         """
         ret = self._get_attr('hardLinks')
-        return int(ret) 
+        return ret 
 
     @property
     def modification_time(self):
@@ -13272,7 +13168,7 @@ class IFsObjInfo(Interface):
         Time of last data modification (st_mtime).
         """
         ret = self._get_attr('modificationTime')
-        return int(ret) 
+        return ret 
 
     @property
     def name(self):
@@ -13280,7 +13176,7 @@ class IFsObjInfo(Interface):
         The object's name.
         """
         ret = self._get_attr('name')
-        return str(ret) 
+        return ret 
 
     @property
     def node_id(self):
@@ -13288,7 +13184,7 @@ class IFsObjInfo(Interface):
         The unique identifier (within the filesystem) of this filesystem object (st_ino).
         """
         ret = self._get_attr('nodeId')
-        return int(ret) 
+        return ret 
 
     @property
     def node_id_device(self):
@@ -13296,7 +13192,7 @@ class IFsObjInfo(Interface):
         The device number of the device which this filesystem object resides on (st_dev).
         """
         ret = self._get_attr('nodeIdDevice')
-        return int(ret) 
+        return ret 
 
     @property
     def object_size(self):
@@ -13306,7 +13202,7 @@ class IFsObjInfo(Interface):
         symbolic link. For other objects this fields needs to be specified.
         """
         ret = self._get_attr('objectSize')
-        return int(ret) 
+        return ret 
 
     @property
     def type_p(self):
@@ -13322,7 +13218,7 @@ class IFsObjInfo(Interface):
         The user owning the filesystem object (st_uid).
         """
         ret = self._get_attr('UID')
-        return int(ret) 
+        return ret 
 
     @property
     def user_flags(self):
@@ -13330,7 +13226,7 @@ class IFsObjInfo(Interface):
         User flags (st_flags).
         """
         ret = self._get_attr('userFlags')
-        return int(ret) 
+        return ret 
 
     @property
     def user_name(self):
@@ -13338,7 +13234,7 @@ class IFsObjInfo(Interface):
         The user name.
         """
         ret = self._get_attr('userName')
-        return str(ret) 
+        return ret 
 
 
 class IGuestFsObjInfo(IFsObjInfo):
@@ -13376,7 +13272,7 @@ class IGuest(Interface):
           the same as <link to="IMachine::OSTypeId"/>.
         """
         ret = self._get_attr('OSTypeId')
-        return str(ret) 
+        return ret 
 
     @property
     def additions_run_level(self):
@@ -13393,7 +13289,7 @@ class IGuest(Interface):
         <link to="IVirtualBox::version"/>.
         """
         ret = self._get_attr('additionsVersion')
-        return str(ret) 
+        return ret 
 
     @property
     def additions_revision(self):
@@ -13403,7 +13299,7 @@ class IGuest(Interface):
         See also <link to="IVirtualBox::revision"/>.
         """
         ret = self._get_attr('additionsRevision')
-        return int(ret) 
+        return ret 
 
     @property
     def facilities(self):
@@ -13428,7 +13324,7 @@ class IGuest(Interface):
         Guest system memory balloon size in megabytes (transient property).
         """
         ret = self._get_attr('memoryBalloonSize')
-        return int(ret) 
+        return ret 
 
     @memory_balloon_size.setter
     def memory_balloon_size(self, value):
@@ -13442,7 +13338,7 @@ class IGuest(Interface):
         Interval to update guest statistics in seconds.
         """
         ret = self._get_attr('statisticsUpdateInterval')
-        return int(ret) 
+        return ret 
 
     @statistics_update_interval.setter
     def statistics_update_interval(self, value):
@@ -13494,19 +13390,6 @@ class IGuest(Interface):
 
         """
         (cpu_user, cpu_kernel, cpu_idle, mem_total, mem_free, mem_balloon, mem_shared, mem_cache, paged_total, mem_alloc_total, mem_free_total, mem_balloon_total, mem_shared_total) = self._call_method('internalGetStatistics')
-        cpu_user = int(cpu_user)
-        cpu_kernel = int(cpu_kernel)
-        cpu_idle = int(cpu_idle)
-        mem_total = int(mem_total)
-        mem_free = int(mem_free)
-        mem_balloon = int(mem_balloon)
-        mem_shared = int(mem_shared)
-        mem_cache = int(mem_cache)
-        paged_total = int(paged_total)
-        mem_alloc_total = int(mem_alloc_total)
-        mem_free_total = int(mem_free_total)
-        mem_balloon_total = int(mem_balloon_total)
-        mem_shared_total = int(mem_shared_total)
         return (cpu_user, cpu_kernel, cpu_idle, mem_total, mem_free, mem_balloon, mem_shared, mem_cache, paged_total, mem_alloc_total, mem_free_total, mem_balloon_total, mem_shared_total)
 
     def get_facility_status(self, facility):
@@ -13526,7 +13409,6 @@ class IGuest(Interface):
             raise TypeError("facility can only be an instance of type AdditionsFacilityType")
         (timestamp, status) = self._call_method('getFacilityStatus',
                      in_p=[facility])
-        timestamp = int(timestamp)
         status = AdditionsFacilityStatus(status)
         return (timestamp, status)
 
@@ -13547,7 +13429,6 @@ class IGuest(Interface):
             raise TypeError("level can only be an instance of type AdditionsRunLevelType")
         active = self._call_method('getAdditionsStatus',
                      in_p=[level])
-        active = bool(active)
         return active
 
     def set_credentials(self, user_name, password, domain, allow_interactive_logon):
@@ -13762,7 +13643,6 @@ class IGuest(Interface):
                 raise TypeError("array can only contain objects of type str")
         (format_p, result_action) = self._call_method('dragHGDrop',
                      in_p=[screen_id, x, y, default_action, allowed_actions, formats])
-        format_p = str(format_p)
         result_action = DragAndDropAction(result_action)
         return (format_p, result_action)
 
@@ -13828,7 +13708,6 @@ class IGuest(Interface):
             raise TypeError("screen_id can only be an instance of type int")
         (formats, allowed_actions, default_action) = self._call_method('dragGHPending',
                      in_p=[screen_id])
-        formats = [str(a) for a in formats]
         allowed_actions = [DragAndDropAction(a) for a in allowed_actions]
         default_action = DragAndDropAction(default_action)
         return (formats, allowed_actions, default_action)
@@ -13873,7 +13752,6 @@ class IGuest(Interface):
         
         """
         data = self._call_method('dragGHGetData')
-        data = [str(a) for a in data]
         return data
 
     def create_session(self, user, password, domain, session_name):
@@ -14046,7 +13924,7 @@ class IProgress(Interface):
         ID of the task.
         """
         ret = self._get_attr('id')
-        return str(ret) 
+        return ret 
 
     @property
     def description(self):
@@ -14054,7 +13932,7 @@ class IProgress(Interface):
         Description of the task.
         """
         ret = self._get_attr('description')
-        return str(ret) 
+        return ret 
 
     @property
     def initiator(self):
@@ -14070,7 +13948,7 @@ class IProgress(Interface):
         Whether the task can be interrupted.
         """
         ret = self._get_attr('cancelable')
-        return bool(ret) 
+        return ret 
 
     @property
     def percent(self):
@@ -14080,7 +13958,7 @@ class IProgress(Interface):
         Returns 100 if <link to="#completed"/> is @c true.
         """
         ret = self._get_attr('percent')
-        return int(ret) 
+        return ret 
 
     @property
     def time_remaining(self):
@@ -14096,7 +13974,7 @@ class IProgress(Interface):
             before at least 20% of a task have completed.
         """
         ret = self._get_attr('timeRemaining')
-        return int(ret) 
+        return ret 
 
     @property
     def completed(self):
@@ -14104,7 +13982,7 @@ class IProgress(Interface):
         Whether the task has been completed.
         """
         ret = self._get_attr('completed')
-        return bool(ret) 
+        return ret 
 
     @property
     def canceled(self):
@@ -14112,7 +13990,7 @@ class IProgress(Interface):
         Whether the task has been canceled.
         """
         ret = self._get_attr('canceled')
-        return bool(ret) 
+        return ret 
 
     @property
     def result_code(self):
@@ -14121,7 +13999,7 @@ class IProgress(Interface):
         Valid only if <link to="#completed"/> is @c true.
         """
         ret = self._get_attr('resultCode')
-        return int(ret) 
+        return ret 
 
     @property
     def error_info(self):
@@ -14142,7 +14020,7 @@ class IProgress(Interface):
           Every task consists of at least one suboperation.
         """
         ret = self._get_attr('operationCount')
-        return int(ret) 
+        return ret 
 
     @property
     def operation(self):
@@ -14150,7 +14028,7 @@ class IProgress(Interface):
         Number of the sub-operation being currently executed.
         """
         ret = self._get_attr('operation')
-        return int(ret) 
+        return ret 
 
     @property
     def operation_description(self):
@@ -14158,7 +14036,7 @@ class IProgress(Interface):
         Description of the sub-operation being currently executed.
         """
         ret = self._get_attr('operationDescription')
-        return str(ret) 
+        return ret 
 
     @property
     def operation_percent(self):
@@ -14166,7 +14044,7 @@ class IProgress(Interface):
         Progress value of the current sub-operation only, in percent.
         """
         ret = self._get_attr('operationPercent')
-        return int(ret) 
+        return ret 
 
     @property
     def operation_weight(self):
@@ -14174,7 +14052,7 @@ class IProgress(Interface):
         Weight value of the current sub-operation only.
         """
         ret = self._get_attr('operationWeight')
-        return int(ret) 
+        return ret 
 
     @property
     def timeout(self):
@@ -14184,7 +14062,7 @@ class IProgress(Interface):
           cancelable objects.
         """
         ret = self._get_attr('timeout')
-        return int(ret) 
+        return ret 
 
     @timeout.setter
     def timeout(self, value):
@@ -14397,7 +14275,7 @@ class ISnapshot(Interface):
         UUID of the snapshot.
         """
         ret = self._get_attr('id')
-        return str(ret) 
+        return ret 
 
     @property
     def name(self):
@@ -14407,7 +14285,7 @@ class ISnapshot(Interface):
       be called implicitly.
         """
         ret = self._get_attr('name')
-        return str(ret) 
+        return ret 
 
     @name.setter
     def name(self, value):
@@ -14423,7 +14301,7 @@ class ISnapshot(Interface):
       be called implicitly.
         """
         ret = self._get_attr('description')
-        return str(ret) 
+        return ret 
 
     @description.setter
     def description(self, value):
@@ -14437,7 +14315,7 @@ class ISnapshot(Interface):
         Time stamp of the snapshot, in milliseconds since 1970-01-01 UTC.
         """
         ret = self._get_attr('timeStamp')
-        return int(ret) 
+        return ret 
 
     @property
     def online(self):
@@ -14451,7 +14329,7 @@ class ISnapshot(Interface):
           an empty string.
         """
         ret = self._get_attr('online')
-        return bool(ret) 
+        return ret 
 
     @property
     def machine(self):
@@ -14492,7 +14370,6 @@ class ISnapshot(Interface):
 
         """
         children_count = self._call_method('getChildrenCount')
-        children_count = int(children_count)
         return children_count
 
 
@@ -14693,7 +14570,7 @@ Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
         by name.
         """
         ret = self._get_attr('controller')
-        return str(ret) 
+        return ret 
 
     @property
     def port(self):
@@ -14702,7 +14579,7 @@ Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
         See <link to="IMachine::attachDevice"/> for the meaning of this value for the different controller types.
         """
         ret = self._get_attr('port')
-        return int(ret) 
+        return ret 
 
     @property
     def device(self):
@@ -14711,7 +14588,7 @@ Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
         See <link to="IMachine::attachDevice"/> for the meaning of this value for the different controller types.
         """
         ret = self._get_attr('device')
-        return int(ret) 
+        return ret 
 
     @property
     def type_p(self):
@@ -14727,7 +14604,7 @@ Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
         Pass I/O requests through to a device on the host.
         """
         ret = self._get_attr('passthrough')
-        return bool(ret) 
+        return ret 
 
     @property
     def temporary_eject(self):
@@ -14735,7 +14612,7 @@ Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
         Whether guest-triggered eject results in unmounting the medium.
         """
         ret = self._get_attr('temporaryEject')
-        return bool(ret) 
+        return ret 
 
     @property
     def is_ejected(self):
@@ -14744,7 +14621,7 @@ Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
         necessarily equivalent to having a @c null medium association.
         """
         ret = self._get_attr('isEjected')
-        return bool(ret) 
+        return ret 
 
     @property
     def non_rotational(self):
@@ -14752,7 +14629,7 @@ Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
         Whether the associated medium is non-rotational.
         """
         ret = self._get_attr('nonRotational')
-        return bool(ret) 
+        return ret 
 
     @property
     def discard(self):
@@ -14760,7 +14637,7 @@ Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
         Whether the associated medium supports discarding unused blocks.
         """
         ret = self._get_attr('discard')
-        return bool(ret) 
+        return ret 
 
     @property
     def bandwidth_group(self):
@@ -14940,7 +14817,7 @@ class IMedium(Interface):
           and will most likely be an empty UUID.
         """
         ret = self._get_attr('id')
-        return str(ret) 
+        return ret 
 
     @property
     def description(self):
@@ -14959,7 +14836,7 @@ class IMedium(Interface):
           medium is the <link to="MediumState_LockedRead"/> state.
         """
         ret = self._get_attr('description')
-        return str(ret) 
+        return ret 
 
     @description.setter
     def description(self, value):
@@ -15016,7 +14893,7 @@ class IMedium(Interface):
         automatically appended by the implementation depending on the medium type.
         """
         ret = self._get_attr('location')
-        return str(ret) 
+        return ret 
 
     @location.setter
     def location(self, value):
@@ -15044,7 +14921,7 @@ class IMedium(Interface):
         given type and format.
         """
         ret = self._get_attr('name')
-        return str(ret) 
+        return ret 
 
     @property
     def device_type(self):
@@ -15061,7 +14938,7 @@ class IMedium(Interface):
         True if this corresponds to a drive on the host.
         """
         ret = self._get_attr('hostDrive')
-        return bool(ret) 
+        return ret 
 
     @property
     def size(self):
@@ -15074,7 +14951,7 @@ class IMedium(Interface):
           the returned value is zero.
         """
         ret = self._get_attr('size')
-        return int(ret) 
+        return ret 
 
     @property
     def format_p(self):
@@ -15091,7 +14968,7 @@ class IMedium(Interface):
         <link to="ISystemProperties::mediumFormats"/>.
         """
         ret = self._get_attr('format')
-        return str(ret) 
+        return ret 
 
     @property
     def medium_format(self):
@@ -15217,7 +15094,7 @@ class IMedium(Interface):
           state of the storage unit.
         """
         ret = self._get_attr('readOnly')
-        return bool(ret) 
+        return ret 
 
     @property
     def logical_size(self):
@@ -15233,7 +15110,7 @@ class IMedium(Interface):
           media, the returned value is zero.
         """
         ret = self._get_attr('logicalSize')
-        return int(ret) 
+        return ret 
 
     @property
     def auto_reset(self):
@@ -15253,7 +15130,7 @@ class IMedium(Interface):
           case is not supported.
         """
         ret = self._get_attr('autoReset')
-        return bool(ret) 
+        return ret 
 
     @auto_reset.setter
     def auto_reset(self, value):
@@ -15276,7 +15153,7 @@ class IMedium(Interface):
         a reason of the failure (for example, a file read error).
         """
         ret = self._get_attr('lastAccessError')
-        return str(ret) 
+        return ret 
 
     @property
     def machine_ids(self):
@@ -15293,7 +15170,7 @@ class IMedium(Interface):
           details.
         """
         ret = self._call_method('getMachineIds')
-        return [str(a) for a in ret] 
+        return ret 
 
     def set_ids(self, set_image_id, image_id, set_parent_id, parent_id):
         """Changes the UUID and parent UUID for a hard disk medium.
@@ -15395,7 +15272,6 @@ class IMedium(Interface):
             raise TypeError("machine_id can only be an instance of type str")
         snapshot_ids = self._call_method('getSnapshotIds',
                      in_p=[machine_id])
-        snapshot_ids = [str(a) for a in snapshot_ids]
         return snapshot_ids
 
     def lock_read(self):
@@ -15603,7 +15479,6 @@ class IMedium(Interface):
             raise TypeError("name can only be an instance of type str")
         value = self._call_method('getProperty',
                      in_p=[name])
-        value = str(value)
         return value
 
     def set_property(self, name, value):
@@ -15672,8 +15547,6 @@ class IMedium(Interface):
             raise TypeError("names can only be an instance of type str")
         (return_names, return_values) = self._call_method('getProperties',
                      in_p=[names])
-        return_names = [str(a) for a in return_names]
-        return_values = [str(a) for a in return_values]
         return (return_names, return_values)
 
     def set_properties(self, names, values):
@@ -16177,7 +16050,7 @@ class IMediumFormat(Interface):
         <link to="IVirtualBox::createHardDisk"/>.
         """
         ret = self._get_attr('id')
-        return str(ret) 
+        return ret 
 
     @property
     def name(self):
@@ -16187,7 +16060,7 @@ class IMediumFormat(Interface):
         Mainly for use in file open dialogs.
         """
         ret = self._get_attr('name')
-        return str(ret) 
+        return ret 
 
     @property
     def capabilities(self):
@@ -16219,7 +16092,6 @@ class IMediumFormat(Interface):
 
         """
         (extensions, types) = self._call_method('describeFileExtensions')
-        extensions = [str(a) for a in extensions]
         types = [DeviceType(a) for a in types]
         return (extensions, types)
 
@@ -16254,11 +16126,7 @@ class IMediumFormat(Interface):
 
         """
         (names, descriptions, types, flags, defaults) = self._call_method('describeProperties')
-        names = [str(a) for a in names]
-        descriptions = [str(a) for a in descriptions]
         types = [DataType(a) for a in types]
-        flags = [int(a) for a in flags]
-        defaults = [str(a) for a in defaults]
         return (names, descriptions, types, flags, defaults)
 
 
@@ -16305,7 +16173,6 @@ class IKeyboard(Interface):
                 raise TypeError("array can only contain objects of type int")
         codes_stored = self._call_method('putScancodes',
                      in_p=[scancodes])
-        codes_stored = int(codes_stored)
         return codes_stored
 
     def put_cad(self):
@@ -16352,7 +16219,7 @@ class IMouse(Interface):
         <link to="#putMouseEventAbsolute"/>
         """
         ret = self._get_attr('absoluteSupported')
-        return bool(ret) 
+        return ret 
 
     @property
     def relative_supported(self):
@@ -16367,7 +16234,7 @@ class IMouse(Interface):
         <link to="#putMouseEvent"/>
         """
         ret = self._get_attr('relativeSupported')
-        return bool(ret) 
+        return ret 
 
     @property
     def needs_host_cursor(self):
@@ -16382,7 +16249,7 @@ class IMouse(Interface):
         <link to="#putMouseEvent"/>
         """
         ret = self._get_attr('needsHostCursor')
-        return bool(ret) 
+        return ret 
 
     def put_mouse_event(self, dx, dy, dz, dw, button_state):
         """Initiates a mouse event using relative pointer movements
@@ -16521,7 +16388,7 @@ class IFramebuffer(Interface):
         Address of the start byte of the frame buffer.
         """
         ret = self._get_attr('address')
-        return str(ret) 
+        return ret 
 
     @property
     def width(self):
@@ -16529,7 +16396,7 @@ class IFramebuffer(Interface):
         Frame buffer width, in pixels.
         """
         ret = self._get_attr('width')
-        return int(ret) 
+        return ret 
 
     @property
     def height(self):
@@ -16537,7 +16404,7 @@ class IFramebuffer(Interface):
         Frame buffer height, in pixels.
         """
         ret = self._get_attr('height')
-        return int(ret) 
+        return ret 
 
     @property
     def bits_per_pixel(self):
@@ -16546,7 +16413,7 @@ class IFramebuffer(Interface):
         are: 8, 15, 16, 24 and 32.
         """
         ret = self._get_attr('bitsPerPixel')
-        return int(ret) 
+        return ret 
 
     @property
     def bytes_per_line(self):
@@ -16555,7 +16422,7 @@ class IFramebuffer(Interface):
         size of the scan line must be aligned to 32 bits.
         """
         ret = self._get_attr('bytesPerLine')
-        return int(ret) 
+        return ret 
 
     @property
     def pixel_format(self):
@@ -16566,7 +16433,7 @@ class IFramebuffer(Interface):
           <link to="#address"/> points to must be always known.
         """
         ret = self._get_attr('pixelFormat')
-        return int(ret) 
+        return ret 
 
     @property
     def uses_guest_vram(self):
@@ -16575,7 +16442,7 @@ class IFramebuffer(Interface):
         buffer (guest VRAM) directly or not. See <link to="IFramebuffer::requestResize"/> for more information.
         """
         ret = self._get_attr('usesGuestVRAM')
-        return bool(ret) 
+        return ret 
 
     @property
     def height_reduction(self):
@@ -16587,7 +16454,7 @@ class IFramebuffer(Interface):
         is not guaranteed that the guest respects the value.
         """
         ret = self._get_attr('heightReduction')
-        return int(ret) 
+        return ret 
 
     @property
     def overlay(self):
@@ -16613,7 +16480,7 @@ class IFramebuffer(Interface):
         frame buffer is drawn, or zero if there's no such window.
         """
         ret = self._get_attr('winId')
-        return int(ret) 
+        return ret 
 
     def lock(self):
         """Locks the frame buffer.
@@ -16778,7 +16645,6 @@ class IFramebuffer(Interface):
             raise TypeError("height can only be an instance of type int")
         finished = self._call_method('requestResize',
                      in_p=[screen_id, pixel_format, vram, bits_per_pixel, bytes_per_line, width, height])
-        finished = bool(finished)
         return finished
 
     def video_mode_supported(self, width, height, bpp):
@@ -16807,7 +16673,6 @@ class IFramebuffer(Interface):
             raise TypeError("bpp can only be an instance of type int")
         supported = self._call_method('videoModeSupported',
                      in_p=[width, height, bpp])
-        supported = bool(supported)
         return supported
 
     def get_visible_region(self, rectangles, count):
@@ -16846,7 +16711,6 @@ class IFramebuffer(Interface):
             raise TypeError("count can only be an instance of type int")
         count_copied = self._call_method('getVisibleRegion',
                      in_p=[rectangles, count])
-        count_copied = int(count_copied)
         return count_copied
 
     def set_visible_region(self, rectangles, count):
@@ -16938,7 +16802,7 @@ class IFramebufferOverlay(IFramebuffer):
         X position of the overlay, relative to the frame buffer.
         """
         ret = self._get_attr('x')
-        return int(ret) 
+        return ret 
 
     @property
     def y(self):
@@ -16946,7 +16810,7 @@ class IFramebufferOverlay(IFramebuffer):
         Y position of the overlay, relative to the frame buffer.
         """
         ret = self._get_attr('y')
-        return int(ret) 
+        return ret 
 
     @property
     def visible(self):
@@ -16954,7 +16818,7 @@ class IFramebufferOverlay(IFramebuffer):
         Whether the overlay is currently visible.
         """
         ret = self._get_attr('visible')
-        return bool(ret) 
+        return ret 
 
     @visible.setter
     def visible(self, value):
@@ -16969,7 +16833,7 @@ class IFramebufferOverlay(IFramebuffer):
         supported by a given front end.
         """
         ret = self._get_attr('alpha')
-        return int(ret) 
+        return ret 
 
     @alpha.setter
     def alpha(self, value):
@@ -17024,9 +16888,6 @@ class IDisplay(Interface):
             raise TypeError("screen_id can only be an instance of type int")
         (width, height, bits_per_pixel) = self._call_method('getScreenResolution',
                      in_p=[screen_id])
-        width = int(width)
-        height = int(height)
-        bits_per_pixel = int(bits_per_pixel)
         return (width, height, bits_per_pixel)
 
     def set_framebuffer(self, screen_id, framebuffer):
@@ -17061,8 +16922,6 @@ class IDisplay(Interface):
         (framebuffer, x_origin, y_origin) = self._call_method('getFramebuffer',
                      in_p=[screen_id])
         framebuffer = IFramebuffer(framebuffer)
-        x_origin = int(x_origin)
-        y_origin = int(y_origin)
         return (framebuffer, x_origin, y_origin)
 
     def set_video_mode_hint(self, display, enabled, change_origin, origin_x, origin_y, width, height, bits_per_pixel):
@@ -17217,7 +17076,6 @@ class IDisplay(Interface):
             raise TypeError("height can only be an instance of type int")
         screen_data = self._call_method('takeScreenShotToArray',
                      in_p=[screen_id, width, height])
-        screen_data = [str(a) for a in screen_data]
         return screen_data
 
     def take_screen_shot_png_to_array(self, screen_id, width, height):
@@ -17251,7 +17109,6 @@ class IDisplay(Interface):
             raise TypeError("height can only be an instance of type int")
         screen_data = self._call_method('takeScreenShotPNGToArray',
                      in_p=[screen_id, width, height])
-        screen_data = [str(a) for a in screen_data]
         return screen_data
 
     def enable_video_capture(self, screens):
@@ -17439,7 +17296,7 @@ class INetworkAdapter(Interface):
         to obtain this instance.
         """
         ret = self._get_attr('slot')
-        return int(ret) 
+        return ret 
 
     @property
     def enabled(self):
@@ -17450,7 +17307,7 @@ class INetworkAdapter(Interface):
         the VM is not running.
         """
         ret = self._get_attr('enabled')
-        return bool(ret) 
+        return ret 
 
     @enabled.setter
     def enabled(self, value):
@@ -17465,7 +17322,7 @@ class INetworkAdapter(Interface):
         it to @c null or an empty string, VirtualBox will generate a unique MAC address.
         """
         ret = self._get_attr('MACAddress')
-        return str(ret) 
+        return ret 
 
     @mac_address.setter
     def mac_address(self, value):
@@ -17493,7 +17350,7 @@ class INetworkAdapter(Interface):
         Name of the network interface the VM should be bridged to.
         """
         ret = self._get_attr('bridgedInterface')
-        return str(ret) 
+        return ret 
 
     @bridged_interface.setter
     def bridged_interface(self, value):
@@ -17507,7 +17364,7 @@ class INetworkAdapter(Interface):
         Name of the host only network interface the VM is attached to.
         """
         ret = self._get_attr('hostOnlyInterface')
-        return str(ret) 
+        return ret 
 
     @host_only_interface.setter
     def host_only_interface(self, value):
@@ -17521,7 +17378,7 @@ class INetworkAdapter(Interface):
         Name of the internal network the VM is attached to.
         """
         ret = self._get_attr('internalNetwork')
-        return str(ret) 
+        return ret 
 
     @internal_network.setter
     def internal_network(self, value):
@@ -17535,7 +17392,7 @@ class INetworkAdapter(Interface):
         Name of the NAT network the VM is attached to.
         """
         ret = self._get_attr('NATNetwork')
-        return str(ret) 
+        return ret 
 
     @nat_network.setter
     def nat_network(self, value):
@@ -17549,7 +17406,7 @@ class INetworkAdapter(Interface):
         Name of the driver to use for the "Generic" network attachment type.
         """
         ret = self._get_attr('genericDriver')
-        return str(ret) 
+        return ret 
 
     @generic_driver.setter
     def generic_driver(self, value):
@@ -17564,7 +17421,7 @@ class INetworkAdapter(Interface):
         It can be used to report offline situations to a VM.
         """
         ret = self._get_attr('cableConnected')
-        return bool(ret) 
+        return ret 
 
     @cable_connected.setter
     def cable_connected(self, value):
@@ -17578,7 +17435,7 @@ class INetworkAdapter(Interface):
         Line speed reported by custom drivers, in units of 1 kbps.
         """
         ret = self._get_attr('lineSpeed')
-        return int(ret) 
+        return ret 
 
     @line_speed.setter
     def line_speed(self, value):
@@ -17608,7 +17465,7 @@ class INetworkAdapter(Interface):
         Can only be toggled when the VM is turned off.
         """
         ret = self._get_attr('traceEnabled')
-        return bool(ret) 
+        return ret 
 
     @trace_enabled.setter
     def trace_enabled(self, value):
@@ -17623,7 +17480,7 @@ class INetworkAdapter(Interface):
         will be used.
         """
         ret = self._get_attr('traceFile')
-        return str(ret) 
+        return ret 
 
     @trace_file.setter
     def trace_file(self, value):
@@ -17648,7 +17505,7 @@ class INetworkAdapter(Interface):
         the priority is considered to be at the lowest possible setting.
         """
         ret = self._get_attr('bootPriority')
-        return int(ret) 
+        return ret 
 
     @boot_priority.setter
     def boot_priority(self, value):
@@ -17690,7 +17547,6 @@ class INetworkAdapter(Interface):
             raise TypeError("key can only be an instance of type str")
         value = self._call_method('getProperty',
                      in_p=[key])
-        value = str(value)
         return value
 
     def set_property(self, key, value):
@@ -17745,8 +17601,6 @@ class INetworkAdapter(Interface):
             raise TypeError("names can only be an instance of type str")
         (return_names, return_values) = self._call_method('getProperties',
                      in_p=[names])
-        return_names = [str(a) for a in return_names]
-        return_values = [str(a) for a in return_values]
         return (return_names, return_values)
 
 
@@ -17785,7 +17639,7 @@ class ISerialPort(Interface):
         to obtain this instance.
         """
         ret = self._get_attr('slot')
-        return int(ret) 
+        return ret 
 
     @property
     def enabled(self):
@@ -17794,7 +17648,7 @@ class ISerialPort(Interface):
         the serial port will not be reported to the guest OS.
         """
         ret = self._get_attr('enabled')
-        return bool(ret) 
+        return ret 
 
     @enabled.setter
     def enabled(self, value):
@@ -17808,7 +17662,7 @@ class ISerialPort(Interface):
         Base I/O address of the serial port.
         """
         ret = self._get_attr('IOBase')
-        return int(ret) 
+        return ret 
 
     @io_base.setter
     def io_base(self, value):
@@ -17822,7 +17676,7 @@ class ISerialPort(Interface):
         IRQ number of the serial port.
         """
         ret = self._get_attr('IRQ')
-        return int(ret) 
+        return ret 
 
     @irq.setter
     def irq(self, value):
@@ -17855,7 +17709,7 @@ class ISerialPort(Interface):
         used only when <link to="#hostMode"/> is PortMode_HostPipe.
         """
         ret = self._get_attr('server')
-        return bool(ret) 
+        return ret 
 
     @server.setter
     def server(self, value):
@@ -17873,7 +17727,7 @@ class ISerialPort(Interface):
         is an error. Otherwise, the value of this property is ignored.
         """
         ret = self._get_attr('path')
-        return str(ret) 
+        return ret 
 
     @path.setter
     def path(self, value):
@@ -17908,7 +17762,7 @@ class IParallelPort(Interface):
         to obtain this instance.
         """
         ret = self._get_attr('slot')
-        return int(ret) 
+        return ret 
 
     @property
     def enabled(self):
@@ -17917,7 +17771,7 @@ class IParallelPort(Interface):
         the parallel port will not be reported to the guest OS.
         """
         ret = self._get_attr('enabled')
-        return bool(ret) 
+        return ret 
 
     @enabled.setter
     def enabled(self, value):
@@ -17931,7 +17785,7 @@ class IParallelPort(Interface):
         Base I/O address of the parallel port.
         """
         ret = self._get_attr('IOBase')
-        return int(ret) 
+        return ret 
 
     @io_base.setter
     def io_base(self, value):
@@ -17945,7 +17799,7 @@ class IParallelPort(Interface):
         IRQ number of the parallel port.
         """
         ret = self._get_attr('IRQ')
-        return int(ret) 
+        return ret 
 
     @irq.setter
     def irq(self, value):
@@ -17961,7 +17815,7 @@ class IParallelPort(Interface):
         an error.
         """
         ret = self._get_attr('path')
-        return str(ret) 
+        return ret 
 
     @path.setter
     def path(self, value):
@@ -18040,7 +17894,6 @@ class IMachineDebugger(Interface):
             raise TypeError("args can only be an instance of type str")
         info = self._call_method('info',
                      in_p=[name, args])
-        info = str(info)
         return info
 
     def inject_nmi(self):
@@ -18110,7 +17963,6 @@ class IMachineDebugger(Interface):
             raise TypeError("size can only be an instance of type int")
         bytes_p = self._call_method('readPhysicalMemory',
                      in_p=[address, size])
-        bytes_p = [str(a) for a in bytes_p]
         return bytes_p
 
     def write_physical_memory(self, address, size, bytes_p):
@@ -18168,7 +18020,6 @@ class IMachineDebugger(Interface):
             raise TypeError("size can only be an instance of type int")
         bytes_p = self._call_method('readVirtualMemory',
                      in_p=[cpu_id, address, size])
-        bytes_p = [str(a) for a in bytes_p]
         return bytes_p
 
     def write_virtual_memory(self, cpu_id, address, size, bytes_p):
@@ -18215,7 +18066,6 @@ class IMachineDebugger(Interface):
 
         """
         os = self._call_method('detectOS')
-        os = str(os)
         return os
 
     def get_register(self, cpu_id, name):
@@ -18241,7 +18091,6 @@ class IMachineDebugger(Interface):
             raise TypeError("name can only be an instance of type str")
         value = self._call_method('getRegister',
                      in_p=[cpu_id, name])
-        value = str(value)
         return value
 
     def get_registers(self, cpu_id):
@@ -18265,8 +18114,6 @@ class IMachineDebugger(Interface):
             raise TypeError("cpu_id can only be an instance of type int")
         (names, values) = self._call_method('getRegisters',
                      in_p=[cpu_id])
-        names = [str(a) for a in names]
-        values = [str(a) for a in values]
         return (names, values)
 
     def set_register(self, cpu_id, name, value):
@@ -18346,7 +18193,6 @@ class IMachineDebugger(Interface):
             raise TypeError("cpu_id can only be an instance of type int")
         stack = self._call_method('dumpGuestStack',
                      in_p=[cpu_id])
-        stack = str(stack)
         return stack
 
     def reset_stats(self, pattern):
@@ -18392,7 +18238,6 @@ class IMachineDebugger(Interface):
             raise TypeError("with_descriptions can only be an instance of type bool")
         stats = self._call_method('getStats',
                      in_p=[pattern, with_descriptions])
-        stats = str(stats)
         return stats
 
     @property
@@ -18401,7 +18246,7 @@ class IMachineDebugger(Interface):
         Switch for enabling single-stepping.
         """
         ret = self._get_attr('singleStep')
-        return bool(ret) 
+        return ret 
 
     @single_step.setter
     def single_step(self, value):
@@ -18415,7 +18260,7 @@ class IMachineDebugger(Interface):
         Switch for forcing code recompilation for user mode code.
         """
         ret = self._get_attr('recompileUser')
-        return bool(ret) 
+        return ret 
 
     @recompile_user.setter
     def recompile_user(self, value):
@@ -18429,7 +18274,7 @@ class IMachineDebugger(Interface):
         Switch for forcing code recompilation for supervisor mode code.
         """
         ret = self._get_attr('recompileSupervisor')
-        return bool(ret) 
+        return ret 
 
     @recompile_supervisor.setter
     def recompile_supervisor(self, value):
@@ -18443,7 +18288,7 @@ class IMachineDebugger(Interface):
         Switch for enabling and disabling the PATM component.
         """
         ret = self._get_attr('PATMEnabled')
-        return bool(ret) 
+        return ret 
 
     @patm_enabled.setter
     def patm_enabled(self, value):
@@ -18457,7 +18302,7 @@ class IMachineDebugger(Interface):
         Switch for enabling and disabling the CSAM component.
         """
         ret = self._get_attr('CSAMEnabled')
-        return bool(ret) 
+        return ret 
 
     @csam_enabled.setter
     def csam_enabled(self, value):
@@ -18471,7 +18316,7 @@ class IMachineDebugger(Interface):
         Switch for enabling and disabling the debug logger.
         """
         ret = self._get_attr('logEnabled')
-        return bool(ret) 
+        return ret 
 
     @log_enabled.setter
     def log_enabled(self, value):
@@ -18485,7 +18330,7 @@ class IMachineDebugger(Interface):
         The debug logger flags.
         """
         ret = self._get_attr('logDbgFlags')
-        return str(ret) 
+        return ret 
 
     @property
     def log_dbg_groups(self):
@@ -18493,7 +18338,7 @@ class IMachineDebugger(Interface):
         The debug logger's group settings.
         """
         ret = self._get_attr('logDbgGroups')
-        return str(ret) 
+        return ret 
 
     @property
     def log_dbg_destinations(self):
@@ -18501,7 +18346,7 @@ class IMachineDebugger(Interface):
         The debug logger's destination settings.
         """
         ret = self._get_attr('logDbgDestinations')
-        return str(ret) 
+        return ret 
 
     @property
     def log_rel_flags(self):
@@ -18509,7 +18354,7 @@ class IMachineDebugger(Interface):
         The release logger flags.
         """
         ret = self._get_attr('logRelFlags')
-        return str(ret) 
+        return ret 
 
     @property
     def log_rel_groups(self):
@@ -18517,7 +18362,7 @@ class IMachineDebugger(Interface):
         The release logger's group settings.
         """
         ret = self._get_attr('logRelGroups')
-        return str(ret) 
+        return ret 
 
     @property
     def log_rel_destinations(self):
@@ -18525,7 +18370,7 @@ class IMachineDebugger(Interface):
         The relase logger's destination settings.
         """
         ret = self._get_attr('logRelDestinations')
-        return str(ret) 
+        return ret 
 
     @property
     def hw_virt_ex_enabled(self):
@@ -18534,7 +18379,7 @@ class IMachineDebugger(Interface):
         virtualization extensions.
         """
         ret = self._get_attr('HWVirtExEnabled')
-        return bool(ret) 
+        return ret 
 
     @property
     def hw_virt_ex_nested_paging_enabled(self):
@@ -18543,7 +18388,7 @@ class IMachineDebugger(Interface):
         CPU hardware virtualization extension.
         """
         ret = self._get_attr('HWVirtExNestedPagingEnabled')
-        return bool(ret) 
+        return ret 
 
     @property
     def hw_virt_ex_vpid_enabled(self):
@@ -18552,7 +18397,7 @@ class IMachineDebugger(Interface):
         VT-x extension.
         """
         ret = self._get_attr('HWVirtExVPIDEnabled')
-        return bool(ret) 
+        return ret 
 
     @property
     def hw_virt_ex_ux_enabled(self):
@@ -18561,7 +18406,7 @@ class IMachineDebugger(Interface):
         unrestricted execution feature of VT-x.
         """
         ret = self._get_attr('HWVirtExUXEnabled')
-        return bool(ret) 
+        return ret 
 
     @property
     def os_name(self):
@@ -18572,7 +18417,7 @@ class IMachineDebugger(Interface):
         in a dot release.
         """
         ret = self._get_attr('OSName')
-        return str(ret) 
+        return ret 
 
     @property
     def os_version(self):
@@ -18583,7 +18428,7 @@ class IMachineDebugger(Interface):
         in a dot release.
         """
         ret = self._get_attr('OSVersion')
-        return str(ret) 
+        return ret 
 
     @property
     def pae_enabled(self):
@@ -18592,7 +18437,7 @@ class IMachineDebugger(Interface):
         Address Extension CPU feature.
         """
         ret = self._get_attr('PAEEnabled')
-        return bool(ret) 
+        return ret 
 
     @property
     def virtual_time_rate(self):
@@ -18601,7 +18446,7 @@ class IMachineDebugger(Interface):
         The accepted range is 2% to 20000%.
         """
         ret = self._get_attr('virtualTimeRate')
-        return int(ret) 
+        return ret 
 
     @virtual_time_rate.setter
     def virtual_time_rate(self, value):
@@ -18617,7 +18462,7 @@ class IMachineDebugger(Interface):
         the details of this interface.
         """
         ret = self._get_attr('VM')
-        return int(ret) 
+        return ret 
 
 
 class IUSBController(Interface):
@@ -18639,7 +18484,7 @@ class IUSBController(Interface):
         the VM is powered off.
         """
         ret = self._get_attr('enabled')
-        return bool(ret) 
+        return ret 
 
     @enabled.setter
     def enabled(self, value):
@@ -18656,7 +18501,7 @@ class IUSBController(Interface):
         the VM is powered off.
         """
         ret = self._get_attr('enabledEHCI')
-        return bool(ret) 
+        return ret 
 
     @enabled_ehci.setter
     def enabled_ehci(self, value):
@@ -18670,7 +18515,7 @@ class IUSBController(Interface):
         Flag whether there is an USB proxy available.
         """
         ret = self._get_attr('proxyAvailable')
-        return bool(ret) 
+        return ret 
 
     @property
     def usb_standard(self):
@@ -18680,7 +18525,7 @@ class IUSBController(Interface):
         high byte and minor version is in the low byte.
         """
         ret = self._get_attr('USBStandard')
-        return int(ret) 
+        return ret 
 
     @property
     def device_filters(self):
@@ -18830,7 +18675,7 @@ class IUSBDevice(Interface):
         #productId, #revision and #serialNumber.
         """
         ret = self._get_attr('id')
-        return str(ret) 
+        return ret 
 
     @property
     def vendor_id(self):
@@ -18838,7 +18683,7 @@ class IUSBDevice(Interface):
         Vendor ID.
         """
         ret = self._get_attr('vendorId')
-        return int(ret) 
+        return ret 
 
     @property
     def product_id(self):
@@ -18846,7 +18691,7 @@ class IUSBDevice(Interface):
         Product ID.
         """
         ret = self._get_attr('productId')
-        return int(ret) 
+        return ret 
 
     @property
     def revision(self):
@@ -18856,7 +18701,7 @@ class IUSBDevice(Interface):
         byte is the decimal.
         """
         ret = self._get_attr('revision')
-        return int(ret) 
+        return ret 
 
     @property
     def manufacturer(self):
@@ -18864,7 +18709,7 @@ class IUSBDevice(Interface):
         Manufacturer string.
         """
         ret = self._get_attr('manufacturer')
-        return str(ret) 
+        return ret 
 
     @property
     def product(self):
@@ -18872,7 +18717,7 @@ class IUSBDevice(Interface):
         Product string.
         """
         ret = self._get_attr('product')
-        return str(ret) 
+        return ret 
 
     @property
     def serial_number(self):
@@ -18880,7 +18725,7 @@ class IUSBDevice(Interface):
         Serial number string.
         """
         ret = self._get_attr('serialNumber')
-        return str(ret) 
+        return ret 
 
     @property
     def address(self):
@@ -18888,7 +18733,7 @@ class IUSBDevice(Interface):
         Host specific address of the device.
         """
         ret = self._get_attr('address')
-        return str(ret) 
+        return ret 
 
     @property
     def port(self):
@@ -18897,7 +18742,7 @@ class IUSBDevice(Interface):
         connected to.
         """
         ret = self._get_attr('port')
-        return int(ret) 
+        return ret 
 
     @property
     def version(self):
@@ -18905,7 +18750,7 @@ class IUSBDevice(Interface):
         The major USB version of the device - 1 or 2.
         """
         ret = self._get_attr('version')
-        return int(ret) 
+        return ret 
 
     @property
     def port_version(self):
@@ -18915,7 +18760,7 @@ class IUSBDevice(Interface):
         anything this will have the same value as the version attribute.
         """
         ret = self._get_attr('portVersion')
-        return int(ret) 
+        return ret 
 
     @property
     def remote(self):
@@ -18924,7 +18769,7 @@ class IUSBDevice(Interface):
         client or to a local host machine.
         """
         ret = self._get_attr('remote')
-        return bool(ret) 
+        return ret 
 
 
 class IUSBDeviceFilter(Interface):
@@ -19007,7 +18852,7 @@ class IUSBDeviceFilter(Interface):
         so it can neither be @c null nor an empty string.
         """
         ret = self._get_attr('name')
-        return str(ret) 
+        return ret 
 
     @name.setter
     def name(self, value):
@@ -19021,7 +18866,7 @@ class IUSBDeviceFilter(Interface):
         Whether this filter active or has been temporarily disabled.
         """
         ret = self._get_attr('active')
-        return bool(ret) 
+        return ret 
 
     @active.setter
     def active(self, value):
@@ -19038,7 +18883,7 @@ class IUSBDeviceFilter(Interface):
         (including leading zeroes).
         """
         ret = self._get_attr('vendorId')
-        return str(ret) 
+        return ret 
 
     @vendor_id.setter
     def vendor_id(self, value):
@@ -19055,7 +18900,7 @@ class IUSBDeviceFilter(Interface):
         (including leading zeroes).
         """
         ret = self._get_attr('productId')
-        return str(ret) 
+        return ret 
 
     @product_id.setter
     def product_id(self, value):
@@ -19078,7 +18923,7 @@ class IUSBDeviceFilter(Interface):
         revision from 1.0 to 1.99.
         """
         ret = self._get_attr('revision')
-        return str(ret) 
+        return ret 
 
     @revision.setter
     def revision(self, value):
@@ -19092,7 +18937,7 @@ class IUSBDeviceFilter(Interface):
         <link to="IUSBDevice::manufacturer">Manufacturer</link> filter.
         """
         ret = self._get_attr('manufacturer')
-        return str(ret) 
+        return ret 
 
     @manufacturer.setter
     def manufacturer(self, value):
@@ -19106,7 +18951,7 @@ class IUSBDeviceFilter(Interface):
         <link to="IUSBDevice::product">Product</link> filter.
         """
         ret = self._get_attr('product')
-        return str(ret) 
+        return ret 
 
     @product.setter
     def product(self, value):
@@ -19120,7 +18965,7 @@ class IUSBDeviceFilter(Interface):
         <link to="IUSBDevice::serialNumber">Serial number</link> filter.
         """
         ret = self._get_attr('serialNumber')
-        return str(ret) 
+        return ret 
 
     @serial_number.setter
     def serial_number(self, value):
@@ -19134,7 +18979,7 @@ class IUSBDeviceFilter(Interface):
         <link to="IUSBDevice::port">Host USB port</link> filter.
         """
         ret = self._get_attr('port')
-        return str(ret) 
+        return ret 
 
     @port.setter
     def port(self, value):
@@ -19151,7 +18996,7 @@ class IUSBDeviceFilter(Interface):
           i.e. it is ignored by IHostUSBDeviceFilter objects.
         """
         ret = self._get_attr('remote')
-        return str(ret) 
+        return ret 
 
     @remote.setter
     def remote(self, value):
@@ -19169,7 +19014,7 @@ class IUSBDeviceFilter(Interface):
         This feature only works on Linux hosts.
         """
         ret = self._get_attr('maskedInterfaces')
-        return int(ret) 
+        return ret 
 
     @masked_interfaces.setter
     def masked_interfaces(self, value):
@@ -19256,7 +19101,7 @@ class IAudioAdapter(Interface):
         the VM is not running.
         """
         ret = self._get_attr('enabled')
-        return bool(ret) 
+        return ret 
 
     @enabled.setter
     def enabled(self, value):
@@ -19307,7 +19152,7 @@ class IVRDEServer(Interface):
         Flag if VRDE server is enabled.
         """
         ret = self._get_attr('enabled')
-        return bool(ret) 
+        return ret 
 
     @enabled.setter
     def enabled(self, value):
@@ -19335,7 +19180,7 @@ class IVRDEServer(Interface):
         Timeout for guest authentication. Milliseconds.
         """
         ret = self._get_attr('authTimeout')
-        return int(ret) 
+        return ret 
 
     @auth_timeout.setter
     def auth_timeout(self, value):
@@ -19350,7 +19195,7 @@ class IVRDEServer(Interface):
         Note that this will be replaced by a more powerful mechanism in the future.
         """
         ret = self._get_attr('allowMultiConnection')
-        return bool(ret) 
+        return ret 
 
     @allow_multi_connection.setter
     def allow_multi_connection(self, value):
@@ -19366,7 +19211,7 @@ class IVRDEServer(Interface):
         connection mode.
         """
         ret = self._get_attr('reuseSingleConnection')
-        return bool(ret) 
+        return ret 
 
     @reuse_single_connection.setter
     def reuse_single_connection(self, value):
@@ -19381,7 +19226,7 @@ class IVRDEServer(Interface):
         <link to="ISystemProperties::defaultVRDEExtPack"/>.
         """
         ret = self._get_attr('VRDEExtPack')
-        return str(ret) 
+        return ret 
 
     @vrde_ext_pack.setter
     def vrde_ext_pack(self, value):
@@ -19396,7 +19241,7 @@ class IVRDEServer(Interface):
         <link to="ISystemProperties::VRDEAuthLibrary"/>.
         """
         ret = self._get_attr('authLibrary')
-        return str(ret) 
+        return ret 
 
     @auth_library.setter
     def auth_library(self, value):
@@ -19410,7 +19255,7 @@ class IVRDEServer(Interface):
         Array of names of properties, which are supported by this VRDE server.
         """
         ret = self._call_method('getVRDEProperties')
-        return [str(a) for a in ret] 
+        return ret 
 
     def set_vrde_property(self, key, value):
         """Sets a VRDE specific property string.
@@ -19449,7 +19294,6 @@ class IVRDEServer(Interface):
             raise TypeError("key can only be an instance of type str")
         value = self._call_method('getVRDEProperty',
                      in_p=[key])
-        value = str(value)
         return value
 
 
@@ -19511,7 +19355,7 @@ class ISharedFolder(Interface):
         Logical name of the shared folder.
         """
         ret = self._get_attr('name')
-        return str(ret) 
+        return ret 
 
     @property
     def host_path(self):
@@ -19519,7 +19363,7 @@ class ISharedFolder(Interface):
         Full path to the shared folder in the host file system.
         """
         ret = self._get_attr('hostPath')
-        return str(ret) 
+        return ret 
 
     @property
     def accessible(self):
@@ -19531,7 +19375,7 @@ class ISharedFolder(Interface):
         this property is read.
         """
         ret = self._get_attr('accessible')
-        return bool(ret) 
+        return ret 
 
     @property
     def writable(self):
@@ -19540,7 +19384,7 @@ class ISharedFolder(Interface):
         not.
         """
         ret = self._get_attr('writable')
-        return bool(ret) 
+        return ret 
 
     @property
     def auto_mount(self):
@@ -19548,7 +19392,7 @@ class ISharedFolder(Interface):
         Whether the folder gets automatically mounted by the guest or not.
         """
         ret = self._get_attr('autoMount')
-        return bool(ret) 
+        return ret 
 
     @property
     def last_access_error(self):
@@ -19563,7 +19407,7 @@ class ISharedFolder(Interface):
         example, a file read error).
         """
         ret = self._get_attr('lastAccessError')
-        return str(ret) 
+        return ret 
 
 
 class IInternalSessionControl(Interface):
@@ -19580,7 +19424,6 @@ class IInternalSessionControl(Interface):
 
         """
         pid = self._call_method('getPID')
-        pid = int(pid)
         return pid
 
     def get_remote_console(self):
@@ -19979,8 +19822,6 @@ class IInternalSessionControl(Interface):
             raise TypeError("check can only be an instance of type bool")
         (can_show, win_id) = self._call_method('onShowWindow',
                      in_p=[check])
-        can_show = bool(can_show)
-        win_id = int(win_id)
         return (can_show, win_id)
 
     def on_bandwidth_group_change(self, bandwidth_group):
@@ -20031,9 +19872,6 @@ class IInternalSessionControl(Interface):
             raise TypeError("is_setter can only be an instance of type bool")
         (ret_value, ret_timestamp, ret_flags) = self._call_method('accessGuestProperty',
                      in_p=[name, value, flags, is_setter])
-        ret_value = str(ret_value)
-        ret_timestamp = int(ret_timestamp)
-        ret_flags = str(ret_flags)
         return (ret_value, ret_timestamp, ret_flags)
 
     def enumerate_guest_properties(self, patterns):
@@ -20071,10 +19909,6 @@ class IInternalSessionControl(Interface):
             raise TypeError("patterns can only be an instance of type str")
         (keys, values, timestamps, flags) = self._call_method('enumerateGuestProperties',
                      in_p=[patterns])
-        keys = [str(a) for a in keys]
-        values = [str(a) for a in values]
-        timestamps = [int(a) for a in timestamps]
-        flags = [str(a) for a in flags]
         return (keys, values, timestamps, flags)
 
     def online_merge_medium(self, medium_attachment, source_idx, target_idx, source, target, merge_forward, parent_for_target, children_to_reparent, progress):
@@ -20311,7 +20145,7 @@ class IStorageController(Interface):
         <link to="IMachine::attachDevice"/> and <link to="IMachine::mountMedium"/>.
         """
         ret = self._get_attr('name')
-        return str(ret) 
+        return ret 
 
     @property
     def max_devices_per_port_count(self):
@@ -20319,7 +20153,7 @@ class IStorageController(Interface):
         Maximum number of devices which can be attached to one port.
         """
         ret = self._get_attr('maxDevicesPerPortCount')
-        return int(ret) 
+        return ret 
 
     @property
     def min_port_count(self):
@@ -20327,7 +20161,7 @@ class IStorageController(Interface):
         Minimum number of ports that <link to="IStorageController::portCount"/> can be set to.
         """
         ret = self._get_attr('minPortCount')
-        return int(ret) 
+        return ret 
 
     @property
     def max_port_count(self):
@@ -20335,7 +20169,7 @@ class IStorageController(Interface):
         Maximum number of ports that <link to="IStorageController::portCount"/> can be set to.
         """
         ret = self._get_attr('maxPortCount')
-        return int(ret) 
+        return ret 
 
     @property
     def instance(self):
@@ -20343,7 +20177,7 @@ class IStorageController(Interface):
         The instance number of the device in the running VM.
         """
         ret = self._get_attr('instance')
-        return int(ret) 
+        return ret 
 
     @instance.setter
     def instance(self, value):
@@ -20360,7 +20194,7 @@ class IStorageController(Interface):
         and <link to="IStorageController::maxPortCount"/>.
         """
         ret = self._get_attr('portCount')
-        return int(ret) 
+        return ret 
 
     @port_count.setter
     def port_count(self, value):
@@ -20412,7 +20246,7 @@ class IStorageController(Interface):
         This option new with the API of VirtualBox 3.2 and is now the default for non-IDE storage controllers.
         """
         ret = self._get_attr('useHostIOCache')
-        return bool(ret) 
+        return ret 
 
     @use_host_io_cache.setter
     def use_host_io_cache(self, value):
@@ -20426,7 +20260,7 @@ class IStorageController(Interface):
         Returns whether it is possible to boot from disks attached to this controller.
         """
         ret = self._get_attr('bootable')
-        return bool(ret) 
+        return ret 
 
 
 class IPerformanceMetric(Interface):
@@ -20443,7 +20277,7 @@ class IPerformanceMetric(Interface):
         Name of the metric.
         """
         ret = self._get_attr('metricName')
-        return str(ret) 
+        return ret 
 
     @property
     def object_p(self):
@@ -20459,7 +20293,7 @@ class IPerformanceMetric(Interface):
         Textual description of the metric.
         """
         ret = self._get_attr('description')
-        return str(ret) 
+        return ret 
 
     @property
     def period(self):
@@ -20467,7 +20301,7 @@ class IPerformanceMetric(Interface):
         Time interval between samples, measured in seconds.
         """
         ret = self._get_attr('period')
-        return int(ret) 
+        return ret 
 
     @property
     def count(self):
@@ -20479,7 +20313,7 @@ class IPerformanceMetric(Interface):
         are discarded.
         """
         ret = self._get_attr('count')
-        return int(ret) 
+        return ret 
 
     @property
     def unit(self):
@@ -20487,7 +20321,7 @@ class IPerformanceMetric(Interface):
         Unit of measurement.
         """
         ret = self._get_attr('unit')
-        return str(ret) 
+        return ret 
 
     @property
     def minimum_value(self):
@@ -20495,7 +20329,7 @@ class IPerformanceMetric(Interface):
         Minimum possible value of this metric.
         """
         ret = self._get_attr('minimumValue')
-        return int(ret) 
+        return ret 
 
     @property
     def maximum_value(self):
@@ -20503,7 +20337,7 @@ class IPerformanceMetric(Interface):
         Maximum possible value of this metric.
         """
         ret = self._get_attr('maximumValue')
-        return int(ret) 
+        return ret 
 
 
 class IPerformanceCollector(Interface):
@@ -20622,7 +20456,7 @@ class IPerformanceCollector(Interface):
         list of supported metrics for a particular object.
         """
         ret = self._call_method('getMetricNames')
-        return [str(a) for a in ret] 
+        return ret 
 
     def get_metrics(self, metric_names, objects):
         """Returns parameters of specified metrics for a set of objects.
@@ -20865,14 +20699,7 @@ class IPerformanceCollector(Interface):
                 raise TypeError("array can only contain objects of type Interface")
         (return_metric_names, return_objects, return_units, return_scales, return_sequence_numbers, return_data_indices, return_data_lengths, return_data) = self._call_method('queryMetricsData',
                      in_p=[metric_names, objects])
-        return_metric_names = [str(a) for a in return_metric_names]
         return_objects = [Interface(a) for a in return_objects]
-        return_units = [str(a) for a in return_units]
-        return_scales = [int(a) for a in return_scales]
-        return_sequence_numbers = [int(a) for a in return_sequence_numbers]
-        return_data_indices = [int(a) for a in return_data_indices]
-        return_data_lengths = [int(a) for a in return_data_lengths]
-        return_data = [int(a) for a in return_data]
         return (return_metric_names, return_objects, return_units, return_scales, return_sequence_numbers, return_data_indices, return_data_lengths, return_data)
 
 
@@ -20892,7 +20719,7 @@ class INATEngine(Interface):
         DHCP server to fill corresponding fields of DHCP leases).
         """
         ret = self._get_attr('network')
-        return str(ret) 
+        return ret 
 
     @network.setter
     def network(self, value):
@@ -20907,7 +20734,7 @@ class INATEngine(Interface):
           Changing this does not change binding of port forwarding.
         """
         ret = self._get_attr('hostIP')
-        return str(ret) 
+        return ret 
 
     @host_ip.setter
     def host_ip(self, value):
@@ -20922,7 +20749,7 @@ class INATEngine(Interface):
         the corresponding fields of DHCP leases.
         """
         ret = self._get_attr('TFTPPrefix')
-        return str(ret) 
+        return ret 
 
     @tftp_prefix.setter
     def tftp_prefix(self, value):
@@ -20937,7 +20764,7 @@ class INATEngine(Interface):
         the corresponding fields of DHCP leases.
         """
         ret = self._get_attr('TFTPBootFile')
-        return str(ret) 
+        return ret 
 
     @tftp_boot_file.setter
     def tftp_boot_file(self, value):
@@ -20953,7 +20780,7 @@ class INATEngine(Interface):
         The preferred form is IPv4 addresses.
         """
         ret = self._get_attr('TFTPNextServer')
-        return str(ret) 
+        return ret 
 
     @tftp_next_server.setter
     def tftp_next_server(self, value):
@@ -20967,7 +20794,7 @@ class INATEngine(Interface):
         <desc/>
         """
         ret = self._get_attr('aliasMode')
-        return int(ret) 
+        return ret 
 
     @alias_mode.setter
     def alias_mode(self, value):
@@ -20981,7 +20808,7 @@ class INATEngine(Interface):
         Whether the DHCP server should pass the DNS domain used by the host.
         """
         ret = self._get_attr('DNSPassDomain')
-        return bool(ret) 
+        return ret 
 
     @dns_pass_domain.setter
     def dns_pass_domain(self, value):
@@ -20996,7 +20823,7 @@ class INATEngine(Interface):
         of the DNS proxy and process traffic using DNS servers registered on the host.
         """
         ret = self._get_attr('DNSProxy')
-        return bool(ret) 
+        return ret 
 
     @dns_proxy.setter
     def dns_proxy(self, value):
@@ -21011,7 +20838,7 @@ class INATEngine(Interface):
         of the DNS proxy and process traffic using the host resolver mechanism.
         """
         ret = self._get_attr('DNSUseHostResolver')
-        return bool(ret) 
+        return ret 
 
     @dns_use_host_resolver.setter
     def dns_use_host_resolver(self, value):
@@ -21026,7 +20853,7 @@ class INATEngine(Interface):
         format: "name,protocol id,host ip,host port,guest ip,guest port".
         """
         ret = self._call_method('getRedirects')
-        return [str(a) for a in ret] 
+        return ret 
 
     def set_network_settings(self, mtu, sock_snd, sock_rcv, tcp_wnd_snd, tcp_wnd_rcv):
         """Sets network configuration of the NAT engine.
@@ -21078,11 +20905,6 @@ class INATEngine(Interface):
 
         """
         (mtu, sock_snd, sock_rcv, tcp_wnd_snd, tcp_wnd_rcv) = self._call_method('getNetworkSettings')
-        mtu = int(mtu)
-        sock_snd = int(sock_snd)
-        sock_rcv = int(sock_rcv)
-        tcp_wnd_snd = int(tcp_wnd_snd)
-        tcp_wnd_rcv = int(tcp_wnd_rcv)
         return (mtu, sock_snd, sock_rcv, tcp_wnd_snd, tcp_wnd_rcv)
 
     def add_redirect(self, name, proto, host_ip, host_port, guest_ip, guest_port):
@@ -21153,7 +20975,7 @@ class IExtPackPlugIn(Interface):
         The plug-in name.
         """
         ret = self._get_attr('name')
-        return str(ret) 
+        return ret 
 
     @property
     def description(self):
@@ -21161,7 +20983,7 @@ class IExtPackPlugIn(Interface):
         The plug-in description.
         """
         ret = self._get_attr('description')
-        return str(ret) 
+        return ret 
 
     @property
     def frontend(self):
@@ -21169,7 +20991,7 @@ class IExtPackPlugIn(Interface):
         The name of the frontend or component name this plug-in plugs into.
         """
         ret = self._get_attr('frontend')
-        return str(ret) 
+        return ret 
 
     @property
     def module_path(self):
@@ -21177,7 +20999,7 @@ class IExtPackPlugIn(Interface):
         The module path.
         """
         ret = self._get_attr('modulePath')
-        return str(ret) 
+        return ret 
 
 
 class IExtPackBase(Interface):
@@ -21194,7 +21016,7 @@ class IExtPackBase(Interface):
         The extension pack name. This is unique.
         """
         ret = self._get_attr('name')
-        return str(ret) 
+        return ret 
 
     @property
     def description(self):
@@ -21202,7 +21024,7 @@ class IExtPackBase(Interface):
         The extension pack description.
         """
         ret = self._get_attr('description')
-        return str(ret) 
+        return ret 
 
     @property
     def version(self):
@@ -21216,7 +21038,7 @@ class IExtPackBase(Interface):
         Examples: "1.2.3", "1.2.3_BETA1" and "1.2.3_RC2".
         """
         ret = self._get_attr('version')
-        return str(ret) 
+        return ret 
 
     @property
     def revision(self):
@@ -21224,7 +21046,7 @@ class IExtPackBase(Interface):
         The extension pack internal revision number.
         """
         ret = self._get_attr('revision')
-        return int(ret) 
+        return ret 
 
     @property
     def edition(self):
@@ -21236,7 +21058,7 @@ class IExtPackBase(Interface):
         something differs.
         """
         ret = self._get_attr('edition')
-        return str(ret) 
+        return ret 
 
     @property
     def vrde_module(self):
@@ -21244,7 +21066,7 @@ class IExtPackBase(Interface):
         The name of the VRDE module if the extension pack sports one.
         """
         ret = self._get_attr('VRDEModule')
-        return str(ret) 
+        return ret 
 
     @property
     def plug_ins(self):
@@ -21264,7 +21086,7 @@ class IExtPackBase(Interface):
         incompatible with the current VirtualBox version.
         """
         ret = self._get_attr('usable')
-        return bool(ret) 
+        return ret 
 
     @property
     def why_unusable(self):
@@ -21273,7 +21095,7 @@ class IExtPackBase(Interface):
         empty string if usable and always a non-empty string if not usable.
         """
         ret = self._get_attr('whyUnusable')
-        return str(ret) 
+        return ret 
 
     @property
     def show_license(self):
@@ -21281,7 +21103,7 @@ class IExtPackBase(Interface):
         Whether to show the license before installation
         """
         ret = self._get_attr('showLicense')
-        return bool(ret) 
+        return ret 
 
     @property
     def license_p(self):
@@ -21292,7 +21114,7 @@ class IExtPackBase(Interface):
         to html.
         """
         ret = self._get_attr('license')
-        return str(ret) 
+        return ret 
 
     def query_license(self, preferred_locale, preferred_language, format_p):
         """Full feature version of the license attribute.
@@ -21322,7 +21144,6 @@ class IExtPackBase(Interface):
             raise TypeError("format_p can only be an instance of type str")
         license_text = self._call_method('queryLicense',
                      in_p=[preferred_locale, preferred_language, format_p])
-        license_text = str(license_text)
         return license_text
 
 
@@ -21369,7 +21190,7 @@ class IExtPackFile(IExtPackBase):
         The path to the extension pack file.
         """
         ret = self._get_attr('filePath')
-        return str(ret) 
+        return ret 
 
     def install(self, replace, display_info):
         """Install the extension pack.
@@ -21503,7 +21324,6 @@ class IExtPackManager(Interface):
             raise TypeError("frontend_name can only be an instance of type str")
         plug_in_modules = self._call_method('queryAllPlugInsForFrontend',
                      in_p=[frontend_name])
-        plug_in_modules = [str(a) for a in plug_in_modules]
         return plug_in_modules
 
     def is_ext_pack_usable(self, name):
@@ -21520,7 +21340,6 @@ class IExtPackManager(Interface):
             raise TypeError("name can only be an instance of type str")
         usable = self._call_method('isExtPackUsable',
                      in_p=[name])
-        usable = bool(usable)
         return usable
 
 
@@ -21537,7 +21356,7 @@ class IBandwidthGroup(Interface):
         Name of the group.
         """
         ret = self._get_attr('name')
-        return str(ret) 
+        return ret 
 
     @property
     def type_p(self):
@@ -21553,7 +21372,7 @@ class IBandwidthGroup(Interface):
         How many devices/medium attachements use this group.
         """
         ret = self._get_attr('reference')
-        return int(ret) 
+        return ret 
 
     @property
     def max_bytes_per_sec(self):
@@ -21562,7 +21381,7 @@ class IBandwidthGroup(Interface):
         entities attached to this group during one second.
         """
         ret = self._get_attr('maxBytesPerSec')
-        return int(ret) 
+        return ret 
 
     @max_bytes_per_sec.setter
     def max_bytes_per_sec(self, value):
@@ -21585,7 +21404,7 @@ class IBandwidthControl(Interface):
         The current number of existing bandwidth groups managed.
         """
         ret = self._get_attr('numGroups')
-        return int(ret) 
+        return ret 
 
     def create_bandwidth_group(self, name, type_p, max_bytes_per_sec):
         """Creates a new bandwidth group.
@@ -21821,7 +21640,6 @@ class IEventSource(Interface):
             raise TypeError("timeout can only be an instance of type int")
         result = self._call_method('fireEvent',
                      in_p=[event, timeout])
-        result = bool(result)
         return result
 
     def get_event(self, listener, timeout):
@@ -22003,7 +21821,7 @@ class IEvent(Interface):
         until all consumers confirmed events.
         """
         ret = self._get_attr('waitable')
-        return bool(ret) 
+        return ret 
 
     def set_processed(self):
         """Internal method called by the system when all listeners of a particular event have called
@@ -22028,7 +21846,6 @@ class IEvent(Interface):
             raise TypeError("timeout can only be an instance of type int")
         result = self._call_method('waitProcessed',
                      in_p=[timeout])
-        result = bool(result)
         return result
 
 
@@ -22045,7 +21862,7 @@ class IReusableEvent(IEvent):
         Current generation of event, incremented on reuse.
         """
         ret = self._get_attr('generation')
-        return int(ret) 
+        return ret 
 
     def reuse(self):
         """Marks an event as reused, increments 'generation', fields shall no
@@ -22068,7 +21885,7 @@ class IMachineEvent(IEvent):
         ID of the machine this event relates to.
         """
         ret = self._get_attr('machineId')
-        return str(ret) 
+        return ret 
 
 
 class IMachineStateChangedEvent(IMachineEvent):
@@ -22103,7 +21920,7 @@ class IMachineDataChangedEvent(IMachineEvent):
         for temporary changes is NOT IMPLEMENTED.
         """
         ret = self._get_attr('temporary')
-        return bool(ret) 
+        return ret 
 
 
 class IMediumRegisteredEvent(IEvent):
@@ -22120,7 +21937,7 @@ class IMediumRegisteredEvent(IEvent):
         ID of the medium this event relates to.
         """
         ret = self._get_attr('mediumId')
-        return str(ret) 
+        return ret 
 
     @property
     def medium_type(self):
@@ -22137,7 +21954,7 @@ class IMediumRegisteredEvent(IEvent):
         unregistered.
         """
         ret = self._get_attr('registered')
-        return bool(ret) 
+        return ret 
 
 
 class IMachineRegisteredEvent(IMachineEvent):
@@ -22155,7 +21972,7 @@ class IMachineRegisteredEvent(IMachineEvent):
         unregistered.
         """
         ret = self._get_attr('registered')
-        return bool(ret) 
+        return ret 
 
 
 class ISessionStateChangedEvent(IMachineEvent):
@@ -22188,7 +22005,7 @@ class IGuestPropertyChangedEvent(IMachineEvent):
         The name of the property that has changed.
         """
         ret = self._get_attr('name')
-        return str(ret) 
+        return ret 
 
     @property
     def value(self):
@@ -22196,7 +22013,7 @@ class IGuestPropertyChangedEvent(IMachineEvent):
         The new property value.
         """
         ret = self._get_attr('value')
-        return str(ret) 
+        return ret 
 
     @property
     def flags(self):
@@ -22204,7 +22021,7 @@ class IGuestPropertyChangedEvent(IMachineEvent):
         The new property flags.
         """
         ret = self._get_attr('flags')
-        return str(ret) 
+        return ret 
 
 
 class ISnapshotEvent(IMachineEvent):
@@ -22220,7 +22037,7 @@ class ISnapshotEvent(IMachineEvent):
         ID of the snapshot this event relates to.
         """
         ret = self._get_attr('snapshotId')
-        return str(ret) 
+        return ret 
 
 
 class ISnapshotTakenEvent(ISnapshotEvent):
@@ -22271,7 +22088,7 @@ class IMousePointerShapeChangedEvent(IEvent):
         Flag whether the pointer is visible.
         """
         ret = self._get_attr('visible')
-        return bool(ret) 
+        return ret 
 
     @property
     def alpha(self):
@@ -22279,7 +22096,7 @@ class IMousePointerShapeChangedEvent(IEvent):
         Flag whether the pointer has an alpha channel.
         """
         ret = self._get_attr('alpha')
-        return bool(ret) 
+        return ret 
 
     @property
     def xhot(self):
@@ -22287,7 +22104,7 @@ class IMousePointerShapeChangedEvent(IEvent):
         The pointer hot spot X coordinate.
         """
         ret = self._get_attr('xhot')
-        return int(ret) 
+        return ret 
 
     @property
     def yhot(self):
@@ -22295,7 +22112,7 @@ class IMousePointerShapeChangedEvent(IEvent):
         The pointer hot spot Y coordinate.
         """
         ret = self._get_attr('yhot')
-        return int(ret) 
+        return ret 
 
     @property
     def width(self):
@@ -22303,7 +22120,7 @@ class IMousePointerShapeChangedEvent(IEvent):
         Width of the pointer shape in pixels.
         """
         ret = self._get_attr('width')
-        return int(ret) 
+        return ret 
 
     @property
     def height(self):
@@ -22311,7 +22128,7 @@ class IMousePointerShapeChangedEvent(IEvent):
         Height of the pointer shape in pixels.
         """
         ret = self._get_attr('height')
-        return int(ret) 
+        return ret 
 
     @property
     def shape(self):
@@ -22344,7 +22161,7 @@ class IMousePointerShapeChangedEvent(IEvent):
           If @a shape is 0, only the pointer visibility is changed.
         """
         ret = self._call_method('getShape')
-        return [str(a) for a in ret] 
+        return ret 
 
 
 class IMouseCapabilityChangedEvent(IEvent):
@@ -22361,7 +22178,7 @@ class IMouseCapabilityChangedEvent(IEvent):
         Supports absolute coordinates.
         """
         ret = self._get_attr('supportsAbsolute')
-        return bool(ret) 
+        return ret 
 
     @property
     def supports_relative(self):
@@ -22369,7 +22186,7 @@ class IMouseCapabilityChangedEvent(IEvent):
         Supports relative coordinates.
         """
         ret = self._get_attr('supportsRelative')
-        return bool(ret) 
+        return ret 
 
     @property
     def needs_host_cursor(self):
@@ -22377,7 +22194,7 @@ class IMouseCapabilityChangedEvent(IEvent):
         If host cursor is needed.
         """
         ret = self._get_attr('needsHostCursor')
-        return bool(ret) 
+        return ret 
 
 
 class IKeyboardLedsChangedEvent(IEvent):
@@ -22394,7 +22211,7 @@ class IKeyboardLedsChangedEvent(IEvent):
         NumLock status.
         """
         ret = self._get_attr('numLock')
-        return bool(ret) 
+        return ret 
 
     @property
     def caps_lock(self):
@@ -22402,7 +22219,7 @@ class IKeyboardLedsChangedEvent(IEvent):
         CapsLock status.
         """
         ret = self._get_attr('capsLock')
-        return bool(ret) 
+        return ret 
 
     @property
     def scroll_lock(self):
@@ -22410,7 +22227,7 @@ class IKeyboardLedsChangedEvent(IEvent):
         ScrollLock status.
         """
         ret = self._get_attr('scrollLock')
-        return bool(ret) 
+        return ret 
 
 
 class IStateChangedEvent(IEvent):
@@ -22570,7 +22387,7 @@ class ICPUChangedEvent(IEvent):
         The CPU which changed.
         """
         ret = self._get_attr('CPU')
-        return int(ret) 
+        return ret 
 
     @property
     def add(self):
@@ -22578,7 +22395,7 @@ class ICPUChangedEvent(IEvent):
         Flag whether the CPU was added or removed.
         """
         ret = self._get_attr('add')
-        return bool(ret) 
+        return ret 
 
 
 class ICPUExecutionCapChangedEvent(IEvent):
@@ -22594,7 +22411,7 @@ class ICPUExecutionCapChangedEvent(IEvent):
         The new CPU execution cap value. (1-100)
         """
         ret = self._get_attr('executionCap')
-        return int(ret) 
+        return ret 
 
 
 class IGuestKeyboardEvent(IEvent):
@@ -22610,7 +22427,7 @@ class IGuestKeyboardEvent(IEvent):
         Array of scancodes.
         """
         ret = self._call_method('getScancodes')
-        return [int(a) for a in ret] 
+        return ret 
 
 
 class IGuestMouseEvent(IReusableEvent):
@@ -22626,7 +22443,7 @@ class IGuestMouseEvent(IReusableEvent):
         If this event is relative or absolute.
         """
         ret = self._get_attr('absolute')
-        return bool(ret) 
+        return ret 
 
     @property
     def x(self):
@@ -22634,7 +22451,7 @@ class IGuestMouseEvent(IReusableEvent):
         New X position, or X delta.
         """
         ret = self._get_attr('x')
-        return int(ret) 
+        return ret 
 
     @property
     def y(self):
@@ -22642,7 +22459,7 @@ class IGuestMouseEvent(IReusableEvent):
         New Y position, or Y delta.
         """
         ret = self._get_attr('y')
-        return int(ret) 
+        return ret 
 
     @property
     def z(self):
@@ -22650,7 +22467,7 @@ class IGuestMouseEvent(IReusableEvent):
         Z delta.
         """
         ret = self._get_attr('z')
-        return int(ret) 
+        return ret 
 
     @property
     def w(self):
@@ -22658,7 +22475,7 @@ class IGuestMouseEvent(IReusableEvent):
         W delta.
         """
         ret = self._get_attr('w')
-        return int(ret) 
+        return ret 
 
     @property
     def buttons(self):
@@ -22666,7 +22483,7 @@ class IGuestMouseEvent(IReusableEvent):
         Button state bitmask.
         """
         ret = self._get_attr('buttons')
-        return int(ret) 
+        return ret 
 
 
 class IGuestSessionEvent(IEvent):
@@ -22698,7 +22515,7 @@ class IGuestSessionStateChangedEvent(IGuestSessionEvent):
         Session ID of guest session which was changed.
         """
         ret = self._get_attr('id')
-        return int(ret) 
+        return ret 
 
     @property
     def status(self):
@@ -22735,7 +22552,7 @@ class IGuestSessionRegisteredEvent(IGuestSessionEvent):
         unregistered.
         """
         ret = self._get_attr('registered')
-        return bool(ret) 
+        return ret 
 
 
 class IGuestProcessEvent(IGuestSessionEvent):
@@ -22759,7 +22576,7 @@ class IGuestProcessEvent(IGuestSessionEvent):
         Guest process ID (PID).
         """
         ret = self._get_attr('pid')
-        return int(ret) 
+        return ret 
 
 
 class IGuestProcessRegisteredEvent(IGuestProcessEvent):
@@ -22776,7 +22593,7 @@ class IGuestProcessRegisteredEvent(IGuestProcessEvent):
         unregistered.
         """
         ret = self._get_attr('registered')
-        return bool(ret) 
+        return ret 
 
 
 class IGuestProcessStateChangedEvent(IGuestProcessEvent):
@@ -22821,7 +22638,7 @@ class IGuestProcessIOEvent(IGuestProcessEvent):
         1 is stdout and 2 is stderr.
         """
         ret = self._get_attr('handle')
-        return int(ret) 
+        return ret 
 
     @property
     def processed(self):
@@ -22829,7 +22646,7 @@ class IGuestProcessIOEvent(IGuestProcessEvent):
         Processed input or output (in bytes).
         """
         ret = self._get_attr('processed')
-        return int(ret) 
+        return ret 
 
 
 class IGuestProcessInputNotifyEvent(IGuestProcessIOEvent):
@@ -22862,7 +22679,7 @@ class IGuestProcessOutputEvent(IGuestProcessIOEvent):
         Actual output data.
         """
         ret = self._call_method('getData')
-        return [str(a) for a in ret] 
+        return ret 
 
 
 class IGuestFileEvent(IGuestSessionEvent):
@@ -22895,7 +22712,7 @@ class IGuestFileRegisteredEvent(IGuestFileEvent):
         unregistered.
         """
         ret = self._get_attr('registered')
-        return bool(ret) 
+        return ret 
 
 
 class IGuestFileStateChangedEvent(IGuestFileEvent):
@@ -22939,7 +22756,7 @@ class IGuestFileIOEvent(IGuestFileEvent):
         Current offset (in bytes).
         """
         ret = self._get_attr('offset')
-        return int(ret) 
+        return ret 
 
     @property
     def processed(self):
@@ -22947,7 +22764,7 @@ class IGuestFileIOEvent(IGuestFileEvent):
         Processed input or output (in bytes).
         """
         ret = self._get_attr('processed')
-        return int(ret) 
+        return ret 
 
 
 class IGuestFileOffsetChangedEvent(IGuestFileIOEvent):
@@ -22971,7 +22788,7 @@ class IGuestFileReadEvent(IGuestFileIOEvent):
         Actual data read.
         """
         ret = self._call_method('getData')
-        return [str(a) for a in ret] 
+        return ret 
 
 
 class IGuestFileWriteEvent(IGuestFileIOEvent):
@@ -23051,7 +22868,7 @@ class IUSBDeviceStateChangedEvent(IEvent):
         @c true if the device was attached and @c false otherwise.
         """
         ret = self._get_attr('attached')
-        return bool(ret) 
+        return ret 
 
     @property
     def error(self):
@@ -23145,7 +22962,7 @@ class IRuntimeErrorEvent(IEvent):
         Whether the error is fatal or not.
         """
         ret = self._get_attr('fatal')
-        return bool(ret) 
+        return ret 
 
     @property
     def id_p(self):
@@ -23153,7 +22970,7 @@ class IRuntimeErrorEvent(IEvent):
         Error identifier.
         """
         ret = self._get_attr('id')
-        return str(ret) 
+        return ret 
 
     @property
     def message(self):
@@ -23161,7 +22978,7 @@ class IRuntimeErrorEvent(IEvent):
         Optional error message.
         """
         ret = self._get_attr('message')
-        return str(ret) 
+        return ret 
 
 
 class IEventSourceChangedEvent(IEvent):
@@ -23185,7 +23002,7 @@ class IEventSourceChangedEvent(IEvent):
         Flag whether listener was added or removed.
         """
         ret = self._get_attr('add')
-        return bool(ret) 
+        return ret 
 
 
 class IExtraDataChangedEvent(IEvent):
@@ -23203,7 +23020,7 @@ class IExtraDataChangedEvent(IEvent):
         Null for global extra data changes.
         """
         ret = self._get_attr('machineId')
-        return str(ret) 
+        return ret 
 
     @property
     def key(self):
@@ -23211,7 +23028,7 @@ class IExtraDataChangedEvent(IEvent):
         Extra data key that has changed.
         """
         ret = self._get_attr('key')
-        return str(ret) 
+        return ret 
 
     @property
     def value(self):
@@ -23219,7 +23036,7 @@ class IExtraDataChangedEvent(IEvent):
         Extra data value for the given key.
         """
         ret = self._get_attr('value')
-        return str(ret) 
+        return ret 
 
 
 class IVetoEvent(IEvent):
@@ -23249,7 +23066,6 @@ class IVetoEvent(IEvent):
 
         """
         result = self._call_method('isVetoed')
-        result = bool(result)
         return result
 
     def get_vetos(self):
@@ -23260,7 +23076,6 @@ class IVetoEvent(IEvent):
 
         """
         result = self._call_method('getVetos')
-        result = [str(a) for a in result]
         return result
 
 
@@ -23280,7 +23095,7 @@ class IExtraDataCanChangeEvent(IVetoEvent):
         Null for global extra data changes.
         """
         ret = self._get_attr('machineId')
-        return str(ret) 
+        return ret 
 
     @property
     def key(self):
@@ -23288,7 +23103,7 @@ class IExtraDataCanChangeEvent(IVetoEvent):
         Extra data key that has changed.
         """
         ret = self._get_attr('key')
-        return str(ret) 
+        return ret 
 
     @property
     def value(self):
@@ -23296,7 +23111,7 @@ class IExtraDataCanChangeEvent(IVetoEvent):
         Extra data value for the given key.
         """
         ret = self._get_attr('value')
-        return str(ret) 
+        return ret 
 
 
 class ICanShowWindowEvent(IVetoEvent):
@@ -23355,7 +23170,7 @@ class IShowWindowEvent(IEvent):
         the given platform and/or this VirtualBox front-end.
         """
         ret = self._get_attr('winId')
-        return int(ret) 
+        return ret 
 
     @win_id.setter
     def win_id(self, value):
@@ -23377,7 +23192,7 @@ class INATRedirectEvent(IMachineEvent):
         Adapter which NAT attached to.
         """
         ret = self._get_attr('slot')
-        return int(ret) 
+        return ret 
 
     @property
     def remove(self):
@@ -23385,7 +23200,7 @@ class INATRedirectEvent(IMachineEvent):
         Whether rule remove or add.
         """
         ret = self._get_attr('remove')
-        return bool(ret) 
+        return ret 
 
     @property
     def name(self):
@@ -23393,7 +23208,7 @@ class INATRedirectEvent(IMachineEvent):
         Name of the rule.
         """
         ret = self._get_attr('name')
-        return str(ret) 
+        return ret 
 
     @property
     def proto(self):
@@ -23409,7 +23224,7 @@ class INATRedirectEvent(IMachineEvent):
         Host ip address to bind socket on.
         """
         ret = self._get_attr('hostIP')
-        return str(ret) 
+        return ret 
 
     @property
     def host_port(self):
@@ -23417,7 +23232,7 @@ class INATRedirectEvent(IMachineEvent):
         Host port to bind socket on.
         """
         ret = self._get_attr('hostPort')
-        return int(ret) 
+        return ret 
 
     @property
     def guest_ip(self):
@@ -23425,7 +23240,7 @@ class INATRedirectEvent(IMachineEvent):
         Guest ip address to redirect to.
         """
         ret = self._get_attr('guestIP')
-        return str(ret) 
+        return ret 
 
     @property
     def guest_port(self):
@@ -23433,7 +23248,7 @@ class INATRedirectEvent(IMachineEvent):
         Guest port to redirect to.
         """
         ret = self._get_attr('guestPort')
-        return int(ret) 
+        return ret 
 
 
 class IHostPCIDevicePlugEvent(IMachineEvent):
@@ -23453,7 +23268,7 @@ class IHostPCIDevicePlugEvent(IMachineEvent):
         If device successfully plugged or unplugged.
         """
         ret = self._get_attr('plugged')
-        return bool(ret) 
+        return ret 
 
     @property
     def success(self):
@@ -23462,7 +23277,7 @@ class IHostPCIDevicePlugEvent(IMachineEvent):
         may be of interest.
         """
         ret = self._get_attr('success')
-        return bool(ret) 
+        return ret 
 
     @property
     def attachment(self):
@@ -23478,7 +23293,7 @@ class IHostPCIDevicePlugEvent(IMachineEvent):
         Optional error message.
         """
         ret = self._get_attr('message')
-        return str(ret) 
+        return ret 
 
 
 class IVBoxSVCAvailabilityChangedEvent(IEvent):
@@ -23495,7 +23310,7 @@ class IVBoxSVCAvailabilityChangedEvent(IEvent):
         Whether VBoxSVC is available now.
         """
         ret = self._get_attr('available')
-        return bool(ret) 
+        return ret 
 
 
 class IBandwidthGroupChangedEvent(IEvent):
@@ -23535,7 +23350,7 @@ class IGuestMonitorChangedEvent(IEvent):
         The monitor which was changed.
         """
         ret = self._get_attr('screenId')
-        return int(ret) 
+        return ret 
 
     @property
     def origin_x(self):
@@ -23544,7 +23359,7 @@ class IGuestMonitorChangedEvent(IEvent):
         Valid for Enabled and NewOrigin.
         """
         ret = self._get_attr('originX')
-        return int(ret) 
+        return ret 
 
     @property
     def origin_y(self):
@@ -23553,7 +23368,7 @@ class IGuestMonitorChangedEvent(IEvent):
         Valid for Enabled and NewOrigin.
         """
         ret = self._get_attr('originY')
-        return int(ret) 
+        return ret 
 
     @property
     def width(self):
@@ -23562,7 +23377,7 @@ class IGuestMonitorChangedEvent(IEvent):
         Valid for Enabled.
         """
         ret = self._get_attr('width')
-        return int(ret) 
+        return ret 
 
     @property
     def height(self):
@@ -23571,7 +23386,7 @@ class IGuestMonitorChangedEvent(IEvent):
         Valid for Enabled.
         """
         ret = self._get_attr('height')
-        return int(ret) 
+        return ret 
 
 
 class IStorageDeviceChangedEvent(IEvent):
@@ -23597,7 +23412,7 @@ class IStorageDeviceChangedEvent(IEvent):
         Flag whether the device was removed or added to the VM.
         """
         ret = self._get_attr('removed')
-        return bool(ret) 
+        return ret 
 
     @property
     def silent(self):
@@ -23605,7 +23420,7 @@ class IStorageDeviceChangedEvent(IEvent):
         Flag whether the guest should be notified about the change.
         """
         ret = self._get_attr('silent')
-        return bool(ret) 
+        return ret 
 
 
 class INATNetworkChangedEvent(IEvent):
@@ -23617,7 +23432,7 @@ class INATNetworkChangedEvent(IEvent):
     def network_name(self):
         """Get str value for 'NetworkName'"""
         ret = self._get_attr('NetworkName')
-        return str(ret) 
+        return ret 
 
 
 class INATNetworkStartStopEvent(INATNetworkChangedEvent):
@@ -23633,7 +23448,7 @@ class INATNetworkStartStopEvent(INATNetworkChangedEvent):
         IsStartEvent is true when NAT network is started and false on stopping.
         """
         ret = self._get_attr('startEvent')
-        return bool(ret) 
+        return ret 
 
 
 class INATNetworkAlterEvent(INATNetworkChangedEvent):
@@ -23651,7 +23466,7 @@ class INATNetworkCreationDeletionEvent(INATNetworkAlterEvent):
     def creation_event(self):
         """Get bool value for 'creationEvent'"""
         ret = self._get_attr('creationEvent')
-        return bool(ret) 
+        return ret 
 
 
 class INATNetworkSettingEvent(INATNetworkAlterEvent):
@@ -23663,31 +23478,31 @@ class INATNetworkSettingEvent(INATNetworkAlterEvent):
     def enabled(self):
         """Get bool value for 'enabled'"""
         ret = self._get_attr('enabled')
-        return bool(ret) 
+        return ret 
 
     @property
     def network(self):
         """Get str value for 'network'"""
         ret = self._get_attr('network')
-        return str(ret) 
+        return ret 
 
     @property
     def gateway(self):
         """Get str value for 'gateway'"""
         ret = self._get_attr('gateway')
-        return str(ret) 
+        return ret 
 
     @property
     def advertise_default_i_pv6_route_enabled(self):
         """Get bool value for 'advertiseDefaultIPv6RouteEnabled'"""
         ret = self._get_attr('advertiseDefaultIPv6RouteEnabled')
-        return bool(ret) 
+        return ret 
 
     @property
     def need_dhcp_server(self):
         """Get bool value for 'needDhcpServer'"""
         ret = self._get_attr('needDhcpServer')
-        return bool(ret) 
+        return ret 
 
 
 class INATNetworkPortForwardEvent(INATNetworkAlterEvent):
@@ -23699,19 +23514,19 @@ class INATNetworkPortForwardEvent(INATNetworkAlterEvent):
     def create(self):
         """Get bool value for 'create'"""
         ret = self._get_attr('create')
-        return bool(ret) 
+        return ret 
 
     @property
     def ipv6(self):
         """Get bool value for 'ipv6'"""
         ret = self._get_attr('ipv6')
-        return bool(ret) 
+        return ret 
 
     @property
     def name(self):
         """Get str value for 'name'"""
         ret = self._get_attr('name')
-        return str(ret) 
+        return ret 
 
     @property
     def proto(self):
@@ -23723,23 +23538,23 @@ class INATNetworkPortForwardEvent(INATNetworkAlterEvent):
     def host_ip(self):
         """Get str value for 'hostIp'"""
         ret = self._get_attr('hostIp')
-        return str(ret) 
+        return ret 
 
     @property
     def host_port(self):
         """Get int value for 'hostPort'"""
         ret = self._get_attr('hostPort')
-        return int(ret) 
+        return ret 
 
     @property
     def guest_ip(self):
         """Get str value for 'guestIp'"""
         ret = self._get_attr('guestIp')
-        return str(ret) 
+        return ret 
 
     @property
     def guest_port(self):
         """Get int value for 'guestPort'"""
         ret = self._get_attr('guestPort')
-        return int(ret) 
+        return ret 
 
