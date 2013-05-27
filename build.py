@@ -266,17 +266,6 @@ class %(name)s(%(extends)s):
     __wsmap__ = '%(wsmap)s'
     %(event_id)s'''
 
-CLASSES = {'IVirtualBox':"@virtualbox.org/VirtualBox;1",
-           'ISession':"@virtualbox.org/Session;1"}
-
-INIT_METHOD = """\
-    def __init__(self):
-        import xpcom.components
-        classobj = xpcom.components.classes["%(class_ref)s"]
-        self._i = classobj.createInstance()
-
-"""
-
 def process_interface(node):
     name = node.getAttribute('name')
     uuid = node.getAttribute('uuid')
@@ -373,8 +362,8 @@ def process_interface_attribute(node):
     else:
         callname = "_get_attr('%s')" % name
         retval = "%s(ret)" % (ntype)
-    code.append(ATTR_GET % dict(name=name, pname=pname, callname=callname, ntype=ntype, 
-                doc=doc, doc_action=doc_action,
+    code.append(ATTR_GET % dict(name=name, pname=pname, callname=callname,
+                ntype=ntype, doc=doc, doc_action=doc_action,
                 retval=retval))
     if not readonly:
         if rdoc: 
@@ -402,7 +391,7 @@ METHOD_ASSERT_IN = '''\
             raise TypeError("%(invar)s can only be an instance of type %(invartype)s")'''
 
 METHOD_ASSERT_ARRAY_IN = '''\
-        for a in %(invar)s:
+        for a in %(invar)s[:10]:
             if not isinstance(a, %(invartype)s):
                 raise TypeError("array can only contain objects of type %(invartype)s")'''
             

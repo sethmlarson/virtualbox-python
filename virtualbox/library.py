@@ -3089,7 +3089,7 @@ class IVirtualBox(Interface):
             raise TypeError("name can only be an instance of type str")
         if not isinstance(groups, list):
             raise TypeError("groups can only be an instance of type list")
-        for a in groups:
+        for a in groups[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         if not isinstance(os_type_id, str):
@@ -3189,7 +3189,7 @@ class IVirtualBox(Interface):
         """
         if not isinstance(groups, list):
             raise TypeError("groups can only be an instance of type list")
-        for a in groups:
+        for a in groups[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         machines = self._call_method('getMachinesByGroups',
@@ -3209,7 +3209,7 @@ class IVirtualBox(Interface):
         """
         if not isinstance(machines, list):
             raise TypeError("machines can only be an instance of type list")
-        for a in machines:
+        for a in machines[:10]:
             if not isinstance(a, IMachine):
                 raise TypeError("array can only contain objects of type IMachine")
         states = self._call_method('getMachineStates',
@@ -3800,7 +3800,7 @@ class IVFSExplorer(Interface):
         """
         if not isinstance(names, list):
             raise TypeError("names can only be an instance of type list")
-        for a in names:
+        for a in names[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         exists = self._call_method('exists',
@@ -3820,7 +3820,7 @@ class IVFSExplorer(Interface):
         """
         if not isinstance(names, list):
             raise TypeError("names can only be an instance of type list")
-        for a in names:
+        for a in names[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         progress = self._call_method('remove',
@@ -4042,7 +4042,7 @@ class IAppliance(Interface):
         """
         if not isinstance(options, list):
             raise TypeError("options can only be an instance of type list")
-        for a in options:
+        for a in options[:10]:
             if not isinstance(a, ImportOptions):
                 raise TypeError("array can only contain objects of type ImportOptions")
         progress = self._call_method('importMachines',
@@ -4358,17 +4358,17 @@ class IVirtualSystemDescription(Interface):
         """
         if not isinstance(enabled, list):
             raise TypeError("enabled can only be an instance of type list")
-        for a in enabled:
+        for a in enabled[:10]:
             if not isinstance(a, bool):
                 raise TypeError("array can only contain objects of type bool")
         if not isinstance(v_box_values, list):
             raise TypeError("v_box_values can only be an instance of type list")
-        for a in v_box_values:
+        for a in v_box_values[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         if not isinstance(extra_config_values, list):
             raise TypeError("extra_config_values can only be an instance of type list")
-        for a in extra_config_values:
+        for a in extra_config_values[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         self._call_method('setFinalValues',
@@ -4825,7 +4825,7 @@ class IInternalMachineControl(Interface):
             raise TypeError("parent_for_target can only be an instance of type IMedium")
         if not isinstance(children_to_reparent, list):
             raise TypeError("children_to_reparent can only be an instance of type list")
-        for a in children_to_reparent:
+        for a in children_to_reparent[:10]:
             if not isinstance(a, IMedium):
                 raise TypeError("array can only contain objects of type IMedium")
         self._call_method('finishOnlineMergeMedium',
@@ -8250,7 +8250,7 @@ class IMachine(Interface):
         """
         if not isinstance(media, list):
             raise TypeError("media can only be an instance of type list")
-        for a in media:
+        for a in media[:10]:
             if not isinstance(a, IMedium):
                 raise TypeError("array can only contain objects of type IMedium")
         progress = self._call_method('deleteConfig',
@@ -8894,7 +8894,7 @@ class IMachine(Interface):
             raise TypeError("mode can only be an instance of type CloneMode")
         if not isinstance(options, list):
             raise TypeError("options can only be an instance of type list")
-        for a in options:
+        for a in options[:10]:
             if not isinstance(a, CloneOptions):
                 raise TypeError("array can only contain objects of type CloneOptions")
         progress = self._call_method('cloneTo',
@@ -11699,7 +11699,7 @@ class IGuestSession(Interface):
             raise TypeError("dest can only be an instance of type str")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
-        for a in flags:
+        for a in flags[:10]:
             if not isinstance(a, CopyFileFlag):
                 raise TypeError("array can only contain objects of type CopyFileFlag")
         progress = self._call_method('copyFrom',
@@ -11732,7 +11732,7 @@ class IGuestSession(Interface):
             raise TypeError("dest can only be an instance of type str")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
-        for a in flags:
+        for a in flags[:10]:
             if not isinstance(a, CopyFileFlag):
                 raise TypeError("array can only contain objects of type CopyFileFlag")
         progress = self._call_method('copyTo',
@@ -11762,7 +11762,7 @@ class IGuestSession(Interface):
             raise TypeError("mode can only be an instance of type int")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
-        for a in flags:
+        for a in flags[:10]:
             if not isinstance(a, DirectoryCreateFlag):
                 raise TypeError("array can only contain objects of type DirectoryCreateFlag")
         self._call_method('directoryCreate',
@@ -11871,7 +11871,7 @@ class IGuestSession(Interface):
             raise TypeError("filter_p can only be an instance of type str")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
-        for a in flags:
+        for a in flags[:10]:
             if not isinstance(a, DirectoryOpenFlag):
                 raise TypeError("array can only contain objects of type DirectoryOpenFlag")
         directory = self._call_method('directoryOpen',
@@ -11937,7 +11937,7 @@ class IGuestSession(Interface):
             raise TypeError("path can only be an instance of type str")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
-        for a in flags:
+        for a in flags[:10]:
             if not isinstance(a, DirectoryRemoveRecFlag):
                 raise TypeError("array can only contain objects of type DirectoryRemoveRecFlag")
         progress = self._call_method('directoryRemoveRecursive',
@@ -11967,7 +11967,7 @@ class IGuestSession(Interface):
             raise TypeError("dest can only be an instance of type str")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
-        for a in flags:
+        for a in flags[:10]:
             if not isinstance(a, PathRenameFlag):
                 raise TypeError("array can only contain objects of type PathRenameFlag")
         self._call_method('directoryRename',
@@ -12262,7 +12262,7 @@ class IGuestSession(Interface):
             raise TypeError("dest can only be an instance of type str")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
-        for a in flags:
+        for a in flags[:10]:
             if not isinstance(a, PathRenameFlag):
                 raise TypeError("array can only contain objects of type PathRenameFlag")
         self._call_method('fileRename',
@@ -12346,17 +12346,17 @@ class IGuestSession(Interface):
             raise TypeError("command can only be an instance of type str")
         if not isinstance(arguments, list):
             raise TypeError("arguments can only be an instance of type list")
-        for a in arguments:
+        for a in arguments[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         if not isinstance(environment, list):
             raise TypeError("environment can only be an instance of type list")
-        for a in environment:
+        for a in environment[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
-        for a in flags:
+        for a in flags[:10]:
             if not isinstance(a, ProcessCreateFlag):
                 raise TypeError("array can only contain objects of type ProcessCreateFlag")
         if not isinstance(timeout_ms, int):
@@ -12414,17 +12414,17 @@ class IGuestSession(Interface):
             raise TypeError("command can only be an instance of type str")
         if not isinstance(arguments, list):
             raise TypeError("arguments can only be an instance of type list")
-        for a in arguments:
+        for a in arguments[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         if not isinstance(environment, list):
             raise TypeError("environment can only be an instance of type list")
-        for a in environment:
+        for a in environment[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
-        for a in flags:
+        for a in flags[:10]:
             if not isinstance(a, ProcessCreateFlag):
                 raise TypeError("array can only contain objects of type ProcessCreateFlag")
         if not isinstance(timeout_ms, int):
@@ -12433,7 +12433,7 @@ class IGuestSession(Interface):
             raise TypeError("priority can only be an instance of type ProcessPriority")
         if not isinstance(affinity, list):
             raise TypeError("affinity can only be an instance of type list")
-        for a in affinity:
+        for a in affinity[:10]:
             if not isinstance(a, int):
                 raise TypeError("array can only contain objects of type int")
         guest_process = self._call_method('processCreateEx',
@@ -12524,7 +12524,7 @@ class IGuestSession(Interface):
             raise TypeError("symlink can only be an instance of type str")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
-        for a in flags:
+        for a in flags[:10]:
             if not isinstance(a, SymlinkReadFlag):
                 raise TypeError("array can only contain objects of type SymlinkReadFlag")
         target = self._call_method('symlinkRead',
@@ -12606,7 +12606,7 @@ class IGuestSession(Interface):
         """
         if not isinstance(wait_for, list):
             raise TypeError("wait_for can only be an instance of type list")
-        for a in wait_for:
+        for a in wait_for[:10]:
             if not isinstance(a, GuestSessionWaitForFlag):
                 raise TypeError("array can only contain objects of type GuestSessionWaitForFlag")
         if not isinstance(timeout_ms, int):
@@ -12734,7 +12734,7 @@ class IProcess(Interface):
         """
         if not isinstance(wait_for, list):
             raise TypeError("wait_for can only be an instance of type list")
-        for a in wait_for:
+        for a in wait_for[:10]:
             if not isinstance(a, ProcessWaitForFlag):
                 raise TypeError("array can only contain objects of type ProcessWaitForFlag")
         if not isinstance(timeout_ms, int):
@@ -12799,7 +12799,7 @@ class IProcess(Interface):
             raise TypeError("flags can only be an instance of type int")
         if not isinstance(data, list):
             raise TypeError("data can only be an instance of type list")
-        for a in data:
+        for a in data[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         if not isinstance(timeout_ms, int):
@@ -12835,12 +12835,12 @@ class IProcess(Interface):
             raise TypeError("handle can only be an instance of type int")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
-        for a in flags:
+        for a in flags[:10]:
             if not isinstance(a, ProcessInputFlag):
                 raise TypeError("array can only contain objects of type ProcessInputFlag")
         if not isinstance(data, list):
             raise TypeError("data can only be an instance of type list")
-        for a in data:
+        for a in data[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         if not isinstance(timeout_ms, int):
@@ -13123,7 +13123,7 @@ class IFile(Interface):
         """
         if not isinstance(data, list):
             raise TypeError("data can only be an instance of type list")
-        for a in data:
+        for a in data[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         if not isinstance(timeout_ms, int):
@@ -13158,7 +13158,7 @@ class IFile(Interface):
             raise TypeError("offset can only be an instance of type int")
         if not isinstance(data, list):
             raise TypeError("data can only be an instance of type list")
-        for a in data:
+        for a in data[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         if not isinstance(timeout_ms, int):
@@ -13626,12 +13626,12 @@ class IGuest(Interface):
             raise TypeError("default_action can only be an instance of type DragAndDropAction")
         if not isinstance(allowed_actions, list):
             raise TypeError("allowed_actions can only be an instance of type list")
-        for a in allowed_actions:
+        for a in allowed_actions[:10]:
             if not isinstance(a, DragAndDropAction):
                 raise TypeError("array can only contain objects of type DragAndDropAction")
         if not isinstance(formats, list):
             raise TypeError("formats can only be an instance of type list")
-        for a in formats:
+        for a in formats[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         result_action = self._call_method('dragHGEnter',
@@ -13679,12 +13679,12 @@ class IGuest(Interface):
             raise TypeError("default_action can only be an instance of type DragAndDropAction")
         if not isinstance(allowed_actions, list):
             raise TypeError("allowed_actions can only be an instance of type list")
-        for a in allowed_actions:
+        for a in allowed_actions[:10]:
             if not isinstance(a, DragAndDropAction):
                 raise TypeError("array can only contain objects of type DragAndDropAction")
         if not isinstance(formats, list):
             raise TypeError("formats can only be an instance of type list")
-        for a in formats:
+        for a in formats[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         result_action = self._call_method('dragHGMove',
@@ -13752,12 +13752,12 @@ class IGuest(Interface):
             raise TypeError("default_action can only be an instance of type DragAndDropAction")
         if not isinstance(allowed_actions, list):
             raise TypeError("allowed_actions can only be an instance of type list")
-        for a in allowed_actions:
+        for a in allowed_actions[:10]:
             if not isinstance(a, DragAndDropAction):
                 raise TypeError("array can only contain objects of type DragAndDropAction")
         if not isinstance(formats, list):
             raise TypeError("formats can only be an instance of type list")
-        for a in formats:
+        for a in formats[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         (format_p, result_action) = self._call_method('dragHGDrop',
@@ -13793,7 +13793,7 @@ class IGuest(Interface):
             raise TypeError("format_p can only be an instance of type str")
         if not isinstance(data, list):
             raise TypeError("data can only be an instance of type list")
-        for a in data:
+        for a in data[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         progress = self._call_method('dragHGPutData',
@@ -13991,7 +13991,7 @@ class IGuest(Interface):
             raise TypeError("source can only be an instance of type str")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
-        for a in flags:
+        for a in flags[:10]:
             if not isinstance(a, AdditionsUpdateFlag):
                 raise TypeError("array can only contain objects of type AdditionsUpdateFlag")
         progress = self._call_method('updateGuestAdditions',
@@ -15708,12 +15708,12 @@ class IMedium(Interface):
         """
         if not isinstance(names, list):
             raise TypeError("names can only be an instance of type list")
-        for a in names:
+        for a in names[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         if not isinstance(values, list):
             raise TypeError("values can only be an instance of type list")
-        for a in values:
+        for a in values[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         self._call_method('setProperties',
@@ -15752,7 +15752,7 @@ class IMedium(Interface):
             raise TypeError("logical_size can only be an instance of type int")
         if not isinstance(variant, list):
             raise TypeError("variant can only be an instance of type list")
-        for a in variant:
+        for a in variant[:10]:
             if not isinstance(a, MediumVariant):
                 raise TypeError("array can only contain objects of type MediumVariant")
         progress = self._call_method('createBaseStorage',
@@ -15843,7 +15843,7 @@ class IMedium(Interface):
             raise TypeError("target can only be an instance of type IMedium")
         if not isinstance(variant, list):
             raise TypeError("variant can only be an instance of type list")
-        for a in variant:
+        for a in variant[:10]:
             if not isinstance(a, MediumVariant):
                 raise TypeError("array can only contain objects of type MediumVariant")
         progress = self._call_method('createDiffStorage',
@@ -15984,7 +15984,7 @@ class IMedium(Interface):
             raise TypeError("target can only be an instance of type IMedium")
         if not isinstance(variant, list):
             raise TypeError("variant can only be an instance of type list")
-        for a in variant:
+        for a in variant[:10]:
             if not isinstance(a, MediumVariant):
                 raise TypeError("array can only contain objects of type MediumVariant")
         if not isinstance(parent, IMedium):
@@ -16040,7 +16040,7 @@ class IMedium(Interface):
             raise TypeError("target can only be an instance of type IMedium")
         if not isinstance(variant, list):
             raise TypeError("variant can only be an instance of type list")
-        for a in variant:
+        for a in variant[:10]:
             if not isinstance(a, MediumVariant):
                 raise TypeError("array can only contain objects of type MediumVariant")
         progress = self._call_method('cloneToBase',
@@ -16300,7 +16300,7 @@ class IKeyboard(Interface):
         """
         if not isinstance(scancodes, list):
             raise TypeError("scancodes can only be an instance of type list")
-        for a in scancodes:
+        for a in scancodes[:10]:
             if not isinstance(a, int):
                 raise TypeError("array can only contain objects of type int")
         codes_stored = self._call_method('putScancodes',
@@ -17263,7 +17263,7 @@ class IDisplay(Interface):
         """
         if not isinstance(screens, list):
             raise TypeError("screens can only be an instance of type list")
-        for a in screens:
+        for a in screens[:10]:
             if not isinstance(a, bool):
                 raise TypeError("array can only contain objects of type bool")
         self._call_method('enableVideoCapture',
@@ -17278,7 +17278,7 @@ class IDisplay(Interface):
         """
         if not isinstance(screens, list):
             raise TypeError("screens can only be an instance of type list")
-        for a in screens:
+        for a in screens[:10]:
             if not isinstance(a, bool):
                 raise TypeError("array can only contain objects of type bool")
         self._call_method('disableVideoCapture',
@@ -18135,7 +18135,7 @@ class IMachineDebugger(Interface):
             raise TypeError("size can only be an instance of type int")
         if not isinstance(bytes_p, list):
             raise TypeError("bytes_p can only be an instance of type list")
-        for a in bytes_p:
+        for a in bytes_p[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         self._call_method('writePhysicalMemory',
@@ -18198,7 +18198,7 @@ class IMachineDebugger(Interface):
             raise TypeError("size can only be an instance of type int")
         if not isinstance(bytes_p, list):
             raise TypeError("bytes_p can only be an instance of type list")
-        for a in bytes_p:
+        for a in bytes_p[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         self._call_method('writeVirtualMemory',
@@ -18318,12 +18318,12 @@ class IMachineDebugger(Interface):
             raise TypeError("cpu_id can only be an instance of type int")
         if not isinstance(names, list):
             raise TypeError("names can only be an instance of type list")
-        for a in names:
+        for a in names[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         if not isinstance(values, list):
             raise TypeError("values can only be an instance of type list")
-        for a in values:
+        for a in values[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         self._call_method('setRegisters',
@@ -20134,7 +20134,7 @@ class IInternalSessionControl(Interface):
             raise TypeError("parent_for_target can only be an instance of type IMedium")
         if not isinstance(children_to_reparent, list):
             raise TypeError("children_to_reparent can only be an instance of type list")
-        for a in children_to_reparent:
+        for a in children_to_reparent[:10]:
             if not isinstance(a, IMedium):
                 raise TypeError("array can only contain objects of type IMedium")
         if not isinstance(progress, IProgress):
@@ -20643,12 +20643,12 @@ class IPerformanceCollector(Interface):
         """
         if not isinstance(metric_names, list):
             raise TypeError("metric_names can only be an instance of type list")
-        for a in metric_names:
+        for a in metric_names[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         if not isinstance(objects, list):
             raise TypeError("objects can only be an instance of type list")
-        for a in objects:
+        for a in objects[:10]:
             if not isinstance(a, Interface):
                 raise TypeError("array can only contain objects of type Interface")
         metrics = self._call_method('getMetrics',
@@ -20688,12 +20688,12 @@ class IPerformanceCollector(Interface):
         """
         if not isinstance(metric_names, list):
             raise TypeError("metric_names can only be an instance of type list")
-        for a in metric_names:
+        for a in metric_names[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         if not isinstance(objects, list):
             raise TypeError("objects can only be an instance of type list")
-        for a in objects:
+        for a in objects[:10]:
             if not isinstance(a, Interface):
                 raise TypeError("array can only contain objects of type Interface")
         if not isinstance(period, int):
@@ -20729,12 +20729,12 @@ class IPerformanceCollector(Interface):
         """
         if not isinstance(metric_names, list):
             raise TypeError("metric_names can only be an instance of type list")
-        for a in metric_names:
+        for a in metric_names[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         if not isinstance(objects, list):
             raise TypeError("objects can only be an instance of type list")
-        for a in objects:
+        for a in objects[:10]:
             if not isinstance(a, Interface):
                 raise TypeError("array can only contain objects of type Interface")
         affected_metrics = self._call_method('enableMetrics',
@@ -20766,12 +20766,12 @@ class IPerformanceCollector(Interface):
         """
         if not isinstance(metric_names, list):
             raise TypeError("metric_names can only be an instance of type list")
-        for a in metric_names:
+        for a in metric_names[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         if not isinstance(objects, list):
             raise TypeError("objects can only be an instance of type list")
-        for a in objects:
+        for a in objects[:10]:
             if not isinstance(a, Interface):
                 raise TypeError("array can only contain objects of type Interface")
         affected_metrics = self._call_method('disableMetrics',
@@ -20855,12 +20855,12 @@ class IPerformanceCollector(Interface):
         """
         if not isinstance(metric_names, list):
             raise TypeError("metric_names can only be an instance of type list")
-        for a in metric_names:
+        for a in metric_names[:10]:
             if not isinstance(a, str):
                 raise TypeError("array can only contain objects of type str")
         if not isinstance(objects, list):
             raise TypeError("objects can only be an instance of type list")
-        for a in objects:
+        for a in objects[:10]:
             if not isinstance(a, Interface):
                 raise TypeError("array can only contain objects of type Interface")
         (return_metric_names, return_objects, return_units, return_scales, return_sequence_numbers, return_data_indices, return_data_lengths, return_data) = self._call_method('queryMetricsData',
@@ -21740,7 +21740,7 @@ class IEventSource(Interface):
         """
         if not isinstance(subordinates, list):
             raise TypeError("subordinates can only be an instance of type list")
-        for a in subordinates:
+        for a in subordinates[:10]:
             if not isinstance(a, IEventSource):
                 raise TypeError("array can only contain objects of type IEventSource")
         result = self._call_method('createAggregator',
@@ -21780,7 +21780,7 @@ class IEventSource(Interface):
             raise TypeError("listener can only be an instance of type IEventListener")
         if not isinstance(interesting, list):
             raise TypeError("interesting can only be an instance of type list")
-        for a in interesting:
+        for a in interesting[:10]:
             if not isinstance(a, VBoxEventType):
                 raise TypeError("array can only contain objects of type VBoxEventType")
         if not isinstance(active, bool):
