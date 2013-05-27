@@ -18,8 +18,11 @@ Install and run
 Simply run the following::
 
     > python setup.py install
-    > python setup.py test
+    
+or `PyPi`_:: 
 
+    > pip install pyvbox
+    
 Exploring the library::
     
     > ipython
@@ -112,5 +115,5 @@ version 0.0.0 (10/05/2013)
 
 
 
-.. _github.com: https://github.com/provoke-vagueness/restq
-
+.. _github.com: https://github.com/mjdorma/pyvbox
+.. _PyPi: http://pypi.python.org/pypi/pyvbox
