@@ -95,12 +95,9 @@ class TestGuestSession(unittest.TestCase):
         p.wait_for_completion(5000)
 
     def tearDown(self):
-        try:
-            self.session.console.power_down()
-        finally:
-            self.session.unlock_machine()
-            while self.session.state != virtualbox.library.SessionState.unlocked:
-                time.sleep(1)
+        self.session.console.power_down()
+        while self.vm.state >= virtualbox.library.MachineState.running:
+            time.sleep(1)
 
     def test_execute(self):
         s = self.session.console.guest.create_session(username, password, '',
@@ -137,7 +134,6 @@ class TestGuestSession(unittest.TestCase):
                     virtualbox.library.ProcessStatus.terminated_normally)
             
             stdout = "".join(stdout)
-            print(stdout)
             self.assertTrue('Pinging' in stdout)
 
         finally:
