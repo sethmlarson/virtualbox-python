@@ -86,6 +86,7 @@ class TestTestVM(unittest.TestCase):
         s.unlock_machine()
 
 
+CMD_EXE = r"C:\Windows\System32\cmd.exe"
 class TestGuestSession(unittest.TestCase):
     def setUp(self):
         self.vbox = virtualbox.VirtualBox()
@@ -93,29 +94,32 @@ class TestGuestSession(unittest.TestCase):
         self.vm = self.vbox.find_machine('test_vm')
         p = self.vm.launch_vm_process(self.session, "gui", "")
         p.wait_for_completion(5000)
+        self.guest_session = self.session.console.guest.create_session(\
+                username, password, '', 'TestGuestSession')
+        # Wait until the guest service comes online
+        while True:
+            try:
+                self.guest_session.file_query_info(CMD_EXE)
+            except virtualbox.library.VBoxError:
+                time.sleep(0.5)
+                continue
+            else:
+                break
 
     def tearDown(self):
+        self.guest_session.close()
         self.session.console.power_down()
         while self.vm.state >= virtualbox.library.MachineState.running:
             time.sleep(1)
 
     def test_execute(self):
-        s = self.session.console.guest.create_session(username, password, '',
-                            'TestGuestSession')
-        try:
-            # Wait until the guest service comes online
-            while True:
-                try:
-                    s.file_query_info(r"C:\Windows\System32\cmd.exe")
-                except virtualbox.library.VBoxError:
-                    time.sleep(0.5)
-                    continue
-                else:
-                    break
+        """test execute ping localhost"""
 
+        # TODO This technique is unstable
+        def execute(guest_session, cmd, args):
             # Now to run a process
-            process = s.process_create(r'C:\Windows\System32\cmd.exe', 
-                    [r'/C', 'ping', '127.0.0.1'], [],
+            print "Execute %s " % cmd
+            process = guest_session.process_create(cmd, args, [],
                     [virtualbox.library.ProcessCreateFlag.wait_for_std_err,
                      virtualbox.library.ProcessCreateFlag.wait_for_std_out],
                     10000)
@@ -125,18 +129,35 @@ class TestGuestSession(unittest.TestCase):
 
             # NOTE : XP guest svc doesn't support StdOut or StdErr wait flags
             stdout = []
-            while process.status <= virtualbox.library.ProcessStatus.started:
-                o = process.read(1, 65000, 1000)
-                stdout.append(o)
+            stderr = []
+            # TODO Seems that reading data from stderr sometimes causes a 
+            #      VBoxErrorIptrError - which tends to break the guest service
+            while process.status == virtualbox.library.ProcessStatus.started:
+                try:
+                    o = process.read(1, 65000, 1000)
+                    stdout.append(o)
+                    e = process.read(2, 65000, 1000)
+                    stderr.append(e)
+                except virtualbox.library.VBoxErrorIprtError:
+                    pass
                 time.sleep(0.2)
             
             self.assertEqual(process.status,
                     virtualbox.library.ProcessStatus.terminated_normally)
             
             stdout = "".join(stdout)
-            self.assertTrue('Pinging' in stdout)
+            stderr = "".join(stderr)
+            return process.exit_code, stdout, stderr
 
-        finally:
-            s.close()
+        _, stdout, _ = execute(self.guest_session, CMD_EXE, 
+                [r'/C', 'ping', '127.0.0.1'])
+        self.assertTrue('Pinging' in stdout)
 
+        # failing...  need to figure out whats going on
+        for i in xrange(100):
+            _, stdout, _ = execute(self.guest_session, CMD_EXE, 
+                [r'/C', 'netstat', '-nao'])
+            print stdout
+
+ 
 
