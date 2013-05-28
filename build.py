@@ -266,6 +266,10 @@ class %(name)s(%(extends)s):
     __wsmap__ = '%(wsmap)s'
     %(event_id)s'''
 
+INTERFACE_VAR = """\
+    _%(pname)s = '%(name)s'
+"""
+
 def process_interface(node):
     name = node.getAttribute('name')
     uuid = node.getAttribute('uuid')
@@ -308,14 +312,13 @@ ATTR_GET = '''\
     def %(pname)s(self):
         """%(doc_action)s %(ntype)s value for '%(name)s'%(doc)s"""
         ret = self.%(callname)s
-        return %(retval)s 
-'''
-ATTR_SET = '''\
+        return %(retval)s'''
+
+ATTR_SET = '''
     @%(pname)s.setter
     def %(pname)s(self, value):
 %(assert_type)s
-        return self._set_attr('%(name)s', value)
-'''
+        return self._set_attr('%(name)s', value)'''
 
 ATTR_SET_ASSERT_INST = '''\
         if not isinstance(value, %(ntype)s):
@@ -366,7 +369,8 @@ def process_interface_attribute(node):
     code = []
     pname = pythonic_name(name)
     if array:
-        callname = "_call_method('get%s')" % (name[0].upper() + name[1:])
+        name = 'get%s' % name[0].upper() + name[1:]
+        callname = "_call_method('%s')" % (name)
         if ntype not in python_types:
             retval = "[%s(a) for a in ret]" % ntype
         else:
@@ -390,6 +394,8 @@ def process_interface_attribute(node):
             assert_type = ATTR_SET_ASSERT_INST % (dict(ntype=ntype))
         code.append(ATTR_SET % dict(name=name, pname=pname,
                                     assert_type=assert_type))
+
+    code.append(INTERFACE_VAR % dict(name=name, pname=pname))
     return code
 
 
@@ -422,21 +428,24 @@ METHOD_ASSERT_ARRAY_IN = '''\
 METHOD_ASSERT_ARRAY_IN_INST = '''\
         for a in %(invar)s[:10]:
             if not isinstance(a, %(invartype)s):
-                raise TypeError("array can only contain objects of type %(invartype)s")'''
+                raise TypeError(\\
+                        "array can only contain objects of type %(invartype)s")'''
 
 METHOD_ASSERT_ARRAY_IN_STR = '''\
         for a in %(invar)s[:10]:
-            if a not in [str, unicode]:
+            if type(a) not in [str, unicode]:
                 raise TypeError("array can only contain str or unicode")'''
 
 METHOD_CALL = '''\
-        %(outvars)sself._call_method('%(name)s'%(in_p)s)'''
+        %(outvars)sself._call_method(self._%(pname)s%(in_p)s)'''
 
 METHOD_OUT_CONV = '''\
         %(name)s = %(convfunc)s'''
 
 METHOD_RETURN = '''\
         %(retcmd)s'''
+
+
 
 def process_interface_method(node):
     def process_result(c):
@@ -556,8 +565,9 @@ def process_interface_method(node):
         outvars = ''
         retvars = ''
 
-    func.append(METHOD_CALL % dict(outvars=outvars, name=method_name,
-        in_p=in_p))
+    func.append(METHOD_CALL % dict(outvars=outvars,
+                                   pname=pythonic_name(method_name),
+                                   in_p=in_p))
 
     for name, atype, array in out_p:
         if atype in python_types:
@@ -570,11 +580,10 @@ def process_interface_method(node):
         func.append(METHOD_OUT_CONV % dict(name=name, convfunc=convfunc))
         
     if retvars:
-        retcmd = "return %s\n" % retvars 
-    else:
-        retcmd = ''
-    func.append(METHOD_RETURN % dict(retcmd=retcmd))
-        
+        retcmd = "return %s" % retvars 
+        func.append(METHOD_RETURN % dict(retcmd=retcmd))
+    func.append(INTERFACE_VAR % dict(pname=pythonic_name(method_name),
+                                        name=method_name))
     return func
 
 
