@@ -2264,7 +2264,7 @@ class IVirtualBoxErrorInfo(Interface):
           In MS COM, there is no equivalent.
           In XPCOM, it is the same as nsIException::result.
         """
-        ret = self._get_attr('resultCode')
+        ret = self._get_attr(self._result_code)
         return ret
     _result_code = 'resultCode'
 
@@ -2274,7 +2274,7 @@ class IVirtualBoxErrorInfo(Interface):
         Optional result data of this error. This will vary depending on the
         actual error usage. By default this attribute is not being used.
         """
-        ret = self._get_attr('resultDetail')
+        ret = self._get_attr(self._result_detail)
         return ret
     _result_detail = 'resultDetail'
 
@@ -2287,7 +2287,7 @@ class IVirtualBoxErrorInfo(Interface):
           data type.
           In XPCOM, there is no equivalent.
         """
-        ret = self._get_attr('interfaceID')
+        ret = self._get_attr(self._interface_id)
         return ret
     _interface_id = 'interfaceID'
 
@@ -2299,7 +2299,7 @@ class IVirtualBoxErrorInfo(Interface):
           In MS COM, it is the same as IErrorInfo::GetSource.
           In XPCOM, there is no equivalent.
         """
-        ret = self._get_attr('component')
+        ret = self._get_attr(self._component)
         return ret
     _component = 'component'
 
@@ -2311,7 +2311,7 @@ class IVirtualBoxErrorInfo(Interface):
           In MS COM, it is the same as IErrorInfo::GetDescription.
           In XPCOM, it is the same as nsIException::message.
         """
-        ret = self._get_attr('text')
+        ret = self._get_attr(self._text)
         return ret
     _text = 'text'
 
@@ -2323,7 +2323,7 @@ class IVirtualBoxErrorInfo(Interface):
           In MS COM, there is no equivalent.
           In XPCOM, it is the same as nsIException::inner.
         """
-        ret = self._get_attr('next')
+        ret = self._get_attr(self._next_p)
         return IVirtualBoxErrorInfo(ret)
     _next_p = 'next'
 
@@ -2346,27 +2346,27 @@ class INATNetwork(Interface):
         port-forwanding rules. so perhaps we should support only single instance of NAT
         network.
         """
-        ret = self._get_attr('NetworkName')
+        ret = self._get_attr(self._network_name)
         return ret
 
     @network_name.setter
     def network_name(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('NetworkName', value)
+        return self._set_attr(self._network_name', value)
     _network_name = 'NetworkName'
 
     @property
     def enabled(self):
         """Get or set bool value for 'enabled'"""
-        ret = self._get_attr('enabled')
+        ret = self._get_attr(self._enabled)
         return ret
 
     @enabled.setter
     def enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('enabled', value)
+        return self._set_attr(self._enabled', value)
     _enabled = 'enabled'
 
     @property
@@ -2377,14 +2377,14 @@ class INATNetwork(Interface):
         Note: if there're defined IPv4 port-forward rules update of network
         will be ignored (because new assignment could break existing rules).
         """
-        ret = self._get_attr('network')
+        ret = self._get_attr(self._network)
         return ret
 
     @network.setter
     def network(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('network', value)
+        return self._set_attr(self._network', value)
     _network = 'network'
 
     @property
@@ -2393,7 +2393,7 @@ class INATNetwork(Interface):
         This attribute is read-only. It's recalculated on changing
         network attribute (low address of network + 1).
         """
-        ret = self._get_attr('gateway')
+        ret = self._get_attr(self._gateway)
         return ret
     _gateway = 'gateway'
 
@@ -2402,14 +2402,14 @@ class INATNetwork(Interface):
         """Get or set bool value for 'IPv6Enabled'
         This attribute define whether gateway will support IPv6 or not.
         """
-        ret = self._get_attr('IPv6Enabled')
+        ret = self._get_attr(self._i_pv6_enabled)
         return ret
 
     @i_pv6_enabled.setter
     def i_pv6_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('IPv6Enabled', value)
+        return self._set_attr(self._i_pv6_enabled', value)
     _i_pv6_enabled = 'IPv6Enabled'
 
     @property
@@ -2417,46 +2417,46 @@ class INATNetwork(Interface):
         """Get or set str value for 'IPv6Prefix'
         This a CIDR IPv6 defining prefix for link-local addresses autoconfiguration     within network. Note: ignored if attribute ipv6enabled is false.
         """
-        ret = self._get_attr('IPv6Prefix')
+        ret = self._get_attr(self._i_pv6_prefix)
         return ret
 
     @i_pv6_prefix.setter
     def i_pv6_prefix(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('IPv6Prefix', value)
+        return self._set_attr(self._i_pv6_prefix', value)
     _i_pv6_prefix = 'IPv6Prefix'
 
     @property
     def advertise_default_i_pv6_route_enabled(self):
         """Get or set bool value for 'advertiseDefaultIPv6RouteEnabled'"""
-        ret = self._get_attr('advertiseDefaultIPv6RouteEnabled')
+        ret = self._get_attr(self._advertise_default_i_pv6_route_enabled)
         return ret
 
     @advertise_default_i_pv6_route_enabled.setter
     def advertise_default_i_pv6_route_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('advertiseDefaultIPv6RouteEnabled', value)
+        return self._set_attr(self._advertise_default_i_pv6_route_enabled', value)
     _advertise_default_i_pv6_route_enabled = 'advertiseDefaultIPv6RouteEnabled'
 
     @property
     def need_dhcp_server(self):
         """Get or set bool value for 'needDhcpServer'"""
-        ret = self._get_attr('needDhcpServer')
+        ret = self._get_attr(self._need_dhcp_server)
         return ret
 
     @need_dhcp_server.setter
     def need_dhcp_server(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('needDhcpServer', value)
+        return self._set_attr(self._need_dhcp_server', value)
     _need_dhcp_server = 'needDhcpServer'
 
     @property
     def event_source(self):
         """Get IEventSource value for 'eventSource'"""
-        ret = self._get_attr('eventSource')
+        ret = self._get_attr(self._event_source)
         return IEventSource(ret)
     _event_source = 'eventSource'
 
@@ -2467,7 +2467,7 @@ class INATNetwork(Interface):
       in the following format:
       "name:protocolid:[host ip]:host port:[guest ip]:guest port".
         """
-        ret = self._call_method('getPortForwardRules4')
+        ret = self._call_method(self._port_forward_rules4)
         return ret
     _port_forward_rules4 = 'getPortForwardRules4'
 
@@ -2477,7 +2477,7 @@ class INATNetwork(Interface):
         Array of NAT port-forwarding rules in string representation, in the
       following format: "name:protocolid:[host ip]:host port:[guest ip]:guest port".
         """
-        ret = self._call_method('getPortForwardRules6')
+        ret = self._call_method(self._port_forward_rules6)
         return ret
     _port_forward_rules6 = 'getPortForwardRules6'
 
@@ -2577,14 +2577,14 @@ class IDHCPServer(Interface):
         """Get or set bool value for 'enabled'
         specifies if the DHCP server is enabled
         """
-        ret = self._get_attr('enabled')
+        ret = self._get_attr(self._enabled)
         return ret
 
     @enabled.setter
     def enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('enabled', value)
+        return self._set_attr(self._enabled', value)
     _enabled = 'enabled'
 
     @property
@@ -2592,7 +2592,7 @@ class IDHCPServer(Interface):
         """Get str value for 'IPAddress'
         specifies server IP
         """
-        ret = self._get_attr('IPAddress')
+        ret = self._get_attr(self._ip_address)
         return ret
     _ip_address = 'IPAddress'
 
@@ -2601,7 +2601,7 @@ class IDHCPServer(Interface):
         """Get str value for 'networkMask'
         specifies server network mask
         """
-        ret = self._get_attr('networkMask')
+        ret = self._get_attr(self._network_mask)
         return ret
     _network_mask = 'networkMask'
 
@@ -2610,7 +2610,7 @@ class IDHCPServer(Interface):
         """Get str value for 'networkName'
         specifies internal network name the server is used for
         """
-        ret = self._get_attr('networkName')
+        ret = self._get_attr(self._network_name)
         return ret
     _network_name = 'networkName'
 
@@ -2619,7 +2619,7 @@ class IDHCPServer(Interface):
         """Get str value for 'lowerIP'
         specifies from IP address in server address range
         """
-        ret = self._get_attr('lowerIP')
+        ret = self._get_attr(self._lower_ip)
         return ret
     _lower_ip = 'lowerIP'
 
@@ -2628,7 +2628,7 @@ class IDHCPServer(Interface):
         """Get str value for 'upperIP'
         specifies to IP address in server address range
         """
-        ret = self._get_attr('upperIP')
+        ret = self._get_attr(self._upper_ip)
         return ret
     _upper_ip = 'upperIP'
 
@@ -2730,7 +2730,7 @@ class IVirtualBox(Interface):
         publisher tag, at the end. The publisher tag starts with an underscore
         just like the prerelease build type tag.
         """
-        ret = self._get_attr('version')
+        ret = self._get_attr(self._version)
         return ret
     _version = 'version'
 
@@ -2741,7 +2741,7 @@ class IVirtualBox(Interface):
         without the publisher information (but still with other tags).
         See <link to="#version"/>.
         """
-        ret = self._get_attr('versionNormalized')
+        ret = self._get_attr(self._version_normalized)
         return ret
     _version_normalized = 'versionNormalized'
 
@@ -2750,7 +2750,7 @@ class IVirtualBox(Interface):
         """Get int value for 'revision'
         The internal build revision number of the product.
         """
-        ret = self._get_attr('revision')
+        ret = self._get_attr(self._revision)
         return ret
     _revision = 'revision'
 
@@ -2763,7 +2763,7 @@ class IVirtualBox(Interface):
         is either GENERIC, UBUNTU_606, UBUNTU_710, or something like
         this.
         """
-        ret = self._get_attr('packageType')
+        ret = self._get_attr(self._package_type)
         return ret
     _package_type = 'packageType'
 
@@ -2778,7 +2778,7 @@ class IVirtualBox(Interface):
         guarantee that this version is identical to the first two integer
         numbers of the package version.
         """
-        ret = self._get_attr('APIVersion')
+        ret = self._get_attr(self._api_version)
         return ret
     _api_version = 'APIVersion'
 
@@ -2797,7 +2797,7 @@ class IVirtualBox(Interface):
         places where relative paths are allowed (unless otherwise
         expressly indicated).
         """
-        ret = self._get_attr('homeFolder')
+        ret = self._get_attr(self._home_folder)
         return ret
     _home_folder = 'homeFolder'
 
@@ -2808,7 +2808,7 @@ class IVirtualBox(Interface):
         The value of this property corresponds to the value of
         <link to="#homeFolder"/> plus /VirtualBox.xml.
         """
-        ret = self._get_attr('settingsFilePath')
+        ret = self._get_attr(self._settings_file_path)
         return ret
     _settings_file_path = 'settingsFilePath'
 
@@ -2817,7 +2817,7 @@ class IVirtualBox(Interface):
         """Get IHost value for 'host'
         Associated host object.
         """
-        ret = self._get_attr('host')
+        ret = self._get_attr(self._host)
         return IHost(ret)
     _host = 'host'
 
@@ -2826,7 +2826,7 @@ class IVirtualBox(Interface):
         """Get ISystemProperties value for 'systemProperties'
         Associated system information object.
         """
-        ret = self._get_attr('systemProperties')
+        ret = self._get_attr(self._system_properties)
         return ISystemProperties(ret)
     _system_properties = 'systemProperties'
 
@@ -2835,7 +2835,7 @@ class IVirtualBox(Interface):
         """Get IMachine value for 'getMachines'
         Array of machine objects registered within this VirtualBox instance.
         """
-        ret = self._call_method('getMachines')
+        ret = self._call_method(self._machines)
         return [IMachine(a) for a in ret]
     _machines = 'getMachines'
 
@@ -2848,7 +2848,7 @@ class IVirtualBox(Interface):
         in the group hierarchy (i.e. "/", "/group/subgroup"
         is a valid result).
         """
-        ret = self._call_method('getMachineGroups')
+        ret = self._call_method(self._machine_groups)
         return ret
     _machine_groups = 'getMachineGroups'
 
@@ -2861,7 +2861,7 @@ class IVirtualBox(Interface):
         media of the given base medium can be enumerated using
         <link to="IMedium::children"/>.
         """
-        ret = self._call_method('getHardDisks')
+        ret = self._call_method(self._hard_disks)
         return [IMedium(a) for a in ret]
     _hard_disks = 'getHardDisks'
 
@@ -2870,7 +2870,7 @@ class IVirtualBox(Interface):
         """Get IMedium value for 'getDVDImages'
         Array of CD/DVD image objects currently in use by this VirtualBox instance.
         """
-        ret = self._call_method('getDVDImages')
+        ret = self._call_method(self._dvd_images)
         return [IMedium(a) for a in ret]
     _dvd_images = 'getDVDImages'
 
@@ -2879,21 +2879,21 @@ class IVirtualBox(Interface):
         """Get IMedium value for 'getFloppyImages'
         Array of floppy image objects currently in use by this VirtualBox instance.
         """
-        ret = self._call_method('getFloppyImages')
+        ret = self._call_method(self._floppy_images)
         return [IMedium(a) for a in ret]
     _floppy_images = 'getFloppyImages'
 
     @property
     def progress_operations(self):
         """Get IProgress value for 'getProgressOperations'"""
-        ret = self._call_method('getProgressOperations')
+        ret = self._call_method(self._progress_operations)
         return [IProgress(a) for a in ret]
     _progress_operations = 'getProgressOperations'
 
     @property
     def guest_os_types(self):
         """Get IGuestOSType value for 'getGuestOSTypes'"""
-        ret = self._call_method('getGuestOSTypes')
+        ret = self._call_method(self._guest_os_types)
         return [IGuestOSType(a) for a in ret]
     _guest_os_types = 'getGuestOSTypes'
 
@@ -2911,7 +2911,7 @@ class IVirtualBox(Interface):
           In the current version of the product, global shared folders are not
           implemented and therefore this collection is always empty.
         """
-        ret = self._call_method('getSharedFolders')
+        ret = self._call_method(self._shared_folders)
         return [ISharedFolder(a) for a in ret]
     _shared_folders = 'getSharedFolders'
 
@@ -2920,7 +2920,7 @@ class IVirtualBox(Interface):
         """Get IPerformanceCollector value for 'performanceCollector'
         Associated performance collector object.
         """
-        ret = self._get_attr('performanceCollector')
+        ret = self._get_attr(self._performance_collector)
         return IPerformanceCollector(ret)
     _performance_collector = 'performanceCollector'
 
@@ -2929,14 +2929,14 @@ class IVirtualBox(Interface):
         """Get IDHCPServer value for 'getDHCPServers'
         DHCP servers.
         """
-        ret = self._call_method('getDHCPServers')
+        ret = self._call_method(self._dhcp_servers)
         return [IDHCPServer(a) for a in ret]
     _dhcp_servers = 'getDHCPServers'
 
     @property
     def nat_networks(self):
         """Get INATNetwork value for 'getNATNetworks'"""
-        ret = self._call_method('getNATNetworks')
+        ret = self._call_method(self._nat_networks)
         return [INATNetwork(a) for a in ret]
     _nat_networks = 'getNATNetworks'
 
@@ -2945,7 +2945,7 @@ class IVirtualBox(Interface):
         """Get IEventSource value for 'eventSource'
         Event source for VirtualBox events.
         """
-        ret = self._get_attr('eventSource')
+        ret = self._get_attr(self._event_source)
         return IEventSource(ret)
     _event_source = 'eventSource'
 
@@ -2954,7 +2954,7 @@ class IVirtualBox(Interface):
         """Get IExtPackManager value for 'extensionPackManager'
         The extension pack manager.
         """
-        ret = self._get_attr('extensionPackManager')
+        ret = self._get_attr(self._extension_pack_manager)
         return IExtPackManager(ret)
     _extension_pack_manager = 'extensionPackManager'
 
@@ -2963,7 +2963,7 @@ class IVirtualBox(Interface):
         """Get str value for 'getInternalNetworks'
         Names of all internal networks.
         """
-        ret = self._call_method('getInternalNetworks')
+        ret = self._call_method(self._internal_networks)
         return ret
     _internal_networks = 'getInternalNetworks'
 
@@ -2972,7 +2972,7 @@ class IVirtualBox(Interface):
         """Get str value for 'getGenericNetworkDrivers'
         Names of all generic network drivers.
         """
-        ret = self._call_method('getGenericNetworkDrivers')
+        ret = self._call_method(self._generic_network_drivers)
         return ret
     _generic_network_drivers = 'getGenericNetworkDrivers'
 
@@ -3784,7 +3784,7 @@ class IVFSExplorer(Interface):
         """Get str value for 'path'
         Returns the current path in the virtual file system.
         """
-        ret = self._get_attr('path')
+        ret = self._get_attr(self._path)
         return ret
     _path = 'path'
 
@@ -3793,7 +3793,7 @@ class IVFSExplorer(Interface):
         """Get VFSType value for 'type'
         Returns the file system type which is currently in use.
         """
-        ret = self._get_attr('type')
+        ret = self._get_attr(self._type_p)
         return VFSType(ret)
     _type_p = 'type'
 
@@ -3990,7 +3990,7 @@ class IAppliance(Interface):
           <link to="#write"/> (for export).
           This attribute is empty until one of these methods has been called.
         """
-        ret = self._get_attr('path')
+        ret = self._get_attr(self._path)
         return ret
     _path = 'path'
 
@@ -4031,7 +4031,7 @@ class IAppliance(Interface):
 
             Compression (optional string equalling "gzip" if the image is gzip-compressed)
         """
-        ret = self._call_method('getDisks')
+        ret = self._call_method(self._disks)
         return ret
     _disks = 'getDisks'
 
@@ -4043,7 +4043,7 @@ class IAppliance(Interface):
       This array is empty until either <link to="#interpret"/> (for import) or <link to="IMachine::exportTo"/>
       (for export) has been called.
         """
-        ret = self._call_method('getVirtualSystemDescriptions')
+        ret = self._call_method(self._virtual_system_descriptions)
         return [IVirtualSystemDescription(a) for a in ret]
     _virtual_system_descriptions = 'getVirtualSystemDescriptions'
 
@@ -4054,7 +4054,7 @@ class IAppliance(Interface):
         relevant for the import case, and will only contain data after a call to <link to="#importMachines"/>
         succeeded.
         """
-        ret = self._call_method('getMachines')
+        ret = self._call_method(self._machines)
         return ret
     _machines = 'getMachines'
 
@@ -4219,7 +4219,7 @@ class IVirtualSystemDescription(Interface):
         """Get int value for 'count'
         Return the number of virtual system description entries.
         """
-        ret = self._get_attr('count')
+        ret = self._get_attr(self._count)
         return ret
     _count = 'count'
 
@@ -5158,14 +5158,14 @@ class IBIOSSettings(Interface):
         """Get or set bool value for 'logoFadeIn'
         Fade in flag for BIOS logo animation.
         """
-        ret = self._get_attr('logoFadeIn')
+        ret = self._get_attr(self._logo_fade_in)
         return ret
 
     @logo_fade_in.setter
     def logo_fade_in(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('logoFadeIn', value)
+        return self._set_attr(self._logo_fade_in', value)
     _logo_fade_in = 'logoFadeIn'
 
     @property
@@ -5173,14 +5173,14 @@ class IBIOSSettings(Interface):
         """Get or set bool value for 'logoFadeOut'
         Fade out flag for BIOS logo animation.
         """
-        ret = self._get_attr('logoFadeOut')
+        ret = self._get_attr(self._logo_fade_out)
         return ret
 
     @logo_fade_out.setter
     def logo_fade_out(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('logoFadeOut', value)
+        return self._set_attr(self._logo_fade_out', value)
     _logo_fade_out = 'logoFadeOut'
 
     @property
@@ -5188,14 +5188,14 @@ class IBIOSSettings(Interface):
         """Get or set int value for 'logoDisplayTime'
         BIOS logo display time in milliseconds (0 = default).
         """
-        ret = self._get_attr('logoDisplayTime')
+        ret = self._get_attr(self._logo_display_time)
         return ret
 
     @logo_display_time.setter
     def logo_display_time(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('logoDisplayTime', value)
+        return self._set_attr(self._logo_display_time', value)
     _logo_display_time = 'logoDisplayTime'
 
     @property
@@ -5204,14 +5204,14 @@ class IBIOSSettings(Interface):
         Local file system path for external BIOS splash image. Empty string
         means the default image is shown on boot.
         """
-        ret = self._get_attr('logoImagePath')
+        ret = self._get_attr(self._logo_image_path)
         return ret
 
     @logo_image_path.setter
     def logo_image_path(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('logoImagePath', value)
+        return self._set_attr(self._logo_image_path', value)
     _logo_image_path = 'logoImagePath'
 
     @property
@@ -5219,14 +5219,14 @@ class IBIOSSettings(Interface):
         """Get or set BIOSBootMenuMode value for 'bootMenuMode'
         Mode of the BIOS boot device menu.
         """
-        ret = self._get_attr('bootMenuMode')
+        ret = self._get_attr(self._boot_menu_mode)
         return BIOSBootMenuMode(ret)
 
     @boot_menu_mode.setter
     def boot_menu_mode(self, value):
         if not isinstance(value, BIOSBootMenuMode):
             raise TypeError("value is not an instance of BIOSBootMenuMode")
-        return self._set_attr('bootMenuMode', value)
+        return self._set_attr(self._boot_menu_mode', value)
     _boot_menu_mode = 'bootMenuMode'
 
     @property
@@ -5234,14 +5234,14 @@ class IBIOSSettings(Interface):
         """Get or set bool value for 'ACPIEnabled'
         ACPI support flag.
         """
-        ret = self._get_attr('ACPIEnabled')
+        ret = self._get_attr(self._acpi_enabled)
         return ret
 
     @acpi_enabled.setter
     def acpi_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('ACPIEnabled', value)
+        return self._set_attr(self._acpi_enabled', value)
     _acpi_enabled = 'ACPIEnabled'
 
     @property
@@ -5250,14 +5250,14 @@ class IBIOSSettings(Interface):
         IO APIC support flag. If set, VirtualBox will provide an IO APIC
         and support IRQs above 15.
         """
-        ret = self._get_attr('IOAPICEnabled')
+        ret = self._get_attr(self._ioapic_enabled)
         return ret
 
     @ioapic_enabled.setter
     def ioapic_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('IOAPICEnabled', value)
+        return self._set_attr(self._ioapic_enabled', value)
     _ioapic_enabled = 'IOAPICEnabled'
 
     @property
@@ -5269,14 +5269,14 @@ class IBIOSSettings(Interface):
         it is not an absolute value but a relative one. Guest Additions
         time synchronization honors this offset.
         """
-        ret = self._get_attr('timeOffset')
+        ret = self._get_attr(self._time_offset)
         return ret
 
     @time_offset.setter
     def time_offset(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('timeOffset', value)
+        return self._set_attr(self._time_offset', value)
     _time_offset = 'timeOffset'
 
     @property
@@ -5285,14 +5285,14 @@ class IBIOSSettings(Interface):
         PXE debug logging flag. If set, VirtualBox will write extensive
         PXE trace information to the release log.
         """
-        ret = self._get_attr('PXEDebugEnabled')
+        ret = self._get_attr(self._pxe_debug_enabled)
         return ret
 
     @pxe_debug_enabled.setter
     def pxe_debug_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('PXEDebugEnabled', value)
+        return self._set_attr(self._pxe_debug_enabled', value)
     _pxe_debug_enabled = 'PXEDebugEnabled'
 
 
@@ -5308,14 +5308,14 @@ class IPCIAddress(Interface):
         """Get or set int value for 'bus'
         Bus number.
         """
-        ret = self._get_attr('bus')
+        ret = self._get_attr(self._bus)
         return ret
 
     @bus.setter
     def bus(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('bus', value)
+        return self._set_attr(self._bus', value)
     _bus = 'bus'
 
     @property
@@ -5323,14 +5323,14 @@ class IPCIAddress(Interface):
         """Get or set int value for 'device'
         Device number.
         """
-        ret = self._get_attr('device')
+        ret = self._get_attr(self._device)
         return ret
 
     @device.setter
     def device(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('device', value)
+        return self._set_attr(self._device', value)
     _device = 'device'
 
     @property
@@ -5338,14 +5338,14 @@ class IPCIAddress(Interface):
         """Get or set int value for 'devFunction'
         Device function number.
         """
-        ret = self._get_attr('devFunction')
+        ret = self._get_attr(self._dev_function)
         return ret
 
     @dev_function.setter
     def dev_function(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('devFunction', value)
+        return self._set_attr(self._dev_function', value)
     _dev_function = 'devFunction'
 
     def as_long(self):
@@ -5383,7 +5383,7 @@ class IPCIDeviceAttachment(Interface):
         """Get str value for 'name'
         Device name.
         """
-        ret = self._get_attr('name')
+        ret = self._get_attr(self._name)
         return ret
     _name = 'name'
 
@@ -5392,7 +5392,7 @@ class IPCIDeviceAttachment(Interface):
         """Get bool value for 'isPhysicalDevice'
         If this is physical or virtual device.
         """
-        ret = self._get_attr('isPhysicalDevice')
+        ret = self._get_attr(self._is_physical_device)
         return ret
     _is_physical_device = 'isPhysicalDevice'
 
@@ -5401,7 +5401,7 @@ class IPCIDeviceAttachment(Interface):
         """Get int value for 'hostAddress'
         Address of device on the host, applicable only to host devices.
         """
-        ret = self._get_attr('hostAddress')
+        ret = self._get_attr(self._host_address)
         return ret
     _host_address = 'hostAddress'
 
@@ -5410,7 +5410,7 @@ class IPCIDeviceAttachment(Interface):
         """Get int value for 'guestAddress'
         Address of device on the guest.
         """
-        ret = self._get_attr('guestAddress')
+        ret = self._get_attr(self._guest_address)
         return ret
     _guest_address = 'guestAddress'
 
@@ -5459,7 +5459,7 @@ class IMachine(Interface):
         """Get IVirtualBox value for 'parent'
         Associated parent object.
         """
-        ret = self._get_attr('parent')
+        ret = self._get_attr(self._parent)
         return IVirtualBox(ret)
     _parent = 'parent'
 
@@ -5505,7 +5505,7 @@ class IMachine(Interface):
           server is restarted). This limitation may be removed in
           future releases.
         """
-        ret = self._get_attr('accessible')
+        ret = self._get_attr(self._accessible)
         return ret
     _accessible = 'accessible'
 
@@ -5520,7 +5520,7 @@ class IMachine(Interface):
         machine is currently inaccessible). Otherwise, a @c null
         IVirtualBoxErrorInfo object will be returned.
         """
-        ret = self._get_attr('accessError')
+        ret = self._get_attr(self._access_error)
         return IVirtualBoxErrorInfo(ret)
     _access_error = 'accessError'
 
@@ -5563,14 +5563,14 @@ class IMachine(Interface):
         file is recommended, but not enforced. (Previous versions always
         used a generic ".xml" extension.)
         """
-        ret = self._get_attr('name')
+        ret = self._get_attr(self._name)
         return ret
 
     @name.setter
     def name(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('name', value)
+        return self._set_attr(self._name', value)
     _name = 'name'
 
     @property
@@ -5583,14 +5583,14 @@ class IMachine(Interface):
         configuration of the virtual machine in detail (i.e. network
         settings, versions of the installed software and so on).
         """
-        ret = self._get_attr('description')
+        ret = self._get_attr(self._description)
         return ret
 
     @description.setter
     def description(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('description', value)
+        return self._set_attr(self._description', value)
     _description = 'description'
 
     @property
@@ -5598,7 +5598,7 @@ class IMachine(Interface):
         """Get str value for 'id'
         UUID of the virtual machine.
         """
-        ret = self._get_attr('id')
+        ret = self._get_attr(self._id_p)
         return ret
     _id_p = 'id'
 
@@ -5612,14 +5612,14 @@ class IMachine(Interface):
         hierarchy (i.e. "/group",
         "/group/subgroup/subsubgroup" is a valid result).
         """
-        ret = self._call_method('getGroups')
+        ret = self._call_method(self._groups)
         return ret
 
     @groups.setter
     def groups(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('getGroups', value)
+        return self._set_attr(self._groups', value)
     _groups = 'getGroups'
 
     @property
@@ -5634,14 +5634,14 @@ class IMachine(Interface):
           <link to="IGuest::OSTypeId"/> if Guest Additions are
           installed to the guest OS.
         """
-        ret = self._get_attr('OSTypeId')
+        ret = self._get_attr(self._os_type_id)
         return ret
 
     @os_type_id.setter
     def os_type_id(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('OSTypeId', value)
+        return self._set_attr(self._os_type_id', value)
     _os_type_id = 'OSTypeId'
 
     @property
@@ -5649,14 +5649,14 @@ class IMachine(Interface):
         """Get or set str value for 'hardwareVersion'
         Hardware version identifier. Internal use only for now.
         """
-        ret = self._get_attr('hardwareVersion')
+        ret = self._get_attr(self._hardware_version)
         return ret
 
     @hardware_version.setter
     def hardware_version(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('hardwareVersion', value)
+        return self._set_attr(self._hardware_version', value)
     _hardware_version = 'hardwareVersion'
 
     @property
@@ -5668,14 +5668,14 @@ class IMachine(Interface):
         VM. The latter is because the guest shouldn't notice that it was
         cloned or teleported.
         """
-        ret = self._get_attr('hardwareUUID')
+        ret = self._get_attr(self._hardware_uuid)
         return ret
 
     @hardware_uuid.setter
     def hardware_uuid(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('hardwareUUID', value)
+        return self._set_attr(self._hardware_uuid', value)
     _hardware_uuid = 'hardwareUUID'
 
     @property
@@ -5683,14 +5683,14 @@ class IMachine(Interface):
         """Get or set int value for 'CPUCount'
         Number of virtual CPUs in the VM.
         """
-        ret = self._get_attr('CPUCount')
+        ret = self._get_attr(self._cpu_count)
         return ret
 
     @cpu_count.setter
     def cpu_count(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('CPUCount', value)
+        return self._set_attr(self._cpu_count', value)
     _cpu_count = 'CPUCount'
 
     @property
@@ -5699,14 +5699,14 @@ class IMachine(Interface):
         This setting determines whether VirtualBox allows CPU
         hotplugging for this machine.
         """
-        ret = self._get_attr('CPUHotPlugEnabled')
+        ret = self._get_attr(self._cpu_hot_plug_enabled)
         return ret
 
     @cpu_hot_plug_enabled.setter
     def cpu_hot_plug_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('CPUHotPlugEnabled', value)
+        return self._set_attr(self._cpu_hot_plug_enabled', value)
     _cpu_hot_plug_enabled = 'CPUHotPlugEnabled'
 
     @property
@@ -5716,14 +5716,14 @@ class IMachine(Interface):
         is percentage of host CPU cycles per second. The valid range
         is 1 - 100. 100 (the default) implies no limit.
         """
-        ret = self._get_attr('CPUExecutionCap')
+        ret = self._get_attr(self._cpu_execution_cap)
         return ret
 
     @cpu_execution_cap.setter
     def cpu_execution_cap(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('CPUExecutionCap', value)
+        return self._set_attr(self._cpu_execution_cap', value)
     _cpu_execution_cap = 'CPUExecutionCap'
 
     @property
@@ -5731,14 +5731,14 @@ class IMachine(Interface):
         """Get or set int value for 'memorySize'
         System memory size in megabytes.
         """
-        ret = self._get_attr('memorySize')
+        ret = self._get_attr(self._memory_size)
         return ret
 
     @memory_size.setter
     def memory_size(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('memorySize', value)
+        return self._set_attr(self._memory_size', value)
     _memory_size = 'memorySize'
 
     @property
@@ -5746,14 +5746,14 @@ class IMachine(Interface):
         """Get or set int value for 'memoryBalloonSize'
         Memory balloon size in megabytes.
         """
-        ret = self._get_attr('memoryBalloonSize')
+        ret = self._get_attr(self._memory_balloon_size)
         return ret
 
     @memory_balloon_size.setter
     def memory_balloon_size(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('memoryBalloonSize', value)
+        return self._set_attr(self._memory_balloon_size', value)
     _memory_balloon_size = 'memoryBalloonSize'
 
     @property
@@ -5762,14 +5762,14 @@ class IMachine(Interface):
         This setting determines whether VirtualBox allows page
         fusion for this machine (64-bit hosts only).
         """
-        ret = self._get_attr('pageFusionEnabled')
+        ret = self._get_attr(self._page_fusion_enabled)
         return ret
 
     @page_fusion_enabled.setter
     def page_fusion_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('pageFusionEnabled', value)
+        return self._set_attr(self._page_fusion_enabled', value)
     _page_fusion_enabled = 'pageFusionEnabled'
 
     @property
@@ -5777,14 +5777,14 @@ class IMachine(Interface):
         """Get or set GraphicsControllerType value for 'graphicsControllerType'
         Graphics controller type.
         """
-        ret = self._get_attr('graphicsControllerType')
+        ret = self._get_attr(self._graphics_controller_type)
         return GraphicsControllerType(ret)
 
     @graphics_controller_type.setter
     def graphics_controller_type(self, value):
         if not isinstance(value, GraphicsControllerType):
             raise TypeError("value is not an instance of GraphicsControllerType")
-        return self._set_attr('graphicsControllerType', value)
+        return self._set_attr(self._graphics_controller_type', value)
     _graphics_controller_type = 'graphicsControllerType'
 
     @property
@@ -5792,14 +5792,14 @@ class IMachine(Interface):
         """Get or set int value for 'VRAMSize'
         Video memory size in megabytes.
         """
-        ret = self._get_attr('VRAMSize')
+        ret = self._get_attr(self._vram_size)
         return ret
 
     @vram_size.setter
     def vram_size(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('VRAMSize', value)
+        return self._set_attr(self._vram_size', value)
     _vram_size = 'VRAMSize'
 
     @property
@@ -5808,14 +5808,14 @@ class IMachine(Interface):
         This setting determines whether VirtualBox allows this machine to make
         use of the 3D graphics support available on the host.
         """
-        ret = self._get_attr('accelerate3DEnabled')
+        ret = self._get_attr(self._accelerate3_d_enabled)
         return ret
 
     @accelerate3_d_enabled.setter
     def accelerate3_d_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('accelerate3DEnabled', value)
+        return self._set_attr(self._accelerate3_d_enabled', value)
     _accelerate3_d_enabled = 'accelerate3DEnabled'
 
     @property
@@ -5824,14 +5824,14 @@ class IMachine(Interface):
         This setting determines whether VirtualBox allows this machine to make
         use of the 2D video acceleration support available on the host.
         """
-        ret = self._get_attr('accelerate2DVideoEnabled')
+        ret = self._get_attr(self._accelerate2_d_video_enabled)
         return ret
 
     @accelerate2_d_video_enabled.setter
     def accelerate2_d_video_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('accelerate2DVideoEnabled', value)
+        return self._set_attr(self._accelerate2_d_video_enabled', value)
     _accelerate2_d_video_enabled = 'accelerate2DVideoEnabled'
 
     @property
@@ -5842,14 +5842,14 @@ class IMachine(Interface):
           Only effective on Windows XP and later guests with
           Guest Additions installed.
         """
-        ret = self._get_attr('monitorCount')
+        ret = self._get_attr(self._monitor_count)
         return ret
 
     @monitor_count.setter
     def monitor_count(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('monitorCount', value)
+        return self._set_attr(self._monitor_count', value)
     _monitor_count = 'monitorCount'
 
     @property
@@ -5858,14 +5858,14 @@ class IMachine(Interface):
         This setting determines whether VirtualBox uses video recording to
         record VM session.
         """
-        ret = self._get_attr('VideoCaptureEnabled')
+        ret = self._get_attr(self._video_capture_enabled)
         return ret
 
     @video_capture_enabled.setter
     def video_capture_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('VideoCaptureEnabled', value)
+        return self._set_attr(self._video_capture_enabled', value)
     _video_capture_enabled = 'VideoCaptureEnabled'
 
     @property
@@ -5874,14 +5874,14 @@ class IMachine(Interface):
         This setting determines for which screens video recording is
         enabled.
         """
-        ret = self._call_method('getVideoCaptureScreens')
+        ret = self._call_method(self._video_capture_screens)
         return ret
 
     @video_capture_screens.setter
     def video_capture_screens(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('getVideoCaptureScreens', value)
+        return self._set_attr(self._video_capture_screens', value)
     _video_capture_screens = 'getVideoCaptureScreens'
 
     @property
@@ -5890,14 +5890,14 @@ class IMachine(Interface):
         This setting determines the filename VirtualBox uses to save
         the recorded content.
         """
-        ret = self._get_attr('VideoCaptureFile')
+        ret = self._get_attr(self._video_capture_file)
         return ret
 
     @video_capture_file.setter
     def video_capture_file(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('VideoCaptureFile', value)
+        return self._set_attr(self._video_capture_file', value)
     _video_capture_file = 'VideoCaptureFile'
 
     @property
@@ -5905,14 +5905,14 @@ class IMachine(Interface):
         """Get or set int value for 'VideoCaptureWidth'
         This setting determines the horizontal resolution of the recorded video.
         """
-        ret = self._get_attr('VideoCaptureWidth')
+        ret = self._get_attr(self._video_capture_width)
         return ret
 
     @video_capture_width.setter
     def video_capture_width(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('VideoCaptureWidth', value)
+        return self._set_attr(self._video_capture_width', value)
     _video_capture_width = 'VideoCaptureWidth'
 
     @property
@@ -5920,14 +5920,14 @@ class IMachine(Interface):
         """Get or set int value for 'VideoCaptureHeight'
         This setting determines the vertical resolution of the recorded video.
         """
-        ret = self._get_attr('VideoCaptureHeight')
+        ret = self._get_attr(self._video_capture_height)
         return ret
 
     @video_capture_height.setter
     def video_capture_height(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('VideoCaptureHeight', value)
+        return self._set_attr(self._video_capture_height', value)
     _video_capture_height = 'VideoCaptureHeight'
 
     @property
@@ -5937,14 +5937,14 @@ class IMachine(Interface):
         Increasing this value makes the video look better for the
         cost of an increased file size.
         """
-        ret = self._get_attr('VideoCaptureRate')
+        ret = self._get_attr(self._video_capture_rate)
         return ret
 
     @video_capture_rate.setter
     def video_capture_rate(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('VideoCaptureRate', value)
+        return self._set_attr(self._video_capture_rate', value)
     _video_capture_rate = 'VideoCaptureRate'
 
     @property
@@ -5955,14 +5955,14 @@ class IMachine(Interface):
         value increses the number of skipped frames but reduces the
         file size.
         """
-        ret = self._get_attr('VideoCaptureFps')
+        ret = self._get_attr(self._video_capture_fps)
         return ret
 
     @video_capture_fps.setter
     def video_capture_fps(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('VideoCaptureFps', value)
+        return self._set_attr(self._video_capture_fps', value)
     _video_capture_fps = 'VideoCaptureFps'
 
     @property
@@ -5970,7 +5970,7 @@ class IMachine(Interface):
         """Get IBIOSSettings value for 'BIOSSettings'
         Object containing all BIOS settings.
         """
-        ret = self._get_attr('BIOSSettings')
+        ret = self._get_attr(self._bios_settings)
         return IBIOSSettings(ret)
     _bios_settings = 'BIOSSettings'
 
@@ -5980,14 +5980,14 @@ class IMachine(Interface):
         Type of firmware (such as legacy BIOS or EFI), used for initial
         bootstrap in this VM.
         """
-        ret = self._get_attr('firmwareType')
+        ret = self._get_attr(self._firmware_type)
         return FirmwareType(ret)
 
     @firmware_type.setter
     def firmware_type(self, value):
         if not isinstance(value, FirmwareType):
             raise TypeError("value is not an instance of FirmwareType")
-        return self._set_attr('firmwareType', value)
+        return self._set_attr(self._firmware_type', value)
     _firmware_type = 'firmwareType'
 
     @property
@@ -5997,14 +5997,14 @@ class IMachine(Interface):
         The default is typically "PS2Mouse" but can vary depending on the
         requirements of the guest operating system.
         """
-        ret = self._get_attr('pointingHIDType')
+        ret = self._get_attr(self._pointing_hid_type)
         return PointingHIDType(ret)
 
     @pointing_hid_type.setter
     def pointing_hid_type(self, value):
         if not isinstance(value, PointingHIDType):
             raise TypeError("value is not an instance of PointingHIDType")
-        return self._set_attr('pointingHIDType', value)
+        return self._set_attr(self._pointing_hid_type', value)
     _pointing_hid_type = 'pointingHIDType'
 
     @property
@@ -6014,14 +6014,14 @@ class IMachine(Interface):
         The default is typically "PS2Keyboard" but can vary depending on the
         requirements of the guest operating system.
         """
-        ret = self._get_attr('keyboardHIDType')
+        ret = self._get_attr(self._keyboard_hid_type)
         return KeyboardHIDType(ret)
 
     @keyboard_hid_type.setter
     def keyboard_hid_type(self, value):
         if not isinstance(value, KeyboardHIDType):
             raise TypeError("value is not an instance of KeyboardHIDType")
-        return self._set_attr('keyboardHIDType', value)
+        return self._set_attr(self._keyboard_hid_type', value)
     _keyboard_hid_type = 'keyboardHIDType'
 
     @property
@@ -6032,14 +6032,14 @@ class IMachine(Interface):
         with additional time source, or if guest requires HPET to function correctly.
         Default is false.
         """
-        ret = self._get_attr('HPETEnabled')
+        ret = self._get_attr(self._hpet_enabled)
         return ret
 
     @hpet_enabled.setter
     def hpet_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('HPETEnabled', value)
+        return self._set_attr(self._hpet_enabled', value)
     _hpet_enabled = 'HPETEnabled'
 
     @property
@@ -6047,14 +6047,14 @@ class IMachine(Interface):
         """Get or set ChipsetType value for 'chipsetType'
         Chipset type used in this VM.
         """
-        ret = self._get_attr('chipsetType')
+        ret = self._get_attr(self._chipset_type)
         return ChipsetType(ret)
 
     @chipset_type.setter
     def chipset_type(self, value):
         if not isinstance(value, ChipsetType):
             raise TypeError("value is not an instance of ChipsetType")
-        return self._set_attr('chipsetType', value)
+        return self._set_attr(self._chipset_type', value)
     _chipset_type = 'chipsetType'
 
     @property
@@ -6089,14 +6089,14 @@ class IMachine(Interface):
           The specified path may not exist, it will be created
           when necessary.
         """
-        ret = self._get_attr('snapshotFolder')
+        ret = self._get_attr(self._snapshot_folder)
         return ret
 
     @snapshot_folder.setter
     def snapshot_folder(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('snapshotFolder', value)
+        return self._set_attr(self._snapshot_folder', value)
     _snapshot_folder = 'snapshotFolder'
 
     @property
@@ -6104,34 +6104,34 @@ class IMachine(Interface):
         """Get IVRDEServer value for 'VRDEServer'
         VirtualBox Remote Desktop Extension (VRDE) server object.
         """
-        ret = self._get_attr('VRDEServer')
+        ret = self._get_attr(self._vrde_server)
         return IVRDEServer(ret)
     _vrde_server = 'VRDEServer'
 
     @property
     def emulated_usb_webcamera_enabled(self):
         """Get or set bool value for 'emulatedUSBWebcameraEnabled'"""
-        ret = self._get_attr('emulatedUSBWebcameraEnabled')
+        ret = self._get_attr(self._emulated_usb_webcamera_enabled)
         return ret
 
     @emulated_usb_webcamera_enabled.setter
     def emulated_usb_webcamera_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('emulatedUSBWebcameraEnabled', value)
+        return self._set_attr(self._emulated_usb_webcamera_enabled', value)
     _emulated_usb_webcamera_enabled = 'emulatedUSBWebcameraEnabled'
 
     @property
     def emulated_usb_card_reader_enabled(self):
         """Get or set bool value for 'emulatedUSBCardReaderEnabled'"""
-        ret = self._get_attr('emulatedUSBCardReaderEnabled')
+        ret = self._get_attr(self._emulated_usb_card_reader_enabled)
         return ret
 
     @emulated_usb_card_reader_enabled.setter
     def emulated_usb_card_reader_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('emulatedUSBCardReaderEnabled', value)
+        return self._set_attr(self._emulated_usb_card_reader_enabled', value)
     _emulated_usb_card_reader_enabled = 'emulatedUSBCardReaderEnabled'
 
     @property
@@ -6139,7 +6139,7 @@ class IMachine(Interface):
         """Get IMediumAttachment value for 'getMediumAttachments'
         Array of media attached to this machine.
         """
-        ret = self._call_method('getMediumAttachments')
+        ret = self._call_method(self._medium_attachments)
         return [IMediumAttachment(a) for a in ret]
     _medium_attachments = 'getMediumAttachments'
 
@@ -6152,7 +6152,7 @@ class IMachine(Interface):
           If USB functionality is not available in the given edition of
           VirtualBox, this method will set the result code to @c E_NOTIMPL.
         """
-        ret = self._get_attr('USBController')
+        ret = self._get_attr(self._usb_controller)
         return IUSBController(ret)
     _usb_controller = 'USBController'
 
@@ -6161,7 +6161,7 @@ class IMachine(Interface):
         """Get IAudioAdapter value for 'audioAdapter'
         Associated audio adapter, always present.
         """
-        ret = self._get_attr('audioAdapter')
+        ret = self._get_attr(self._audio_adapter)
         return IAudioAdapter(ret)
     _audio_adapter = 'audioAdapter'
 
@@ -6170,7 +6170,7 @@ class IMachine(Interface):
         """Get IStorageController value for 'getStorageControllers'
         Array of storage controllers attached to this machine.
         """
-        ret = self._call_method('getStorageControllers')
+        ret = self._call_method(self._storage_controllers)
         return [IStorageController(a) for a in ret]
     _storage_controllers = 'getStorageControllers'
 
@@ -6179,7 +6179,7 @@ class IMachine(Interface):
         """Get str value for 'settingsFilePath'
         Full name of the file containing machine settings data.
         """
-        ret = self._get_attr('settingsFilePath')
+        ret = self._get_attr(self._settings_file_path)
         return ret
     _settings_file_path = 'settingsFilePath'
 
@@ -6204,7 +6204,7 @@ class IMachine(Interface):
           changed after the creation or not). For opened machines
           the value is set to @c false (and then follows to normal rules).
         """
-        ret = self._get_attr('settingsModified')
+        ret = self._get_attr(self._settings_modified)
         return ret
     _settings_modified = 'settingsModified'
 
@@ -6213,7 +6213,7 @@ class IMachine(Interface):
         """Get SessionState value for 'sessionState'
         Current session state for this machine.
         """
-        ret = self._get_attr('sessionState')
+        ret = self._get_attr(self._session_state)
         return SessionState(ret)
     _session_state = 'sessionState'
 
@@ -6229,7 +6229,7 @@ class IMachine(Interface):
         <link to="#sessionState"/> is SessionClosed, the value of this
         attribute is an empty string.
         """
-        ret = self._get_attr('sessionType')
+        ret = self._get_attr(self._session_type)
         return ret
     _session_type = 'sessionType'
 
@@ -6242,7 +6242,7 @@ class IMachine(Interface):
         value is only valid if <link to="#sessionState"/> is Locked or
         Unlocking by the time this property is read.
         """
-        ret = self._get_attr('sessionPID')
+        ret = self._get_attr(self._session_pid)
         return ret
     _session_pid = 'sessionPID'
 
@@ -6251,7 +6251,7 @@ class IMachine(Interface):
         """Get MachineState value for 'state'
         Current execution state of this machine.
         """
-        ret = self._get_attr('state')
+        ret = self._get_attr(self._state)
         return MachineState(ret)
     _state = 'state'
 
@@ -6261,7 +6261,7 @@ class IMachine(Interface):
         Time stamp of the last execution state change,
         in milliseconds since 1970-01-01 UTC.
         """
-        ret = self._get_attr('lastStateChange')
+        ret = self._get_attr(self._last_state_change)
         return ret
     _last_state_change = 'lastStateChange'
 
@@ -6274,7 +6274,7 @@ class IMachine(Interface):
           When the machine is not in the Saved state, this attribute is
           an empty string.
         """
-        ret = self._get_attr('stateFilePath')
+        ret = self._get_attr(self._state_file_path)
         return ret
     _state_file_path = 'stateFilePath'
 
@@ -6287,7 +6287,7 @@ class IMachine(Interface):
         named VBox.log.1 and so on (up to VBox.log.3
         in the current version).
         """
-        ret = self._get_attr('logFolder')
+        ret = self._get_attr(self._log_folder)
         return ret
     _log_folder = 'logFolder'
 
@@ -6301,7 +6301,7 @@ class IMachine(Interface):
         or <link to="IConsole::restoreSnapshot"/>, depending on which
         was called last. See <link to="ISnapshot"/> for details.
         """
-        ret = self._get_attr('currentSnapshot')
+        ret = self._get_attr(self._current_snapshot)
         return ISnapshot(ret)
     _current_snapshot = 'currentSnapshot'
 
@@ -6311,7 +6311,7 @@ class IMachine(Interface):
         Number of snapshots taken on this machine. Zero means the
         machine doesn't have any snapshots.
         """
-        ret = self._get_attr('snapshotCount')
+        ret = self._get_attr(self._snapshot_count)
         return ret
     _snapshot_count = 'snapshotCount'
 
@@ -6346,7 +6346,7 @@ class IMachine(Interface):
           For machines that don't have snapshots, this property is
           always @c false.
         """
-        ret = self._get_attr('currentStateModified')
+        ret = self._get_attr(self._current_state_modified)
         return ret
     _current_state_modified = 'currentStateModified'
 
@@ -6361,7 +6361,7 @@ class IMachine(Interface):
         <link to="#createSharedFolder"/>. Existing shared folders can be
         removed using <link to="#removeSharedFolder"/>.
         """
-        ret = self._call_method('getSharedFolders')
+        ret = self._call_method(self._shared_folders)
         return [ISharedFolder(a) for a in ret]
     _shared_folders = 'getSharedFolders'
 
@@ -6371,14 +6371,14 @@ class IMachine(Interface):
         Synchronization mode between the host OS clipboard
         and the guest OS clipboard.
         """
-        ret = self._get_attr('clipboardMode')
+        ret = self._get_attr(self._clipboard_mode)
         return ClipboardMode(ret)
 
     @clipboard_mode.setter
     def clipboard_mode(self, value):
         if not isinstance(value, ClipboardMode):
             raise TypeError("value is not an instance of ClipboardMode")
-        return self._set_attr('clipboardMode', value)
+        return self._set_attr(self._clipboard_mode', value)
     _clipboard_mode = 'clipboardMode'
 
     @property
@@ -6386,14 +6386,14 @@ class IMachine(Interface):
         """Get or set DragAndDropMode value for 'dragAndDropMode'
         Which mode is allowed for drag'n'drop.
         """
-        ret = self._get_attr('dragAndDropMode')
+        ret = self._get_attr(self._drag_and_drop_mode)
         return DragAndDropMode(ret)
 
     @drag_and_drop_mode.setter
     def drag_and_drop_mode(self, value):
         if not isinstance(value, DragAndDropMode):
             raise TypeError("value is not an instance of DragAndDropMode")
-        return self._set_attr('dragAndDropMode', value)
+        return self._set_attr(self._drag_and_drop_mode', value)
     _drag_and_drop_mode = 'dragAndDropMode'
 
     @property
@@ -6403,14 +6403,14 @@ class IMachine(Interface):
         properties whose name matches one of the patterns will generate an
         <link to="IGuestPropertyChangedEvent"/> signal.
         """
-        ret = self._get_attr('guestPropertyNotificationPatterns')
+        ret = self._get_attr(self._guest_property_notification_patterns)
         return ret
 
     @guest_property_notification_patterns.setter
     def guest_property_notification_patterns(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('guestPropertyNotificationPatterns', value)
+        return self._set_attr(self._guest_property_notification_patterns', value)
     _guest_property_notification_patterns = 'guestPropertyNotificationPatterns'
 
     @property
@@ -6423,14 +6423,14 @@ class IMachine(Interface):
         <!-- This property is automatically set to @a false when the VM is powered
         on. (bird: This doesn't work yet ) -->
         """
-        ret = self._get_attr('teleporterEnabled')
+        ret = self._get_attr(self._teleporter_enabled)
         return ret
 
     @teleporter_enabled.setter
     def teleporter_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('teleporterEnabled', value)
+        return self._set_attr(self._teleporter_enabled', value)
     _teleporter_enabled = 'teleporterEnabled'
 
     @property
@@ -6443,14 +6443,14 @@ class IMachine(Interface):
         value can be read from this property while the machine is waiting for
         incoming teleportations.
         """
-        ret = self._get_attr('teleporterPort')
+        ret = self._get_attr(self._teleporter_port)
         return ret
 
     @teleporter_port.setter
     def teleporter_port(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('teleporterPort', value)
+        return self._set_attr(self._teleporter_port', value)
     _teleporter_port = 'teleporterPort'
 
     @property
@@ -6459,14 +6459,14 @@ class IMachine(Interface):
         The address the target teleporter will listen on. If set to an empty
         string, it will listen on all addresses.
         """
-        ret = self._get_attr('teleporterAddress')
+        ret = self._get_attr(self._teleporter_address)
         return ret
 
     @teleporter_address.setter
     def teleporter_address(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('teleporterAddress', value)
+        return self._set_attr(self._teleporter_address', value)
     _teleporter_address = 'teleporterAddress'
 
     @property
@@ -6479,14 +6479,14 @@ class IMachine(Interface):
         Note that you SET a plain text password while reading back a HASHED
         password. Setting a hashed password is currently not supported.
         """
-        ret = self._get_attr('teleporterPassword')
+        ret = self._get_attr(self._teleporter_password)
         return ret
 
     @teleporter_password.setter
     def teleporter_password(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('teleporterPassword', value)
+        return self._set_attr(self._teleporter_password', value)
     _teleporter_password = 'teleporterPassword'
 
     @property
@@ -6496,14 +6496,14 @@ class IMachine(Interface):
         This property can be changed at any time. If you change it for a running
         VM, then the fault tolerance address and port must be set beforehand.
         """
-        ret = self._get_attr('faultToleranceState')
+        ret = self._get_attr(self._fault_tolerance_state)
         return FaultToleranceState(ret)
 
     @fault_tolerance_state.setter
     def fault_tolerance_state(self, value):
         if not isinstance(value, FaultToleranceState):
             raise TypeError("value is not an instance of FaultToleranceState")
-        return self._set_attr('faultToleranceState', value)
+        return self._set_attr(self._fault_tolerance_state', value)
     _fault_tolerance_state = 'faultToleranceState'
 
     @property
@@ -6512,14 +6512,14 @@ class IMachine(Interface):
         The TCP port the fault tolerance source or target will use for
         communication.
         """
-        ret = self._get_attr('faultTolerancePort')
+        ret = self._get_attr(self._fault_tolerance_port)
         return ret
 
     @fault_tolerance_port.setter
     def fault_tolerance_port(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('faultTolerancePort', value)
+        return self._set_attr(self._fault_tolerance_port', value)
     _fault_tolerance_port = 'faultTolerancePort'
 
     @property
@@ -6527,14 +6527,14 @@ class IMachine(Interface):
         """Get or set str value for 'faultToleranceAddress'
         The address the fault tolerance source or target.
         """
-        ret = self._get_attr('faultToleranceAddress')
+        ret = self._get_attr(self._fault_tolerance_address)
         return ret
 
     @fault_tolerance_address.setter
     def fault_tolerance_address(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('faultToleranceAddress', value)
+        return self._set_attr(self._fault_tolerance_address', value)
     _fault_tolerance_address = 'faultToleranceAddress'
 
     @property
@@ -6544,14 +6544,14 @@ class IMachine(Interface):
         very basic measure to prevent simple hacks and operators accidentally
         choosing the wrong standby VM.
         """
-        ret = self._get_attr('faultTolerancePassword')
+        ret = self._get_attr(self._fault_tolerance_password)
         return ret
 
     @fault_tolerance_password.setter
     def fault_tolerance_password(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('faultTolerancePassword', value)
+        return self._set_attr(self._fault_tolerance_password', value)
     _fault_tolerance_password = 'faultTolerancePassword'
 
     @property
@@ -6559,14 +6559,14 @@ class IMachine(Interface):
         """Get or set int value for 'faultToleranceSyncInterval'
         The interval in ms used for syncing the state between source and target.
         """
-        ret = self._get_attr('faultToleranceSyncInterval')
+        ret = self._get_attr(self._fault_tolerance_sync_interval)
         return ret
 
     @fault_tolerance_sync_interval.setter
     def fault_tolerance_sync_interval(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('faultToleranceSyncInterval', value)
+        return self._set_attr(self._fault_tolerance_sync_interval', value)
     _fault_tolerance_sync_interval = 'faultToleranceSyncInterval'
 
     @property
@@ -6576,14 +6576,14 @@ class IMachine(Interface):
         in UTC time, otherwise in local time. Especially Unix guests prefer
         the time in UTC.
         """
-        ret = self._get_attr('RTCUseUTC')
+        ret = self._get_attr(self._rtc_use_utc)
         return ret
 
     @rtc_use_utc.setter
     def rtc_use_utc(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('RTCUseUTC', value)
+        return self._set_attr(self._rtc_use_utc', value)
     _rtc_use_utc = 'RTCUseUTC'
 
     @property
@@ -6592,14 +6592,14 @@ class IMachine(Interface):
         When set to @a true, the builtin I/O cache of the virtual machine
         will be enabled.
         """
-        ret = self._get_attr('IOCacheEnabled')
+        ret = self._get_attr(self._io_cache_enabled)
         return ret
 
     @io_cache_enabled.setter
     def io_cache_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('IOCacheEnabled', value)
+        return self._set_attr(self._io_cache_enabled', value)
     _io_cache_enabled = 'IOCacheEnabled'
 
     @property
@@ -6607,14 +6607,14 @@ class IMachine(Interface):
         """Get or set int value for 'IOCacheSize'
         Maximum size of the I/O cache in MB.
         """
-        ret = self._get_attr('IOCacheSize')
+        ret = self._get_attr(self._io_cache_size)
         return ret
 
     @io_cache_size.setter
     def io_cache_size(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('IOCacheSize', value)
+        return self._set_attr(self._io_cache_size', value)
     _io_cache_size = 'IOCacheSize'
 
     @property
@@ -6627,7 +6627,7 @@ class IMachine(Interface):
         virtual hardware config. Usually, this list keeps host's physical
         devices assigned to the particular machine.
         """
-        ret = self._call_method('getPCIDeviceAssignments')
+        ret = self._call_method(self._pci_device_assignments)
         return [IPCIDeviceAttachment(a) for a in ret]
     _pci_device_assignments = 'getPCIDeviceAssignments'
 
@@ -6636,7 +6636,7 @@ class IMachine(Interface):
         """Get IBandwidthControl value for 'bandwidthControl'
         Bandwidth control manager.
         """
-        ret = self._get_attr('bandwidthControl')
+        ret = self._get_attr(self._bandwidth_control)
         return IBandwidthControl(ret)
     _bandwidth_control = 'bandwidthControl'
 
@@ -6648,14 +6648,14 @@ class IMachine(Interface):
         enabled and there may be some extra overhead from tracepoints that are
         always enabled.
         """
-        ret = self._get_attr('tracingEnabled')
+        ret = self._get_attr(self._tracing_enabled)
         return ret
 
     @tracing_enabled.setter
     def tracing_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('tracingEnabled', value)
+        return self._set_attr(self._tracing_enabled', value)
     _tracing_enabled = 'tracingEnabled'
 
     @property
@@ -6672,14 +6672,14 @@ class IMachine(Interface):
         effect of the same config may differ between Solaris and Windows for
         example.
         """
-        ret = self._get_attr('tracingConfig')
+        ret = self._get_attr(self._tracing_config)
         return ret
 
     @tracing_config.setter
     def tracing_config(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('tracingConfig', value)
+        return self._set_attr(self._tracing_config', value)
     _tracing_config = 'tracingConfig'
 
     @property
@@ -6694,14 +6694,14 @@ class IMachine(Interface):
         business accessing the VMCPU or VM structures, and are therefore unable
         to get any pointers to these.
         """
-        ret = self._get_attr('allowTracingToAccessVM')
+        ret = self._get_attr(self._allow_tracing_to_access_vm)
         return ret
 
     @allow_tracing_to_access_vm.setter
     def allow_tracing_to_access_vm(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('allowTracingToAccessVM', value)
+        return self._set_attr(self._allow_tracing_to_access_vm', value)
     _allow_tracing_to_access_vm = 'allowTracingToAccessVM'
 
     @property
@@ -6709,14 +6709,14 @@ class IMachine(Interface):
         """Get or set bool value for 'autostartEnabled'
         Enables autostart of the VM during system boot.
         """
-        ret = self._get_attr('autostartEnabled')
+        ret = self._get_attr(self._autostart_enabled)
         return ret
 
     @autostart_enabled.setter
     def autostart_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('autostartEnabled', value)
+        return self._set_attr(self._autostart_enabled', value)
     _autostart_enabled = 'autostartEnabled'
 
     @property
@@ -6724,14 +6724,14 @@ class IMachine(Interface):
         """Get or set int value for 'autostartDelay'
         Number of seconds to wait until the VM should be started during system boot.
         """
-        ret = self._get_attr('autostartDelay')
+        ret = self._get_attr(self._autostart_delay)
         return ret
 
     @autostart_delay.setter
     def autostart_delay(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('autostartDelay', value)
+        return self._set_attr(self._autostart_delay', value)
     _autostart_delay = 'autostartDelay'
 
     @property
@@ -6739,14 +6739,14 @@ class IMachine(Interface):
         """Get or set AutostopType value for 'autostopType'
         Action type to do when the system is shutting down.
         """
-        ret = self._get_attr('autostopType')
+        ret = self._get_attr(self._autostop_type)
         return AutostopType(ret)
 
     @autostop_type.setter
     def autostop_type(self, value):
         if not isinstance(value, AutostopType):
             raise TypeError("value is not an instance of AutostopType")
-        return self._set_attr('autostopType', value)
+        return self._set_attr(self._autostop_type', value)
     _autostop_type = 'autostopType'
 
     @property
@@ -6764,14 +6764,14 @@ class IMachine(Interface):
         overridden by a frontend type passed to
         <link to="IMachine::launchVMProcess"/>.
         """
-        ret = self._get_attr('defaultFrontend')
+        ret = self._get_attr(self._default_frontend)
         return ret
 
     @default_frontend.setter
     def default_frontend(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('defaultFrontend', value)
+        return self._set_attr(self._default_frontend', value)
     _default_frontend = 'defaultFrontend'
 
     def lock_machine(self, session, lock_type):
@@ -9143,7 +9143,7 @@ class IVRDEServerInfo(Interface):
         """Get bool value for 'active'
         Whether the remote desktop connection is active.
         """
-        ret = self._get_attr('active')
+        ret = self._get_attr(self._active)
         return ret
     _active = 'active'
 
@@ -9155,7 +9155,7 @@ class IVRDEServerInfo(Interface):
         ports to bind to. If this property is equal to -1, then the VRDE
         server has not yet been started.
         """
-        ret = self._get_attr('port')
+        ret = self._get_attr(self._port)
         return ret
     _port = 'port'
 
@@ -9164,7 +9164,7 @@ class IVRDEServerInfo(Interface):
         """Get int value for 'numberOfClients'
         How many times a client connected.
         """
-        ret = self._get_attr('numberOfClients')
+        ret = self._get_attr(self._number_of_clients)
         return ret
     _number_of_clients = 'numberOfClients'
 
@@ -9173,7 +9173,7 @@ class IVRDEServerInfo(Interface):
         """Get int value for 'beginTime'
         When the last connection was established, in milliseconds since 1970-01-01 UTC.
         """
-        ret = self._get_attr('beginTime')
+        ret = self._get_attr(self._begin_time)
         return ret
     _begin_time = 'beginTime'
 
@@ -9183,7 +9183,7 @@ class IVRDEServerInfo(Interface):
         When the last connection was terminated or the current time, if
         connection is still active, in milliseconds since 1970-01-01 UTC.
         """
-        ret = self._get_attr('endTime')
+        ret = self._get_attr(self._end_time)
         return ret
     _end_time = 'endTime'
 
@@ -9192,7 +9192,7 @@ class IVRDEServerInfo(Interface):
         """Get int value for 'bytesSent'
         How many bytes were sent in last or current, if still active, connection.
         """
-        ret = self._get_attr('bytesSent')
+        ret = self._get_attr(self._bytes_sent)
         return ret
     _bytes_sent = 'bytesSent'
 
@@ -9201,7 +9201,7 @@ class IVRDEServerInfo(Interface):
         """Get int value for 'bytesSentTotal'
         How many bytes were sent in all connections.
         """
-        ret = self._get_attr('bytesSentTotal')
+        ret = self._get_attr(self._bytes_sent_total)
         return ret
     _bytes_sent_total = 'bytesSentTotal'
 
@@ -9210,7 +9210,7 @@ class IVRDEServerInfo(Interface):
         """Get int value for 'bytesReceived'
         How many bytes were received in last or current, if still active, connection.
         """
-        ret = self._get_attr('bytesReceived')
+        ret = self._get_attr(self._bytes_received)
         return ret
     _bytes_received = 'bytesReceived'
 
@@ -9219,7 +9219,7 @@ class IVRDEServerInfo(Interface):
         """Get int value for 'bytesReceivedTotal'
         How many bytes were received in all connections.
         """
-        ret = self._get_attr('bytesReceivedTotal')
+        ret = self._get_attr(self._bytes_received_total)
         return ret
     _bytes_received_total = 'bytesReceivedTotal'
 
@@ -9228,7 +9228,7 @@ class IVRDEServerInfo(Interface):
         """Get str value for 'user'
         Login user name supplied by the client.
         """
-        ret = self._get_attr('user')
+        ret = self._get_attr(self._user)
         return ret
     _user = 'user'
 
@@ -9237,7 +9237,7 @@ class IVRDEServerInfo(Interface):
         """Get str value for 'domain'
         Login domain name supplied by the client.
         """
-        ret = self._get_attr('domain')
+        ret = self._get_attr(self._domain)
         return ret
     _domain = 'domain'
 
@@ -9246,7 +9246,7 @@ class IVRDEServerInfo(Interface):
         """Get str value for 'clientName'
         The client name supplied by the client.
         """
-        ret = self._get_attr('clientName')
+        ret = self._get_attr(self._client_name)
         return ret
     _client_name = 'clientName'
 
@@ -9255,7 +9255,7 @@ class IVRDEServerInfo(Interface):
         """Get str value for 'clientIP'
         The IP address of the client.
         """
-        ret = self._get_attr('clientIP')
+        ret = self._get_attr(self._client_ip)
         return ret
     _client_ip = 'clientIP'
 
@@ -9264,7 +9264,7 @@ class IVRDEServerInfo(Interface):
         """Get int value for 'clientVersion'
         The client software version number.
         """
-        ret = self._get_attr('clientVersion')
+        ret = self._get_attr(self._client_version)
         return ret
     _client_version = 'clientVersion'
 
@@ -9275,7 +9275,7 @@ class IVRDEServerInfo(Interface):
         Values: 0 - RDP4 public key exchange scheme.
         1 - X509 certificates were sent to client.
         """
-        ret = self._get_attr('encryptionStyle')
+        ret = self._get_attr(self._encryption_style)
         return ret
     _encryption_style = 'encryptionStyle'
 
@@ -9309,7 +9309,7 @@ class IConsole(Interface):
           <link to="ISession::machine"/> of the corresponding session
           object.
         """
-        ret = self._get_attr('machine')
+        ret = self._get_attr(self._machine)
         return IMachine(ret)
     _machine = 'machine'
 
@@ -9324,7 +9324,7 @@ class IConsole(Interface):
           preferable way of querying the VM state, because no IPC
           calls are made.
         """
-        ret = self._get_attr('state')
+        ret = self._get_attr(self._state)
         return MachineState(ret)
     _state = 'state'
 
@@ -9333,7 +9333,7 @@ class IConsole(Interface):
         """Get IGuest value for 'guest'
         Guest object.
         """
-        ret = self._get_attr('guest')
+        ret = self._get_attr(self._guest)
         return IGuest(ret)
     _guest = 'guest'
 
@@ -9345,7 +9345,7 @@ class IConsole(Interface):
           If the machine is not running, any attempt to use
           the returned object will result in an error.
         """
-        ret = self._get_attr('keyboard')
+        ret = self._get_attr(self._keyboard)
         return IKeyboard(ret)
     _keyboard = 'keyboard'
 
@@ -9357,7 +9357,7 @@ class IConsole(Interface):
           If the machine is not running, any attempt to use
           the returned object will result in an error.
         """
-        ret = self._get_attr('mouse')
+        ret = self._get_attr(self._mouse)
         return IMouse(ret)
     _mouse = 'mouse'
 
@@ -9369,7 +9369,7 @@ class IConsole(Interface):
           If the machine is not running, any attempt to use
           the returned object will result in an error.
         """
-        ret = self._get_attr('display')
+        ret = self._get_attr(self._display)
         return IDisplay(ret)
     _display = 'display'
 
@@ -9378,7 +9378,7 @@ class IConsole(Interface):
         """Get IMachineDebugger value for 'debugger'
         Debugging interface.
         """
-        ret = self._get_attr('debugger')
+        ret = self._get_attr(self._debugger)
         return IMachineDebugger(ret)
     _debugger = 'debugger'
 
@@ -9390,7 +9390,7 @@ class IConsole(Interface):
         
           The collection is empty if the machine is not running.
         """
-        ret = self._call_method('getUSBDevices')
+        ret = self._call_method(self._usb_devices)
         return [IUSBDevice(a) for a in ret]
     _usb_devices = 'getUSBDevices'
 
@@ -9401,7 +9401,7 @@ class IConsole(Interface):
         Once a new device is physically attached to the remote host computer,
         it appears in this list and remains there until detached.
         """
-        ret = self._call_method('getRemoteUSBDevices')
+        ret = self._call_method(self._remote_usb_devices)
         return [IHostUSBDevice(a) for a in ret]
     _remote_usb_devices = 'getRemoteUSBDevices'
 
@@ -9420,7 +9420,7 @@ class IConsole(Interface):
         <link to="#createSharedFolder"/>. Existing shared folders can be
         removed using <link to="#removeSharedFolder"/>.
         """
-        ret = self._call_method('getSharedFolders')
+        ret = self._call_method(self._shared_folders)
         return [ISharedFolder(a) for a in ret]
     _shared_folders = 'getSharedFolders'
 
@@ -9429,7 +9429,7 @@ class IConsole(Interface):
         """Get IVRDEServerInfo value for 'VRDEServerInfo'
         Interface that provides information on Remote Desktop Extension (VRDE) connection.
         """
-        ret = self._get_attr('VRDEServerInfo')
+        ret = self._get_attr(self._vrde_server_info)
         return IVRDEServerInfo(ret)
     _vrde_server_info = 'VRDEServerInfo'
 
@@ -9438,7 +9438,7 @@ class IConsole(Interface):
         """Get IEventSource value for 'eventSource'
         Event source for console events.
         """
-        ret = self._get_attr('eventSource')
+        ret = self._get_attr(self._event_source)
         return IEventSource(ret)
     _event_source = 'eventSource'
 
@@ -9447,7 +9447,7 @@ class IConsole(Interface):
         """Get IPCIDeviceAttachment value for 'getAttachedPCIDevices'
         Array of PCI devices attached to this machine.
         """
-        ret = self._call_method('getAttachedPCIDevices')
+        ret = self._call_method(self._attached_pci_devices)
         return [IPCIDeviceAttachment(a) for a in ret]
     _attached_pci_devices = 'getAttachedPCIDevices'
 
@@ -9459,14 +9459,14 @@ class IConsole(Interface):
         setting may not affect existing guest clipboard connections which
         are already connected to the host clipboard.
         """
-        ret = self._get_attr('useHostClipboard')
+        ret = self._get_attr(self._use_host_clipboard)
         return ret
 
     @use_host_clipboard.setter
     def use_host_clipboard(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('useHostClipboard', value)
+        return self._set_attr(self._use_host_clipboard', value)
     _use_host_clipboard = 'useHostClipboard'
 
     def power_up(self):
@@ -10274,7 +10274,7 @@ class IHostNetworkInterface(Interface):
         """Get str value for 'name'
         Returns the host network interface name.
         """
-        ret = self._get_attr('name')
+        ret = self._get_attr(self._name)
         return ret
     _name = 'name'
 
@@ -10283,7 +10283,7 @@ class IHostNetworkInterface(Interface):
         """Get str value for 'id'
         Returns the interface UUID.
         """
-        ret = self._get_attr('id')
+        ret = self._get_attr(self._id_p)
         return ret
     _id_p = 'id'
 
@@ -10292,7 +10292,7 @@ class IHostNetworkInterface(Interface):
         """Get str value for 'networkName'
         Returns the name of a virtual network the interface gets attached to.
         """
-        ret = self._get_attr('networkName')
+        ret = self._get_attr(self._network_name)
         return ret
     _network_name = 'networkName'
 
@@ -10301,7 +10301,7 @@ class IHostNetworkInterface(Interface):
         """Get bool value for 'DHCPEnabled'
         Specifies whether the DHCP is enabled for the interface.
         """
-        ret = self._get_attr('DHCPEnabled')
+        ret = self._get_attr(self._dhcp_enabled)
         return ret
     _dhcp_enabled = 'DHCPEnabled'
 
@@ -10310,7 +10310,7 @@ class IHostNetworkInterface(Interface):
         """Get str value for 'IPAddress'
         Returns the IP V4 address of the interface.
         """
-        ret = self._get_attr('IPAddress')
+        ret = self._get_attr(self._ip_address)
         return ret
     _ip_address = 'IPAddress'
 
@@ -10319,7 +10319,7 @@ class IHostNetworkInterface(Interface):
         """Get str value for 'networkMask'
         Returns the network mask of the interface.
         """
-        ret = self._get_attr('networkMask')
+        ret = self._get_attr(self._network_mask)
         return ret
     _network_mask = 'networkMask'
 
@@ -10328,7 +10328,7 @@ class IHostNetworkInterface(Interface):
         """Get bool value for 'IPV6Supported'
         Specifies whether the IP V6 is supported/enabled for the interface.
         """
-        ret = self._get_attr('IPV6Supported')
+        ret = self._get_attr(self._ipv6_supported)
         return ret
     _ipv6_supported = 'IPV6Supported'
 
@@ -10337,7 +10337,7 @@ class IHostNetworkInterface(Interface):
         """Get str value for 'IPV6Address'
         Returns the IP V6 address of the interface.
         """
-        ret = self._get_attr('IPV6Address')
+        ret = self._get_attr(self._ipv6_address)
         return ret
     _ipv6_address = 'IPV6Address'
 
@@ -10346,7 +10346,7 @@ class IHostNetworkInterface(Interface):
         """Get int value for 'IPV6NetworkMaskPrefixLength'
         Returns the length IP V6 network mask prefix of the interface.
         """
-        ret = self._get_attr('IPV6NetworkMaskPrefixLength')
+        ret = self._get_attr(self._ipv6_network_mask_prefix_length)
         return ret
     _ipv6_network_mask_prefix_length = 'IPV6NetworkMaskPrefixLength'
 
@@ -10355,7 +10355,7 @@ class IHostNetworkInterface(Interface):
         """Get str value for 'hardwareAddress'
         Returns the hardware address. For Ethernet it is MAC address.
         """
-        ret = self._get_attr('hardwareAddress')
+        ret = self._get_attr(self._hardware_address)
         return ret
     _hardware_address = 'hardwareAddress'
 
@@ -10364,7 +10364,7 @@ class IHostNetworkInterface(Interface):
         """Get HostNetworkInterfaceMediumType value for 'mediumType'
         Type of protocol encapsulation used.
         """
-        ret = self._get_attr('mediumType')
+        ret = self._get_attr(self._medium_type)
         return HostNetworkInterfaceMediumType(ret)
     _medium_type = 'mediumType'
 
@@ -10373,7 +10373,7 @@ class IHostNetworkInterface(Interface):
         """Get HostNetworkInterfaceStatus value for 'status'
         Status of the interface.
         """
-        ret = self._get_attr('status')
+        ret = self._get_attr(self._status)
         return HostNetworkInterfaceStatus(ret)
     _status = 'status'
 
@@ -10382,7 +10382,7 @@ class IHostNetworkInterface(Interface):
         """Get HostNetworkInterfaceType value for 'interfaceType'
         specifies the host interface type.
         """
-        ret = self._get_attr('interfaceType')
+        ret = self._get_attr(self._interface_type)
         return HostNetworkInterfaceType(ret)
     _interface_type = 'interfaceType'
 
@@ -10457,7 +10457,7 @@ class IHost(Interface):
         """Get IMedium value for 'getDVDDrives'
         List of DVD drives available on the host.
         """
-        ret = self._call_method('getDVDDrives')
+        ret = self._call_method(self._dvd_drives)
         return [IMedium(a) for a in ret]
     _dvd_drives = 'getDVDDrives'
 
@@ -10466,7 +10466,7 @@ class IHost(Interface):
         """Get IMedium value for 'getFloppyDrives'
         List of floppy drives available on the host.
         """
-        ret = self._call_method('getFloppyDrives')
+        ret = self._call_method(self._floppy_drives)
         return [IMedium(a) for a in ret]
     _floppy_drives = 'getFloppyDrives'
 
@@ -10481,7 +10481,7 @@ class IHost(Interface):
           If USB functionality is not available in the given edition of
           VirtualBox, this method will set the result code to @c E_NOTIMPL.
         """
-        ret = self._call_method('getUSBDevices')
+        ret = self._call_method(self._usb_devices)
         return [IHostUSBDevice(a) for a in ret]
     _usb_devices = 'getUSBDevices'
 
@@ -10507,7 +10507,7 @@ class IHost(Interface):
         <link to="IHostUSBDeviceFilter"/>,
           <link to="USBDeviceState"/>
         """
-        ret = self._call_method('getUSBDeviceFilters')
+        ret = self._call_method(self._usb_device_filters)
         return [IHostUSBDeviceFilter(a) for a in ret]
     _usb_device_filters = 'getUSBDeviceFilters'
 
@@ -10516,7 +10516,7 @@ class IHost(Interface):
         """Get IHostNetworkInterface value for 'getNetworkInterfaces'
         List of host network interfaces currently defined on the host.
         """
-        ret = self._call_method('getNetworkInterfaces')
+        ret = self._call_method(self._network_interfaces)
         return [IHostNetworkInterface(a) for a in ret]
     _network_interfaces = 'getNetworkInterfaces'
 
@@ -10525,7 +10525,7 @@ class IHost(Interface):
         """Get int value for 'processorCount'
         Number of (logical) CPUs installed in the host system.
         """
-        ret = self._get_attr('processorCount')
+        ret = self._get_attr(self._processor_count)
         return ret
     _processor_count = 'processorCount'
 
@@ -10534,7 +10534,7 @@ class IHost(Interface):
         """Get int value for 'processorOnlineCount'
         Number of (logical) CPUs online in the host system.
         """
-        ret = self._get_attr('processorOnlineCount')
+        ret = self._get_attr(self._processor_online_count)
         return ret
     _processor_online_count = 'processorOnlineCount'
 
@@ -10543,7 +10543,7 @@ class IHost(Interface):
         """Get int value for 'processorCoreCount'
         Number of physical processor cores installed in the host system.
         """
-        ret = self._get_attr('processorCoreCount')
+        ret = self._get_attr(self._processor_core_count)
         return ret
     _processor_core_count = 'processorCoreCount'
 
@@ -10650,7 +10650,7 @@ class IHost(Interface):
         """Get int value for 'memorySize'
         Amount of system memory in megabytes installed in the host system.
         """
-        ret = self._get_attr('memorySize')
+        ret = self._get_attr(self._memory_size)
         return ret
     _memory_size = 'memorySize'
 
@@ -10659,7 +10659,7 @@ class IHost(Interface):
         """Get int value for 'memoryAvailable'
         Available system memory in the host system.
         """
-        ret = self._get_attr('memoryAvailable')
+        ret = self._get_attr(self._memory_available)
         return ret
     _memory_available = 'memoryAvailable'
 
@@ -10668,7 +10668,7 @@ class IHost(Interface):
         """Get str value for 'operatingSystem'
         Name of the host system's operating system.
         """
-        ret = self._get_attr('operatingSystem')
+        ret = self._get_attr(self._operating_system)
         return ret
     _operating_system = 'operatingSystem'
 
@@ -10677,7 +10677,7 @@ class IHost(Interface):
         """Get str value for 'OSVersion'
         Host operating system's version string.
         """
-        ret = self._get_attr('OSVersion')
+        ret = self._get_attr(self._os_version)
         return ret
     _os_version = 'OSVersion'
 
@@ -10686,7 +10686,7 @@ class IHost(Interface):
         """Get int value for 'UTCTime'
         Returns the current host time in milliseconds since 1970-01-01 UTC.
         """
-        ret = self._get_attr('UTCTime')
+        ret = self._get_attr(self._utc_time)
         return ret
     _utc_time = 'UTCTime'
 
@@ -10695,7 +10695,7 @@ class IHost(Interface):
         """Get bool value for 'acceleration3DAvailable'
         Returns @c true when the host supports 3D hardware acceleration.
         """
-        ret = self._get_attr('acceleration3DAvailable')
+        ret = self._get_attr(self._acceleration3_d_available)
         return ret
     _acceleration3_d_available = 'acceleration3DAvailable'
 
@@ -11016,7 +11016,7 @@ class ISystemProperties(Interface):
         """Get int value for 'minGuestRAM'
         Minimum guest system memory in Megabytes.
         """
-        ret = self._get_attr('minGuestRAM')
+        ret = self._get_attr(self._min_guest_ram)
         return ret
     _min_guest_ram = 'minGuestRAM'
 
@@ -11025,7 +11025,7 @@ class ISystemProperties(Interface):
         """Get int value for 'maxGuestRAM'
         Maximum guest system memory in Megabytes.
         """
-        ret = self._get_attr('maxGuestRAM')
+        ret = self._get_attr(self._max_guest_ram)
         return ret
     _max_guest_ram = 'maxGuestRAM'
 
@@ -11034,7 +11034,7 @@ class ISystemProperties(Interface):
         """Get int value for 'minGuestVRAM'
         Minimum guest video memory in Megabytes.
         """
-        ret = self._get_attr('minGuestVRAM')
+        ret = self._get_attr(self._min_guest_vram)
         return ret
     _min_guest_vram = 'minGuestVRAM'
 
@@ -11043,7 +11043,7 @@ class ISystemProperties(Interface):
         """Get int value for 'maxGuestVRAM'
         Maximum guest video memory in Megabytes.
         """
-        ret = self._get_attr('maxGuestVRAM')
+        ret = self._get_attr(self._max_guest_vram)
         return ret
     _max_guest_vram = 'maxGuestVRAM'
 
@@ -11052,7 +11052,7 @@ class ISystemProperties(Interface):
         """Get int value for 'minGuestCPUCount'
         Minimum CPU count.
         """
-        ret = self._get_attr('minGuestCPUCount')
+        ret = self._get_attr(self._min_guest_cpu_count)
         return ret
     _min_guest_cpu_count = 'minGuestCPUCount'
 
@@ -11061,7 +11061,7 @@ class ISystemProperties(Interface):
         """Get int value for 'maxGuestCPUCount'
         Maximum CPU count.
         """
-        ret = self._get_attr('maxGuestCPUCount')
+        ret = self._get_attr(self._max_guest_cpu_count)
         return ret
     _max_guest_cpu_count = 'maxGuestCPUCount'
 
@@ -11070,7 +11070,7 @@ class ISystemProperties(Interface):
         """Get int value for 'maxGuestMonitors'
         Maximum of monitors which could be connected.
         """
-        ret = self._get_attr('maxGuestMonitors')
+        ret = self._get_attr(self._max_guest_monitors)
         return ret
     _max_guest_monitors = 'maxGuestMonitors'
 
@@ -11080,7 +11080,7 @@ class ISystemProperties(Interface):
         Maximum size of a virtual disk image in bytes. Informational value,
       does not reflect the limits of any virtual disk image format.
         """
-        ret = self._get_attr('infoVDSize')
+        ret = self._get_attr(self._info_vd_size)
         return ret
     _info_vd_size = 'infoVDSize'
 
@@ -11090,7 +11090,7 @@ class ISystemProperties(Interface):
         Maximum number of serial ports associated with every
         <link to="IMachine"/> instance.
         """
-        ret = self._get_attr('serialPortCount')
+        ret = self._get_attr(self._serial_port_count)
         return ret
     _serial_port_count = 'serialPortCount'
 
@@ -11100,7 +11100,7 @@ class ISystemProperties(Interface):
         Maximum number of parallel ports associated with every
         <link to="IMachine"/> instance.
         """
-        ret = self._get_attr('parallelPortCount')
+        ret = self._get_attr(self._parallel_port_count)
         return ret
     _parallel_port_count = 'parallelPortCount'
 
@@ -11112,7 +11112,7 @@ class ISystemProperties(Interface):
         possible to include all possible devices to the boot list.
         <link to="IMachine::setBootOrder"/>
         """
-        ret = self._get_attr('maxBootPosition')
+        ret = self._get_attr(self._max_boot_position)
         return ret
     _max_boot_position = 'maxBootPosition'
 
@@ -11139,14 +11139,14 @@ class ISystemProperties(Interface):
           <link to="IVirtualBox::createMachine"/>,
           <link to="IVirtualBox::openMachine"/>
         """
-        ret = self._get_attr('defaultMachineFolder')
+        ret = self._get_attr(self._default_machine_folder)
         return ret
 
     @default_machine_folder.setter
     def default_machine_folder(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('defaultMachineFolder', value)
+        return self._set_attr(self._default_machine_folder', value)
     _default_machine_folder = 'defaultMachineFolder'
 
     @property
@@ -11172,7 +11172,7 @@ class ISystemProperties(Interface):
 
         <link to="IMediumFormat"/>
         """
-        ret = self._call_method('getMediumFormats')
+        ret = self._call_method(self._medium_formats)
         return [IMediumFormat(a) for a in ret]
     _medium_formats = 'getMediumFormats'
 
@@ -11209,14 +11209,14 @@ class ISystemProperties(Interface):
           <link to="IMediumFormat::id"/>,
           <link to="IVirtualBox::createHardDisk"/>
         """
-        ret = self._get_attr('defaultHardDiskFormat')
+        ret = self._get_attr(self._default_hard_disk_format)
         return ret
 
     @default_hard_disk_format.setter
     def default_hard_disk_format(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('defaultHardDiskFormat', value)
+        return self._set_attr(self._default_hard_disk_format', value)
     _default_hard_disk_format = 'defaultHardDiskFormat'
 
     @property
@@ -11226,14 +11226,14 @@ class ISystemProperties(Interface):
       intensive operation is expected to go below) the given size in
       bytes.
         """
-        ret = self._get_attr('freeDiskSpaceWarning')
+        ret = self._get_attr(self._free_disk_space_warning)
         return ret
 
     @free_disk_space_warning.setter
     def free_disk_space_warning(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('freeDiskSpaceWarning', value)
+        return self._set_attr(self._free_disk_space_warning', value)
     _free_disk_space_warning = 'freeDiskSpaceWarning'
 
     @property
@@ -11242,14 +11242,14 @@ class ISystemProperties(Interface):
         Issue a warning if the free disk space is below (or in some disk
       intensive operation is expected to go below) the given percentage.
         """
-        ret = self._get_attr('freeDiskSpacePercentWarning')
+        ret = self._get_attr(self._free_disk_space_percent_warning)
         return ret
 
     @free_disk_space_percent_warning.setter
     def free_disk_space_percent_warning(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('freeDiskSpacePercentWarning', value)
+        return self._set_attr(self._free_disk_space_percent_warning', value)
     _free_disk_space_percent_warning = 'freeDiskSpacePercentWarning'
 
     @property
@@ -11259,14 +11259,14 @@ class ISystemProperties(Interface):
       intensive operation is expected to go below) the given size in
       bytes.
         """
-        ret = self._get_attr('freeDiskSpaceError')
+        ret = self._get_attr(self._free_disk_space_error)
         return ret
 
     @free_disk_space_error.setter
     def free_disk_space_error(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('freeDiskSpaceError', value)
+        return self._set_attr(self._free_disk_space_error', value)
     _free_disk_space_error = 'freeDiskSpaceError'
 
     @property
@@ -11275,14 +11275,14 @@ class ISystemProperties(Interface):
         Issue an error if the free disk space is below (or in some disk
       intensive operation is expected to go below) the given percentage.
         """
-        ret = self._get_attr('freeDiskSpacePercentError')
+        ret = self._get_attr(self._free_disk_space_percent_error)
         return ret
 
     @free_disk_space_percent_error.setter
     def free_disk_space_percent_error(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('freeDiskSpacePercentError', value)
+        return self._set_attr(self._free_disk_space_percent_error', value)
     _free_disk_space_percent_error = 'freeDiskSpacePercentError'
 
     @property
@@ -11306,14 +11306,14 @@ class ISystemProperties(Interface):
           Setting this property to @c null or empty string will restore the
           initial value.
         """
-        ret = self._get_attr('VRDEAuthLibrary')
+        ret = self._get_attr(self._vrde_auth_library)
         return ret
 
     @vrde_auth_library.setter
     def vrde_auth_library(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('VRDEAuthLibrary', value)
+        return self._set_attr(self._vrde_auth_library', value)
     _vrde_auth_library = 'VRDEAuthLibrary'
 
     @property
@@ -11342,14 +11342,14 @@ class ISystemProperties(Interface):
           Setting this property to @c null or empty string will restore the
           initial value.
         """
-        ret = self._get_attr('webServiceAuthLibrary')
+        ret = self._get_attr(self._web_service_auth_library)
         return ret
 
     @web_service_auth_library.setter
     def web_service_auth_library(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('webServiceAuthLibrary', value)
+        return self._set_attr(self._web_service_auth_library', value)
     _web_service_auth_library = 'webServiceAuthLibrary'
 
     @property
@@ -11365,14 +11365,14 @@ class ISystemProperties(Interface):
         For details about VirtualBox Remote Desktop Extension and how to
         implement one, please refer to the VirtualBox SDK.
         """
-        ret = self._get_attr('defaultVRDEExtPack')
+        ret = self._get_attr(self._default_vrde_ext_pack)
         return ret
 
     @default_vrde_ext_pack.setter
     def default_vrde_ext_pack(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('defaultVRDEExtPack', value)
+        return self._set_attr(self._default_vrde_ext_pack', value)
     _default_vrde_ext_pack = 'defaultVRDEExtPack'
 
     @property
@@ -11380,14 +11380,14 @@ class ISystemProperties(Interface):
         """Get or set int value for 'logHistoryCount'
         This value specifies how many old release log files are kept.
         """
-        ret = self._get_attr('logHistoryCount')
+        ret = self._get_attr(self._log_history_count)
         return ret
 
     @log_history_count.setter
     def log_history_count(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('logHistoryCount', value)
+        return self._set_attr(self._log_history_count', value)
     _log_history_count = 'logHistoryCount'
 
     @property
@@ -11396,7 +11396,7 @@ class ISystemProperties(Interface):
         This value hold the default audio driver for the current
       system.
         """
-        ret = self._get_attr('defaultAudioDriver')
+        ret = self._get_attr(self._default_audio_driver)
         return AudioDriverType(ret)
     _default_audio_driver = 'defaultAudioDriver'
 
@@ -11406,14 +11406,14 @@ class ISystemProperties(Interface):
         The path to the autostart database. Depending on the host this might
         be a filesystem path or something else.
         """
-        ret = self._get_attr('autostartDatabasePath')
+        ret = self._get_attr(self._autostart_database_path)
         return ret
 
     @autostart_database_path.setter
     def autostart_database_path(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('autostartDatabasePath', value)
+        return self._set_attr(self._autostart_database_path', value)
     _autostart_database_path = 'autostartDatabasePath'
 
     @property
@@ -11422,14 +11422,14 @@ class ISystemProperties(Interface):
         The path to the default Guest Additions ISO image. Can be empty if
         the location is not known in this installation.
         """
-        ret = self._get_attr('defaultAdditionsISO')
+        ret = self._get_attr(self._default_additions_iso)
         return ret
 
     @default_additions_iso.setter
     def default_additions_iso(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('defaultAdditionsISO', value)
+        return self._set_attr(self._default_additions_iso', value)
     _default_additions_iso = 'defaultAdditionsISO'
 
     @property
@@ -11446,14 +11446,14 @@ class ISystemProperties(Interface):
         <link to="IMachine::defaultFrontend"/> or a frontend type
         passed to <link to="IMachine::launchVMProcess"/>.
         """
-        ret = self._get_attr('defaultFrontend')
+        ret = self._get_attr(self._default_frontend)
         return ret
 
     @default_frontend.setter
     def default_frontend(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('defaultFrontend', value)
+        return self._set_attr(self._default_frontend', value)
     _default_frontend = 'defaultFrontend'
 
     def get_max_network_adapters(self, chipset):
@@ -11625,7 +11625,7 @@ class IGuestOSType(Interface):
         """Get str value for 'familyId'
         Guest OS family identifier string.
         """
-        ret = self._get_attr('familyId')
+        ret = self._get_attr(self._family_id)
         return ret
     _family_id = 'familyId'
 
@@ -11634,7 +11634,7 @@ class IGuestOSType(Interface):
         """Get str value for 'familyDescription'
         Human readable description of the guest OS family.
         """
-        ret = self._get_attr('familyDescription')
+        ret = self._get_attr(self._family_description)
         return ret
     _family_description = 'familyDescription'
 
@@ -11643,7 +11643,7 @@ class IGuestOSType(Interface):
         """Get str value for 'id'
         Guest OS identifier string.
         """
-        ret = self._get_attr('id')
+        ret = self._get_attr(self._id_p)
         return ret
     _id_p = 'id'
 
@@ -11652,7 +11652,7 @@ class IGuestOSType(Interface):
         """Get str value for 'description'
         Human readable description of the guest OS.
         """
-        ret = self._get_attr('description')
+        ret = self._get_attr(self._description)
         return ret
     _description = 'description'
 
@@ -11661,7 +11661,7 @@ class IGuestOSType(Interface):
         """Get bool value for 'is64Bit'
         Returns @c true if the given OS is 64-bit
         """
-        ret = self._get_attr('is64Bit')
+        ret = self._get_attr(self._is64_bit)
         return ret
     _is64_bit = 'is64Bit'
 
@@ -11670,7 +11670,7 @@ class IGuestOSType(Interface):
         """Get bool value for 'recommendedIOAPIC'
         Returns @c true if IO APIC recommended for this OS type.
         """
-        ret = self._get_attr('recommendedIOAPIC')
+        ret = self._get_attr(self._recommended_ioapic)
         return ret
     _recommended_ioapic = 'recommendedIOAPIC'
 
@@ -11679,7 +11679,7 @@ class IGuestOSType(Interface):
         """Get bool value for 'recommendedVirtEx'
         Returns @c true if VT-x or AMD-V recommended for this OS type.
         """
-        ret = self._get_attr('recommendedVirtEx')
+        ret = self._get_attr(self._recommended_virt_ex)
         return ret
     _recommended_virt_ex = 'recommendedVirtEx'
 
@@ -11688,7 +11688,7 @@ class IGuestOSType(Interface):
         """Get int value for 'recommendedRAM'
         Recommended RAM size in Megabytes.
         """
-        ret = self._get_attr('recommendedRAM')
+        ret = self._get_attr(self._recommended_ram)
         return ret
     _recommended_ram = 'recommendedRAM'
 
@@ -11697,7 +11697,7 @@ class IGuestOSType(Interface):
         """Get int value for 'recommendedVRAM'
         Recommended video RAM size in Megabytes.
         """
-        ret = self._get_attr('recommendedVRAM')
+        ret = self._get_attr(self._recommended_vram)
         return ret
     _recommended_vram = 'recommendedVRAM'
 
@@ -11706,7 +11706,7 @@ class IGuestOSType(Interface):
         """Get bool value for 'recommended2DVideoAcceleration'
         Returns @c true if 2D video acceleration is recommended for this OS type.
         """
-        ret = self._get_attr('recommended2DVideoAcceleration')
+        ret = self._get_attr(self._recommended2_d_video_acceleration)
         return ret
     _recommended2_d_video_acceleration = 'recommended2DVideoAcceleration'
 
@@ -11715,7 +11715,7 @@ class IGuestOSType(Interface):
         """Get bool value for 'recommended3DAcceleration'
         Returns @c true if 3D acceleration is recommended for this OS type.
         """
-        ret = self._get_attr('recommended3DAcceleration')
+        ret = self._get_attr(self._recommended3_d_acceleration)
         return ret
     _recommended3_d_acceleration = 'recommended3DAcceleration'
 
@@ -11724,7 +11724,7 @@ class IGuestOSType(Interface):
         """Get int value for 'recommendedHDD'
         Recommended hard disk size in bytes.
         """
-        ret = self._get_attr('recommendedHDD')
+        ret = self._get_attr(self._recommended_hdd)
         return ret
     _recommended_hdd = 'recommendedHDD'
 
@@ -11733,7 +11733,7 @@ class IGuestOSType(Interface):
         """Get NetworkAdapterType value for 'adapterType'
         Returns recommended network adapter for this OS type.
         """
-        ret = self._get_attr('adapterType')
+        ret = self._get_attr(self._adapter_type)
         return NetworkAdapterType(ret)
     _adapter_type = 'adapterType'
 
@@ -11742,7 +11742,7 @@ class IGuestOSType(Interface):
         """Get bool value for 'recommendedPAE'
         Returns @c true if using PAE is recommended for this OS type.
         """
-        ret = self._get_attr('recommendedPAE')
+        ret = self._get_attr(self._recommended_pae)
         return ret
     _recommended_pae = 'recommendedPAE'
 
@@ -11751,7 +11751,7 @@ class IGuestOSType(Interface):
         """Get StorageControllerType value for 'recommendedDVDStorageController'
         Recommended storage controller type for DVD/CD drives.
         """
-        ret = self._get_attr('recommendedDVDStorageController')
+        ret = self._get_attr(self._recommended_dvd_storage_controller)
         return StorageControllerType(ret)
     _recommended_dvd_storage_controller = 'recommendedDVDStorageController'
 
@@ -11760,7 +11760,7 @@ class IGuestOSType(Interface):
         """Get StorageBus value for 'recommendedDVDStorageBus'
         Recommended storage bus type for DVD/CD drives.
         """
-        ret = self._get_attr('recommendedDVDStorageBus')
+        ret = self._get_attr(self._recommended_dvd_storage_bus)
         return StorageBus(ret)
     _recommended_dvd_storage_bus = 'recommendedDVDStorageBus'
 
@@ -11769,7 +11769,7 @@ class IGuestOSType(Interface):
         """Get StorageControllerType value for 'recommendedHDStorageController'
         Recommended storage controller type for HD drives.
         """
-        ret = self._get_attr('recommendedHDStorageController')
+        ret = self._get_attr(self._recommended_hd_storage_controller)
         return StorageControllerType(ret)
     _recommended_hd_storage_controller = 'recommendedHDStorageController'
 
@@ -11778,7 +11778,7 @@ class IGuestOSType(Interface):
         """Get StorageBus value for 'recommendedHDStorageBus'
         Recommended storage bus type for HD drives.
         """
-        ret = self._get_attr('recommendedHDStorageBus')
+        ret = self._get_attr(self._recommended_hd_storage_bus)
         return StorageBus(ret)
     _recommended_hd_storage_bus = 'recommendedHDStorageBus'
 
@@ -11787,7 +11787,7 @@ class IGuestOSType(Interface):
         """Get FirmwareType value for 'recommendedFirmware'
         Recommended firmware type.
         """
-        ret = self._get_attr('recommendedFirmware')
+        ret = self._get_attr(self._recommended_firmware)
         return FirmwareType(ret)
     _recommended_firmware = 'recommendedFirmware'
 
@@ -11796,7 +11796,7 @@ class IGuestOSType(Interface):
         """Get bool value for 'recommendedUSBHID'
         Returns @c true if using USB Human Interface Devices, such as keyboard and mouse recommended.
         """
-        ret = self._get_attr('recommendedUSBHID')
+        ret = self._get_attr(self._recommended_usbhid)
         return ret
     _recommended_usbhid = 'recommendedUSBHID'
 
@@ -11805,7 +11805,7 @@ class IGuestOSType(Interface):
         """Get bool value for 'recommendedHPET'
         Returns @c true if using HPET is recommended for this OS type.
         """
-        ret = self._get_attr('recommendedHPET')
+        ret = self._get_attr(self._recommended_hpet)
         return ret
     _recommended_hpet = 'recommendedHPET'
 
@@ -11814,7 +11814,7 @@ class IGuestOSType(Interface):
         """Get bool value for 'recommendedUSBTablet'
         Returns @c true if using a USB Tablet is recommended.
         """
-        ret = self._get_attr('recommendedUSBTablet')
+        ret = self._get_attr(self._recommended_usb_tablet)
         return ret
     _recommended_usb_tablet = 'recommendedUSBTablet'
 
@@ -11823,7 +11823,7 @@ class IGuestOSType(Interface):
         """Get bool value for 'recommendedRTCUseUTC'
         Returns @c true if the RTC of this VM should be set to UTC
         """
-        ret = self._get_attr('recommendedRTCUseUTC')
+        ret = self._get_attr(self._recommended_rtc_use_utc)
         return ret
     _recommended_rtc_use_utc = 'recommendedRTCUseUTC'
 
@@ -11832,7 +11832,7 @@ class IGuestOSType(Interface):
         """Get ChipsetType value for 'recommendedChipset'
         Recommended chipset type.
         """
-        ret = self._get_attr('recommendedChipset')
+        ret = self._get_attr(self._recommended_chipset)
         return ChipsetType(ret)
     _recommended_chipset = 'recommendedChipset'
 
@@ -11841,7 +11841,7 @@ class IGuestOSType(Interface):
         """Get AudioControllerType value for 'recommendedAudioController'
         Recommended audio type.
         """
-        ret = self._get_attr('recommendedAudioController')
+        ret = self._get_attr(self._recommended_audio_controller)
         return AudioControllerType(ret)
     _recommended_audio_controller = 'recommendedAudioController'
 
@@ -11850,7 +11850,7 @@ class IGuestOSType(Interface):
         """Get bool value for 'recommendedFloppy'
         Returns @c true a floppy drive is recommended for this OS type.
         """
-        ret = self._get_attr('recommendedFloppy')
+        ret = self._get_attr(self._recommended_floppy)
         return ret
     _recommended_floppy = 'recommendedFloppy'
 
@@ -11859,7 +11859,7 @@ class IGuestOSType(Interface):
         """Get bool value for 'recommendedUSB'
         Returns @c true a USB controller is recommended for this OS type.
         """
-        ret = self._get_attr('recommendedUSB')
+        ret = self._get_attr(self._recommended_usb)
         return ret
     _recommended_usb = 'recommendedUSB'
 
@@ -11876,7 +11876,7 @@ class IAdditionsFacility(Interface):
         """Get AdditionsFacilityClass value for 'classType'
         The class this facility is part of.
         """
-        ret = self._get_attr('classType')
+        ret = self._get_attr(self._class_type)
         return AdditionsFacilityClass(ret)
     _class_type = 'classType'
 
@@ -11886,7 +11886,7 @@ class IAdditionsFacility(Interface):
         Time stamp of the last status update,
         in milliseconds since 1970-01-01 UTC.
         """
-        ret = self._get_attr('lastUpdated')
+        ret = self._get_attr(self._last_updated)
         return ret
     _last_updated = 'lastUpdated'
 
@@ -11895,7 +11895,7 @@ class IAdditionsFacility(Interface):
         """Get str value for 'name'
         The facility's friendly name.
         """
-        ret = self._get_attr('name')
+        ret = self._get_attr(self._name)
         return ret
     _name = 'name'
 
@@ -11904,7 +11904,7 @@ class IAdditionsFacility(Interface):
         """Get AdditionsFacilityStatus value for 'status'
         The current status.
         """
-        ret = self._get_attr('status')
+        ret = self._get_attr(self._status)
         return AdditionsFacilityStatus(ret)
     _status = 'status'
 
@@ -11913,7 +11913,7 @@ class IAdditionsFacility(Interface):
         """Get AdditionsFacilityType value for 'type'
         The facility's type ID.
         """
-        ret = self._get_attr('type')
+        ret = self._get_attr(self._type_p)
         return AdditionsFacilityType(ret)
     _type_p = 'type'
 
@@ -11949,7 +11949,7 @@ class IGuestSession(Interface):
         Returns the user name used by this session to impersonate
         users on the guest.
         """
-        ret = self._get_attr('user')
+        ret = self._get_attr(self._user)
         return ret
     _user = 'user'
 
@@ -11959,7 +11959,7 @@ class IGuestSession(Interface):
         Returns the domain name used by this session to impersonate
         users on the guest.
         """
-        ret = self._get_attr('domain')
+        ret = self._get_attr(self._domain)
         return ret
     _domain = 'domain'
 
@@ -11968,7 +11968,7 @@ class IGuestSession(Interface):
         """Get str value for 'name'
         Returns the session's friendly name.
         """
-        ret = self._get_attr('name')
+        ret = self._get_attr(self._name)
         return ret
     _name = 'name'
 
@@ -11977,7 +11977,7 @@ class IGuestSession(Interface):
         """Get int value for 'id'
         Returns the internal session ID.
         """
-        ret = self._get_attr('id')
+        ret = self._get_attr(self._id_p)
         return ret
     _id_p = 'id'
 
@@ -11986,14 +11986,14 @@ class IGuestSession(Interface):
         """Get or set int value for 'timeout'
         Returns the session timeout (in ms).
         """
-        ret = self._get_attr('timeout')
+        ret = self._get_attr(self._timeout)
         return ret
 
     @timeout.setter
     def timeout(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('timeout', value)
+        return self._set_attr(self._timeout', value)
     _timeout = 'timeout'
 
     @property
@@ -12001,7 +12001,7 @@ class IGuestSession(Interface):
         """Get GuestSessionStatus value for 'status'
         Returns the current session status.
         """
-        ret = self._get_attr('status')
+        ret = self._get_attr(self._status)
         return GuestSessionStatus(ret)
     _status = 'status'
 
@@ -12010,14 +12010,14 @@ class IGuestSession(Interface):
         """Get or set str value for 'getEnvironment'
         Returns the current session environment.
         """
-        ret = self._call_method('getEnvironment')
+        ret = self._call_method(self._environment)
         return ret
 
     @environment.setter
     def environment(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('getEnvironment', value)
+        return self._set_attr(self._environment', value)
     _environment = 'getEnvironment'
 
     @property
@@ -12025,7 +12025,7 @@ class IGuestSession(Interface):
         """Get IGuestProcess value for 'getProcesses'
         Returns all current guest processes.
         """
-        ret = self._call_method('getProcesses')
+        ret = self._call_method(self._processes)
         return [IGuestProcess(a) for a in ret]
     _processes = 'getProcesses'
 
@@ -12034,7 +12034,7 @@ class IGuestSession(Interface):
         """Get IGuestDirectory value for 'getDirectories'
         Returns all currently opened guest directories.
         """
-        ret = self._call_method('getDirectories')
+        ret = self._call_method(self._directories)
         return [IGuestDirectory(a) for a in ret]
     _directories = 'getDirectories'
 
@@ -12043,7 +12043,7 @@ class IGuestSession(Interface):
         """Get IGuestFile value for 'getFiles'
         Returns all currently opened guest files.
         """
-        ret = self._call_method('getFiles')
+        ret = self._call_method(self._files)
         return [IGuestFile(a) for a in ret]
     _files = 'getFiles'
 
@@ -12052,7 +12052,7 @@ class IGuestSession(Interface):
         """Get IEventSource value for 'eventSource'
         Event source for guest session events.
         """
-        ret = self._get_attr('eventSource')
+        ret = self._get_attr(self._event_source)
         return IEventSource(ret)
     _event_source = 'eventSource'
 
@@ -13058,7 +13058,7 @@ class IProcess(Interface):
         """Get str value for 'getArguments'
         The arguments this process is using for execution.
         """
-        ret = self._call_method('getArguments')
+        ret = self._call_method(self._arguments)
         return ret
     _arguments = 'getArguments'
 
@@ -13067,7 +13067,7 @@ class IProcess(Interface):
         """Get str value for 'getEnvironment'
         The environment block this process is using during execution.
         """
-        ret = self._call_method('getEnvironment')
+        ret = self._call_method(self._environment)
         return ret
     _environment = 'getEnvironment'
 
@@ -13076,7 +13076,7 @@ class IProcess(Interface):
         """Get IEventSource value for 'eventSource'
         Event source for VirtualBox events.
         """
-        ret = self._get_attr('eventSource')
+        ret = self._get_attr(self._event_source)
         return IEventSource(ret)
     _event_source = 'eventSource'
 
@@ -13085,7 +13085,7 @@ class IProcess(Interface):
         """Get str value for 'executablePath'
         Full path of the actual executable image.
         """
-        ret = self._get_attr('executablePath')
+        ret = self._get_attr(self._executable_path)
         return ret
     _executable_path = 'executablePath'
 
@@ -13095,7 +13095,7 @@ class IProcess(Interface):
         The exit code. Only available when the process has been
         terminated normally.
         """
-        ret = self._get_attr('exitCode')
+        ret = self._get_attr(self._exit_code)
         return ret
     _exit_code = 'exitCode'
 
@@ -13104,7 +13104,7 @@ class IProcess(Interface):
         """Get str value for 'name'
         The friendly name of this process.
         """
-        ret = self._get_attr('name')
+        ret = self._get_attr(self._name)
         return ret
     _name = 'name'
 
@@ -13113,7 +13113,7 @@ class IProcess(Interface):
         """Get int value for 'PID'
         The process ID (PID).
         """
-        ret = self._get_attr('PID')
+        ret = self._get_attr(self._pid)
         return ret
     _pid = 'PID'
 
@@ -13123,7 +13123,7 @@ class IProcess(Interface):
         The current process status; see <link to="ProcessStatus"/>
         for more information.
         """
-        ret = self._get_attr('status')
+        ret = self._get_attr(self._status)
         return ProcessStatus(ret)
     _status = 'status'
 
@@ -13320,7 +13320,7 @@ class IDirectory(Interface):
         """Get str value for 'directoryName'
         Full path of directory.
         """
-        ret = self._get_attr('directoryName')
+        ret = self._get_attr(self._directory_name)
         return ret
     _directory_name = 'directoryName'
 
@@ -13329,7 +13329,7 @@ class IDirectory(Interface):
         """Get str value for 'filter'
         The open filter.
         """
-        ret = self._get_attr('filter')
+        ret = self._get_attr(self._filter_p)
         return ret
     _filter_p = 'filter'
 
@@ -13379,7 +13379,7 @@ class IFile(Interface):
         """Get int value for 'creationMode'
         The creation mode.
         """
-        ret = self._get_attr('creationMode')
+        ret = self._get_attr(self._creation_mode)
         return ret
     _creation_mode = 'creationMode'
 
@@ -13388,7 +13388,7 @@ class IFile(Interface):
         """Get int value for 'disposition'
         The disposition mode.
         """
-        ret = self._get_attr('disposition')
+        ret = self._get_attr(self._disposition)
         return ret
     _disposition = 'disposition'
 
@@ -13397,7 +13397,7 @@ class IFile(Interface):
         """Get IEventSource value for 'eventSource'
         Event source for guest session events.
         """
-        ret = self._get_attr('eventSource')
+        ret = self._get_attr(self._event_source)
         return IEventSource(ret)
     _event_source = 'eventSource'
 
@@ -13406,7 +13406,7 @@ class IFile(Interface):
         """Get str value for 'fileName'
         Full path of the actual file name of this file.
         """
-        ret = self._get_attr('fileName')
+        ret = self._get_attr(self._file_name)
         return ret
     _file_name = 'fileName'
 
@@ -13415,7 +13415,7 @@ class IFile(Interface):
         """Get int value for 'initialSize'
         The initial size in bytes when opened.
         """
-        ret = self._get_attr('initialSize')
+        ret = self._get_attr(self._initial_size)
         return ret
     _initial_size = 'initialSize'
 
@@ -13424,7 +13424,7 @@ class IFile(Interface):
         """Get int value for 'openMode'
         The open mode.
         """
-        ret = self._get_attr('openMode')
+        ret = self._get_attr(self._open_mode)
         return ret
     _open_mode = 'openMode'
 
@@ -13433,7 +13433,7 @@ class IFile(Interface):
         """Get int value for 'offset'
         Current read/write offset in bytes.
         """
-        ret = self._get_attr('offset')
+        ret = self._get_attr(self._offset)
         return ret
     _offset = 'offset'
 
@@ -13442,7 +13442,7 @@ class IFile(Interface):
         """Get FileStatus value for 'status'
         Current file status.
         """
-        ret = self._get_attr('status')
+        ret = self._get_attr(self._status)
         return FileStatus(ret)
     _status = 'status'
 
@@ -13649,7 +13649,7 @@ class IFsObjInfo(Interface):
         """Get int value for 'accessTime'
         Time of last access (st_atime).
         """
-        ret = self._get_attr('accessTime')
+        ret = self._get_attr(self._access_time)
         return ret
     _access_time = 'accessTime'
 
@@ -13658,7 +13658,7 @@ class IFsObjInfo(Interface):
         """Get int value for 'allocatedSize'
         Disk allocation size (st_blocks * DEV_BSIZE).
         """
-        ret = self._get_attr('allocatedSize')
+        ret = self._get_attr(self._allocated_size)
         return ret
     _allocated_size = 'allocatedSize'
 
@@ -13667,7 +13667,7 @@ class IFsObjInfo(Interface):
         """Get int value for 'birthTime'
         Time of file birth (st_birthtime).
         """
-        ret = self._get_attr('birthTime')
+        ret = self._get_attr(self._birth_time)
         return ret
     _birth_time = 'birthTime'
 
@@ -13676,7 +13676,7 @@ class IFsObjInfo(Interface):
         """Get int value for 'changeTime'
         Time of last status change (st_ctime).
         """
-        ret = self._get_attr('changeTime')
+        ret = self._get_attr(self._change_time)
         return ret
     _change_time = 'changeTime'
 
@@ -13685,7 +13685,7 @@ class IFsObjInfo(Interface):
         """Get int value for 'deviceNumber'
         The device number of a character or block device type object (st_rdev).
         """
-        ret = self._get_attr('deviceNumber')
+        ret = self._get_attr(self._device_number)
         return ret
     _device_number = 'deviceNumber'
 
@@ -13694,7 +13694,7 @@ class IFsObjInfo(Interface):
         """Get str value for 'fileAttributes'
         File attributes. Not implemented yet.
         """
-        ret = self._get_attr('fileAttributes')
+        ret = self._get_attr(self._file_attributes)
         return ret
     _file_attributes = 'fileAttributes'
 
@@ -13703,7 +13703,7 @@ class IFsObjInfo(Interface):
         """Get int value for 'generationId'
         The current generation number (st_gen).
         """
-        ret = self._get_attr('generationId')
+        ret = self._get_attr(self._generation_id)
         return ret
     _generation_id = 'generationId'
 
@@ -13712,7 +13712,7 @@ class IFsObjInfo(Interface):
         """Get int value for 'GID'
         The group the filesystem object is assigned (st_gid).
         """
-        ret = self._get_attr('GID')
+        ret = self._get_attr(self._gid)
         return ret
     _gid = 'GID'
 
@@ -13721,7 +13721,7 @@ class IFsObjInfo(Interface):
         """Get str value for 'groupName'
         The group name.
         """
-        ret = self._get_attr('groupName')
+        ret = self._get_attr(self._group_name)
         return ret
     _group_name = 'groupName'
 
@@ -13730,7 +13730,7 @@ class IFsObjInfo(Interface):
         """Get int value for 'hardLinks'
         Number of hard links to this filesystem object (st_nlink).
         """
-        ret = self._get_attr('hardLinks')
+        ret = self._get_attr(self._hard_links)
         return ret
     _hard_links = 'hardLinks'
 
@@ -13739,7 +13739,7 @@ class IFsObjInfo(Interface):
         """Get int value for 'modificationTime'
         Time of last data modification (st_mtime).
         """
-        ret = self._get_attr('modificationTime')
+        ret = self._get_attr(self._modification_time)
         return ret
     _modification_time = 'modificationTime'
 
@@ -13748,7 +13748,7 @@ class IFsObjInfo(Interface):
         """Get str value for 'name'
         The object's name.
         """
-        ret = self._get_attr('name')
+        ret = self._get_attr(self._name)
         return ret
     _name = 'name'
 
@@ -13757,7 +13757,7 @@ class IFsObjInfo(Interface):
         """Get int value for 'nodeId'
         The unique identifier (within the filesystem) of this filesystem object (st_ino).
         """
-        ret = self._get_attr('nodeId')
+        ret = self._get_attr(self._node_id)
         return ret
     _node_id = 'nodeId'
 
@@ -13766,7 +13766,7 @@ class IFsObjInfo(Interface):
         """Get int value for 'nodeIdDevice'
         The device number of the device which this filesystem object resides on (st_dev).
         """
-        ret = self._get_attr('nodeIdDevice')
+        ret = self._get_attr(self._node_id_device)
         return ret
     _node_id_device = 'nodeIdDevice'
 
@@ -13777,7 +13777,7 @@ class IFsObjInfo(Interface):
         For symbolic links, this is the length of the path name contained in the
         symbolic link. For other objects this fields needs to be specified.
         """
-        ret = self._get_attr('objectSize')
+        ret = self._get_attr(self._object_size)
         return ret
     _object_size = 'objectSize'
 
@@ -13786,7 +13786,7 @@ class IFsObjInfo(Interface):
         """Get FsObjType value for 'type'
         The object type. See <link to="FsObjType"/> for more.
         """
-        ret = self._get_attr('type')
+        ret = self._get_attr(self._type_p)
         return FsObjType(ret)
     _type_p = 'type'
 
@@ -13795,7 +13795,7 @@ class IFsObjInfo(Interface):
         """Get int value for 'UID'
         The user owning the filesystem object (st_uid).
         """
-        ret = self._get_attr('UID')
+        ret = self._get_attr(self._uid)
         return ret
     _uid = 'UID'
 
@@ -13804,7 +13804,7 @@ class IFsObjInfo(Interface):
         """Get int value for 'userFlags'
         User flags (st_flags).
         """
-        ret = self._get_attr('userFlags')
+        ret = self._get_attr(self._user_flags)
         return ret
     _user_flags = 'userFlags'
 
@@ -13813,7 +13813,7 @@ class IFsObjInfo(Interface):
         """Get str value for 'userName'
         The user name.
         """
-        ret = self._get_attr('userName')
+        ret = self._get_attr(self._user_name)
         return ret
     _user_name = 'userName'
 
@@ -13852,7 +13852,7 @@ class IGuest(Interface):
           If Guest Additions are not installed, this value will be
           the same as <link to="IMachine::OSTypeId"/>.
         """
-        ret = self._get_attr('OSTypeId')
+        ret = self._get_attr(self._os_type_id)
         return ret
     _os_type_id = 'OSTypeId'
 
@@ -13861,7 +13861,7 @@ class IGuest(Interface):
         """Get AdditionsRunLevelType value for 'additionsRunLevel'
         Current run level of the Guest Additions.
         """
-        ret = self._get_attr('additionsRunLevel')
+        ret = self._get_attr(self._additions_run_level)
         return AdditionsRunLevelType(ret)
     _additions_run_level = 'additionsRunLevel'
 
@@ -13871,7 +13871,7 @@ class IGuest(Interface):
         Version of the Guest Additions in the same format as
         <link to="IVirtualBox::version"/>.
         """
-        ret = self._get_attr('additionsVersion')
+        ret = self._get_attr(self._additions_version)
         return ret
     _additions_version = 'additionsVersion'
 
@@ -13882,7 +13882,7 @@ class IGuest(Interface):
 
         See also <link to="IVirtualBox::revision"/>.
         """
-        ret = self._get_attr('additionsRevision')
+        ret = self._get_attr(self._additions_revision)
         return ret
     _additions_revision = 'additionsRevision'
 
@@ -13892,7 +13892,7 @@ class IGuest(Interface):
         Array of current known facilities. Only returns facilities where a status is known,
         e.g. facilities with an unknown status will not be returned.
         """
-        ret = self._call_method('getFacilities')
+        ret = self._call_method(self._facilities)
         return [IAdditionsFacility(a) for a in ret]
     _facilities = 'getFacilities'
 
@@ -13901,7 +13901,7 @@ class IGuest(Interface):
         """Get IGuestSession value for 'getSessions'
         Returns a collection of all opened guest sessions.
         """
-        ret = self._call_method('getSessions')
+        ret = self._call_method(self._sessions)
         return [IGuestSession(a) for a in ret]
     _sessions = 'getSessions'
 
@@ -13910,14 +13910,14 @@ class IGuest(Interface):
         """Get or set int value for 'memoryBalloonSize'
         Guest system memory balloon size in megabytes (transient property).
         """
-        ret = self._get_attr('memoryBalloonSize')
+        ret = self._get_attr(self._memory_balloon_size)
         return ret
 
     @memory_balloon_size.setter
     def memory_balloon_size(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('memoryBalloonSize', value)
+        return self._set_attr(self._memory_balloon_size', value)
     _memory_balloon_size = 'memoryBalloonSize'
 
     @property
@@ -13925,14 +13925,14 @@ class IGuest(Interface):
         """Get or set int value for 'statisticsUpdateInterval'
         Interval to update guest statistics in seconds.
         """
-        ret = self._get_attr('statisticsUpdateInterval')
+        ret = self._get_attr(self._statistics_update_interval)
         return ret
 
     @statistics_update_interval.setter
     def statistics_update_interval(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('statisticsUpdateInterval', value)
+        return self._set_attr(self._statistics_update_interval', value)
     _statistics_update_interval = 'statisticsUpdateInterval'
 
     def internal_get_statistics(self):
@@ -14531,7 +14531,7 @@ class IProgress(Interface):
         """Get str value for 'id'
         ID of the task.
         """
-        ret = self._get_attr('id')
+        ret = self._get_attr(self._id_p)
         return ret
     _id_p = 'id'
 
@@ -14540,7 +14540,7 @@ class IProgress(Interface):
         """Get str value for 'description'
         Description of the task.
         """
-        ret = self._get_attr('description')
+        ret = self._get_attr(self._description)
         return ret
     _description = 'description'
 
@@ -14549,7 +14549,7 @@ class IProgress(Interface):
         """Get Interface value for 'initiator'
         Initiator of the task.
         """
-        ret = self._get_attr('initiator')
+        ret = self._get_attr(self._initiator)
         return Interface(ret)
     _initiator = 'initiator'
 
@@ -14558,7 +14558,7 @@ class IProgress(Interface):
         """Get bool value for 'cancelable'
         Whether the task can be interrupted.
         """
-        ret = self._get_attr('cancelable')
+        ret = self._get_attr(self._cancelable)
         return ret
     _cancelable = 'cancelable'
 
@@ -14569,7 +14569,7 @@ class IProgress(Interface):
         This value depends on how many operations are already complete.
         Returns 100 if <link to="#completed"/> is @c true.
         """
-        ret = self._get_attr('percent')
+        ret = self._get_attr(self._percent)
         return ret
     _percent = 'percent'
 
@@ -14586,7 +14586,7 @@ class IProgress(Interface):
             task progresses; it is not recommended to display an ETA
             before at least 20% of a task have completed.
         """
-        ret = self._get_attr('timeRemaining')
+        ret = self._get_attr(self._time_remaining)
         return ret
     _time_remaining = 'timeRemaining'
 
@@ -14595,7 +14595,7 @@ class IProgress(Interface):
         """Get bool value for 'completed'
         Whether the task has been completed.
         """
-        ret = self._get_attr('completed')
+        ret = self._get_attr(self._completed)
         return ret
     _completed = 'completed'
 
@@ -14604,7 +14604,7 @@ class IProgress(Interface):
         """Get bool value for 'canceled'
         Whether the task has been canceled.
         """
-        ret = self._get_attr('canceled')
+        ret = self._get_attr(self._canceled)
         return ret
     _canceled = 'canceled'
 
@@ -14614,7 +14614,7 @@ class IProgress(Interface):
         Result code of the progress task.
         Valid only if <link to="#completed"/> is @c true.
         """
-        ret = self._get_attr('resultCode')
+        ret = self._get_attr(self._result_code)
         return ret
     _result_code = 'resultCode'
 
@@ -14627,7 +14627,7 @@ class IProgress(Interface):
         Valid only if <link to="#completed"/> is @c true and
         <link to="#resultCode"/> indicates a failure.
         """
-        ret = self._get_attr('errorInfo')
+        ret = self._get_attr(self._error_info)
         return IVirtualBoxErrorInfo(ret)
     _error_info = 'errorInfo'
 
@@ -14637,7 +14637,7 @@ class IProgress(Interface):
         Number of sub-operations this task is divided into.
           Every task consists of at least one suboperation.
         """
-        ret = self._get_attr('operationCount')
+        ret = self._get_attr(self._operation_count)
         return ret
     _operation_count = 'operationCount'
 
@@ -14646,7 +14646,7 @@ class IProgress(Interface):
         """Get int value for 'operation'
         Number of the sub-operation being currently executed.
         """
-        ret = self._get_attr('operation')
+        ret = self._get_attr(self._operation)
         return ret
     _operation = 'operation'
 
@@ -14655,7 +14655,7 @@ class IProgress(Interface):
         """Get str value for 'operationDescription'
         Description of the sub-operation being currently executed.
         """
-        ret = self._get_attr('operationDescription')
+        ret = self._get_attr(self._operation_description)
         return ret
     _operation_description = 'operationDescription'
 
@@ -14664,7 +14664,7 @@ class IProgress(Interface):
         """Get int value for 'operationPercent'
         Progress value of the current sub-operation only, in percent.
         """
-        ret = self._get_attr('operationPercent')
+        ret = self._get_attr(self._operation_percent)
         return ret
     _operation_percent = 'operationPercent'
 
@@ -14673,7 +14673,7 @@ class IProgress(Interface):
         """Get int value for 'operationWeight'
         Weight value of the current sub-operation only.
         """
-        ret = self._get_attr('operationWeight')
+        ret = self._get_attr(self._operation_weight)
         return ret
     _operation_weight = 'operationWeight'
 
@@ -14684,14 +14684,14 @@ class IProgress(Interface):
           the operation will automatically be canceled. This can only be set on
           cancelable objects.
         """
-        ret = self._get_attr('timeout')
+        ret = self._get_attr(self._timeout)
         return ret
 
     @timeout.setter
     def timeout(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('timeout', value)
+        return self._set_attr(self._timeout', value)
     _timeout = 'timeout'
 
     def set_current_operation_progress(self, percent):
@@ -14904,7 +14904,7 @@ class ISnapshot(Interface):
         """Get str value for 'id'
         UUID of the snapshot.
         """
-        ret = self._get_attr('id')
+        ret = self._get_attr(self._id_p)
         return ret
     _id_p = 'id'
 
@@ -14915,14 +14915,14 @@ class ISnapshot(Interface):
       Setting this attribute causes <link to="IMachine::saveSettings"/> to
       be called implicitly.
         """
-        ret = self._get_attr('name')
+        ret = self._get_attr(self._name)
         return ret
 
     @name.setter
     def name(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('name', value)
+        return self._set_attr(self._name', value)
     _name = 'name'
 
     @property
@@ -14932,14 +14932,14 @@ class ISnapshot(Interface):
       Setting this attribute causes <link to="IMachine::saveSettings"/> to
       be called implicitly.
         """
-        ret = self._get_attr('description')
+        ret = self._get_attr(self._description)
         return ret
 
     @description.setter
     def description(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('description', value)
+        return self._set_attr(self._description', value)
     _description = 'description'
 
     @property
@@ -14947,7 +14947,7 @@ class ISnapshot(Interface):
         """Get int value for 'timeStamp'
         Time stamp of the snapshot, in milliseconds since 1970-01-01 UTC.
         """
-        ret = self._get_attr('timeStamp')
+        ret = self._get_attr(self._time_stamp)
         return ret
     _time_stamp = 'timeStamp'
 
@@ -14962,7 +14962,7 @@ class ISnapshot(Interface):
           will point to the saved state file. Otherwise, it will be
           an empty string.
         """
-        ret = self._get_attr('online')
+        ret = self._get_attr(self._online)
         return ret
     _online = 'online'
 
@@ -14975,7 +14975,7 @@ class ISnapshot(Interface):
           The returned machine object is immutable, i.e. no
           any settings can be changed.
         """
-        ret = self._get_attr('machine')
+        ret = self._get_attr(self._machine)
         return IMachine(ret)
     _machine = 'machine'
 
@@ -14985,7 +14985,7 @@ class ISnapshot(Interface):
         Parent snapshot (a snapshot this one is based on), or
         @c null if the snapshot has no parent (i.e. is the first snapshot).
         """
-        ret = self._get_attr('parent')
+        ret = self._get_attr(self._parent)
         return ISnapshot(ret)
     _parent = 'parent'
 
@@ -14997,7 +14997,7 @@ class ISnapshot(Interface):
         (which can be obtained by calling <link to="IMachine::findSnapshot"/>
         with a @c null UUID), a machine's snapshots tree can be iterated over.
         """
-        ret = self._call_method('getChildren')
+        ret = self._call_method(self._children)
         return [ISnapshot(a) for a in ret]
     _children = 'getChildren'
 
@@ -15198,7 +15198,7 @@ Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
         Medium object associated with this attachment; it
         can be @c null for removable devices.
         """
-        ret = self._get_attr('medium')
+        ret = self._get_attr(self._medium)
         return IMedium(ret)
     _medium = 'medium'
 
@@ -15209,7 +15209,7 @@ Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
         refers to one of the controllers in <link to="IMachine::storageControllers"/>
         by name.
         """
-        ret = self._get_attr('controller')
+        ret = self._get_attr(self._controller)
         return ret
     _controller = 'controller'
 
@@ -15219,7 +15219,7 @@ Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
         Port number of this attachment.
         See <link to="IMachine::attachDevice"/> for the meaning of this value for the different controller types.
         """
-        ret = self._get_attr('port')
+        ret = self._get_attr(self._port)
         return ret
     _port = 'port'
 
@@ -15229,7 +15229,7 @@ Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
         Device slot number of this attachment.
         See <link to="IMachine::attachDevice"/> for the meaning of this value for the different controller types.
         """
-        ret = self._get_attr('device')
+        ret = self._get_attr(self._device)
         return ret
     _device = 'device'
 
@@ -15238,7 +15238,7 @@ Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
         """Get DeviceType value for 'type'
         Device type of this attachment.
         """
-        ret = self._get_attr('type')
+        ret = self._get_attr(self._type_p)
         return DeviceType(ret)
     _type_p = 'type'
 
@@ -15247,7 +15247,7 @@ Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
         """Get bool value for 'passthrough'
         Pass I/O requests through to a device on the host.
         """
-        ret = self._get_attr('passthrough')
+        ret = self._get_attr(self._passthrough)
         return ret
     _passthrough = 'passthrough'
 
@@ -15256,7 +15256,7 @@ Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
         """Get bool value for 'temporaryEject'
         Whether guest-triggered eject results in unmounting the medium.
         """
-        ret = self._get_attr('temporaryEject')
+        ret = self._get_attr(self._temporary_eject)
         return ret
     _temporary_eject = 'temporaryEject'
 
@@ -15266,7 +15266,7 @@ Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
         Signals that the removable medium has been ejected. This is not
         necessarily equivalent to having a @c null medium association.
         """
-        ret = self._get_attr('isEjected')
+        ret = self._get_attr(self._is_ejected)
         return ret
     _is_ejected = 'isEjected'
 
@@ -15275,7 +15275,7 @@ Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
         """Get bool value for 'nonRotational'
         Whether the associated medium is non-rotational.
         """
-        ret = self._get_attr('nonRotational')
+        ret = self._get_attr(self._non_rotational)
         return ret
     _non_rotational = 'nonRotational'
 
@@ -15284,7 +15284,7 @@ Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
         """Get bool value for 'discard'
         Whether the associated medium supports discarding unused blocks.
         """
-        ret = self._get_attr('discard')
+        ret = self._get_attr(self._discard)
         return ret
     _discard = 'discard'
 
@@ -15293,7 +15293,7 @@ Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
         """Get IBandwidthGroup value for 'bandwidthGroup'
         The bandwidth group this medium attachment is assigned to.
         """
-        ret = self._get_attr('bandwidthGroup')
+        ret = self._get_attr(self._bandwidth_group)
         return IBandwidthGroup(ret)
     _bandwidth_group = 'bandwidthGroup'
 
@@ -15466,7 +15466,7 @@ class IMedium(Interface):
           MediumState_Deleting states, the value of this property is undefined
           and will most likely be an empty UUID.
         """
-        ret = self._get_attr('id')
+        ret = self._get_attr(self._id_p)
         return ret
     _id_p = 'id'
 
@@ -15486,14 +15486,14 @@ class IMedium(Interface):
           attribute value is not possible in such case, as well as when the
           medium is the <link to="MediumState_LockedRead"/> state.
         """
-        ret = self._get_attr('description')
+        ret = self._get_attr(self._description)
         return ret
 
     @description.setter
     def description(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('description', value)
+        return self._set_attr(self._description', value)
     _description = 'description'
 
     @property
@@ -15509,7 +15509,7 @@ class IMedium(Interface):
         As of version 3.1, this no longer performs an accessibility check
           automatically; call <link to="#refreshState"/> for that.
         """
-        ret = self._get_attr('state')
+        ret = self._get_attr(self._state)
         return MediumState(ret)
     _state = 'state'
 
@@ -15521,7 +15521,7 @@ class IMedium(Interface):
         Before <link to="#refreshState"/> is called this method returns
         an undefined value.
         """
-        ret = self._call_method('getVariant')
+        ret = self._call_method(self._variant)
         return [MediumVariant(a) for a in ret]
     _variant = 'getVariant'
 
@@ -15546,14 +15546,14 @@ class IMedium(Interface):
         the file extension part then a proper default extension will be
         automatically appended by the implementation depending on the medium type.
         """
-        ret = self._get_attr('location')
+        ret = self._get_attr(self._location)
         return ret
 
     @location.setter
     def location(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('location', value)
+        return self._set_attr(self._location', value)
     _location = 'location'
 
     @property
@@ -15575,7 +15575,7 @@ class IMedium(Interface):
         attribute will not necessary be unique for a list of media of the
         given type and format.
         """
-        ret = self._get_attr('name')
+        ret = self._get_attr(self._name)
         return ret
     _name = 'name'
 
@@ -15585,7 +15585,7 @@ class IMedium(Interface):
         Kind of device (DVD/Floppy/HardDisk) which is applicable to this
         medium.
         """
-        ret = self._get_attr('deviceType')
+        ret = self._get_attr(self._device_type)
         return DeviceType(ret)
     _device_type = 'deviceType'
 
@@ -15594,7 +15594,7 @@ class IMedium(Interface):
         """Get bool value for 'hostDrive'
         True if this corresponds to a drive on the host.
         """
-        ret = self._get_attr('hostDrive')
+        ret = self._get_attr(self._host_drive)
         return ret
     _host_drive = 'hostDrive'
 
@@ -15608,7 +15608,7 @@ class IMedium(Interface):
           last known size. For <link to="MediumState_NotCreated"/> media,
           the returned value is zero.
         """
-        ret = self._get_attr('size')
+        ret = self._get_attr(self._size)
         return ret
     _size = 'size'
 
@@ -15626,7 +15626,7 @@ class IMedium(Interface):
         installation can be obtained using
         <link to="ISystemProperties::mediumFormats"/>.
         """
-        ret = self._get_attr('format')
+        ret = self._get_attr(self._format_p)
         return ret
     _format_p = 'format'
 
@@ -15644,7 +15644,7 @@ class IMedium(Interface):
         object. This can e.g. happen for medium objects representing host
         drives and other special medium objects.
         """
-        ret = self._get_attr('mediumFormat')
+        ret = self._get_attr(self._medium_format)
         return IMediumFormat(ret)
     _medium_format = 'mediumFormat'
 
@@ -15672,14 +15672,14 @@ class IMedium(Interface):
         <link to="MediumType_Normal"/>, except for DVD and floppy media,
         which have a type of <link to="MediumType_Writethrough"/>.
         """
-        ret = self._get_attr('type')
+        ret = self._get_attr(self._type_p)
         return MediumType(ret)
 
     @type_p.setter
     def type_p(self, value):
         if not isinstance(value, MediumType):
             raise TypeError("value is not an instance of MediumType")
-        return self._set_attr('type', value)
+        return self._set_attr(self._type_p', value)
     _type_p = 'type'
 
     @property
@@ -15687,7 +15687,7 @@ class IMedium(Interface):
         """Get MediumType value for 'getAllowedTypes'
         Returns which medium types can selected for this medium.
         """
-        ret = self._call_method('getAllowedTypes')
+        ret = self._call_method(self._allowed_types)
         return [MediumType(a) for a in ret]
     _allowed_types = 'getAllowedTypes'
 
@@ -15700,7 +15700,7 @@ class IMedium(Interface):
         Only differencing media have parents. For base (non-differencing)
         media, @c null is returned.
         """
-        ret = self._get_attr('parent')
+        ret = self._get_attr(self._parent)
         return IMedium(ret)
     _parent = 'parent'
 
@@ -15711,7 +15711,7 @@ class IMedium(Interface):
         on this medium). A @c null array is returned if this medium
         does not have any children.
         """
-        ret = self._call_method('getChildren')
+        ret = self._call_method(self._children)
         return [IMedium(a) for a in ret]
     _children = 'getChildren'
 
@@ -15725,7 +15725,7 @@ class IMedium(Interface):
         property returns the medium object itself (i.e. the same object this
         property is read on).
         """
-        ret = self._get_attr('base')
+        ret = self._get_attr(self._base)
         return IMedium(ret)
     _base = 'base'
 
@@ -15759,7 +15759,7 @@ class IMedium(Interface):
           <link to="IMedium::state">medium state</link> and not to the read-only
           state of the storage unit.
         """
-        ret = self._get_attr('readOnly')
+        ret = self._get_attr(self._read_only)
         return ret
     _read_only = 'readOnly'
 
@@ -15776,7 +15776,7 @@ class IMedium(Interface):
           last known logical size. For <link to="MediumState_NotCreated"/>
           media, the returned value is zero.
         """
-        ret = self._get_attr('logicalSize')
+        ret = self._get_attr(self._logical_size)
         return ret
     _logical_size = 'logicalSize'
 
@@ -15797,14 +15797,14 @@ class IMedium(Interface):
           always @c false. Changing the value of this property in this
           case is not supported.
         """
-        ret = self._get_attr('autoReset')
+        ret = self._get_attr(self._auto_reset)
         return ret
 
     @auto_reset.setter
     def auto_reset(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('autoReset', value)
+        return self._set_attr(self._auto_reset', value)
     _auto_reset = 'autoReset'
 
     @property
@@ -15821,7 +15821,7 @@ class IMedium(Interface):
         A non-empty string indicates a failure and should normally describe
         a reason of the failure (for example, a file read error).
         """
-        ret = self._get_attr('lastAccessError')
+        ret = self._get_attr(self._last_access_error)
         return ret
     _last_access_error = 'lastAccessError'
 
@@ -15839,7 +15839,7 @@ class IMedium(Interface):
           one of the machine's snapshots. See <link to="#getSnapshotIds"/> for
           details.
         """
-        ret = self._call_method('getMachineIds')
+        ret = self._call_method(self._machine_ids)
         return ret
     _machine_ids = 'getMachineIds'
 
@@ -16745,7 +16745,7 @@ class IMediumFormat(Interface):
         to specify a medium format, such as
         <link to="IVirtualBox::createHardDisk"/>.
         """
-        ret = self._get_attr('id')
+        ret = self._get_attr(self._id_p)
         return ret
     _id_p = 'id'
 
@@ -16756,7 +16756,7 @@ class IMediumFormat(Interface):
 
         Mainly for use in file open dialogs.
         """
-        ret = self._get_attr('name')
+        ret = self._get_attr(self._name)
         return ret
     _name = 'name'
 
@@ -16768,7 +16768,7 @@ class IMediumFormat(Interface):
         For the meaning of individual capability flags see
         <link to="MediumFormatCapabilities"/>.
         """
-        ret = self._call_method('getCapabilities')
+        ret = self._call_method(self._capabilities)
         return [MediumFormatCapabilities(a) for a in ret]
     _capabilities = 'getCapabilities'
 
@@ -16896,7 +16896,7 @@ class IKeyboard(Interface):
         """Get IEventSource value for 'eventSource'
         Event source for keyboard events.
         """
-        ret = self._get_attr('eventSource')
+        ret = self._get_attr(self._event_source)
         return IEventSource(ret)
     _event_source = 'eventSource'
 
@@ -16924,7 +16924,7 @@ class IMouse(Interface):
         
         <link to="#putMouseEventAbsolute"/>
         """
-        ret = self._get_attr('absoluteSupported')
+        ret = self._get_attr(self._absolute_supported)
         return ret
     _absolute_supported = 'absoluteSupported'
 
@@ -16940,7 +16940,7 @@ class IMouse(Interface):
         
         <link to="#putMouseEvent"/>
         """
-        ret = self._get_attr('relativeSupported')
+        ret = self._get_attr(self._relative_supported)
         return ret
     _relative_supported = 'relativeSupported'
 
@@ -16956,7 +16956,7 @@ class IMouse(Interface):
         
         <link to="#putMouseEvent"/>
         """
-        ret = self._get_attr('needsHostCursor')
+        ret = self._get_attr(self._needs_host_cursor)
         return ret
     _needs_host_cursor = 'needsHostCursor'
 
@@ -17082,7 +17082,7 @@ class IMouse(Interface):
         """Get IEventSource value for 'eventSource'
         Event source for mouse events.
         """
-        ret = self._get_attr('eventSource')
+        ret = self._get_attr(self._event_source)
         return IEventSource(ret)
     _event_source = 'eventSource'
 
@@ -17099,7 +17099,7 @@ class IFramebuffer(Interface):
         """Get str value for 'address'
         Address of the start byte of the frame buffer.
         """
-        ret = self._get_attr('address')
+        ret = self._get_attr(self._address)
         return ret
     _address = 'address'
 
@@ -17108,7 +17108,7 @@ class IFramebuffer(Interface):
         """Get int value for 'width'
         Frame buffer width, in pixels.
         """
-        ret = self._get_attr('width')
+        ret = self._get_attr(self._width)
         return ret
     _width = 'width'
 
@@ -17117,7 +17117,7 @@ class IFramebuffer(Interface):
         """Get int value for 'height'
         Frame buffer height, in pixels.
         """
-        ret = self._get_attr('height')
+        ret = self._get_attr(self._height)
         return ret
     _height = 'height'
 
@@ -17127,7 +17127,7 @@ class IFramebuffer(Interface):
         Color depth, in bits per pixel. When <link to="#pixelFormat"/> is <link to="FramebufferPixelFormat_FOURCC_RGB">FOURCC_RGB</link>, valid values
         are: 8, 15, 16, 24 and 32.
         """
-        ret = self._get_attr('bitsPerPixel')
+        ret = self._get_attr(self._bits_per_pixel)
         return ret
     _bits_per_pixel = 'bitsPerPixel'
 
@@ -17137,7 +17137,7 @@ class IFramebuffer(Interface):
         Scan line size, in bytes. When <link to="#pixelFormat"/> is <link to="FramebufferPixelFormat_FOURCC_RGB">FOURCC_RGB</link>, the
         size of the scan line must be aligned to 32 bits.
         """
-        ret = self._get_attr('bytesPerLine')
+        ret = self._get_attr(self._bytes_per_line)
         return ret
     _bytes_per_line = 'bytesPerLine'
 
@@ -17149,7 +17149,7 @@ class IFramebuffer(Interface):
           This attribute must never return <link to="FramebufferPixelFormat_Opaque"/> -- the format of the buffer
           <link to="#address"/> points to must be always known.
         """
-        ret = self._get_attr('pixelFormat')
+        ret = self._get_attr(self._pixel_format)
         return ret
     _pixel_format = 'pixelFormat'
 
@@ -17159,7 +17159,7 @@ class IFramebuffer(Interface):
         Defines whether this frame buffer uses the virtual video card's memory
         buffer (guest VRAM) directly or not. See <link to="IFramebuffer::requestResize"/> for more information.
         """
-        ret = self._get_attr('usesGuestVRAM')
+        ret = self._get_attr(self._uses_guest_vram)
         return ret
     _uses_guest_vram = 'usesGuestVRAM'
 
@@ -17172,7 +17172,7 @@ class IFramebuffer(Interface):
         so that it can use it for determining its video mode table. It
         is not guaranteed that the guest respects the value.
         """
-        ret = self._get_attr('heightReduction')
+        ret = self._get_attr(self._height_reduction)
         return ret
     _height_reduction = 'heightReduction'
 
@@ -17190,7 +17190,7 @@ class IFramebuffer(Interface):
         attribute can also return @c null to signal that the overlay is not
         implemented.
         """
-        ret = self._get_attr('overlay')
+        ret = self._get_attr(self._overlay)
         return IFramebufferOverlay(ret)
     _overlay = 'overlay'
 
@@ -17200,7 +17200,7 @@ class IFramebuffer(Interface):
         Platform-dependent identifier of the window where context of this
         frame buffer is drawn, or zero if there's no such window.
         """
-        ret = self._get_attr('winId')
+        ret = self._get_attr(self._win_id)
         return ret
     _win_id = 'winId'
 
@@ -17532,7 +17532,7 @@ class IFramebufferOverlay(IFramebuffer):
         """Get int value for 'x'
         X position of the overlay, relative to the frame buffer.
         """
-        ret = self._get_attr('x')
+        ret = self._get_attr(self._x)
         return ret
     _x = 'x'
 
@@ -17541,7 +17541,7 @@ class IFramebufferOverlay(IFramebuffer):
         """Get int value for 'y'
         Y position of the overlay, relative to the frame buffer.
         """
-        ret = self._get_attr('y')
+        ret = self._get_attr(self._y)
         return ret
     _y = 'y'
 
@@ -17550,14 +17550,14 @@ class IFramebufferOverlay(IFramebuffer):
         """Get or set bool value for 'visible'
         Whether the overlay is currently visible.
         """
-        ret = self._get_attr('visible')
+        ret = self._get_attr(self._visible)
         return ret
 
     @visible.setter
     def visible(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('visible', value)
+        return self._set_attr(self._visible', value)
     _visible = 'visible'
 
     @property
@@ -17566,14 +17566,14 @@ class IFramebufferOverlay(IFramebuffer):
         The global alpha value for the overlay. This may or may not be
         supported by a given front end.
         """
-        ret = self._get_attr('alpha')
+        ret = self._get_attr(self._alpha)
         return ret
 
     @alpha.setter
     def alpha(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('alpha', value)
+        return self._set_attr(self._alpha', value)
     _alpha = 'alpha'
 
     def move(self, x, y):
@@ -18032,14 +18032,14 @@ class INetworkAdapter(Interface):
         VirtualBox will provide a different virtual network hardware
         to the guest.
         """
-        ret = self._get_attr('adapterType')
+        ret = self._get_attr(self._adapter_type)
         return NetworkAdapterType(ret)
 
     @adapter_type.setter
     def adapter_type(self, value):
         if not isinstance(value, NetworkAdapterType):
             raise TypeError("value is not an instance of NetworkAdapterType")
-        return self._set_attr('adapterType', value)
+        return self._set_attr(self._adapter_type', value)
     _adapter_type = 'adapterType'
 
     @property
@@ -18049,7 +18049,7 @@ class INetworkAdapter(Interface):
         the value you pass to <link to="IMachine::getNetworkAdapter"/>
         to obtain this instance.
         """
-        ret = self._get_attr('slot')
+        ret = self._get_attr(self._slot)
         return ret
     _slot = 'slot'
 
@@ -18061,14 +18061,14 @@ class INetworkAdapter(Interface):
         not contain this network adapter. Can only be changed when
         the VM is not running.
         """
-        ret = self._get_attr('enabled')
+        ret = self._get_attr(self._enabled)
         return ret
 
     @enabled.setter
     def enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('enabled', value)
+        return self._set_attr(self._enabled', value)
     _enabled = 'enabled'
 
     @property
@@ -18077,14 +18077,14 @@ class INetworkAdapter(Interface):
         Ethernet MAC address of the adapter, 12 hexadecimal characters. When setting
         it to @c null or an empty string, VirtualBox will generate a unique MAC address.
         """
-        ret = self._get_attr('MACAddress')
+        ret = self._get_attr(self._mac_address)
         return ret
 
     @mac_address.setter
     def mac_address(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('MACAddress', value)
+        return self._set_attr(self._mac_address', value)
     _mac_address = 'MACAddress'
 
     @property
@@ -18092,14 +18092,14 @@ class INetworkAdapter(Interface):
         """Get or set NetworkAttachmentType value for 'attachmentType'
         Sets/Gets network attachment type of this network adapter.
         """
-        ret = self._get_attr('attachmentType')
+        ret = self._get_attr(self._attachment_type)
         return NetworkAttachmentType(ret)
 
     @attachment_type.setter
     def attachment_type(self, value):
         if not isinstance(value, NetworkAttachmentType):
             raise TypeError("value is not an instance of NetworkAttachmentType")
-        return self._set_attr('attachmentType', value)
+        return self._set_attr(self._attachment_type', value)
     _attachment_type = 'attachmentType'
 
     @property
@@ -18107,14 +18107,14 @@ class INetworkAdapter(Interface):
         """Get or set str value for 'bridgedInterface'
         Name of the network interface the VM should be bridged to.
         """
-        ret = self._get_attr('bridgedInterface')
+        ret = self._get_attr(self._bridged_interface)
         return ret
 
     @bridged_interface.setter
     def bridged_interface(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('bridgedInterface', value)
+        return self._set_attr(self._bridged_interface', value)
     _bridged_interface = 'bridgedInterface'
 
     @property
@@ -18122,14 +18122,14 @@ class INetworkAdapter(Interface):
         """Get or set str value for 'hostOnlyInterface'
         Name of the host only network interface the VM is attached to.
         """
-        ret = self._get_attr('hostOnlyInterface')
+        ret = self._get_attr(self._host_only_interface)
         return ret
 
     @host_only_interface.setter
     def host_only_interface(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('hostOnlyInterface', value)
+        return self._set_attr(self._host_only_interface', value)
     _host_only_interface = 'hostOnlyInterface'
 
     @property
@@ -18137,14 +18137,14 @@ class INetworkAdapter(Interface):
         """Get or set str value for 'internalNetwork'
         Name of the internal network the VM is attached to.
         """
-        ret = self._get_attr('internalNetwork')
+        ret = self._get_attr(self._internal_network)
         return ret
 
     @internal_network.setter
     def internal_network(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('internalNetwork', value)
+        return self._set_attr(self._internal_network', value)
     _internal_network = 'internalNetwork'
 
     @property
@@ -18152,14 +18152,14 @@ class INetworkAdapter(Interface):
         """Get or set str value for 'NATNetwork'
         Name of the NAT network the VM is attached to.
         """
-        ret = self._get_attr('NATNetwork')
+        ret = self._get_attr(self._nat_network)
         return ret
 
     @nat_network.setter
     def nat_network(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('NATNetwork', value)
+        return self._set_attr(self._nat_network', value)
     _nat_network = 'NATNetwork'
 
     @property
@@ -18167,14 +18167,14 @@ class INetworkAdapter(Interface):
         """Get or set str value for 'genericDriver'
         Name of the driver to use for the "Generic" network attachment type.
         """
-        ret = self._get_attr('genericDriver')
+        ret = self._get_attr(self._generic_driver)
         return ret
 
     @generic_driver.setter
     def generic_driver(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('genericDriver', value)
+        return self._set_attr(self._generic_driver', value)
     _generic_driver = 'genericDriver'
 
     @property
@@ -18183,14 +18183,14 @@ class INetworkAdapter(Interface):
         Flag whether the adapter reports the cable as connected or not.
         It can be used to report offline situations to a VM.
         """
-        ret = self._get_attr('cableConnected')
+        ret = self._get_attr(self._cable_connected)
         return ret
 
     @cable_connected.setter
     def cable_connected(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('cableConnected', value)
+        return self._set_attr(self._cable_connected', value)
     _cable_connected = 'cableConnected'
 
     @property
@@ -18198,14 +18198,14 @@ class INetworkAdapter(Interface):
         """Get or set int value for 'lineSpeed'
         Line speed reported by custom drivers, in units of 1 kbps.
         """
-        ret = self._get_attr('lineSpeed')
+        ret = self._get_attr(self._line_speed)
         return ret
 
     @line_speed.setter
     def line_speed(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('lineSpeed', value)
+        return self._set_attr(self._line_speed', value)
     _line_speed = 'lineSpeed'
 
     @property
@@ -18214,14 +18214,14 @@ class INetworkAdapter(Interface):
         The promiscuous mode policy of the network adapter when attached to an
         internal network, host only network or a bridge.
         """
-        ret = self._get_attr('promiscModePolicy')
+        ret = self._get_attr(self._promisc_mode_policy)
         return NetworkAdapterPromiscModePolicy(ret)
 
     @promisc_mode_policy.setter
     def promisc_mode_policy(self, value):
         if not isinstance(value, NetworkAdapterPromiscModePolicy):
             raise TypeError("value is not an instance of NetworkAdapterPromiscModePolicy")
-        return self._set_attr('promiscModePolicy', value)
+        return self._set_attr(self._promisc_mode_policy', value)
     _promisc_mode_policy = 'promiscModePolicy'
 
     @property
@@ -18230,14 +18230,14 @@ class INetworkAdapter(Interface):
         Flag whether network traffic from/to the network card should be traced.
         Can only be toggled when the VM is turned off.
         """
-        ret = self._get_attr('traceEnabled')
+        ret = self._get_attr(self._trace_enabled)
         return ret
 
     @trace_enabled.setter
     def trace_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('traceEnabled', value)
+        return self._set_attr(self._trace_enabled', value)
     _trace_enabled = 'traceEnabled'
 
     @property
@@ -18246,14 +18246,14 @@ class INetworkAdapter(Interface):
         Filename where a network trace will be stored. If not set, VBox-pid.pcap
         will be used.
         """
-        ret = self._get_attr('traceFile')
+        ret = self._get_attr(self._trace_file)
         return ret
 
     @trace_file.setter
     def trace_file(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('traceFile', value)
+        return self._set_attr(self._trace_file', value)
     _trace_file = 'traceFile'
 
     @property
@@ -18263,7 +18263,7 @@ class INetworkAdapter(Interface):
         for this interface. This is active only when the interface actually uses
         NAT.
         """
-        ret = self._get_attr('NATEngine')
+        ret = self._get_attr(self._nat_engine)
         return INATEngine(ret)
     _nat_engine = 'NATEngine'
 
@@ -18273,14 +18273,14 @@ class INetworkAdapter(Interface):
         Network boot priority of the adapter. Priority 1 is highest. If not set,
         the priority is considered to be at the lowest possible setting.
         """
-        ret = self._get_attr('bootPriority')
+        ret = self._get_attr(self._boot_priority)
         return ret
 
     @boot_priority.setter
     def boot_priority(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('bootPriority', value)
+        return self._set_attr(self._boot_priority', value)
     _boot_priority = 'bootPriority'
 
     @property
@@ -18288,14 +18288,14 @@ class INetworkAdapter(Interface):
         """Get or set IBandwidthGroup value for 'bandwidthGroup'
         The bandwidth group this network adapter is assigned to.
         """
-        ret = self._get_attr('bandwidthGroup')
+        ret = self._get_attr(self._bandwidth_group)
         return IBandwidthGroup(ret)
 
     @bandwidth_group.setter
     def bandwidth_group(self, value):
         if not isinstance(value, IBandwidthGroup):
             raise TypeError("value is not an instance of IBandwidthGroup")
-        return self._set_attr('bandwidthGroup', value)
+        return self._set_attr(self._bandwidth_group', value)
     _bandwidth_group = 'bandwidthGroup'
 
     def get_property(self, key):
@@ -18412,7 +18412,7 @@ class ISerialPort(Interface):
         the value you pass to <link to="IMachine::getSerialPort"/>
         to obtain this instance.
         """
-        ret = self._get_attr('slot')
+        ret = self._get_attr(self._slot)
         return ret
     _slot = 'slot'
 
@@ -18422,14 +18422,14 @@ class ISerialPort(Interface):
         Flag whether the serial port is enabled. If disabled,
         the serial port will not be reported to the guest OS.
         """
-        ret = self._get_attr('enabled')
+        ret = self._get_attr(self._enabled)
         return ret
 
     @enabled.setter
     def enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('enabled', value)
+        return self._set_attr(self._enabled', value)
     _enabled = 'enabled'
 
     @property
@@ -18437,14 +18437,14 @@ class ISerialPort(Interface):
         """Get or set int value for 'IOBase'
         Base I/O address of the serial port.
         """
-        ret = self._get_attr('IOBase')
+        ret = self._get_attr(self._io_base)
         return ret
 
     @io_base.setter
     def io_base(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('IOBase', value)
+        return self._set_attr(self._io_base', value)
     _io_base = 'IOBase'
 
     @property
@@ -18452,14 +18452,14 @@ class ISerialPort(Interface):
         """Get or set int value for 'IRQ'
         IRQ number of the serial port.
         """
-        ret = self._get_attr('IRQ')
+        ret = self._get_attr(self._irq)
         return ret
 
     @irq.setter
     def irq(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('IRQ', value)
+        return self._set_attr(self._irq', value)
     _irq = 'IRQ'
 
     @property
@@ -18470,14 +18470,14 @@ class ISerialPort(Interface):
           Changing this attribute may fail if the conditions for
           <link to="#path"/> are not met.
         """
-        ret = self._get_attr('hostMode')
+        ret = self._get_attr(self._host_mode)
         return PortMode(ret)
 
     @host_mode.setter
     def host_mode(self, value):
         if not isinstance(value, PortMode):
             raise TypeError("value is not an instance of PortMode")
-        return self._set_attr('hostMode', value)
+        return self._set_attr(self._host_mode', value)
     _host_mode = 'hostMode'
 
     @property
@@ -18487,14 +18487,14 @@ class ISerialPort(Interface):
         the host) or as a client (uses the existing pipe). This attribute is
         used only when <link to="#hostMode"/> is PortMode_HostPipe.
         """
-        ret = self._get_attr('server')
+        ret = self._get_attr(self._server)
         return ret
 
     @server.setter
     def server(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('server', value)
+        return self._set_attr(self._server', value)
     _server = 'server'
 
     @property
@@ -18506,14 +18506,14 @@ class ISerialPort(Interface):
         cases, setting a @c null or empty string as the attribute's value
         is an error. Otherwise, the value of this property is ignored.
         """
-        ret = self._get_attr('path')
+        ret = self._get_attr(self._path)
         return ret
 
     @path.setter
     def path(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('path', value)
+        return self._set_attr(self._path', value)
     _path = 'path'
 
 
@@ -18542,7 +18542,7 @@ class IParallelPort(Interface):
         the value you pass to <link to="IMachine::getParallelPort"/>
         to obtain this instance.
         """
-        ret = self._get_attr('slot')
+        ret = self._get_attr(self._slot)
         return ret
     _slot = 'slot'
 
@@ -18552,14 +18552,14 @@ class IParallelPort(Interface):
         Flag whether the parallel port is enabled. If disabled,
         the parallel port will not be reported to the guest OS.
         """
-        ret = self._get_attr('enabled')
+        ret = self._get_attr(self._enabled)
         return ret
 
     @enabled.setter
     def enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('enabled', value)
+        return self._set_attr(self._enabled', value)
     _enabled = 'enabled'
 
     @property
@@ -18567,14 +18567,14 @@ class IParallelPort(Interface):
         """Get or set int value for 'IOBase'
         Base I/O address of the parallel port.
         """
-        ret = self._get_attr('IOBase')
+        ret = self._get_attr(self._io_base)
         return ret
 
     @io_base.setter
     def io_base(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('IOBase', value)
+        return self._set_attr(self._io_base', value)
     _io_base = 'IOBase'
 
     @property
@@ -18582,14 +18582,14 @@ class IParallelPort(Interface):
         """Get or set int value for 'IRQ'
         IRQ number of the parallel port.
         """
-        ret = self._get_attr('IRQ')
+        ret = self._get_attr(self._irq)
         return ret
 
     @irq.setter
     def irq(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('IRQ', value)
+        return self._set_attr(self._irq', value)
     _irq = 'IRQ'
 
     @property
@@ -18599,14 +18599,14 @@ class IParallelPort(Interface):
         @c null or an empty string as this attribute's value will result in
         an error.
         """
-        ret = self._get_attr('path')
+        ret = self._get_attr(self._path)
         return ret
 
     @path.setter
     def path(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('path', value)
+        return self._set_attr(self._path', value)
     _path = 'path'
 
 
@@ -19051,14 +19051,14 @@ class IMachineDebugger(Interface):
         """Get or set bool value for 'singleStep'
         Switch for enabling single-stepping.
         """
-        ret = self._get_attr('singleStep')
+        ret = self._get_attr(self._single_step)
         return ret
 
     @single_step.setter
     def single_step(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('singleStep', value)
+        return self._set_attr(self._single_step', value)
     _single_step = 'singleStep'
 
     @property
@@ -19066,14 +19066,14 @@ class IMachineDebugger(Interface):
         """Get or set bool value for 'recompileUser'
         Switch for forcing code recompilation for user mode code.
         """
-        ret = self._get_attr('recompileUser')
+        ret = self._get_attr(self._recompile_user)
         return ret
 
     @recompile_user.setter
     def recompile_user(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('recompileUser', value)
+        return self._set_attr(self._recompile_user', value)
     _recompile_user = 'recompileUser'
 
     @property
@@ -19081,14 +19081,14 @@ class IMachineDebugger(Interface):
         """Get or set bool value for 'recompileSupervisor'
         Switch for forcing code recompilation for supervisor mode code.
         """
-        ret = self._get_attr('recompileSupervisor')
+        ret = self._get_attr(self._recompile_supervisor)
         return ret
 
     @recompile_supervisor.setter
     def recompile_supervisor(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('recompileSupervisor', value)
+        return self._set_attr(self._recompile_supervisor', value)
     _recompile_supervisor = 'recompileSupervisor'
 
     @property
@@ -19096,14 +19096,14 @@ class IMachineDebugger(Interface):
         """Get or set bool value for 'PATMEnabled'
         Switch for enabling and disabling the PATM component.
         """
-        ret = self._get_attr('PATMEnabled')
+        ret = self._get_attr(self._patm_enabled)
         return ret
 
     @patm_enabled.setter
     def patm_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('PATMEnabled', value)
+        return self._set_attr(self._patm_enabled', value)
     _patm_enabled = 'PATMEnabled'
 
     @property
@@ -19111,14 +19111,14 @@ class IMachineDebugger(Interface):
         """Get or set bool value for 'CSAMEnabled'
         Switch for enabling and disabling the CSAM component.
         """
-        ret = self._get_attr('CSAMEnabled')
+        ret = self._get_attr(self._csam_enabled)
         return ret
 
     @csam_enabled.setter
     def csam_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('CSAMEnabled', value)
+        return self._set_attr(self._csam_enabled', value)
     _csam_enabled = 'CSAMEnabled'
 
     @property
@@ -19126,14 +19126,14 @@ class IMachineDebugger(Interface):
         """Get or set bool value for 'logEnabled'
         Switch for enabling and disabling the debug logger.
         """
-        ret = self._get_attr('logEnabled')
+        ret = self._get_attr(self._log_enabled)
         return ret
 
     @log_enabled.setter
     def log_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('logEnabled', value)
+        return self._set_attr(self._log_enabled', value)
     _log_enabled = 'logEnabled'
 
     @property
@@ -19141,7 +19141,7 @@ class IMachineDebugger(Interface):
         """Get str value for 'logDbgFlags'
         The debug logger flags.
         """
-        ret = self._get_attr('logDbgFlags')
+        ret = self._get_attr(self._log_dbg_flags)
         return ret
     _log_dbg_flags = 'logDbgFlags'
 
@@ -19150,7 +19150,7 @@ class IMachineDebugger(Interface):
         """Get str value for 'logDbgGroups'
         The debug logger's group settings.
         """
-        ret = self._get_attr('logDbgGroups')
+        ret = self._get_attr(self._log_dbg_groups)
         return ret
     _log_dbg_groups = 'logDbgGroups'
 
@@ -19159,7 +19159,7 @@ class IMachineDebugger(Interface):
         """Get str value for 'logDbgDestinations'
         The debug logger's destination settings.
         """
-        ret = self._get_attr('logDbgDestinations')
+        ret = self._get_attr(self._log_dbg_destinations)
         return ret
     _log_dbg_destinations = 'logDbgDestinations'
 
@@ -19168,7 +19168,7 @@ class IMachineDebugger(Interface):
         """Get str value for 'logRelFlags'
         The release logger flags.
         """
-        ret = self._get_attr('logRelFlags')
+        ret = self._get_attr(self._log_rel_flags)
         return ret
     _log_rel_flags = 'logRelFlags'
 
@@ -19177,7 +19177,7 @@ class IMachineDebugger(Interface):
         """Get str value for 'logRelGroups'
         The release logger's group settings.
         """
-        ret = self._get_attr('logRelGroups')
+        ret = self._get_attr(self._log_rel_groups)
         return ret
     _log_rel_groups = 'logRelGroups'
 
@@ -19186,7 +19186,7 @@ class IMachineDebugger(Interface):
         """Get str value for 'logRelDestinations'
         The relase logger's destination settings.
         """
-        ret = self._get_attr('logRelDestinations')
+        ret = self._get_attr(self._log_rel_destinations)
         return ret
     _log_rel_destinations = 'logRelDestinations'
 
@@ -19196,7 +19196,7 @@ class IMachineDebugger(Interface):
         Flag indicating whether the VM is currently making use of CPU hardware
         virtualization extensions.
         """
-        ret = self._get_attr('HWVirtExEnabled')
+        ret = self._get_attr(self._hw_virt_ex_enabled)
         return ret
     _hw_virt_ex_enabled = 'HWVirtExEnabled'
 
@@ -19206,7 +19206,7 @@ class IMachineDebugger(Interface):
         Flag indicating whether the VM is currently making use of the nested paging
         CPU hardware virtualization extension.
         """
-        ret = self._get_attr('HWVirtExNestedPagingEnabled')
+        ret = self._get_attr(self._hw_virt_ex_nested_paging_enabled)
         return ret
     _hw_virt_ex_nested_paging_enabled = 'HWVirtExNestedPagingEnabled'
 
@@ -19216,7 +19216,7 @@ class IMachineDebugger(Interface):
         Flag indicating whether the VM is currently making use of the VPID
         VT-x extension.
         """
-        ret = self._get_attr('HWVirtExVPIDEnabled')
+        ret = self._get_attr(self._hw_virt_ex_vpid_enabled)
         return ret
     _hw_virt_ex_vpid_enabled = 'HWVirtExVPIDEnabled'
 
@@ -19226,7 +19226,7 @@ class IMachineDebugger(Interface):
         Flag indicating whether the VM is currently making use of the
         unrestricted execution feature of VT-x.
         """
-        ret = self._get_attr('HWVirtExUXEnabled')
+        ret = self._get_attr(self._hw_virt_ex_ux_enabled)
         return ret
     _hw_virt_ex_ux_enabled = 'HWVirtExUXEnabled'
 
@@ -19238,7 +19238,7 @@ class IMachineDebugger(Interface):
         This feature is not implemented in the 4.0.0 release but may show up
         in a dot release.
         """
-        ret = self._get_attr('OSName')
+        ret = self._get_attr(self._os_name)
         return ret
     _os_name = 'OSName'
 
@@ -19250,7 +19250,7 @@ class IMachineDebugger(Interface):
         This feature is not implemented in the 4.0.0 release but may show up
         in a dot release.
         """
-        ret = self._get_attr('OSVersion')
+        ret = self._get_attr(self._os_version)
         return ret
     _os_version = 'OSVersion'
 
@@ -19260,7 +19260,7 @@ class IMachineDebugger(Interface):
         Flag indicating whether the VM is currently making use of the Physical
         Address Extension CPU feature.
         """
-        ret = self._get_attr('PAEEnabled')
+        ret = self._get_attr(self._pae_enabled)
         return ret
     _pae_enabled = 'PAEEnabled'
 
@@ -19270,14 +19270,14 @@ class IMachineDebugger(Interface):
         The rate at which the virtual time runs expressed as a percentage.
         The accepted range is 2% to 20000%.
         """
-        ret = self._get_attr('virtualTimeRate')
+        ret = self._get_attr(self._virtual_time_rate)
         return ret
 
     @virtual_time_rate.setter
     def virtual_time_rate(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('virtualTimeRate', value)
+        return self._set_attr(self._virtual_time_rate', value)
     _virtual_time_rate = 'virtualTimeRate'
 
     @property
@@ -19287,7 +19287,7 @@ class IMachineDebugger(Interface):
         VMR3ReleaseUVM when done.  This is only for internal use while we carve
         the details of this interface.
         """
-        ret = self._get_attr('VM')
+        ret = self._get_attr(self._vm)
         return ret
     _vm = 'VM'
 
@@ -19310,14 +19310,14 @@ class IUSBController(Interface):
         not contain any USB controller. Can only be changed when
         the VM is powered off.
         """
-        ret = self._get_attr('enabled')
+        ret = self._get_attr(self._enabled)
         return ret
 
     @enabled.setter
     def enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('enabled', value)
+        return self._set_attr(self._enabled', value)
     _enabled = 'enabled'
 
     @property
@@ -19328,14 +19328,14 @@ class IUSBController(Interface):
         not contain a USB EHCI controller. Can only be changed when
         the VM is powered off.
         """
-        ret = self._get_attr('enabledEHCI')
+        ret = self._get_attr(self._enabled_ehci)
         return ret
 
     @enabled_ehci.setter
     def enabled_ehci(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('enabledEHCI', value)
+        return self._set_attr(self._enabled_ehci', value)
     _enabled_ehci = 'enabledEHCI'
 
     @property
@@ -19343,7 +19343,7 @@ class IUSBController(Interface):
         """Get bool value for 'proxyAvailable'
         Flag whether there is an USB proxy available.
         """
-        ret = self._get_attr('proxyAvailable')
+        ret = self._get_attr(self._proxy_available)
         return ret
     _proxy_available = 'proxyAvailable'
 
@@ -19354,7 +19354,7 @@ class IUSBController(Interface):
         This is a BCD which means that the major version is in the
         high byte and minor version is in the low byte.
         """
-        ret = self._get_attr('USBStandard')
+        ret = self._get_attr(self._usb_standard)
         return ret
     _usb_standard = 'USBStandard'
 
@@ -19382,7 +19382,7 @@ class IUSBController(Interface):
 
         <link to="IUSBDeviceFilter"/>, <link to="IUSBController"/>
         """
-        ret = self._call_method('getDeviceFilters')
+        ret = self._call_method(self._device_filters)
         return [IUSBDeviceFilter(a) for a in ret]
     _device_filters = 'getDeviceFilters'
 
@@ -19509,7 +19509,7 @@ class IUSBDevice(Interface):
         Unique USB device ID. This ID is built from #vendorId,
         #productId, #revision and #serialNumber.
         """
-        ret = self._get_attr('id')
+        ret = self._get_attr(self._id_p)
         return ret
     _id_p = 'id'
 
@@ -19518,7 +19518,7 @@ class IUSBDevice(Interface):
         """Get int value for 'vendorId'
         Vendor ID.
         """
-        ret = self._get_attr('vendorId')
+        ret = self._get_attr(self._vendor_id)
         return ret
     _vendor_id = 'vendorId'
 
@@ -19527,7 +19527,7 @@ class IUSBDevice(Interface):
         """Get int value for 'productId'
         Product ID.
         """
-        ret = self._get_attr('productId')
+        ret = self._get_attr(self._product_id)
         return ret
     _product_id = 'productId'
 
@@ -19538,7 +19538,7 @@ class IUSBDevice(Interface):
         unsigned short. The high byte is the integer part and the low
         byte is the decimal.
         """
-        ret = self._get_attr('revision')
+        ret = self._get_attr(self._revision)
         return ret
     _revision = 'revision'
 
@@ -19547,7 +19547,7 @@ class IUSBDevice(Interface):
         """Get str value for 'manufacturer'
         Manufacturer string.
         """
-        ret = self._get_attr('manufacturer')
+        ret = self._get_attr(self._manufacturer)
         return ret
     _manufacturer = 'manufacturer'
 
@@ -19556,7 +19556,7 @@ class IUSBDevice(Interface):
         """Get str value for 'product'
         Product string.
         """
-        ret = self._get_attr('product')
+        ret = self._get_attr(self._product)
         return ret
     _product = 'product'
 
@@ -19565,7 +19565,7 @@ class IUSBDevice(Interface):
         """Get str value for 'serialNumber'
         Serial number string.
         """
-        ret = self._get_attr('serialNumber')
+        ret = self._get_attr(self._serial_number)
         return ret
     _serial_number = 'serialNumber'
 
@@ -19574,7 +19574,7 @@ class IUSBDevice(Interface):
         """Get str value for 'address'
         Host specific address of the device.
         """
-        ret = self._get_attr('address')
+        ret = self._get_attr(self._address)
         return ret
     _address = 'address'
 
@@ -19584,7 +19584,7 @@ class IUSBDevice(Interface):
         Host USB port number the device is physically
         connected to.
         """
-        ret = self._get_attr('port')
+        ret = self._get_attr(self._port)
         return ret
     _port = 'port'
 
@@ -19593,7 +19593,7 @@ class IUSBDevice(Interface):
         """Get int value for 'version'
         The major USB version of the device - 1 or 2.
         """
-        ret = self._get_attr('version')
+        ret = self._get_attr(self._version)
         return ret
     _version = 'version'
 
@@ -19604,7 +19604,7 @@ class IUSBDevice(Interface):
         physically connected to - 1 or 2. For devices not connected to
         anything this will have the same value as the version attribute.
         """
-        ret = self._get_attr('portVersion')
+        ret = self._get_attr(self._port_version)
         return ret
     _port_version = 'portVersion'
 
@@ -19614,7 +19614,7 @@ class IUSBDevice(Interface):
         Whether the device is physically connected to a remote VRDE
         client or to a local host machine.
         """
-        ret = self._get_attr('remote')
+        ret = self._get_attr(self._remote)
         return ret
     _remote = 'remote'
 
@@ -19698,14 +19698,14 @@ class IUSBDeviceFilter(Interface):
         This name is used to visually distinguish one filter from another,
         so it can neither be @c null nor an empty string.
         """
-        ret = self._get_attr('name')
+        ret = self._get_attr(self._name)
         return ret
 
     @name.setter
     def name(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('name', value)
+        return self._set_attr(self._name', value)
     _name = 'name'
 
     @property
@@ -19713,14 +19713,14 @@ class IUSBDeviceFilter(Interface):
         """Get or set bool value for 'active'
         Whether this filter active or has been temporarily disabled.
         """
-        ret = self._get_attr('active')
+        ret = self._get_attr(self._active)
         return ret
 
     @active.setter
     def active(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('active', value)
+        return self._set_attr(self._active', value)
     _active = 'active'
 
     @property
@@ -19731,14 +19731,14 @@ class IUSBDeviceFilter(Interface):
         has the form XXXX, where X is the hex digit
         (including leading zeroes).
         """
-        ret = self._get_attr('vendorId')
+        ret = self._get_attr(self._vendor_id)
         return ret
 
     @vendor_id.setter
     def vendor_id(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('vendorId', value)
+        return self._set_attr(self._vendor_id', value)
     _vendor_id = 'vendorId'
 
     @property
@@ -19749,14 +19749,14 @@ class IUSBDeviceFilter(Interface):
         has the form XXXX, where X is the hex digit
         (including leading zeroes).
         """
-        ret = self._get_attr('productId')
+        ret = self._get_attr(self._product_id)
         return ret
 
     @product_id.setter
     def product_id(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('productId', value)
+        return self._set_attr(self._product_id', value)
     _product_id = 'productId'
 
     @property
@@ -19773,14 +19773,14 @@ class IUSBDeviceFilter(Interface):
         so the expression int:0x0100-0x0199 will match any
         revision from 1.0 to 1.99.
         """
-        ret = self._get_attr('revision')
+        ret = self._get_attr(self._revision)
         return ret
 
     @revision.setter
     def revision(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('revision', value)
+        return self._set_attr(self._revision', value)
     _revision = 'revision'
 
     @property
@@ -19788,14 +19788,14 @@ class IUSBDeviceFilter(Interface):
         """Get or set str value for 'manufacturer'
         <link to="IUSBDevice::manufacturer">Manufacturer</link> filter.
         """
-        ret = self._get_attr('manufacturer')
+        ret = self._get_attr(self._manufacturer)
         return ret
 
     @manufacturer.setter
     def manufacturer(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('manufacturer', value)
+        return self._set_attr(self._manufacturer', value)
     _manufacturer = 'manufacturer'
 
     @property
@@ -19803,14 +19803,14 @@ class IUSBDeviceFilter(Interface):
         """Get or set str value for 'product'
         <link to="IUSBDevice::product">Product</link> filter.
         """
-        ret = self._get_attr('product')
+        ret = self._get_attr(self._product)
         return ret
 
     @product.setter
     def product(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('product', value)
+        return self._set_attr(self._product', value)
     _product = 'product'
 
     @property
@@ -19818,14 +19818,14 @@ class IUSBDeviceFilter(Interface):
         """Get or set str value for 'serialNumber'
         <link to="IUSBDevice::serialNumber">Serial number</link> filter.
         """
-        ret = self._get_attr('serialNumber')
+        ret = self._get_attr(self._serial_number)
         return ret
 
     @serial_number.setter
     def serial_number(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('serialNumber', value)
+        return self._set_attr(self._serial_number', value)
     _serial_number = 'serialNumber'
 
     @property
@@ -19833,14 +19833,14 @@ class IUSBDeviceFilter(Interface):
         """Get or set str value for 'port'
         <link to="IUSBDevice::port">Host USB port</link> filter.
         """
-        ret = self._get_attr('port')
+        ret = self._get_attr(self._port)
         return ret
 
     @port.setter
     def port(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('port', value)
+        return self._set_attr(self._port', value)
     _port = 'port'
 
     @property
@@ -19851,14 +19851,14 @@ class IUSBDeviceFilter(Interface):
           This filter makes sense only for machine USB filters,
           i.e. it is ignored by IHostUSBDeviceFilter objects.
         """
-        ret = self._get_attr('remote')
+        ret = self._get_attr(self._remote)
         return ret
 
     @remote.setter
     def remote(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('remote', value)
+        return self._set_attr(self._remote', value)
     _remote = 'remote'
 
     @property
@@ -19870,14 +19870,14 @@ class IUSBDeviceFilter(Interface):
         if you like.
         This feature only works on Linux hosts.
         """
-        ret = self._get_attr('maskedInterfaces')
+        ret = self._get_attr(self._masked_interfaces)
         return ret
 
     @masked_interfaces.setter
     def masked_interfaces(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('maskedInterfaces', value)
+        return self._set_attr(self._masked_interfaces', value)
     _masked_interfaces = 'maskedInterfaces'
 
 
@@ -19901,7 +19901,7 @@ class IHostUSBDevice(IUSBDevice):
         """Get USBDeviceState value for 'state'
         Current state of the device.
         """
-        ret = self._get_attr('state')
+        ret = self._get_attr(self._state)
         return USBDeviceState(ret)
     _state = 'state'
 
@@ -19933,14 +19933,14 @@ class IHostUSBDeviceFilter(IUSBDeviceFilter):
         Action performed by the host when an attached USB device
         matches this filter.
         """
-        ret = self._get_attr('action')
+        ret = self._get_attr(self._action)
         return USBDeviceFilterAction(ret)
 
     @action.setter
     def action(self, value):
         if not isinstance(value, USBDeviceFilterAction):
             raise TypeError("value is not an instance of USBDeviceFilterAction")
-        return self._set_attr('action', value)
+        return self._set_attr(self._action', value)
     _action = 'action'
 
 
@@ -19960,14 +19960,14 @@ class IAudioAdapter(Interface):
         not contain any audio adapter. Can only be changed when
         the VM is not running.
         """
-        ret = self._get_attr('enabled')
+        ret = self._get_attr(self._enabled)
         return ret
 
     @enabled.setter
     def enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('enabled', value)
+        return self._set_attr(self._enabled', value)
     _enabled = 'enabled'
 
     @property
@@ -19975,14 +19975,14 @@ class IAudioAdapter(Interface):
         """Get or set AudioControllerType value for 'audioController'
         The audio hardware we emulate.
         """
-        ret = self._get_attr('audioController')
+        ret = self._get_attr(self._audio_controller)
         return AudioControllerType(ret)
 
     @audio_controller.setter
     def audio_controller(self, value):
         if not isinstance(value, AudioControllerType):
             raise TypeError("value is not an instance of AudioControllerType")
-        return self._set_attr('audioController', value)
+        return self._set_attr(self._audio_controller', value)
     _audio_controller = 'audioController'
 
     @property
@@ -19991,14 +19991,14 @@ class IAudioAdapter(Interface):
         Audio driver the adapter is connected to. This setting
         can only be changed when the VM is not running.
         """
-        ret = self._get_attr('audioDriver')
+        ret = self._get_attr(self._audio_driver)
         return AudioDriverType(ret)
 
     @audio_driver.setter
     def audio_driver(self, value):
         if not isinstance(value, AudioDriverType):
             raise TypeError("value is not an instance of AudioDriverType")
-        return self._set_attr('audioDriver', value)
+        return self._set_attr(self._audio_driver', value)
     _audio_driver = 'audioDriver'
 
 
@@ -20014,14 +20014,14 @@ class IVRDEServer(Interface):
         """Get or set bool value for 'enabled'
         Flag if VRDE server is enabled.
         """
-        ret = self._get_attr('enabled')
+        ret = self._get_attr(self._enabled)
         return ret
 
     @enabled.setter
     def enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('enabled', value)
+        return self._set_attr(self._enabled', value)
     _enabled = 'enabled'
 
     @property
@@ -20029,14 +20029,14 @@ class IVRDEServer(Interface):
         """Get or set AuthType value for 'authType'
         VRDE authentication method.
         """
-        ret = self._get_attr('authType')
+        ret = self._get_attr(self._auth_type)
         return AuthType(ret)
 
     @auth_type.setter
     def auth_type(self, value):
         if not isinstance(value, AuthType):
             raise TypeError("value is not an instance of AuthType")
-        return self._set_attr('authType', value)
+        return self._set_attr(self._auth_type', value)
     _auth_type = 'authType'
 
     @property
@@ -20044,14 +20044,14 @@ class IVRDEServer(Interface):
         """Get or set int value for 'authTimeout'
         Timeout for guest authentication. Milliseconds.
         """
-        ret = self._get_attr('authTimeout')
+        ret = self._get_attr(self._auth_timeout)
         return ret
 
     @auth_timeout.setter
     def auth_timeout(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('authTimeout', value)
+        return self._set_attr(self._auth_timeout', value)
     _auth_timeout = 'authTimeout'
 
     @property
@@ -20060,14 +20060,14 @@ class IVRDEServer(Interface):
         Flag whether multiple simultaneous connections to the VM are permitted.
         Note that this will be replaced by a more powerful mechanism in the future.
         """
-        ret = self._get_attr('allowMultiConnection')
+        ret = self._get_attr(self._allow_multi_connection)
         return ret
 
     @allow_multi_connection.setter
     def allow_multi_connection(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('allowMultiConnection', value)
+        return self._set_attr(self._allow_multi_connection', value)
     _allow_multi_connection = 'allowMultiConnection'
 
     @property
@@ -20077,14 +20077,14 @@ class IVRDEServer(Interface):
         must be established by the VRDE server, when a new client connects in single
         connection mode.
         """
-        ret = self._get_attr('reuseSingleConnection')
+        ret = self._get_attr(self._reuse_single_connection)
         return ret
 
     @reuse_single_connection.setter
     def reuse_single_connection(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('reuseSingleConnection', value)
+        return self._set_attr(self._reuse_single_connection', value)
     _reuse_single_connection = 'reuseSingleConnection'
 
     @property
@@ -20093,14 +20093,14 @@ class IVRDEServer(Interface):
         The name of Extension Pack providing VRDE for this VM. Overrides
         <link to="ISystemProperties::defaultVRDEExtPack"/>.
         """
-        ret = self._get_attr('VRDEExtPack')
+        ret = self._get_attr(self._vrde_ext_pack)
         return ret
 
     @vrde_ext_pack.setter
     def vrde_ext_pack(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('VRDEExtPack', value)
+        return self._set_attr(self._vrde_ext_pack', value)
     _vrde_ext_pack = 'VRDEExtPack'
 
     @property
@@ -20109,14 +20109,14 @@ class IVRDEServer(Interface):
         Library used for authentication of RDP clients by this VM. Overrides
         <link to="ISystemProperties::VRDEAuthLibrary"/>.
         """
-        ret = self._get_attr('authLibrary')
+        ret = self._get_attr(self._auth_library)
         return ret
 
     @auth_library.setter
     def auth_library(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('authLibrary', value)
+        return self._set_attr(self._auth_library', value)
     _auth_library = 'authLibrary'
 
     @property
@@ -20124,7 +20124,7 @@ class IVRDEServer(Interface):
         """Get str value for 'getVRDEProperties'
         Array of names of properties, which are supported by this VRDE server.
         """
-        ret = self._call_method('getVRDEProperties')
+        ret = self._call_method(self._vrde_properties)
         return ret
     _vrde_properties = 'getVRDEProperties'
 
@@ -20227,7 +20227,7 @@ class ISharedFolder(Interface):
         """Get str value for 'name'
         Logical name of the shared folder.
         """
-        ret = self._get_attr('name')
+        ret = self._get_attr(self._name)
         return ret
     _name = 'name'
 
@@ -20236,7 +20236,7 @@ class ISharedFolder(Interface):
         """Get str value for 'hostPath'
         Full path to the shared folder in the host file system.
         """
-        ret = self._get_attr('hostPath')
+        ret = self._get_attr(self._host_path)
         return ret
     _host_path = 'hostPath'
 
@@ -20249,7 +20249,7 @@ class ISharedFolder(Interface):
         on the network share that is not available by the time
         this property is read.
         """
-        ret = self._get_attr('accessible')
+        ret = self._get_attr(self._accessible)
         return ret
     _accessible = 'accessible'
 
@@ -20259,7 +20259,7 @@ class ISharedFolder(Interface):
         Whether the folder defined by the host path is writable or
         not.
         """
-        ret = self._get_attr('writable')
+        ret = self._get_attr(self._writable)
         return ret
     _writable = 'writable'
 
@@ -20268,7 +20268,7 @@ class ISharedFolder(Interface):
         """Get bool value for 'autoMount'
         Whether the folder gets automatically mounted by the guest or not.
         """
-        ret = self._get_attr('autoMount')
+        ret = self._get_attr(self._auto_mount)
         return ret
     _auto_mount = 'autoMount'
 
@@ -20284,7 +20284,7 @@ class ISharedFolder(Interface):
         failure and should normally describe a reason of the failure (for
         example, a file read error).
         """
-        ret = self._get_attr('lastAccessError')
+        ret = self._get_attr(self._last_access_error)
         return ret
     _last_access_error = 'lastAccessError'
 
@@ -20965,7 +20965,7 @@ class ISession(Interface):
         """Get SessionState value for 'state'
         Current state of this session.
         """
-        ret = self._get_attr('state')
+        ret = self._get_attr(self._state)
         return SessionState(ret)
     _state = 'state'
 
@@ -20976,7 +20976,7 @@ class ISession(Interface):
         if the session currently has a machine locked (i.e. its
         <link to="#state"/> is Locked), otherwise an error will be returned.
         """
-        ret = self._get_attr('type')
+        ret = self._get_attr(self._type_p)
         return SessionType(ret)
     _type_p = 'type'
 
@@ -20985,7 +20985,7 @@ class ISession(Interface):
         """Get IMachine value for 'machine'
         Machine object associated with this session.
         """
-        ret = self._get_attr('machine')
+        ret = self._get_attr(self._machine)
         return IMachine(ret)
     _machine = 'machine'
 
@@ -20994,7 +20994,7 @@ class ISession(Interface):
         """Get IConsole value for 'console'
         Console object associated with this session.
         """
-        ret = self._get_attr('console')
+        ret = self._get_attr(self._console)
         return IConsole(ret)
     _console = 'console'
 
@@ -21056,7 +21056,7 @@ class IStorageController(Interface):
         identifies this controller with other method calls such as
         <link to="IMachine::attachDevice"/> and <link to="IMachine::mountMedium"/>.
         """
-        ret = self._get_attr('name')
+        ret = self._get_attr(self._name)
         return ret
     _name = 'name'
 
@@ -21065,7 +21065,7 @@ class IStorageController(Interface):
         """Get int value for 'maxDevicesPerPortCount'
         Maximum number of devices which can be attached to one port.
         """
-        ret = self._get_attr('maxDevicesPerPortCount')
+        ret = self._get_attr(self._max_devices_per_port_count)
         return ret
     _max_devices_per_port_count = 'maxDevicesPerPortCount'
 
@@ -21074,7 +21074,7 @@ class IStorageController(Interface):
         """Get int value for 'minPortCount'
         Minimum number of ports that <link to="IStorageController::portCount"/> can be set to.
         """
-        ret = self._get_attr('minPortCount')
+        ret = self._get_attr(self._min_port_count)
         return ret
     _min_port_count = 'minPortCount'
 
@@ -21083,7 +21083,7 @@ class IStorageController(Interface):
         """Get int value for 'maxPortCount'
         Maximum number of ports that <link to="IStorageController::portCount"/> can be set to.
         """
-        ret = self._get_attr('maxPortCount')
+        ret = self._get_attr(self._max_port_count)
         return ret
     _max_port_count = 'maxPortCount'
 
@@ -21092,14 +21092,14 @@ class IStorageController(Interface):
         """Get or set int value for 'instance'
         The instance number of the device in the running VM.
         """
-        ret = self._get_attr('instance')
+        ret = self._get_attr(self._instance)
         return ret
 
     @instance.setter
     def instance(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('instance', value)
+        return self._set_attr(self._instance', value)
     _instance = 'instance'
 
     @property
@@ -21110,14 +21110,14 @@ class IStorageController(Interface):
         stored in <link to="IStorageController::minPortCount"/>
         and <link to="IStorageController::maxPortCount"/>.
         """
-        ret = self._get_attr('portCount')
+        ret = self._get_attr(self._port_count)
         return ret
 
     @port_count.setter
     def port_count(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('portCount', value)
+        return self._set_attr(self._port_count', value)
     _port_count = 'portCount'
 
     @property
@@ -21125,7 +21125,7 @@ class IStorageController(Interface):
         """Get StorageBus value for 'bus'
         The bus type of the storage controller (IDE, SATA, SCSI, SAS or Floppy).
         """
-        ret = self._get_attr('bus')
+        ret = self._get_attr(self._bus)
         return StorageBus(ret)
     _bus = 'bus'
 
@@ -21141,14 +21141,14 @@ class IStorageController(Interface):
 
         For SCSI controllers, the default type is LsiLogic.
         """
-        ret = self._get_attr('controllerType')
+        ret = self._get_attr(self._controller_type)
         return StorageControllerType(ret)
 
     @controller_type.setter
     def controller_type(self, value):
         if not isinstance(value, StorageControllerType):
             raise TypeError("value is not an instance of StorageControllerType")
-        return self._set_attr('controllerType', value)
+        return self._set_attr(self._controller_type', value)
     _controller_type = 'controllerType'
 
     @property
@@ -21165,14 +21165,14 @@ class IStorageController(Interface):
         virtual machines are running at the same time to prevent I/O cache related hangs.
         This option new with the API of VirtualBox 3.2 and is now the default for non-IDE storage controllers.
         """
-        ret = self._get_attr('useHostIOCache')
+        ret = self._get_attr(self._use_host_io_cache)
         return ret
 
     @use_host_io_cache.setter
     def use_host_io_cache(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('useHostIOCache', value)
+        return self._set_attr(self._use_host_io_cache', value)
     _use_host_io_cache = 'useHostIOCache'
 
     @property
@@ -21180,7 +21180,7 @@ class IStorageController(Interface):
         """Get bool value for 'bootable'
         Returns whether it is possible to boot from disks attached to this controller.
         """
-        ret = self._get_attr('bootable')
+        ret = self._get_attr(self._bootable)
         return ret
     _bootable = 'bootable'
 
@@ -21198,7 +21198,7 @@ class IPerformanceMetric(Interface):
         """Get str value for 'metricName'
         Name of the metric.
         """
-        ret = self._get_attr('metricName')
+        ret = self._get_attr(self._metric_name)
         return ret
     _metric_name = 'metricName'
 
@@ -21207,7 +21207,7 @@ class IPerformanceMetric(Interface):
         """Get Interface value for 'object'
         Object this metric belongs to.
         """
-        ret = self._get_attr('object')
+        ret = self._get_attr(self._object_p)
         return Interface(ret)
     _object_p = 'object'
 
@@ -21216,7 +21216,7 @@ class IPerformanceMetric(Interface):
         """Get str value for 'description'
         Textual description of the metric.
         """
-        ret = self._get_attr('description')
+        ret = self._get_attr(self._description)
         return ret
     _description = 'description'
 
@@ -21225,7 +21225,7 @@ class IPerformanceMetric(Interface):
         """Get int value for 'period'
         Time interval between samples, measured in seconds.
         """
-        ret = self._get_attr('period')
+        ret = self._get_attr(self._period)
         return ret
     _period = 'period'
 
@@ -21238,7 +21238,7 @@ class IPerformanceMetric(Interface):
         When the collected sample count exceeds this number, older samples
         are discarded.
         """
-        ret = self._get_attr('count')
+        ret = self._get_attr(self._count)
         return ret
     _count = 'count'
 
@@ -21247,7 +21247,7 @@ class IPerformanceMetric(Interface):
         """Get str value for 'unit'
         Unit of measurement.
         """
-        ret = self._get_attr('unit')
+        ret = self._get_attr(self._unit)
         return ret
     _unit = 'unit'
 
@@ -21256,7 +21256,7 @@ class IPerformanceMetric(Interface):
         """Get int value for 'minimumValue'
         Minimum possible value of this metric.
         """
-        ret = self._get_attr('minimumValue')
+        ret = self._get_attr(self._minimum_value)
         return ret
     _minimum_value = 'minimumValue'
 
@@ -21265,7 +21265,7 @@ class IPerformanceMetric(Interface):
         """Get int value for 'maximumValue'
         Maximum possible value of this metric.
         """
-        ret = self._get_attr('maximumValue')
+        ret = self._get_attr(self._maximum_value)
         return ret
     _maximum_value = 'maximumValue'
 
@@ -21385,7 +21385,7 @@ class IPerformanceCollector(Interface):
         <link to="IPerformanceCollector::getMetrics"/> can be used to get the
         list of supported metrics for a particular object.
         """
-        ret = self._call_method('getMetricNames')
+        ret = self._call_method(self._metric_names)
         return ret
     _metric_names = 'getMetricNames'
 
@@ -21659,14 +21659,14 @@ class INATEngine(Interface):
         The network attribute of the NAT engine (the same value is used with built-in
         DHCP server to fill corresponding fields of DHCP leases).
         """
-        ret = self._get_attr('network')
+        ret = self._get_attr(self._network)
         return ret
 
     @network.setter
     def network(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('network', value)
+        return self._set_attr(self._network', value)
     _network = 'network'
 
     @property
@@ -21675,14 +21675,14 @@ class INATEngine(Interface):
         IP of host interface to bind all opened sockets to.
           Changing this does not change binding of port forwarding.
         """
-        ret = self._get_attr('hostIP')
+        ret = self._get_attr(self._host_ip)
         return ret
 
     @host_ip.setter
     def host_ip(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('hostIP', value)
+        return self._set_attr(self._host_ip', value)
     _host_ip = 'hostIP'
 
     @property
@@ -21691,14 +21691,14 @@ class INATEngine(Interface):
         TFTP prefix attribute which is used with the built-in DHCP server to fill
         the corresponding fields of DHCP leases.
         """
-        ret = self._get_attr('TFTPPrefix')
+        ret = self._get_attr(self._tftp_prefix)
         return ret
 
     @tftp_prefix.setter
     def tftp_prefix(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('TFTPPrefix', value)
+        return self._set_attr(self._tftp_prefix', value)
     _tftp_prefix = 'TFTPPrefix'
 
     @property
@@ -21707,14 +21707,14 @@ class INATEngine(Interface):
         TFTP boot file attribute which is used with the built-in DHCP server to fill
         the corresponding fields of DHCP leases.
         """
-        ret = self._get_attr('TFTPBootFile')
+        ret = self._get_attr(self._tftp_boot_file)
         return ret
 
     @tftp_boot_file.setter
     def tftp_boot_file(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('TFTPBootFile', value)
+        return self._set_attr(self._tftp_boot_file', value)
     _tftp_boot_file = 'TFTPBootFile'
 
     @property
@@ -21724,14 +21724,14 @@ class INATEngine(Interface):
         the corresponding fields of DHCP leases.
         The preferred form is IPv4 addresses.
         """
-        ret = self._get_attr('TFTPNextServer')
+        ret = self._get_attr(self._tftp_next_server)
         return ret
 
     @tftp_next_server.setter
     def tftp_next_server(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr('TFTPNextServer', value)
+        return self._set_attr(self._tftp_next_server', value)
     _tftp_next_server = 'TFTPNextServer'
 
     @property
@@ -21739,14 +21739,14 @@ class INATEngine(Interface):
         """Get or set int value for 'aliasMode'
         <desc/>
         """
-        ret = self._get_attr('aliasMode')
+        ret = self._get_attr(self._alias_mode)
         return ret
 
     @alias_mode.setter
     def alias_mode(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('aliasMode', value)
+        return self._set_attr(self._alias_mode', value)
     _alias_mode = 'aliasMode'
 
     @property
@@ -21754,14 +21754,14 @@ class INATEngine(Interface):
         """Get or set bool value for 'DNSPassDomain'
         Whether the DHCP server should pass the DNS domain used by the host.
         """
-        ret = self._get_attr('DNSPassDomain')
+        ret = self._get_attr(self._dns_pass_domain)
         return ret
 
     @dns_pass_domain.setter
     def dns_pass_domain(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('DNSPassDomain', value)
+        return self._set_attr(self._dns_pass_domain', value)
     _dns_pass_domain = 'DNSPassDomain'
 
     @property
@@ -21770,14 +21770,14 @@ class INATEngine(Interface):
         Whether the DHCP server (and the DNS traffic by NAT) should pass the address
         of the DNS proxy and process traffic using DNS servers registered on the host.
         """
-        ret = self._get_attr('DNSProxy')
+        ret = self._get_attr(self._dns_proxy)
         return ret
 
     @dns_proxy.setter
     def dns_proxy(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('DNSProxy', value)
+        return self._set_attr(self._dns_proxy', value)
     _dns_proxy = 'DNSProxy'
 
     @property
@@ -21786,14 +21786,14 @@ class INATEngine(Interface):
         Whether the DHCP server (and the DNS traffic by NAT) should pass the address
         of the DNS proxy and process traffic using the host resolver mechanism.
         """
-        ret = self._get_attr('DNSUseHostResolver')
+        ret = self._get_attr(self._dns_use_host_resolver)
         return ret
 
     @dns_use_host_resolver.setter
     def dns_use_host_resolver(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr('DNSUseHostResolver', value)
+        return self._set_attr(self._dns_use_host_resolver', value)
     _dns_use_host_resolver = 'DNSUseHostResolver'
 
     @property
@@ -21802,7 +21802,7 @@ class INATEngine(Interface):
         Array of NAT port-forwarding rules in string representation, in the following
         format: "name,protocol id,host ip,host port,guest ip,guest port".
         """
-        ret = self._call_method('getRedirects')
+        ret = self._call_method(self._redirects)
         return ret
     _redirects = 'getRedirects'
 
@@ -21929,7 +21929,7 @@ class IExtPackPlugIn(Interface):
         """Get str value for 'name'
         The plug-in name.
         """
-        ret = self._get_attr('name')
+        ret = self._get_attr(self._name)
         return ret
     _name = 'name'
 
@@ -21938,7 +21938,7 @@ class IExtPackPlugIn(Interface):
         """Get str value for 'description'
         The plug-in description.
         """
-        ret = self._get_attr('description')
+        ret = self._get_attr(self._description)
         return ret
     _description = 'description'
 
@@ -21947,7 +21947,7 @@ class IExtPackPlugIn(Interface):
         """Get str value for 'frontend'
         The name of the frontend or component name this plug-in plugs into.
         """
-        ret = self._get_attr('frontend')
+        ret = self._get_attr(self._frontend)
         return ret
     _frontend = 'frontend'
 
@@ -21956,7 +21956,7 @@ class IExtPackPlugIn(Interface):
         """Get str value for 'modulePath'
         The module path.
         """
-        ret = self._get_attr('modulePath')
+        ret = self._get_attr(self._module_path)
         return ret
     _module_path = 'modulePath'
 
@@ -21974,7 +21974,7 @@ class IExtPackBase(Interface):
         """Get str value for 'name'
         The extension pack name. This is unique.
         """
-        ret = self._get_attr('name')
+        ret = self._get_attr(self._name)
         return ret
     _name = 'name'
 
@@ -21983,7 +21983,7 @@ class IExtPackBase(Interface):
         """Get str value for 'description'
         The extension pack description.
         """
-        ret = self._get_attr('description')
+        ret = self._get_attr(self._description)
         return ret
     _description = 'description'
 
@@ -21998,7 +21998,7 @@ class IExtPackBase(Interface):
 
         Examples: "1.2.3", "1.2.3_BETA1" and "1.2.3_RC2".
         """
-        ret = self._get_attr('version')
+        ret = self._get_attr(self._version)
         return ret
     _version = 'version'
 
@@ -22007,7 +22007,7 @@ class IExtPackBase(Interface):
         """Get int value for 'revision'
         The extension pack internal revision number.
         """
-        ret = self._get_attr('revision')
+        ret = self._get_attr(self._revision)
         return ret
     _revision = 'revision'
 
@@ -22020,7 +22020,7 @@ class IExtPackBase(Interface):
         of the same extension pack where only the license, service contract or
         something differs.
         """
-        ret = self._get_attr('edition')
+        ret = self._get_attr(self._edition)
         return ret
     _edition = 'edition'
 
@@ -22029,7 +22029,7 @@ class IExtPackBase(Interface):
         """Get str value for 'VRDEModule'
         The name of the VRDE module if the extension pack sports one.
         """
-        ret = self._get_attr('VRDEModule')
+        ret = self._get_attr(self._vrde_module)
         return ret
     _vrde_module = 'VRDEModule'
 
@@ -22038,7 +22038,7 @@ class IExtPackBase(Interface):
         """Get IExtPackPlugIn value for 'getPlugIns'
         Plug-ins provided by this extension pack.
         """
-        ret = self._call_method('getPlugIns')
+        ret = self._call_method(self._plug_ins)
         return [IExtPackPlugIn(a) for a in ret]
     _plug_ins = 'getPlugIns'
 
@@ -22051,7 +22051,7 @@ class IExtPackBase(Interface):
         typical examples would be broken installation/file or that it is
         incompatible with the current VirtualBox version.
         """
-        ret = self._get_attr('usable')
+        ret = self._get_attr(self._usable)
         return ret
     _usable = 'usable'
 
@@ -22061,7 +22061,7 @@ class IExtPackBase(Interface):
         String indicating why the extension pack is not usable. This is an
         empty string if usable and always a non-empty string if not usable.
         """
-        ret = self._get_attr('whyUnusable')
+        ret = self._get_attr(self._why_unusable)
         return ret
     _why_unusable = 'whyUnusable'
 
@@ -22070,7 +22070,7 @@ class IExtPackBase(Interface):
         """Get bool value for 'showLicense'
         Whether to show the license before installation
         """
-        ret = self._get_attr('showLicense')
+        ret = self._get_attr(self._show_license)
         return ret
     _show_license = 'showLicense'
 
@@ -22082,7 +22082,7 @@ class IExtPackBase(Interface):
         preferredLocale and preferredLanguage as empty strings and format set
         to html.
         """
-        ret = self._get_attr('license')
+        ret = self._get_attr(self._license_p)
         return ret
     _license_p = 'license'
 
@@ -22161,7 +22161,7 @@ class IExtPackFile(IExtPackBase):
         """Get str value for 'filePath'
         The path to the extension pack file.
         """
-        ret = self._get_attr('filePath')
+        ret = self._get_attr(self._file_path)
         return ret
     _file_path = 'filePath'
 
@@ -22205,7 +22205,7 @@ class IExtPackManager(Interface):
         """Get IExtPack value for 'getInstalledExtPacks'
         List of the installed extension packs.
         """
-        ret = self._call_method('getInstalledExtPacks')
+        ret = self._call_method(self._installed_ext_packs)
         return [IExtPack(a) for a in ret]
     _installed_ext_packs = 'getInstalledExtPacks'
 
@@ -22336,7 +22336,7 @@ class IBandwidthGroup(Interface):
         """Get str value for 'name'
         Name of the group.
         """
-        ret = self._get_attr('name')
+        ret = self._get_attr(self._name)
         return ret
     _name = 'name'
 
@@ -22345,7 +22345,7 @@ class IBandwidthGroup(Interface):
         """Get BandwidthGroupType value for 'type'
         Type of the group.
         """
-        ret = self._get_attr('type')
+        ret = self._get_attr(self._type_p)
         return BandwidthGroupType(ret)
     _type_p = 'type'
 
@@ -22354,7 +22354,7 @@ class IBandwidthGroup(Interface):
         """Get int value for 'reference'
         How many devices/medium attachements use this group.
         """
-        ret = self._get_attr('reference')
+        ret = self._get_attr(self._reference)
         return ret
     _reference = 'reference'
 
@@ -22364,14 +22364,14 @@ class IBandwidthGroup(Interface):
         The maximum number of bytes which can be transfered by all
         entities attached to this group during one second.
         """
-        ret = self._get_attr('maxBytesPerSec')
+        ret = self._get_attr(self._max_bytes_per_sec)
         return ret
 
     @max_bytes_per_sec.setter
     def max_bytes_per_sec(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('maxBytesPerSec', value)
+        return self._set_attr(self._max_bytes_per_sec', value)
     _max_bytes_per_sec = 'maxBytesPerSec'
 
 
@@ -22388,7 +22388,7 @@ class IBandwidthControl(Interface):
         """Get int value for 'numGroups'
         The current number of existing bandwidth groups managed.
         """
-        ret = self._get_attr('numGroups')
+        ret = self._get_attr(self._num_groups)
         return ret
     _num_groups = 'numGroups'
 
@@ -22477,7 +22477,7 @@ class IVirtualBoxClient(Interface):
         """Get IVirtualBox value for 'virtualBox'
         Reference to the server-side API root object.
         """
-        ret = self._get_attr('virtualBox')
+        ret = self._get_attr(self._virtual_box)
         return IVirtualBox(ret)
     _virtual_box = 'virtualBox'
 
@@ -22486,7 +22486,7 @@ class IVirtualBoxClient(Interface):
         """Get ISession value for 'session'
         Create a new session object and return the reference to it.
         """
-        ret = self._get_attr('session')
+        ret = self._get_attr(self._session)
         return ISession(ret)
     _session = 'session'
 
@@ -22495,7 +22495,7 @@ class IVirtualBoxClient(Interface):
         """Get IEventSource value for 'eventSource'
         Event source for VirtualBoxClient events.
         """
-        ret = self._get_attr('eventSource')
+        ret = self._get_attr(self._event_source)
         return IEventSource(ret)
     _event_source = 'eventSource'
 
@@ -22803,7 +22803,7 @@ class IEvent(Interface):
         """Get VBoxEventType value for 'type'
         Event type.
         """
-        ret = self._get_attr('type')
+        ret = self._get_attr(self._type_p)
         return VBoxEventType(ret)
     _type_p = 'type'
 
@@ -22812,7 +22812,7 @@ class IEvent(Interface):
         """Get IEventSource value for 'source'
         Source of this event.
         """
-        ret = self._get_attr('source')
+        ret = self._get_attr(self._source)
         return IEventSource(ret)
     _source = 'source'
 
@@ -22826,7 +22826,7 @@ class IEvent(Interface):
         for example for vetoable changes, or if event refers to some resource which need to be kept immutable
         until all consumers confirmed events.
         """
-        ret = self._get_attr('waitable')
+        ret = self._get_attr(self._waitable)
         return ret
     _waitable = 'waitable'
 
@@ -22870,7 +22870,7 @@ class IReusableEvent(IEvent):
         """Get int value for 'generation'
         Current generation of event, incremented on reuse.
         """
-        ret = self._get_attr('generation')
+        ret = self._get_attr(self._generation)
         return ret
     _generation = 'generation'
 
@@ -22895,7 +22895,7 @@ class IMachineEvent(IEvent):
         """Get str value for 'machineId'
         ID of the machine this event relates to.
         """
-        ret = self._get_attr('machineId')
+        ret = self._get_attr(self._machine_id)
         return ret
     _machine_id = 'machineId'
 
@@ -22912,7 +22912,7 @@ class IMachineStateChangedEvent(IMachineEvent):
         """Get MachineState value for 'state'
         New execution state.
         """
-        ret = self._get_attr('state')
+        ret = self._get_attr(self._state)
         return MachineState(ret)
     _state = 'state'
 
@@ -22932,7 +22932,7 @@ class IMachineDataChangedEvent(IMachineEvent):
         changes for running VMs will trigger an event. Note: sending events
         for temporary changes is NOT IMPLEMENTED.
         """
-        ret = self._get_attr('temporary')
+        ret = self._get_attr(self._temporary)
         return ret
     _temporary = 'temporary'
 
@@ -22950,7 +22950,7 @@ class IMediumRegisteredEvent(IEvent):
         """Get str value for 'mediumId'
         ID of the medium this event relates to.
         """
-        ret = self._get_attr('mediumId')
+        ret = self._get_attr(self._medium_id)
         return ret
     _medium_id = 'mediumId'
 
@@ -22959,7 +22959,7 @@ class IMediumRegisteredEvent(IEvent):
         """Get DeviceType value for 'mediumType'
         Type of the medium this event relates to.
         """
-        ret = self._get_attr('mediumType')
+        ret = self._get_attr(self._medium_type)
         return DeviceType(ret)
     _medium_type = 'mediumType'
 
@@ -22969,7 +22969,7 @@ class IMediumRegisteredEvent(IEvent):
         If @c true, the medium was registered, otherwise it was
         unregistered.
         """
-        ret = self._get_attr('registered')
+        ret = self._get_attr(self._registered)
         return ret
     _registered = 'registered'
 
@@ -22988,7 +22988,7 @@ class IMachineRegisteredEvent(IMachineEvent):
         If @c true, the machine was registered, otherwise it was
         unregistered.
         """
-        ret = self._get_attr('registered')
+        ret = self._get_attr(self._registered)
         return ret
     _registered = 'registered'
 
@@ -23006,7 +23006,7 @@ class ISessionStateChangedEvent(IMachineEvent):
         """Get SessionState value for 'state'
         New session state.
         """
-        ret = self._get_attr('state')
+        ret = self._get_attr(self._state)
         return SessionState(ret)
     _state = 'state'
 
@@ -23023,7 +23023,7 @@ class IGuestPropertyChangedEvent(IMachineEvent):
         """Get str value for 'name'
         The name of the property that has changed.
         """
-        ret = self._get_attr('name')
+        ret = self._get_attr(self._name)
         return ret
     _name = 'name'
 
@@ -23032,7 +23032,7 @@ class IGuestPropertyChangedEvent(IMachineEvent):
         """Get str value for 'value'
         The new property value.
         """
-        ret = self._get_attr('value')
+        ret = self._get_attr(self._value)
         return ret
     _value = 'value'
 
@@ -23041,7 +23041,7 @@ class IGuestPropertyChangedEvent(IMachineEvent):
         """Get str value for 'flags'
         The new property flags.
         """
-        ret = self._get_attr('flags')
+        ret = self._get_attr(self._flags)
         return ret
     _flags = 'flags'
 
@@ -23058,7 +23058,7 @@ class ISnapshotEvent(IMachineEvent):
         """Get str value for 'snapshotId'
         ID of the snapshot this event relates to.
         """
-        ret = self._get_attr('snapshotId')
+        ret = self._get_attr(self._snapshot_id)
         return ret
     _snapshot_id = 'snapshotId'
 
@@ -23110,7 +23110,7 @@ class IMousePointerShapeChangedEvent(IEvent):
         """Get bool value for 'visible'
         Flag whether the pointer is visible.
         """
-        ret = self._get_attr('visible')
+        ret = self._get_attr(self._visible)
         return ret
     _visible = 'visible'
 
@@ -23119,7 +23119,7 @@ class IMousePointerShapeChangedEvent(IEvent):
         """Get bool value for 'alpha'
         Flag whether the pointer has an alpha channel.
         """
-        ret = self._get_attr('alpha')
+        ret = self._get_attr(self._alpha)
         return ret
     _alpha = 'alpha'
 
@@ -23128,7 +23128,7 @@ class IMousePointerShapeChangedEvent(IEvent):
         """Get int value for 'xhot'
         The pointer hot spot X coordinate.
         """
-        ret = self._get_attr('xhot')
+        ret = self._get_attr(self._xhot)
         return ret
     _xhot = 'xhot'
 
@@ -23137,7 +23137,7 @@ class IMousePointerShapeChangedEvent(IEvent):
         """Get int value for 'yhot'
         The pointer hot spot Y coordinate.
         """
-        ret = self._get_attr('yhot')
+        ret = self._get_attr(self._yhot)
         return ret
     _yhot = 'yhot'
 
@@ -23146,7 +23146,7 @@ class IMousePointerShapeChangedEvent(IEvent):
         """Get int value for 'width'
         Width of the pointer shape in pixels.
         """
-        ret = self._get_attr('width')
+        ret = self._get_attr(self._width)
         return ret
     _width = 'width'
 
@@ -23155,7 +23155,7 @@ class IMousePointerShapeChangedEvent(IEvent):
         """Get int value for 'height'
         Height of the pointer shape in pixels.
         """
-        ret = self._get_attr('height')
+        ret = self._get_attr(self._height)
         return ret
     _height = 'height'
 
@@ -23189,7 +23189,7 @@ class IMousePointerShapeChangedEvent(IEvent):
         
           If @a shape is 0, only the pointer visibility is changed.
         """
-        ret = self._call_method('getShape')
+        ret = self._call_method(self._shape)
         return ret
     _shape = 'getShape'
 
@@ -23207,7 +23207,7 @@ class IMouseCapabilityChangedEvent(IEvent):
         """Get bool value for 'supportsAbsolute'
         Supports absolute coordinates.
         """
-        ret = self._get_attr('supportsAbsolute')
+        ret = self._get_attr(self._supports_absolute)
         return ret
     _supports_absolute = 'supportsAbsolute'
 
@@ -23216,7 +23216,7 @@ class IMouseCapabilityChangedEvent(IEvent):
         """Get bool value for 'supportsRelative'
         Supports relative coordinates.
         """
-        ret = self._get_attr('supportsRelative')
+        ret = self._get_attr(self._supports_relative)
         return ret
     _supports_relative = 'supportsRelative'
 
@@ -23225,7 +23225,7 @@ class IMouseCapabilityChangedEvent(IEvent):
         """Get bool value for 'needsHostCursor'
         If host cursor is needed.
         """
-        ret = self._get_attr('needsHostCursor')
+        ret = self._get_attr(self._needs_host_cursor)
         return ret
     _needs_host_cursor = 'needsHostCursor'
 
@@ -23243,7 +23243,7 @@ class IKeyboardLedsChangedEvent(IEvent):
         """Get bool value for 'numLock'
         NumLock status.
         """
-        ret = self._get_attr('numLock')
+        ret = self._get_attr(self._num_lock)
         return ret
     _num_lock = 'numLock'
 
@@ -23252,7 +23252,7 @@ class IKeyboardLedsChangedEvent(IEvent):
         """Get bool value for 'capsLock'
         CapsLock status.
         """
-        ret = self._get_attr('capsLock')
+        ret = self._get_attr(self._caps_lock)
         return ret
     _caps_lock = 'capsLock'
 
@@ -23261,7 +23261,7 @@ class IKeyboardLedsChangedEvent(IEvent):
         """Get bool value for 'scrollLock'
         ScrollLock status.
         """
-        ret = self._get_attr('scrollLock')
+        ret = self._get_attr(self._scroll_lock)
         return ret
     _scroll_lock = 'scrollLock'
 
@@ -23279,7 +23279,7 @@ class IStateChangedEvent(IEvent):
         """Get MachineState value for 'state'
         New machine state.
         """
-        ret = self._get_attr('state')
+        ret = self._get_attr(self._state)
         return MachineState(ret)
     _state = 'state'
 
@@ -23309,7 +23309,7 @@ class INetworkAdapterChangedEvent(IEvent):
         """Get INetworkAdapter value for 'networkAdapter'
         Network adapter that is subject to change.
         """
-        ret = self._get_attr('networkAdapter')
+        ret = self._get_attr(self._network_adapter)
         return INetworkAdapter(ret)
     _network_adapter = 'networkAdapter'
 
@@ -23329,7 +23329,7 @@ class ISerialPortChangedEvent(IEvent):
         """Get ISerialPort value for 'serialPort'
         Serial port that is subject to change.
         """
-        ret = self._get_attr('serialPort')
+        ret = self._get_attr(self._serial_port)
         return ISerialPort(ret)
     _serial_port = 'serialPort'
 
@@ -23349,7 +23349,7 @@ class IParallelPortChangedEvent(IEvent):
         """Get IParallelPort value for 'parallelPort'
         Parallel port that is subject to change.
         """
-        ret = self._get_attr('parallelPort')
+        ret = self._get_attr(self._parallel_port)
         return IParallelPort(ret)
     _parallel_port = 'parallelPort'
 
@@ -23378,7 +23378,7 @@ class IMediumChangedEvent(IEvent):
         """Get IMediumAttachment value for 'mediumAttachment'
         Medium attachment that is subject to change.
         """
-        ret = self._get_attr('mediumAttachment')
+        ret = self._get_attr(self._medium_attachment)
         return IMediumAttachment(ret)
     _medium_attachment = 'mediumAttachment'
 
@@ -23395,7 +23395,7 @@ class IClipboardModeChangedEvent(IEvent):
         """Get ClipboardMode value for 'clipboardMode'
         The new clipboard mode.
         """
-        ret = self._get_attr('clipboardMode')
+        ret = self._get_attr(self._clipboard_mode)
         return ClipboardMode(ret)
     _clipboard_mode = 'clipboardMode'
 
@@ -23412,7 +23412,7 @@ class IDragAndDropModeChangedEvent(IEvent):
         """Get DragAndDropMode value for 'dragAndDropMode'
         The new drag'n'drop mode.
         """
-        ret = self._get_attr('dragAndDropMode')
+        ret = self._get_attr(self._drag_and_drop_mode)
         return DragAndDropMode(ret)
     _drag_and_drop_mode = 'dragAndDropMode'
 
@@ -23429,7 +23429,7 @@ class ICPUChangedEvent(IEvent):
         """Get int value for 'CPU'
         The CPU which changed.
         """
-        ret = self._get_attr('CPU')
+        ret = self._get_attr(self._cpu)
         return ret
     _cpu = 'CPU'
 
@@ -23438,7 +23438,7 @@ class ICPUChangedEvent(IEvent):
         """Get bool value for 'add'
         Flag whether the CPU was added or removed.
         """
-        ret = self._get_attr('add')
+        ret = self._get_attr(self._add)
         return ret
     _add = 'add'
 
@@ -23455,7 +23455,7 @@ class ICPUExecutionCapChangedEvent(IEvent):
         """Get int value for 'executionCap'
         The new CPU execution cap value. (1-100)
         """
-        ret = self._get_attr('executionCap')
+        ret = self._get_attr(self._execution_cap)
         return ret
     _execution_cap = 'executionCap'
 
@@ -23472,7 +23472,7 @@ class IGuestKeyboardEvent(IEvent):
         """Get int value for 'getScancodes'
         Array of scancodes.
         """
-        ret = self._call_method('getScancodes')
+        ret = self._call_method(self._scancodes)
         return ret
     _scancodes = 'getScancodes'
 
@@ -23489,7 +23489,7 @@ class IGuestMouseEvent(IReusableEvent):
         """Get bool value for 'absolute'
         If this event is relative or absolute.
         """
-        ret = self._get_attr('absolute')
+        ret = self._get_attr(self._absolute)
         return ret
     _absolute = 'absolute'
 
@@ -23498,7 +23498,7 @@ class IGuestMouseEvent(IReusableEvent):
         """Get int value for 'x'
         New X position, or X delta.
         """
-        ret = self._get_attr('x')
+        ret = self._get_attr(self._x)
         return ret
     _x = 'x'
 
@@ -23507,7 +23507,7 @@ class IGuestMouseEvent(IReusableEvent):
         """Get int value for 'y'
         New Y position, or Y delta.
         """
-        ret = self._get_attr('y')
+        ret = self._get_attr(self._y)
         return ret
     _y = 'y'
 
@@ -23516,7 +23516,7 @@ class IGuestMouseEvent(IReusableEvent):
         """Get int value for 'z'
         Z delta.
         """
-        ret = self._get_attr('z')
+        ret = self._get_attr(self._z)
         return ret
     _z = 'z'
 
@@ -23525,7 +23525,7 @@ class IGuestMouseEvent(IReusableEvent):
         """Get int value for 'w'
         W delta.
         """
-        ret = self._get_attr('w')
+        ret = self._get_attr(self._w)
         return ret
     _w = 'w'
 
@@ -23534,7 +23534,7 @@ class IGuestMouseEvent(IReusableEvent):
         """Get int value for 'buttons'
         Button state bitmask.
         """
-        ret = self._get_attr('buttons')
+        ret = self._get_attr(self._buttons)
         return ret
     _buttons = 'buttons'
 
@@ -23551,7 +23551,7 @@ class IGuestSessionEvent(IEvent):
         """Get IGuestSession value for 'session'
         Guest session that is subject to change.
         """
-        ret = self._get_attr('session')
+        ret = self._get_attr(self._session)
         return IGuestSession(ret)
     _session = 'session'
 
@@ -23568,7 +23568,7 @@ class IGuestSessionStateChangedEvent(IGuestSessionEvent):
         """Get int value for 'id'
         Session ID of guest session which was changed.
         """
-        ret = self._get_attr('id')
+        ret = self._get_attr(self._id_p)
         return ret
     _id_p = 'id'
 
@@ -23577,7 +23577,7 @@ class IGuestSessionStateChangedEvent(IGuestSessionEvent):
         """Get GuestSessionStatus value for 'status'
         New session status.
         """
-        ret = self._get_attr('status')
+        ret = self._get_attr(self._status)
         return GuestSessionStatus(ret)
     _status = 'status'
 
@@ -23590,7 +23590,7 @@ class IGuestSessionStateChangedEvent(IGuestSessionEvent):
         the runtime (IPRT) error code from the guest. See include/iprt/err.h and
         include/VBox/err.h for details.
         """
-        ret = self._get_attr('error')
+        ret = self._get_attr(self._error)
         return IVirtualBoxErrorInfo(ret)
     _error = 'error'
 
@@ -23608,7 +23608,7 @@ class IGuestSessionRegisteredEvent(IGuestSessionEvent):
         If @c true, the guest session was registered, otherwise it was
         unregistered.
         """
-        ret = self._get_attr('registered')
+        ret = self._get_attr(self._registered)
         return ret
     _registered = 'registered'
 
@@ -23625,7 +23625,7 @@ class IGuestProcessEvent(IGuestSessionEvent):
         """Get IGuestProcess value for 'process'
         Guest process object which is related to this event.
         """
-        ret = self._get_attr('process')
+        ret = self._get_attr(self._process)
         return IGuestProcess(ret)
     _process = 'process'
 
@@ -23634,7 +23634,7 @@ class IGuestProcessEvent(IGuestSessionEvent):
         """Get int value for 'pid'
         Guest process ID (PID).
         """
-        ret = self._get_attr('pid')
+        ret = self._get_attr(self._pid)
         return ret
     _pid = 'pid'
 
@@ -23652,7 +23652,7 @@ class IGuestProcessRegisteredEvent(IGuestProcessEvent):
         If @c true, the guest process was registered, otherwise it was
         unregistered.
         """
-        ret = self._get_attr('registered')
+        ret = self._get_attr(self._registered)
         return ret
     _registered = 'registered'
 
@@ -23669,7 +23669,7 @@ class IGuestProcessStateChangedEvent(IGuestProcessEvent):
         """Get ProcessStatus value for 'status'
         New guest process status.
         """
-        ret = self._get_attr('status')
+        ret = self._get_attr(self._status)
         return ProcessStatus(ret)
     _status = 'status'
 
@@ -23682,7 +23682,7 @@ class IGuestProcessStateChangedEvent(IGuestProcessEvent):
         the runtime (IPRT) error code from the guest. See include/iprt/err.h and
         include/VBox/err.h for details.
         """
-        ret = self._get_attr('error')
+        ret = self._get_attr(self._error)
         return IVirtualBoxErrorInfo(ret)
     _error = 'error'
 
@@ -23700,7 +23700,7 @@ class IGuestProcessIOEvent(IGuestProcessEvent):
         Input/output (IO) handle involved in this event. Usually 0 is stdin,
         1 is stdout and 2 is stderr.
         """
-        ret = self._get_attr('handle')
+        ret = self._get_attr(self._handle)
         return ret
     _handle = 'handle'
 
@@ -23709,7 +23709,7 @@ class IGuestProcessIOEvent(IGuestProcessEvent):
         """Get int value for 'processed'
         Processed input or output (in bytes).
         """
-        ret = self._get_attr('processed')
+        ret = self._get_attr(self._processed)
         return ret
     _processed = 'processed'
 
@@ -23727,7 +23727,7 @@ class IGuestProcessInputNotifyEvent(IGuestProcessIOEvent):
         """Get ProcessInputStatus value for 'status'
         Current process input status.
         """
-        ret = self._get_attr('status')
+        ret = self._get_attr(self._status)
         return ProcessInputStatus(ret)
     _status = 'status'
 
@@ -23744,7 +23744,7 @@ class IGuestProcessOutputEvent(IGuestProcessIOEvent):
         """Get str value for 'getData'
         Actual output data.
         """
-        ret = self._call_method('getData')
+        ret = self._call_method(self._data)
         return ret
     _data = 'getData'
 
@@ -23761,7 +23761,7 @@ class IGuestFileEvent(IGuestSessionEvent):
         """Get IGuestFile value for 'file'
         Guest file object which is related to this event.
         """
-        ret = self._get_attr('file')
+        ret = self._get_attr(self._file_p)
         return IGuestFile(ret)
     _file_p = 'file'
 
@@ -23779,7 +23779,7 @@ class IGuestFileRegisteredEvent(IGuestFileEvent):
         If @c true, the guest file was registered, otherwise it was
         unregistered.
         """
-        ret = self._get_attr('registered')
+        ret = self._get_attr(self._registered)
         return ret
     _registered = 'registered'
 
@@ -23796,7 +23796,7 @@ class IGuestFileStateChangedEvent(IGuestFileEvent):
         """Get FileStatus value for 'status'
         New guest file status.
         """
-        ret = self._get_attr('status')
+        ret = self._get_attr(self._status)
         return FileStatus(ret)
     _status = 'status'
 
@@ -23809,7 +23809,7 @@ class IGuestFileStateChangedEvent(IGuestFileEvent):
         the runtime (IPRT) error code from the guest. See include/iprt/err.h and
         include/VBox/err.h for details.
         """
-        ret = self._get_attr('error')
+        ret = self._get_attr(self._error)
         return IVirtualBoxErrorInfo(ret)
     _error = 'error'
 
@@ -23826,7 +23826,7 @@ class IGuestFileIOEvent(IGuestFileEvent):
         """Get int value for 'offset'
         Current offset (in bytes).
         """
-        ret = self._get_attr('offset')
+        ret = self._get_attr(self._offset)
         return ret
     _offset = 'offset'
 
@@ -23835,7 +23835,7 @@ class IGuestFileIOEvent(IGuestFileEvent):
         """Get int value for 'processed'
         Processed input or output (in bytes).
         """
-        ret = self._get_attr('processed')
+        ret = self._get_attr(self._processed)
         return ret
     _processed = 'processed'
 
@@ -23860,7 +23860,7 @@ class IGuestFileReadEvent(IGuestFileIOEvent):
         """Get str value for 'getData'
         Actual data read.
         """
-        ret = self._call_method('getData')
+        ret = self._call_method(self._data)
         return ret
     _data = 'getData'
 
@@ -23933,7 +23933,7 @@ class IUSBDeviceStateChangedEvent(IEvent):
         """Get IUSBDevice value for 'device'
         Device that is subject to state change.
         """
-        ret = self._get_attr('device')
+        ret = self._get_attr(self._device)
         return IUSBDevice(ret)
     _device = 'device'
 
@@ -23942,7 +23942,7 @@ class IUSBDeviceStateChangedEvent(IEvent):
         """Get bool value for 'attached'
         @c true if the device was attached and @c false otherwise.
         """
-        ret = self._get_attr('attached')
+        ret = self._get_attr(self._attached)
         return ret
     _attached = 'attached'
 
@@ -23951,7 +23951,7 @@ class IUSBDeviceStateChangedEvent(IEvent):
         """Get IVirtualBoxErrorInfo value for 'error'
         @c null on success or an error message object on failure.
         """
-        ret = self._get_attr('error')
+        ret = self._get_attr(self._error)
         return IVirtualBoxErrorInfo(ret)
     _error = 'error'
 
@@ -23976,7 +23976,7 @@ class ISharedFolderChangedEvent(IEvent):
         """Get Scope value for 'scope'
         Scope of the notification.
         """
-        ret = self._get_attr('scope')
+        ret = self._get_attr(self._scope)
         return Scope(ret)
     _scope = 'scope'
 
@@ -24039,7 +24039,7 @@ class IRuntimeErrorEvent(IEvent):
         """Get bool value for 'fatal'
         Whether the error is fatal or not.
         """
-        ret = self._get_attr('fatal')
+        ret = self._get_attr(self._fatal)
         return ret
     _fatal = 'fatal'
 
@@ -24048,7 +24048,7 @@ class IRuntimeErrorEvent(IEvent):
         """Get str value for 'id'
         Error identifier.
         """
-        ret = self._get_attr('id')
+        ret = self._get_attr(self._id_p)
         return ret
     _id_p = 'id'
 
@@ -24057,7 +24057,7 @@ class IRuntimeErrorEvent(IEvent):
         """Get str value for 'message'
         Optional error message.
         """
-        ret = self._get_attr('message')
+        ret = self._get_attr(self._message)
         return ret
     _message = 'message'
 
@@ -24074,7 +24074,7 @@ class IEventSourceChangedEvent(IEvent):
         """Get IEventListener value for 'listener'
         Event listener which has changed.
         """
-        ret = self._get_attr('listener')
+        ret = self._get_attr(self._listener)
         return IEventListener(ret)
     _listener = 'listener'
 
@@ -24083,7 +24083,7 @@ class IEventSourceChangedEvent(IEvent):
         """Get bool value for 'add'
         Flag whether listener was added or removed.
         """
-        ret = self._get_attr('add')
+        ret = self._get_attr(self._add)
         return ret
     _add = 'add'
 
@@ -24102,7 +24102,7 @@ class IExtraDataChangedEvent(IEvent):
         ID of the machine this event relates to.
         Null for global extra data changes.
         """
-        ret = self._get_attr('machineId')
+        ret = self._get_attr(self._machine_id)
         return ret
     _machine_id = 'machineId'
 
@@ -24111,7 +24111,7 @@ class IExtraDataChangedEvent(IEvent):
         """Get str value for 'key'
         Extra data key that has changed.
         """
-        ret = self._get_attr('key')
+        ret = self._get_attr(self._key)
         return ret
     _key = 'key'
 
@@ -24120,7 +24120,7 @@ class IExtraDataChangedEvent(IEvent):
         """Get str value for 'value'
         Extra data value for the given key.
         """
-        ret = self._get_attr('value')
+        ret = self._get_attr(self._value)
         return ret
     _value = 'value'
 
@@ -24183,7 +24183,7 @@ class IExtraDataCanChangeEvent(IVetoEvent):
         ID of the machine this event relates to.
         Null for global extra data changes.
         """
-        ret = self._get_attr('machineId')
+        ret = self._get_attr(self._machine_id)
         return ret
     _machine_id = 'machineId'
 
@@ -24192,7 +24192,7 @@ class IExtraDataCanChangeEvent(IVetoEvent):
         """Get str value for 'key'
         Extra data key that has changed.
         """
-        ret = self._get_attr('key')
+        ret = self._get_attr(self._key)
         return ret
     _key = 'key'
 
@@ -24201,7 +24201,7 @@ class IExtraDataCanChangeEvent(IVetoEvent):
         """Get str value for 'value'
         Extra data value for the given key.
         """
-        ret = self._get_attr('value')
+        ret = self._get_attr(self._value)
         return ret
     _value = 'value'
 
@@ -24261,14 +24261,14 @@ class IShowWindowEvent(IEvent):
         necessary to implement the show window semantics for
         the given platform and/or this VirtualBox front-end.
         """
-        ret = self._get_attr('winId')
+        ret = self._get_attr(self._win_id)
         return ret
 
     @win_id.setter
     def win_id(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr('winId', value)
+        return self._set_attr(self._win_id', value)
     _win_id = 'winId'
 
 
@@ -24284,7 +24284,7 @@ class INATRedirectEvent(IMachineEvent):
         """Get int value for 'slot'
         Adapter which NAT attached to.
         """
-        ret = self._get_attr('slot')
+        ret = self._get_attr(self._slot)
         return ret
     _slot = 'slot'
 
@@ -24293,7 +24293,7 @@ class INATRedirectEvent(IMachineEvent):
         """Get bool value for 'remove'
         Whether rule remove or add.
         """
-        ret = self._get_attr('remove')
+        ret = self._get_attr(self._remove)
         return ret
     _remove = 'remove'
 
@@ -24302,7 +24302,7 @@ class INATRedirectEvent(IMachineEvent):
         """Get str value for 'name'
         Name of the rule.
         """
-        ret = self._get_attr('name')
+        ret = self._get_attr(self._name)
         return ret
     _name = 'name'
 
@@ -24311,7 +24311,7 @@ class INATRedirectEvent(IMachineEvent):
         """Get NATProtocol value for 'proto'
         Protocol (TCP or UDP) of the redirect rule.
         """
-        ret = self._get_attr('proto')
+        ret = self._get_attr(self._proto)
         return NATProtocol(ret)
     _proto = 'proto'
 
@@ -24320,7 +24320,7 @@ class INATRedirectEvent(IMachineEvent):
         """Get str value for 'hostIP'
         Host ip address to bind socket on.
         """
-        ret = self._get_attr('hostIP')
+        ret = self._get_attr(self._host_ip)
         return ret
     _host_ip = 'hostIP'
 
@@ -24329,7 +24329,7 @@ class INATRedirectEvent(IMachineEvent):
         """Get int value for 'hostPort'
         Host port to bind socket on.
         """
-        ret = self._get_attr('hostPort')
+        ret = self._get_attr(self._host_port)
         return ret
     _host_port = 'hostPort'
 
@@ -24338,7 +24338,7 @@ class INATRedirectEvent(IMachineEvent):
         """Get str value for 'guestIP'
         Guest ip address to redirect to.
         """
-        ret = self._get_attr('guestIP')
+        ret = self._get_attr(self._guest_ip)
         return ret
     _guest_ip = 'guestIP'
 
@@ -24347,7 +24347,7 @@ class INATRedirectEvent(IMachineEvent):
         """Get int value for 'guestPort'
         Guest port to redirect to.
         """
-        ret = self._get_attr('guestPort')
+        ret = self._get_attr(self._guest_port)
         return ret
     _guest_port = 'guestPort'
 
@@ -24368,7 +24368,7 @@ class IHostPCIDevicePlugEvent(IMachineEvent):
         """Get bool value for 'plugged'
         If device successfully plugged or unplugged.
         """
-        ret = self._get_attr('plugged')
+        ret = self._get_attr(self._plugged)
         return ret
     _plugged = 'plugged'
 
@@ -24378,7 +24378,7 @@ class IHostPCIDevicePlugEvent(IMachineEvent):
         If operation was successful, if false - 'message' attribute
         may be of interest.
         """
-        ret = self._get_attr('success')
+        ret = self._get_attr(self._success)
         return ret
     _success = 'success'
 
@@ -24387,7 +24387,7 @@ class IHostPCIDevicePlugEvent(IMachineEvent):
         """Get IPCIDeviceAttachment value for 'attachment'
         Attachment info for this device.
         """
-        ret = self._get_attr('attachment')
+        ret = self._get_attr(self._attachment)
         return IPCIDeviceAttachment(ret)
     _attachment = 'attachment'
 
@@ -24396,7 +24396,7 @@ class IHostPCIDevicePlugEvent(IMachineEvent):
         """Get str value for 'message'
         Optional error message.
         """
-        ret = self._get_attr('message')
+        ret = self._get_attr(self._message)
         return ret
     _message = 'message'
 
@@ -24414,7 +24414,7 @@ class IVBoxSVCAvailabilityChangedEvent(IEvent):
         """Get bool value for 'available'
         Whether VBoxSVC is available now.
         """
-        ret = self._get_attr('available')
+        ret = self._get_attr(self._available)
         return ret
     _available = 'available'
 
@@ -24431,7 +24431,7 @@ class IBandwidthGroupChangedEvent(IEvent):
         """Get IBandwidthGroup value for 'bandwidthGroup'
         The changed bandwidth group.
         """
-        ret = self._get_attr('bandwidthGroup')
+        ret = self._get_attr(self._bandwidth_group)
         return IBandwidthGroup(ret)
     _bandwidth_group = 'bandwidthGroup'
 
@@ -24448,7 +24448,7 @@ class IGuestMonitorChangedEvent(IEvent):
         """Get GuestMonitorChangedEventType value for 'changeType'
         What was changed for this guest monitor.
         """
-        ret = self._get_attr('changeType')
+        ret = self._get_attr(self._change_type)
         return GuestMonitorChangedEventType(ret)
     _change_type = 'changeType'
 
@@ -24457,7 +24457,7 @@ class IGuestMonitorChangedEvent(IEvent):
         """Get int value for 'screenId'
         The monitor which was changed.
         """
-        ret = self._get_attr('screenId')
+        ret = self._get_attr(self._screen_id)
         return ret
     _screen_id = 'screenId'
 
@@ -24467,7 +24467,7 @@ class IGuestMonitorChangedEvent(IEvent):
         Physical X origin relative to the primary screen.
         Valid for Enabled and NewOrigin.
         """
-        ret = self._get_attr('originX')
+        ret = self._get_attr(self._origin_x)
         return ret
     _origin_x = 'originX'
 
@@ -24477,7 +24477,7 @@ class IGuestMonitorChangedEvent(IEvent):
         Physical Y origin relative to the primary screen.
         Valid for Enabled and NewOrigin.
         """
-        ret = self._get_attr('originY')
+        ret = self._get_attr(self._origin_y)
         return ret
     _origin_y = 'originY'
 
@@ -24487,7 +24487,7 @@ class IGuestMonitorChangedEvent(IEvent):
         Width of the screen.
         Valid for Enabled.
         """
-        ret = self._get_attr('width')
+        ret = self._get_attr(self._width)
         return ret
     _width = 'width'
 
@@ -24497,7 +24497,7 @@ class IGuestMonitorChangedEvent(IEvent):
         Height of the screen.
         Valid for Enabled.
         """
-        ret = self._get_attr('height')
+        ret = self._get_attr(self._height)
         return ret
     _height = 'height'
 
@@ -24516,7 +24516,7 @@ class IStorageDeviceChangedEvent(IEvent):
         """Get IMediumAttachment value for 'storageDevice'
         Storage device that is subject to change.
         """
-        ret = self._get_attr('storageDevice')
+        ret = self._get_attr(self._storage_device)
         return IMediumAttachment(ret)
     _storage_device = 'storageDevice'
 
@@ -24525,7 +24525,7 @@ class IStorageDeviceChangedEvent(IEvent):
         """Get bool value for 'removed'
         Flag whether the device was removed or added to the VM.
         """
-        ret = self._get_attr('removed')
+        ret = self._get_attr(self._removed)
         return ret
     _removed = 'removed'
 
@@ -24534,7 +24534,7 @@ class IStorageDeviceChangedEvent(IEvent):
         """Get bool value for 'silent'
         Flag whether the guest should be notified about the change.
         """
-        ret = self._get_attr('silent')
+        ret = self._get_attr(self._silent)
         return ret
     _silent = 'silent'
 
@@ -24547,7 +24547,7 @@ class INATNetworkChangedEvent(IEvent):
     @property
     def network_name(self):
         """Get str value for 'NetworkName'"""
-        ret = self._get_attr('NetworkName')
+        ret = self._get_attr(self._network_name)
         return ret
     _network_name = 'NetworkName'
 
@@ -24564,7 +24564,7 @@ class INATNetworkStartStopEvent(INATNetworkChangedEvent):
         """Get bool value for 'startEvent'
         IsStartEvent is true when NAT network is started and false on stopping.
         """
-        ret = self._get_attr('startEvent')
+        ret = self._get_attr(self._start_event)
         return ret
     _start_event = 'startEvent'
 
@@ -24583,7 +24583,7 @@ class INATNetworkCreationDeletionEvent(INATNetworkAlterEvent):
     @property
     def creation_event(self):
         """Get bool value for 'creationEvent'"""
-        ret = self._get_attr('creationEvent')
+        ret = self._get_attr(self._creation_event)
         return ret
     _creation_event = 'creationEvent'
 
@@ -24596,35 +24596,35 @@ class INATNetworkSettingEvent(INATNetworkAlterEvent):
     @property
     def enabled(self):
         """Get bool value for 'enabled'"""
-        ret = self._get_attr('enabled')
+        ret = self._get_attr(self._enabled)
         return ret
     _enabled = 'enabled'
 
     @property
     def network(self):
         """Get str value for 'network'"""
-        ret = self._get_attr('network')
+        ret = self._get_attr(self._network)
         return ret
     _network = 'network'
 
     @property
     def gateway(self):
         """Get str value for 'gateway'"""
-        ret = self._get_attr('gateway')
+        ret = self._get_attr(self._gateway)
         return ret
     _gateway = 'gateway'
 
     @property
     def advertise_default_i_pv6_route_enabled(self):
         """Get bool value for 'advertiseDefaultIPv6RouteEnabled'"""
-        ret = self._get_attr('advertiseDefaultIPv6RouteEnabled')
+        ret = self._get_attr(self._advertise_default_i_pv6_route_enabled)
         return ret
     _advertise_default_i_pv6_route_enabled = 'advertiseDefaultIPv6RouteEnabled'
 
     @property
     def need_dhcp_server(self):
         """Get bool value for 'needDhcpServer'"""
-        ret = self._get_attr('needDhcpServer')
+        ret = self._get_attr(self._need_dhcp_server)
         return ret
     _need_dhcp_server = 'needDhcpServer'
 
@@ -24637,56 +24637,56 @@ class INATNetworkPortForwardEvent(INATNetworkAlterEvent):
     @property
     def create(self):
         """Get bool value for 'create'"""
-        ret = self._get_attr('create')
+        ret = self._get_attr(self._create)
         return ret
     _create = 'create'
 
     @property
     def ipv6(self):
         """Get bool value for 'ipv6'"""
-        ret = self._get_attr('ipv6')
+        ret = self._get_attr(self._ipv6)
         return ret
     _ipv6 = 'ipv6'
 
     @property
     def name(self):
         """Get str value for 'name'"""
-        ret = self._get_attr('name')
+        ret = self._get_attr(self._name)
         return ret
     _name = 'name'
 
     @property
     def proto(self):
         """Get NATProtocol value for 'proto'"""
-        ret = self._get_attr('proto')
+        ret = self._get_attr(self._proto)
         return NATProtocol(ret)
     _proto = 'proto'
 
     @property
     def host_ip(self):
         """Get str value for 'hostIp'"""
-        ret = self._get_attr('hostIp')
+        ret = self._get_attr(self._host_ip)
         return ret
     _host_ip = 'hostIp'
 
     @property
     def host_port(self):
         """Get int value for 'hostPort'"""
-        ret = self._get_attr('hostPort')
+        ret = self._get_attr(self._host_port)
         return ret
     _host_port = 'hostPort'
 
     @property
     def guest_ip(self):
         """Get str value for 'guestIp'"""
-        ret = self._get_attr('guestIp')
+        ret = self._get_attr(self._guest_ip)
         return ret
     _guest_ip = 'guestIp'
 
     @property
     def guest_port(self):
         """Get int value for 'guestPort'"""
-        ret = self._get_attr('guestPort')
+        ret = self._get_attr(self._guest_port)
         return ret
     _guest_port = 'guestPort'
 

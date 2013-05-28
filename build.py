@@ -318,7 +318,7 @@ ATTR_SET = '''
     @%(pname)s.setter
     def %(pname)s(self, value):
 %(assert_type)s
-        return self._set_attr('%(name)s', value)'''
+        return self._set_attr(self._%(pname)s', value)'''
 
 ATTR_SET_ASSERT_INST = '''\
         if not isinstance(value, %(ntype)s):
@@ -370,13 +370,13 @@ def process_interface_attribute(node):
     pname = pythonic_name(name)
     if array:
         name = 'get%s' % name[0].upper() + name[1:]
-        callname = "_call_method('%s')" % (name)
+        callname = "_call_method(self._%s)" % (pname)
         if ntype not in python_types:
             retval = "[%s(a) for a in ret]" % ntype
         else:
             retval = 'ret'
     else:
-        callname = "_get_attr('%s')" % name
+        callname = "_get_attr(self._%s)" % pname
         if ntype not in python_types:
             retval = "%s(ret)" % (ntype)
         else:
