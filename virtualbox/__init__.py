@@ -1,4 +1,4 @@
-from extends import library
+from _library_ext import library
 
 __doc__ = library.__doc__
 
