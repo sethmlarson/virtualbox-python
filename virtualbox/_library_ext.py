@@ -9,8 +9,8 @@ manager = vboxapi.VirtualBoxManager(None, None)
  This module is responsible for bootstrapping the COM interfaces into the 
  VirthalBox and Session class interfaces.
 
- It is also the place to default COM API behaviour and the Interfaces defined
- within the Main library API.
+ It is also the place to fix up or improve on default COM API behaviour
+ when interacting through an Interface to the Main library API.
 """
 
 
@@ -30,6 +30,14 @@ class ISession(library.ISession):
             self._i = manager.platform.getSessionObject(None)
         else:
             self._i = interface
+
+
+class IMachine(library.IMachine):
+    __doc__ = library.IMachine.__doc__
+    
+    # Testing showed that deleteConfig was just 'delete'
+    _delete_config = 'delete'
+
 
 
 # Replace original with extension
