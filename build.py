@@ -313,10 +313,18 @@ ATTR_GET = '''\
 ATTR_SET = '''\
     @%(pname)s.setter
     def %(pname)s(self, value):
-        assert isinstance(value, %(ntype)s), \\
-                "value is not an instance of %(ntype)s"
+%(assert_type)s
         return self._set_attr('%(name)s', value)
 '''
+
+ATTR_SET_ASSERT_INST = '''\
+        if not isinstance(value, %(ntype)s):
+            raise TypeError("value is not an instance of %(ntype)s")'''
+
+ATTR_SET_ASSERT_STR  = '''\
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")'''
+
 
 known_types = {'wstring':'str',
                'boolean':'bool', 
@@ -375,8 +383,13 @@ def process_interface_attribute(node):
     if not readonly:
         if rdoc: 
             doc = "\n        %s\n        " % (rdoc)
+            
+        if ntype == 'str':
+            assert_type = ATTR_SET_ASSERT_STR
+        else:
+            assert_type = ATTR_SET_ASSERT_INST % (dict(ntype=ntype))
         code.append(ATTR_SET % dict(name=name, pname=pname,
-                        ntype=ntype))
+                                    assert_type=assert_type))
     return code
 
 
@@ -393,15 +406,29 @@ METHOD_DOC_RAISES = '''\
         raises %(name)s%(doc)s
         '''
 
-METHOD_ASSERT_IN = '''\
+METHOD_ASSERT_IN_INST = '''\
         if not isinstance(%(invar)s, %(invartype)s):
             raise TypeError("%(invar)s can only be an instance of type %(invartype)s")'''
+
+METHOD_ASSERT_IN_STR  = '''\
+        if type(%(invar)s) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")'''
 
 METHOD_ASSERT_ARRAY_IN = '''\
         for a in %(invar)s[:10]:
             if not isinstance(a, %(invartype)s):
                 raise TypeError("array can only contain objects of type %(invartype)s")'''
-            
+
+METHOD_ASSERT_ARRAY_IN_INST = '''\
+        for a in %(invar)s[:10]:
+            if not isinstance(a, %(invartype)s):
+                raise TypeError("array can only contain objects of type %(invartype)s")'''
+
+METHOD_ASSERT_ARRAY_IN_STR = '''\
+        for a in %(invar)s[:10]:
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")'''
+
 METHOD_CALL = '''\
         %(outvars)sself._call_method('%(name)s'%(in_p)s)'''
 
@@ -491,10 +518,17 @@ def process_interface_method(node):
                 invartype = 'list'
             else:
                 invartype = atype
-            func.append(METHOD_ASSERT_IN % dict(invar=name,
+
+            if invartype == 'str':
+                func.append(METHOD_ASSERT_IN_STR % dict(invar=name))
+            else:
+                func.append(METHOD_ASSERT_IN_INST % dict(invar=name,
                                                 invartype=invartype))
             if array:
-                func.append(METHOD_ASSERT_ARRAY_IN % dict(invar=name,
+                if atype == 'str':
+                    func.append(METHOD_ASSERT_ARRAY_IN_STR % dict(invar=name))
+                else:
+                    func.append(METHOD_ASSERT_ARRAY_IN_INST % dict(invar=name,
                                                       invartype=atype))
         elif io == 'out':
             outvars.append(name)

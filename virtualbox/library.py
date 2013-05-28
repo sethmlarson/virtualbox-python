@@ -2345,8 +2345,8 @@ class INATNetwork(Interface):
 
     @network_name.setter
     def network_name(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('NetworkName', value)
 
     @property
@@ -2357,8 +2357,8 @@ class INATNetwork(Interface):
 
     @enabled.setter
     def enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('enabled', value)
 
     @property
@@ -2374,8 +2374,8 @@ class INATNetwork(Interface):
 
     @network.setter
     def network(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('network', value)
 
     @property
@@ -2397,8 +2397,8 @@ class INATNetwork(Interface):
 
     @i_pv6_enabled.setter
     def i_pv6_enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('IPv6Enabled', value)
 
     @property
@@ -2411,8 +2411,8 @@ class INATNetwork(Interface):
 
     @i_pv6_prefix.setter
     def i_pv6_prefix(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('IPv6Prefix', value)
 
     @property
@@ -2423,8 +2423,8 @@ class INATNetwork(Interface):
 
     @advertise_default_i_pv6_route_enabled.setter
     def advertise_default_i_pv6_route_enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('advertiseDefaultIPv6RouteEnabled', value)
 
     @property
@@ -2435,8 +2435,8 @@ class INATNetwork(Interface):
 
     @need_dhcp_server.setter
     def need_dhcp_server(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('needDhcpServer', value)
 
     @property
@@ -2492,16 +2492,16 @@ class INATNetwork(Interface):
         """
         if not isinstance(is_ipv6, bool):
             raise TypeError("is_ipv6 can only be an instance of type bool")
-        if not isinstance(rule_name, str):
-            raise TypeError("rule_name can only be an instance of type str")
+        if type(rule_name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(proto, NATProtocol):
             raise TypeError("proto can only be an instance of type NATProtocol")
-        if not isinstance(host_ip, str):
-            raise TypeError("host_ip can only be an instance of type str")
+        if type(host_ip) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(host_port, int):
             raise TypeError("host_port can only be an instance of type int")
-        if not isinstance(guest_ip, str):
-            raise TypeError("guest_ip can only be an instance of type str")
+        if type(guest_ip) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(guest_port, int):
             raise TypeError("guest_port can only be an instance of type int")
         self._call_method('addPortForwardRule',
@@ -2517,8 +2517,8 @@ class INATNetwork(Interface):
         """
         if not isinstance(i_sipv6, bool):
             raise TypeError("i_sipv6 can only be an instance of type bool")
-        if not isinstance(rule_name, str):
-            raise TypeError("rule_name can only be an instance of type str")
+        if type(rule_name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('removePortForwardRule',
                      in_p=[i_sipv6, rule_name])
         
@@ -2529,8 +2529,8 @@ class INATNetwork(Interface):
             Type of internal network trunk.
 
         """
-        if not isinstance(trunk_type, str):
-            raise TypeError("trunk_type can only be an instance of type str")
+        if type(trunk_type) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('start',
                      in_p=[trunk_type])
         
@@ -2561,8 +2561,8 @@ class IDHCPServer(Interface):
 
     @enabled.setter
     def enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('enabled', value)
 
     @property
@@ -2624,14 +2624,14 @@ class IDHCPServer(Interface):
             invalid configuration supplied
         
         """
-        if not isinstance(ip_address, str):
-            raise TypeError("ip_address can only be an instance of type str")
-        if not isinstance(network_mask, str):
-            raise TypeError("network_mask can only be an instance of type str")
-        if not isinstance(from_ip_address, str):
-            raise TypeError("from_ip_address can only be an instance of type str")
-        if not isinstance(to_ip_address, str):
-            raise TypeError("to_ip_address can only be an instance of type str")
+        if type(ip_address) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(network_mask) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(from_ip_address) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(to_ip_address) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('setConfiguration',
                      in_p=[ip_address, network_mask, from_ip_address, to_ip_address])
         
@@ -2651,12 +2651,12 @@ class IDHCPServer(Interface):
             Failed to start the process.
         
         """
-        if not isinstance(network_name, str):
-            raise TypeError("network_name can only be an instance of type str")
-        if not isinstance(trunk_name, str):
-            raise TypeError("trunk_name can only be an instance of type str")
-        if not isinstance(trunk_type, str):
-            raise TypeError("trunk_type can only be an instance of type str")
+        if type(network_name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(trunk_name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(trunk_type) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('start',
                      in_p=[network_name, trunk_name, trunk_type])
         
@@ -2977,14 +2977,14 @@ class IVirtualBox(Interface):
             Fully qualified path where the machine would be created.
 
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
-        if not isinstance(group, str):
-            raise TypeError("group can only be an instance of type str")
-        if not isinstance(create_flags, str):
-            raise TypeError("create_flags can only be an instance of type str")
-        if not isinstance(base_folder, str):
-            raise TypeError("base_folder can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(group) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(create_flags) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(base_folder) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         file_p = self._call_method('composeMachineFilename',
                      in_p=[name, group, create_flags, base_folder])
         return file_p
@@ -3082,19 +3082,19 @@ class IVirtualBox(Interface):
             @a name is empty or @c null.
         
         """
-        if not isinstance(settings_file, str):
-            raise TypeError("settings_file can only be an instance of type str")
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(settings_file) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(groups, list):
             raise TypeError("groups can only be an instance of type list")
         for a in groups[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
-        if not isinstance(os_type_id, str):
-            raise TypeError("os_type_id can only be an instance of type str")
-        if not isinstance(flags, str):
-            raise TypeError("flags can only be an instance of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
+        if type(os_type_id) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(flags) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         machine = self._call_method('createMachine',
                      in_p=[settings_file, name, groups, os_type_id, flags])
         machine = IMachine(machine)
@@ -3119,8 +3119,8 @@ class IVirtualBox(Interface):
             Settings file name invalid, not found or sharing violation.
         
         """
-        if not isinstance(settings_file, str):
-            raise TypeError("settings_file can only be an instance of type str")
+        if type(settings_file) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         machine = self._call_method('openMachine',
                      in_p=[settings_file])
         machine = IMachine(machine)
@@ -3167,8 +3167,8 @@ class IVirtualBox(Interface):
             Could not find registered machine matching @a nameOrId.
         
         """
-        if not isinstance(name_or_id, str):
-            raise TypeError("name_or_id can only be an instance of type str")
+        if type(name_or_id) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         machine = self._call_method('findMachine',
                      in_p=[name_or_id])
         machine = IMachine(machine)
@@ -3189,8 +3189,8 @@ class IVirtualBox(Interface):
         if not isinstance(groups, list):
             raise TypeError("groups can only be an instance of type list")
         for a in groups[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         machines = self._call_method('getMachinesByGroups',
                      in_p=[groups])
         machines = [IMachine(a) for a in machines]
@@ -3276,10 +3276,10 @@ class IVirtualBox(Interface):
             @a location is a not valid file name (for file-based formats only).
         
         """
-        if not isinstance(format_p, str):
-            raise TypeError("format_p can only be an instance of type str")
-        if not isinstance(location, str):
-            raise TypeError("location can only be an instance of type str")
+        if type(format_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(location) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         medium = self._call_method('createHardDisk',
                      in_p=[format_p, location])
         medium = IMedium(medium)
@@ -3374,8 +3374,8 @@ class IVirtualBox(Interface):
             Medium has already been added to a media registry.
         
         """
-        if not isinstance(location, str):
-            raise TypeError("location can only be an instance of type str")
+        if type(location) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(device_type, DeviceType):
             raise TypeError("device_type can only be an instance of type DeviceType")
         if not isinstance(access_mode, AccessMode):
@@ -3411,8 +3411,8 @@ class IVirtualBox(Interface):
             @a id is not a valid Guest OS type.
         
         """
-        if not isinstance(id_p, str):
-            raise TypeError("id_p can only be an instance of type str")
+        if type(id_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         type_p = self._call_method('getGuestOSType',
                      in_p=[id_p])
         type_p = IGuestOSType(type_p)
@@ -3441,10 +3441,10 @@ class IVirtualBox(Interface):
           or not.
 
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
-        if not isinstance(host_path, str):
-            raise TypeError("host_path can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(host_path) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(writable, bool):
             raise TypeError("writable can only be an instance of type bool")
         if not isinstance(automount, bool):
@@ -3464,8 +3464,8 @@ class IVirtualBox(Interface):
             Logical name of the shared folder to remove.
 
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('removeSharedFolder',
                      in_p=[name])
         
@@ -3499,8 +3499,8 @@ class IVirtualBox(Interface):
             Could not parse the settings file.
         
         """
-        if not isinstance(key, str):
-            raise TypeError("key can only be an instance of type str")
+        if type(key) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         value = self._call_method('getExtraData',
                      in_p=[key])
         return value
@@ -3540,10 +3540,10 @@ class IVirtualBox(Interface):
             Modification request refused.
         
         """
-        if not isinstance(key, str):
-            raise TypeError("key can only be an instance of type str")
-        if not isinstance(value, str):
-            raise TypeError("value can only be an instance of type str")
+        if type(key) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('setExtraData',
                      in_p=[key, value])
         
@@ -3558,8 +3558,8 @@ class IVirtualBox(Interface):
             Virtual machine is not mutable.
         
         """
-        if not isinstance(password, str):
-            raise TypeError("password can only be an instance of type str")
+        if type(password) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('setSettingsSecret',
                      in_p=[password])
         
@@ -3576,8 +3576,8 @@ class IVirtualBox(Interface):
             Host network interface @a name already exists.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         server = self._call_method('createDHCPServer',
                      in_p=[name])
         server = IDHCPServer(server)
@@ -3596,8 +3596,8 @@ class IVirtualBox(Interface):
             Host network interface @a name already exists.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         server = self._call_method('findDHCPServerByNetworkName',
                      in_p=[name])
         server = IDHCPServer(server)
@@ -3626,8 +3626,8 @@ class IVirtualBox(Interface):
         return network of type INATNetwork
 
         """
-        if not isinstance(network_name, str):
-            raise TypeError("network_name can only be an instance of type str")
+        if type(network_name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         network = self._call_method('createNATNetwork',
                      in_p=[network_name])
         network = INATNetwork(network)
@@ -3641,8 +3641,8 @@ class IVirtualBox(Interface):
         return network of type INATNetwork
 
         """
-        if not isinstance(network_name, str):
-            raise TypeError("network_name can only be an instance of type str")
+        if type(network_name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         network = self._call_method('findNATNetworkByName',
                      in_p=[network_name])
         network = INATNetwork(network)
@@ -3683,8 +3683,8 @@ class IVirtualBox(Interface):
         """
         if not isinstance(firmware_type, FirmwareType):
             raise TypeError("firmware_type can only be an instance of type FirmwareType")
-        if not isinstance(version, str):
-            raise TypeError("version can only be an instance of type str")
+        if type(version) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         (url, file_p, result) = self._call_method('checkFirmwarePresent',
                      in_p=[firmware_type, version])
         return (url, file_p, result)
@@ -3739,8 +3739,8 @@ class IVFSExplorer(Interface):
             Progress object to track the operation completion.
 
         """
-        if not isinstance(dir_p, str):
-            raise TypeError("dir_p can only be an instance of type str")
+        if type(dir_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         progress = self._call_method('cd',
                      in_p=[dir_p])
         progress = IProgress(progress)
@@ -3791,8 +3791,8 @@ class IVFSExplorer(Interface):
         if not isinstance(names, list):
             raise TypeError("names can only be an instance of type list")
         for a in names[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         exists = self._call_method('exists',
                      in_p=[names])
         return exists
@@ -3810,8 +3810,8 @@ class IVFSExplorer(Interface):
         if not isinstance(names, list):
             raise TypeError("names can only be an instance of type list")
         for a in names[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         progress = self._call_method('remove',
                      in_p=[names])
         progress = IProgress(progress)
@@ -3982,8 +3982,8 @@ class IAppliance(Interface):
             Progress object to track the operation completion.
 
         """
-        if not isinstance(file_p, str):
-            raise TypeError("file_p can only be an instance of type str")
+        if type(file_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         progress = self._call_method('read',
                      in_p=[file_p])
         progress = IProgress(progress)
@@ -4049,8 +4049,8 @@ class IAppliance(Interface):
             <desc/>
 
         """
-        if not isinstance(uri, str):
-            raise TypeError("uri can only be an instance of type str")
+        if type(uri) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         explorer = self._call_method('createVFSExplorer',
                      in_p=[uri])
         explorer = IVFSExplorer(explorer)
@@ -4082,12 +4082,12 @@ class IAppliance(Interface):
             Progress object to track the operation completion.
 
         """
-        if not isinstance(format_p, str):
-            raise TypeError("format_p can only be an instance of type str")
+        if type(format_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(manifest, bool):
             raise TypeError("manifest can only be an instance of type bool")
-        if not isinstance(path, str):
-            raise TypeError("path can only be an instance of type str")
+        if type(path) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         progress = self._call_method('write',
                      in_p=[format_p, manifest, path])
         progress = IProgress(progress)
@@ -4343,13 +4343,13 @@ class IVirtualSystemDescription(Interface):
         if not isinstance(v_box_values, list):
             raise TypeError("v_box_values can only be an instance of type list")
         for a in v_box_values[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         if not isinstance(extra_config_values, list):
             raise TypeError("extra_config_values can only be an instance of type list")
         for a in extra_config_values[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         self._call_method('setFinalValues',
                      in_p=[enabled, v_box_values, extra_config_values])
         
@@ -4371,10 +4371,10 @@ class IVirtualSystemDescription(Interface):
         """
         if not isinstance(type_p, VirtualSystemDescriptionType):
             raise TypeError("type_p can only be an instance of type VirtualSystemDescriptionType")
-        if not isinstance(v_box_value, str):
-            raise TypeError("v_box_value can only be an instance of type str")
-        if not isinstance(extra_config_value, str):
-            raise TypeError("extra_config_value can only be an instance of type str")
+        if type(v_box_value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(extra_config_value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('addDescription',
                      in_p=[type_p, v_box_value, extra_config_value])
         
@@ -4488,8 +4488,8 @@ class IInternalMachineControl(Interface):
         """
         if not isinstance(result, int):
             raise TypeError("result can only be an instance of type int")
-        if not isinstance(err_msg, str):
-            raise TypeError("err_msg can only be an instance of type str")
+        if type(err_msg) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('endPoweringDown',
                      in_p=[result, err_msg])
         
@@ -4524,8 +4524,8 @@ class IInternalMachineControl(Interface):
         in id_p of type str
 
         """
-        if not isinstance(id_p, str):
-            raise TypeError("id_p can only be an instance of type str")
+        if type(id_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('captureUSBDevice',
                      in_p=[id_p])
         
@@ -4545,8 +4545,8 @@ class IInternalMachineControl(Interface):
         in done of type bool
 
         """
-        if not isinstance(id_p, str):
-            raise TypeError("id_p can only be an instance of type str")
+        if type(id_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(done, bool):
             raise TypeError("done can only be an instance of type bool")
         self._call_method('detachUSBDevice',
@@ -4636,8 +4636,8 @@ class IInternalMachineControl(Interface):
         """
         if not isinstance(result, int):
             raise TypeError("result can only be an instance of type int")
-        if not isinstance(err_msg, str):
-            raise TypeError("err_msg can only be an instance of type str")
+        if type(err_msg) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('endSavingState',
                      in_p=[result, err_msg])
         
@@ -4651,8 +4651,8 @@ class IInternalMachineControl(Interface):
             Invalid saved state file path.
         
         """
-        if not isinstance(saved_state_file, str):
-            raise TypeError("saved_state_file can only be an instance of type str")
+        if type(saved_state_file) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('adoptSavedState',
                      in_p=[saved_state_file])
         
@@ -4695,10 +4695,10 @@ class IInternalMachineControl(Interface):
         """
         if not isinstance(initiator, IConsole):
             raise TypeError("initiator can only be an instance of type IConsole")
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
-        if not isinstance(description, str):
-            raise TypeError("description can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(description) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(console_progress, IProgress):
             raise TypeError("console_progress can only be an instance of type IProgress")
         if not isinstance(f_taking_snapshot_online, bool):
@@ -4752,10 +4752,10 @@ class IInternalMachineControl(Interface):
         """
         if not isinstance(initiator, IConsole):
             raise TypeError("initiator can only be an instance of type IConsole")
-        if not isinstance(start_id, str):
-            raise TypeError("start_id can only be an instance of type str")
-        if not isinstance(end_id, str):
-            raise TypeError("end_id can only be an instance of type str")
+        if type(start_id) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(end_id) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(delete_all_children, bool):
             raise TypeError("delete_all_children can only be an instance of type bool")
         (machine_state, progress) = self._call_method('deleteSnapshot',
@@ -4871,14 +4871,14 @@ class IInternalMachineControl(Interface):
             The flags of the property.
 
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
-        if not isinstance(value, str):
-            raise TypeError("value can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(timestamp, int):
             raise TypeError("timestamp can only be an instance of type int")
-        if not isinstance(flags, str):
-            raise TypeError("flags can only be an instance of type str")
+        if type(flags) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('pushGuestProperty',
                      in_p=[name, value, timestamp, flags])
         
@@ -5030,8 +5030,8 @@ class IBIOSSettings(Interface):
 
     @logo_fade_in.setter
     def logo_fade_in(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('logoFadeIn', value)
 
     @property
@@ -5044,8 +5044,8 @@ class IBIOSSettings(Interface):
 
     @logo_fade_out.setter
     def logo_fade_out(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('logoFadeOut', value)
 
     @property
@@ -5058,8 +5058,8 @@ class IBIOSSettings(Interface):
 
     @logo_display_time.setter
     def logo_display_time(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('logoDisplayTime', value)
 
     @property
@@ -5073,8 +5073,8 @@ class IBIOSSettings(Interface):
 
     @logo_image_path.setter
     def logo_image_path(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('logoImagePath', value)
 
     @property
@@ -5087,8 +5087,8 @@ class IBIOSSettings(Interface):
 
     @boot_menu_mode.setter
     def boot_menu_mode(self, value):
-        assert isinstance(value, BIOSBootMenuMode), \
-                "value is not an instance of BIOSBootMenuMode"
+        if not isinstance(value, BIOSBootMenuMode):
+            raise TypeError("value is not an instance of BIOSBootMenuMode")
         return self._set_attr('bootMenuMode', value)
 
     @property
@@ -5101,8 +5101,8 @@ class IBIOSSettings(Interface):
 
     @acpi_enabled.setter
     def acpi_enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('ACPIEnabled', value)
 
     @property
@@ -5116,8 +5116,8 @@ class IBIOSSettings(Interface):
 
     @ioapic_enabled.setter
     def ioapic_enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('IOAPICEnabled', value)
 
     @property
@@ -5134,8 +5134,8 @@ class IBIOSSettings(Interface):
 
     @time_offset.setter
     def time_offset(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('timeOffset', value)
 
     @property
@@ -5149,8 +5149,8 @@ class IBIOSSettings(Interface):
 
     @pxe_debug_enabled.setter
     def pxe_debug_enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('PXEDebugEnabled', value)
 
 
@@ -5171,8 +5171,8 @@ class IPCIAddress(Interface):
 
     @bus.setter
     def bus(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('bus', value)
 
     @property
@@ -5185,8 +5185,8 @@ class IPCIAddress(Interface):
 
     @device.setter
     def device(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('device', value)
 
     @property
@@ -5199,8 +5199,8 @@ class IPCIAddress(Interface):
 
     @dev_function.setter
     def dev_function(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('devFunction', value)
 
     def as_long(self):
@@ -5414,8 +5414,8 @@ class IMachine(Interface):
 
     @name.setter
     def name(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('name', value)
 
     @property
@@ -5433,8 +5433,8 @@ class IMachine(Interface):
 
     @description.setter
     def description(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('description', value)
 
     @property
@@ -5460,8 +5460,8 @@ class IMachine(Interface):
 
     @groups.setter
     def groups(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('groups', value)
 
     @property
@@ -5481,8 +5481,8 @@ class IMachine(Interface):
 
     @os_type_id.setter
     def os_type_id(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('OSTypeId', value)
 
     @property
@@ -5495,8 +5495,8 @@ class IMachine(Interface):
 
     @hardware_version.setter
     def hardware_version(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('hardwareVersion', value)
 
     @property
@@ -5513,8 +5513,8 @@ class IMachine(Interface):
 
     @hardware_uuid.setter
     def hardware_uuid(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('hardwareUUID', value)
 
     @property
@@ -5527,8 +5527,8 @@ class IMachine(Interface):
 
     @cpu_count.setter
     def cpu_count(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('CPUCount', value)
 
     @property
@@ -5542,8 +5542,8 @@ class IMachine(Interface):
 
     @cpu_hot_plug_enabled.setter
     def cpu_hot_plug_enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('CPUHotPlugEnabled', value)
 
     @property
@@ -5558,8 +5558,8 @@ class IMachine(Interface):
 
     @cpu_execution_cap.setter
     def cpu_execution_cap(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('CPUExecutionCap', value)
 
     @property
@@ -5572,8 +5572,8 @@ class IMachine(Interface):
 
     @memory_size.setter
     def memory_size(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('memorySize', value)
 
     @property
@@ -5586,8 +5586,8 @@ class IMachine(Interface):
 
     @memory_balloon_size.setter
     def memory_balloon_size(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('memoryBalloonSize', value)
 
     @property
@@ -5601,8 +5601,8 @@ class IMachine(Interface):
 
     @page_fusion_enabled.setter
     def page_fusion_enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('pageFusionEnabled', value)
 
     @property
@@ -5615,8 +5615,8 @@ class IMachine(Interface):
 
     @graphics_controller_type.setter
     def graphics_controller_type(self, value):
-        assert isinstance(value, GraphicsControllerType), \
-                "value is not an instance of GraphicsControllerType"
+        if not isinstance(value, GraphicsControllerType):
+            raise TypeError("value is not an instance of GraphicsControllerType")
         return self._set_attr('graphicsControllerType', value)
 
     @property
@@ -5629,8 +5629,8 @@ class IMachine(Interface):
 
     @vram_size.setter
     def vram_size(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('VRAMSize', value)
 
     @property
@@ -5644,8 +5644,8 @@ class IMachine(Interface):
 
     @accelerate3_d_enabled.setter
     def accelerate3_d_enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('accelerate3DEnabled', value)
 
     @property
@@ -5659,8 +5659,8 @@ class IMachine(Interface):
 
     @accelerate2_d_video_enabled.setter
     def accelerate2_d_video_enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('accelerate2DVideoEnabled', value)
 
     @property
@@ -5676,8 +5676,8 @@ class IMachine(Interface):
 
     @monitor_count.setter
     def monitor_count(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('monitorCount', value)
 
     @property
@@ -5691,8 +5691,8 @@ class IMachine(Interface):
 
     @video_capture_enabled.setter
     def video_capture_enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('VideoCaptureEnabled', value)
 
     @property
@@ -5706,8 +5706,8 @@ class IMachine(Interface):
 
     @video_capture_screens.setter
     def video_capture_screens(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('VideoCaptureScreens', value)
 
     @property
@@ -5721,8 +5721,8 @@ class IMachine(Interface):
 
     @video_capture_file.setter
     def video_capture_file(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('VideoCaptureFile', value)
 
     @property
@@ -5735,8 +5735,8 @@ class IMachine(Interface):
 
     @video_capture_width.setter
     def video_capture_width(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('VideoCaptureWidth', value)
 
     @property
@@ -5749,8 +5749,8 @@ class IMachine(Interface):
 
     @video_capture_height.setter
     def video_capture_height(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('VideoCaptureHeight', value)
 
     @property
@@ -5765,8 +5765,8 @@ class IMachine(Interface):
 
     @video_capture_rate.setter
     def video_capture_rate(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('VideoCaptureRate', value)
 
     @property
@@ -5782,8 +5782,8 @@ class IMachine(Interface):
 
     @video_capture_fps.setter
     def video_capture_fps(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('VideoCaptureFps', value)
 
     @property
@@ -5805,8 +5805,8 @@ class IMachine(Interface):
 
     @firmware_type.setter
     def firmware_type(self, value):
-        assert isinstance(value, FirmwareType), \
-                "value is not an instance of FirmwareType"
+        if not isinstance(value, FirmwareType):
+            raise TypeError("value is not an instance of FirmwareType")
         return self._set_attr('firmwareType', value)
 
     @property
@@ -5821,8 +5821,8 @@ class IMachine(Interface):
 
     @pointing_hid_type.setter
     def pointing_hid_type(self, value):
-        assert isinstance(value, PointingHIDType), \
-                "value is not an instance of PointingHIDType"
+        if not isinstance(value, PointingHIDType):
+            raise TypeError("value is not an instance of PointingHIDType")
         return self._set_attr('pointingHIDType', value)
 
     @property
@@ -5837,8 +5837,8 @@ class IMachine(Interface):
 
     @keyboard_hid_type.setter
     def keyboard_hid_type(self, value):
-        assert isinstance(value, KeyboardHIDType), \
-                "value is not an instance of KeyboardHIDType"
+        if not isinstance(value, KeyboardHIDType):
+            raise TypeError("value is not an instance of KeyboardHIDType")
         return self._set_attr('keyboardHIDType', value)
 
     @property
@@ -5854,8 +5854,8 @@ class IMachine(Interface):
 
     @hpet_enabled.setter
     def hpet_enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('HPETEnabled', value)
 
     @property
@@ -5868,8 +5868,8 @@ class IMachine(Interface):
 
     @chipset_type.setter
     def chipset_type(self, value):
-        assert isinstance(value, ChipsetType), \
-                "value is not an instance of ChipsetType"
+        if not isinstance(value, ChipsetType):
+            raise TypeError("value is not an instance of ChipsetType")
         return self._set_attr('chipsetType', value)
 
     @property
@@ -5909,8 +5909,8 @@ class IMachine(Interface):
 
     @snapshot_folder.setter
     def snapshot_folder(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('snapshotFolder', value)
 
     @property
@@ -5929,8 +5929,8 @@ class IMachine(Interface):
 
     @emulated_usb_webcamera_enabled.setter
     def emulated_usb_webcamera_enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('emulatedUSBWebcameraEnabled', value)
 
     @property
@@ -5941,8 +5941,8 @@ class IMachine(Interface):
 
     @emulated_usb_card_reader_enabled.setter
     def emulated_usb_card_reader_enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('emulatedUSBCardReaderEnabled', value)
 
     @property
@@ -6170,8 +6170,8 @@ class IMachine(Interface):
 
     @clipboard_mode.setter
     def clipboard_mode(self, value):
-        assert isinstance(value, ClipboardMode), \
-                "value is not an instance of ClipboardMode"
+        if not isinstance(value, ClipboardMode):
+            raise TypeError("value is not an instance of ClipboardMode")
         return self._set_attr('clipboardMode', value)
 
     @property
@@ -6184,8 +6184,8 @@ class IMachine(Interface):
 
     @drag_and_drop_mode.setter
     def drag_and_drop_mode(self, value):
-        assert isinstance(value, DragAndDropMode), \
-                "value is not an instance of DragAndDropMode"
+        if not isinstance(value, DragAndDropMode):
+            raise TypeError("value is not an instance of DragAndDropMode")
         return self._set_attr('dragAndDropMode', value)
 
     @property
@@ -6200,8 +6200,8 @@ class IMachine(Interface):
 
     @guest_property_notification_patterns.setter
     def guest_property_notification_patterns(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('guestPropertyNotificationPatterns', value)
 
     @property
@@ -6219,8 +6219,8 @@ class IMachine(Interface):
 
     @teleporter_enabled.setter
     def teleporter_enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('teleporterEnabled', value)
 
     @property
@@ -6238,8 +6238,8 @@ class IMachine(Interface):
 
     @teleporter_port.setter
     def teleporter_port(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('teleporterPort', value)
 
     @property
@@ -6253,8 +6253,8 @@ class IMachine(Interface):
 
     @teleporter_address.setter
     def teleporter_address(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('teleporterAddress', value)
 
     @property
@@ -6272,8 +6272,8 @@ class IMachine(Interface):
 
     @teleporter_password.setter
     def teleporter_password(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('teleporterPassword', value)
 
     @property
@@ -6288,8 +6288,8 @@ class IMachine(Interface):
 
     @fault_tolerance_state.setter
     def fault_tolerance_state(self, value):
-        assert isinstance(value, FaultToleranceState), \
-                "value is not an instance of FaultToleranceState"
+        if not isinstance(value, FaultToleranceState):
+            raise TypeError("value is not an instance of FaultToleranceState")
         return self._set_attr('faultToleranceState', value)
 
     @property
@@ -6303,8 +6303,8 @@ class IMachine(Interface):
 
     @fault_tolerance_port.setter
     def fault_tolerance_port(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('faultTolerancePort', value)
 
     @property
@@ -6317,8 +6317,8 @@ class IMachine(Interface):
 
     @fault_tolerance_address.setter
     def fault_tolerance_address(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('faultToleranceAddress', value)
 
     @property
@@ -6333,8 +6333,8 @@ class IMachine(Interface):
 
     @fault_tolerance_password.setter
     def fault_tolerance_password(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('faultTolerancePassword', value)
 
     @property
@@ -6347,8 +6347,8 @@ class IMachine(Interface):
 
     @fault_tolerance_sync_interval.setter
     def fault_tolerance_sync_interval(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('faultToleranceSyncInterval', value)
 
     @property
@@ -6363,8 +6363,8 @@ class IMachine(Interface):
 
     @rtc_use_utc.setter
     def rtc_use_utc(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('RTCUseUTC', value)
 
     @property
@@ -6378,8 +6378,8 @@ class IMachine(Interface):
 
     @io_cache_enabled.setter
     def io_cache_enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('IOCacheEnabled', value)
 
     @property
@@ -6392,8 +6392,8 @@ class IMachine(Interface):
 
     @io_cache_size.setter
     def io_cache_size(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('IOCacheSize', value)
 
     @property
@@ -6430,8 +6430,8 @@ class IMachine(Interface):
 
     @tracing_enabled.setter
     def tracing_enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('tracingEnabled', value)
 
     @property
@@ -6453,8 +6453,8 @@ class IMachine(Interface):
 
     @tracing_config.setter
     def tracing_config(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('tracingConfig', value)
 
     @property
@@ -6474,8 +6474,8 @@ class IMachine(Interface):
 
     @allow_tracing_to_access_vm.setter
     def allow_tracing_to_access_vm(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('allowTracingToAccessVM', value)
 
     @property
@@ -6488,8 +6488,8 @@ class IMachine(Interface):
 
     @autostart_enabled.setter
     def autostart_enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('autostartEnabled', value)
 
     @property
@@ -6502,8 +6502,8 @@ class IMachine(Interface):
 
     @autostart_delay.setter
     def autostart_delay(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('autostartDelay', value)
 
     @property
@@ -6516,8 +6516,8 @@ class IMachine(Interface):
 
     @autostop_type.setter
     def autostop_type(self, value):
-        assert isinstance(value, AutostopType), \
-                "value is not an instance of AutostopType"
+        if not isinstance(value, AutostopType):
+            raise TypeError("value is not an instance of AutostopType")
         return self._set_attr('autostopType', value)
 
     @property
@@ -6540,8 +6540,8 @@ class IMachine(Interface):
 
     @default_frontend.setter
     def default_frontend(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('defaultFrontend', value)
 
     def lock_machine(self, session, lock_type):
@@ -6750,10 +6750,10 @@ class IMachine(Interface):
         """
         if not isinstance(session, ISession):
             raise TypeError("session can only be an instance of type ISession")
-        if not isinstance(type_p, str):
-            raise TypeError("type_p can only be an instance of type str")
-        if not isinstance(environment, str):
-            raise TypeError("environment can only be an instance of type str")
+        if type(type_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(environment) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         progress = self._call_method('launchVMProcess',
                      in_p=[session, type_p, environment])
         progress = IProgress(progress)
@@ -6911,8 +6911,8 @@ class IMachine(Interface):
             A medium is already attached to this or another virtual machine.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(controller_port, int):
             raise TypeError("controller_port can only be an instance of type int")
         if not isinstance(device, int):
@@ -7005,8 +7005,8 @@ class IMachine(Interface):
             A medium is already attached to this or another virtual machine.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(controller_port, int):
             raise TypeError("controller_port can only be an instance of type int")
         if not isinstance(device, int):
@@ -7056,8 +7056,8 @@ class IMachine(Interface):
           created differencing media, should not happen).
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(controller_port, int):
             raise TypeError("controller_port can only be an instance of type int")
         if not isinstance(device, int):
@@ -7097,8 +7097,8 @@ class IMachine(Interface):
             Invalid machine state.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(controller_port, int):
             raise TypeError("controller_port can only be an instance of type int")
         if not isinstance(device, int):
@@ -7140,8 +7140,8 @@ class IMachine(Interface):
             Invalid machine state.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(controller_port, int):
             raise TypeError("controller_port can only be an instance of type int")
         if not isinstance(device, int):
@@ -7186,8 +7186,8 @@ class IMachine(Interface):
             Invalid machine state.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(controller_port, int):
             raise TypeError("controller_port can only be an instance of type int")
         if not isinstance(device, int):
@@ -7232,8 +7232,8 @@ class IMachine(Interface):
             Invalid machine state.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(controller_port, int):
             raise TypeError("controller_port can only be an instance of type int")
         if not isinstance(device, int):
@@ -7273,8 +7273,8 @@ class IMachine(Interface):
             Invalid machine state.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(controller_port, int):
             raise TypeError("controller_port can only be an instance of type int")
         if not isinstance(device, int):
@@ -7310,8 +7310,8 @@ class IMachine(Interface):
             Invalid machine state.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(controller_port, int):
             raise TypeError("controller_port can only be an instance of type int")
         if not isinstance(device, int):
@@ -7367,8 +7367,8 @@ class IMachine(Interface):
             Medium not attached to specified port, device, controller.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(controller_port, int):
             raise TypeError("controller_port can only be an instance of type int")
         if not isinstance(device, int):
@@ -7428,8 +7428,8 @@ class IMachine(Interface):
             Medium already attached to this or another virtual machine.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(controller_port, int):
             raise TypeError("controller_port can only be an instance of type int")
         if not isinstance(device, int):
@@ -7467,8 +7467,8 @@ class IMachine(Interface):
             No medium attached to given slot/bus.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(controller_port, int):
             raise TypeError("controller_port can only be an instance of type int")
         if not isinstance(device, int):
@@ -7490,8 +7490,8 @@ class IMachine(Interface):
             A storage controller with given name doesn't exist.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         medium_attachments = self._call_method('getMediumAttachmentsOfController',
                      in_p=[name])
         medium_attachments = [IMediumAttachment(a) for a in medium_attachments]
@@ -7513,8 +7513,8 @@ class IMachine(Interface):
             No attachment exists for the given controller/port/device combination.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(controller_port, int):
             raise TypeError("controller_port can only be an instance of type int")
         if not isinstance(device, int):
@@ -7640,8 +7640,8 @@ class IMachine(Interface):
             Invalid @a controllerType.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(connection_type, StorageBus):
             raise TypeError("connection_type can only be an instance of type StorageBus")
         controller = self._call_method('addStorageController',
@@ -7660,8 +7660,8 @@ class IMachine(Interface):
             A storage controller with given name doesn't exist.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         storage_controller = self._call_method('getStorageControllerByName',
                      in_p=[name])
         storage_controller = IStorageController(storage_controller)
@@ -7698,8 +7698,8 @@ class IMachine(Interface):
           created differencing media, should not happen).
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('removeStorageController',
                      in_p=[name])
         
@@ -7717,8 +7717,8 @@ class IMachine(Interface):
             Another storage controller is marked as bootable already.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(bootable, bool):
             raise TypeError("bootable can only be an instance of type bool")
         self._call_method('setStorageControllerBootable',
@@ -7798,8 +7798,8 @@ class IMachine(Interface):
             Could not parse the settings file.
         
         """
-        if not isinstance(key, str):
-            raise TypeError("key can only be an instance of type str")
+        if type(key) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         value = self._call_method('getExtraData',
                      in_p=[key])
         return value
@@ -7841,10 +7841,10 @@ class IMachine(Interface):
             Could not parse the settings file.
         
         """
-        if not isinstance(key, str):
-            raise TypeError("key can only be an instance of type str")
-        if not isinstance(value, str):
-            raise TypeError("value can only be an instance of type str")
+        if type(key) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('setExtraData',
                      in_p=[key, value])
         
@@ -8235,8 +8235,8 @@ class IMachine(Interface):
         """
         if not isinstance(appliance, IAppliance):
             raise TypeError("appliance can only be an instance of type IAppliance")
-        if not isinstance(location, str):
-            raise TypeError("location can only be an instance of type str")
+        if type(location) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         description = self._call_method('exportTo',
                      in_p=[appliance, location])
         description = IVirtualSystemDescription(description)
@@ -8261,8 +8261,8 @@ class IMachine(Interface):
             Virtual machine has no snapshots or snapshot not found.
         
         """
-        if not isinstance(name_or_id, str):
-            raise TypeError("name_or_id can only be an instance of type str")
+        if type(name_or_id) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         snapshot = self._call_method('findSnapshot',
                      in_p=[name_or_id])
         snapshot = ISnapshot(snapshot)
@@ -8294,10 +8294,10 @@ class IMachine(Interface):
             Shared folder @a hostPath not accessible.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
-        if not isinstance(host_path, str):
-            raise TypeError("host_path can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(host_path) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(writable, bool):
             raise TypeError("writable can only be an instance of type bool")
         if not isinstance(automount, bool):
@@ -8320,8 +8320,8 @@ class IMachine(Interface):
             Shared folder @a name does not exist.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('removeSharedFolder',
                      in_p=[name])
         
@@ -8394,8 +8394,8 @@ class IMachine(Interface):
             Machine session is not open.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         (value, timestamp, flags) = self._call_method('getGuestProperty',
                      in_p=[name])
         return (value, timestamp, flags)
@@ -8414,8 +8414,8 @@ class IMachine(Interface):
             Machine session is not open.
         
         """
-        if not isinstance(property_p, str):
-            raise TypeError("property_p can only be an instance of type str")
+        if type(property_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         value = self._call_method('getGuestPropertyValue',
                      in_p=[property_p])
         return value
@@ -8434,8 +8434,8 @@ class IMachine(Interface):
             Machine session is not open.
         
         """
-        if not isinstance(property_p, str):
-            raise TypeError("property_p can only be an instance of type str")
+        if type(property_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         value = self._call_method('getGuestPropertyTimestamp',
                      in_p=[property_p])
         return value
@@ -8470,12 +8470,12 @@ class IMachine(Interface):
             Cannot set transient property when machine not running.
         
         """
-        if not isinstance(property_p, str):
-            raise TypeError("property_p can only be an instance of type str")
-        if not isinstance(value, str):
-            raise TypeError("value can only be an instance of type str")
-        if not isinstance(flags, str):
-            raise TypeError("flags can only be an instance of type str")
+        if type(property_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(flags) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('setGuestProperty',
                      in_p=[property_p, value, flags])
         
@@ -8502,10 +8502,10 @@ class IMachine(Interface):
             Cannot set transient property when machine not running.
         
         """
-        if not isinstance(property_p, str):
-            raise TypeError("property_p can only be an instance of type str")
-        if not isinstance(value, str):
-            raise TypeError("value can only be an instance of type str")
+        if type(property_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('setGuestPropertyValue',
                      in_p=[property_p, value])
         
@@ -8519,8 +8519,8 @@ class IMachine(Interface):
             Machine session is not open.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('deleteGuestProperty',
                      in_p=[name])
         
@@ -8548,8 +8548,8 @@ class IMachine(Interface):
           corresponding entries in the @a name array.
 
         """
-        if not isinstance(patterns, str):
-            raise TypeError("patterns can only be an instance of type str")
+        if type(patterns) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         (names, values, timestamps, flags) = self._call_method('enumerateGuestProperties',
                      in_p=[patterns])
         return (names, values, timestamps, flags)
@@ -9136,8 +9136,8 @@ class IConsole(Interface):
 
     @use_host_clipboard.setter
     def use_host_clipboard(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('useHostClipboard', value)
 
     def power_up(self):
@@ -9395,8 +9395,8 @@ class IConsole(Interface):
             Virtual machine state neither PoweredOff nor Aborted.
         
         """
-        if not isinstance(saved_state_file, str):
-            raise TypeError("saved_state_file can only be an instance of type str")
+        if type(saved_state_file) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('adoptSavedState',
                      in_p=[saved_state_file])
         
@@ -9474,8 +9474,8 @@ class IConsole(Interface):
             Virtual machine does not have a USB controller.
         
         """
-        if not isinstance(id_p, str):
-            raise TypeError("id_p can only be an instance of type str")
+        if type(id_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('attachUSBDevice',
                      in_p=[id_p])
         
@@ -9504,8 +9504,8 @@ class IConsole(Interface):
             USB device not attached to this virtual machine.
         
         """
-        if not isinstance(id_p, str):
-            raise TypeError("id_p can only be an instance of type str")
+        if type(id_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         device = self._call_method('detachUSBDevice',
                      in_p=[id_p])
         device = IUSBDevice(device)
@@ -9529,8 +9529,8 @@ class IConsole(Interface):
             Given @c name does not correspond to any USB device.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         device = self._call_method('findUSBDeviceByAddress',
                      in_p=[name])
         device = IUSBDevice(device)
@@ -9553,8 +9553,8 @@ class IConsole(Interface):
             Given @c id does not correspond to any USB device.
         
         """
-        if not isinstance(id_p, str):
-            raise TypeError("id_p can only be an instance of type str")
+        if type(id_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         device = self._call_method('findUSBDeviceById',
                      in_p=[id_p])
         device = IUSBDevice(device)
@@ -9586,10 +9586,10 @@ class IConsole(Interface):
             Shared folder already exists or not accessible.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
-        if not isinstance(host_path, str):
-            raise TypeError("host_path can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(host_path) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(writable, bool):
             raise TypeError("writable can only be an instance of type bool")
         if not isinstance(automount, bool):
@@ -9612,8 +9612,8 @@ class IConsole(Interface):
             Shared folder does not exists.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('removeSharedFolder',
                      in_p=[name])
         
@@ -9650,10 +9650,10 @@ class IConsole(Interface):
             Virtual machine currently changing state.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
-        if not isinstance(description, str):
-            raise TypeError("description can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(description) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         progress = self._call_method('takeSnapshot',
                      in_p=[name, description])
         progress = IProgress(progress)
@@ -9727,8 +9727,8 @@ class IConsole(Interface):
           text explains the reason for the failure.
         
         """
-        if not isinstance(id_p, str):
-            raise TypeError("id_p can only be an instance of type str")
+        if type(id_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         progress = self._call_method('deleteSnapshot',
                      in_p=[id_p])
         progress = IProgress(progress)
@@ -9764,8 +9764,8 @@ class IConsole(Interface):
             The method is not implemented yet.
         
         """
-        if not isinstance(id_p, str):
-            raise TypeError("id_p can only be an instance of type str")
+        if type(id_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         progress = self._call_method('deleteSnapshotAndAllChildren',
                      in_p=[id_p])
         progress = IProgress(progress)
@@ -9806,10 +9806,10 @@ class IConsole(Interface):
             The method is not implemented yet.
         
         """
-        if not isinstance(start_id, str):
-            raise TypeError("start_id can only be an instance of type str")
-        if not isinstance(end_id, str):
-            raise TypeError("end_id can only be an instance of type str")
+        if type(start_id) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(end_id) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         progress = self._call_method('deleteSnapshotRange',
                      in_p=[start_id, end_id])
         progress = IProgress(progress)
@@ -9890,12 +9890,12 @@ class IConsole(Interface):
             Virtual machine not running or paused.
         
         """
-        if not isinstance(hostname, str):
-            raise TypeError("hostname can only be an instance of type str")
+        if type(hostname) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(tcpport, int):
             raise TypeError("tcpport can only be an instance of type int")
-        if not isinstance(password, str):
-            raise TypeError("password can only be an instance of type str")
+        if type(password) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(max_downtime, int):
             raise TypeError("max_downtime can only be an instance of type int")
         progress = self._call_method('teleport',
@@ -10028,10 +10028,10 @@ class IHostNetworkInterface(Interface):
             network mask.
 
         """
-        if not isinstance(ip_address, str):
-            raise TypeError("ip_address can only be an instance of type str")
-        if not isinstance(network_mask, str):
-            raise TypeError("network_mask can only be an instance of type str")
+        if type(ip_address) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(network_mask) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('enableStaticIPConfig',
                      in_p=[ip_address, network_mask])
         
@@ -10045,8 +10045,8 @@ class IHostNetworkInterface(Interface):
             network mask.
 
         """
-        if not isinstance(ipv6_address, str):
-            raise TypeError("ipv6_address can only be an instance of type str")
+        if type(ipv6_address) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(ipv6_network_mask_prefix_length, int):
             raise TypeError("ipv6_network_mask_prefix_length can only be an instance of type int")
         self._call_method('enableStaticIPConfigV6',
@@ -10340,8 +10340,8 @@ class IHost(Interface):
             No host network interface matching @a id found.
         
         """
-        if not isinstance(id_p, str):
-            raise TypeError("id_p can only be an instance of type str")
+        if type(id_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         progress = self._call_method('removeHostOnlyNetworkInterface',
                      in_p=[id_p])
         progress = IProgress(progress)
@@ -10364,8 +10364,8 @@ class IHost(Interface):
             Created filter object.
 
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         filter_p = self._call_method('createUSBDeviceFilter',
                      in_p=[name])
         filter_p = IHostUSBDeviceFilter(filter_p)
@@ -10450,8 +10450,8 @@ class IHost(Interface):
             Given @c name does not correspond to any host drive.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         drive = self._call_method('findHostDVDDrive',
                      in_p=[name])
         drive = IMedium(drive)
@@ -10470,8 +10470,8 @@ class IHost(Interface):
             Given @c name does not correspond to any host floppy drive.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         drive = self._call_method('findHostFloppyDrive',
                      in_p=[name])
         drive = IMedium(drive)
@@ -10491,8 +10491,8 @@ class IHost(Interface):
             Found host network interface object.
 
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         network_interface = self._call_method('findHostNetworkInterfaceByName',
                      in_p=[name])
         network_interface = IHostNetworkInterface(network_interface)
@@ -10512,8 +10512,8 @@ class IHost(Interface):
             Found host network interface object.
 
         """
-        if not isinstance(id_p, str):
-            raise TypeError("id_p can only be an instance of type str")
+        if type(id_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         network_interface = self._call_method('findHostNetworkInterfaceById',
                      in_p=[id_p])
         network_interface = IHostNetworkInterface(network_interface)
@@ -10553,8 +10553,8 @@ class IHost(Interface):
             Given @c id does not correspond to any USB device.
         
         """
-        if not isinstance(id_p, str):
-            raise TypeError("id_p can only be an instance of type str")
+        if type(id_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         device = self._call_method('findUSBDeviceById',
                      in_p=[id_p])
         device = IHostUSBDevice(device)
@@ -10578,8 +10578,8 @@ class IHost(Interface):
             Given @c name does not correspond to any USB device.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         device = self._call_method('findUSBDeviceByAddress',
                      in_p=[name])
         device = IHostUSBDevice(device)
@@ -10730,8 +10730,8 @@ class ISystemProperties(Interface):
 
     @default_machine_folder.setter
     def default_machine_folder(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('defaultMachineFolder', value)
 
     @property
@@ -10798,8 +10798,8 @@ class ISystemProperties(Interface):
 
     @default_hard_disk_format.setter
     def default_hard_disk_format(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('defaultHardDiskFormat', value)
 
     @property
@@ -10814,8 +10814,8 @@ class ISystemProperties(Interface):
 
     @free_disk_space_warning.setter
     def free_disk_space_warning(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('freeDiskSpaceWarning', value)
 
     @property
@@ -10829,8 +10829,8 @@ class ISystemProperties(Interface):
 
     @free_disk_space_percent_warning.setter
     def free_disk_space_percent_warning(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('freeDiskSpacePercentWarning', value)
 
     @property
@@ -10845,8 +10845,8 @@ class ISystemProperties(Interface):
 
     @free_disk_space_error.setter
     def free_disk_space_error(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('freeDiskSpaceError', value)
 
     @property
@@ -10860,8 +10860,8 @@ class ISystemProperties(Interface):
 
     @free_disk_space_percent_error.setter
     def free_disk_space_percent_error(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('freeDiskSpacePercentError', value)
 
     @property
@@ -10890,8 +10890,8 @@ class ISystemProperties(Interface):
 
     @vrde_auth_library.setter
     def vrde_auth_library(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('VRDEAuthLibrary', value)
 
     @property
@@ -10925,8 +10925,8 @@ class ISystemProperties(Interface):
 
     @web_service_auth_library.setter
     def web_service_auth_library(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('webServiceAuthLibrary', value)
 
     @property
@@ -10947,8 +10947,8 @@ class ISystemProperties(Interface):
 
     @default_vrde_ext_pack.setter
     def default_vrde_ext_pack(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('defaultVRDEExtPack', value)
 
     @property
@@ -10961,8 +10961,8 @@ class ISystemProperties(Interface):
 
     @log_history_count.setter
     def log_history_count(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('logHistoryCount', value)
 
     @property
@@ -10985,8 +10985,8 @@ class ISystemProperties(Interface):
 
     @autostart_database_path.setter
     def autostart_database_path(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('autostartDatabasePath', value)
 
     @property
@@ -11000,8 +11000,8 @@ class ISystemProperties(Interface):
 
     @default_additions_iso.setter
     def default_additions_iso(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('defaultAdditionsISO', value)
 
     @property
@@ -11023,8 +11023,8 @@ class ISystemProperties(Interface):
 
     @default_frontend.setter
     def default_frontend(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('defaultFrontend', value)
 
     def get_max_network_adapters(self, chipset):
@@ -11518,8 +11518,8 @@ class IGuestSession(Interface):
 
     @timeout.setter
     def timeout(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('timeout', value)
 
     @property
@@ -11540,8 +11540,8 @@ class IGuestSession(Interface):
 
     @environment.setter
     def environment(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('environment', value)
 
     @property
@@ -11603,10 +11603,10 @@ class IGuestSession(Interface):
             Error starting the copy operation.
         
         """
-        if not isinstance(source, str):
-            raise TypeError("source can only be an instance of type str")
-        if not isinstance(dest, str):
-            raise TypeError("dest can only be an instance of type str")
+        if type(source) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(dest) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
@@ -11636,10 +11636,10 @@ class IGuestSession(Interface):
             Error starting the copy operation.
         
         """
-        if not isinstance(source, str):
-            raise TypeError("source can only be an instance of type str")
-        if not isinstance(dest, str):
-            raise TypeError("dest can only be an instance of type str")
+        if type(source) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(dest) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
@@ -11666,8 +11666,8 @@ class IGuestSession(Interface):
             Error while creating the directory.
         
         """
-        if not isinstance(path, str):
-            raise TypeError("path can only be an instance of type str")
+        if type(path) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(mode, int):
             raise TypeError("mode can only be an instance of type int")
         if not isinstance(flags, list):
@@ -11719,12 +11719,12 @@ class IGuestSession(Interface):
           option was requested.
         
         """
-        if not isinstance(template_name, str):
-            raise TypeError("template_name can only be an instance of type str")
+        if type(template_name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(mode, int):
             raise TypeError("mode can only be an instance of type int")
-        if not isinstance(path, str):
-            raise TypeError("path can only be an instance of type str")
+        if type(path) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(secure, bool):
             raise TypeError("secure can only be an instance of type bool")
         directory = self._call_method('directoryCreateTemp',
@@ -11744,8 +11744,8 @@ class IGuestSession(Interface):
             Error while checking existence of the directory specified.
         
         """
-        if not isinstance(path, str):
-            raise TypeError("path can only be an instance of type str")
+        if type(path) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         exists = self._call_method('directoryExists',
                      in_p=[path])
         return exists
@@ -11773,10 +11773,10 @@ class IGuestSession(Interface):
             Error while opening the directory.
         
         """
-        if not isinstance(path, str):
-            raise TypeError("path can only be an instance of type str")
-        if not isinstance(filter_p, str):
-            raise TypeError("filter_p can only be an instance of type str")
+        if type(path) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(filter_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
@@ -11803,8 +11803,8 @@ class IGuestSession(Interface):
             Error querying information.
         
         """
-        if not isinstance(path, str):
-            raise TypeError("path can only be an instance of type str")
+        if type(path) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         info = self._call_method('directoryQueryInfo',
                      in_p=[path])
         info = IGuestFsObjInfo(info)
@@ -11820,8 +11820,8 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        if not isinstance(path, str):
-            raise TypeError("path can only be an instance of type str")
+        if type(path) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('directoryRemove',
                      in_p=[path])
         
@@ -11841,8 +11841,8 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        if not isinstance(path, str):
-            raise TypeError("path can only be an instance of type str")
+        if type(path) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
@@ -11869,10 +11869,10 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        if not isinstance(source, str):
-            raise TypeError("source can only be an instance of type str")
-        if not isinstance(dest, str):
-            raise TypeError("dest can only be an instance of type str")
+        if type(source) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(dest) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
@@ -11894,10 +11894,10 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        if not isinstance(path, str):
-            raise TypeError("path can only be an instance of type str")
-        if not isinstance(acl, str):
-            raise TypeError("acl can only be an instance of type str")
+        if type(path) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(acl) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('directorySetACL',
                      in_p=[path, acl])
         
@@ -11924,8 +11924,8 @@ class IGuestSession(Interface):
             Error while getting the value of the session environment variable.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         value = self._call_method('environmentGet',
                      in_p=[name])
         return value
@@ -11943,10 +11943,10 @@ class IGuestSession(Interface):
             Error while setting the session environment variable.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
-        if not isinstance(value, str):
-            raise TypeError("value can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('environmentSet',
                      in_p=[name, value])
         
@@ -11960,8 +11960,8 @@ class IGuestSession(Interface):
             Error while unsetting the session environment variable.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('environmentUnset',
                      in_p=[name])
         
@@ -12006,12 +12006,12 @@ class IGuestSession(Interface):
           option was requested.
         
         """
-        if not isinstance(template_name, str):
-            raise TypeError("template_name can only be an instance of type str")
+        if type(template_name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(mode, int):
             raise TypeError("mode can only be an instance of type int")
-        if not isinstance(path, str):
-            raise TypeError("path can only be an instance of type str")
+        if type(path) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(secure, bool):
             raise TypeError("secure can only be an instance of type bool")
         file_p = self._call_method('fileCreateTemp',
@@ -12032,8 +12032,8 @@ class IGuestSession(Interface):
             Error while checking existence of the file specified.
         
         """
-        if not isinstance(path, str):
-            raise TypeError("path can only be an instance of type str")
+        if type(path) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         exists = self._call_method('fileExists',
                      in_p=[path])
         return exists
@@ -12051,8 +12051,8 @@ class IGuestSession(Interface):
             Error while removing the file.
         
         """
-        if not isinstance(path, str):
-            raise TypeError("path can only be an instance of type str")
+        if type(path) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('fileRemove',
                      in_p=[path])
         
@@ -12085,12 +12085,12 @@ class IGuestSession(Interface):
             Error while opening the file.
         
         """
-        if not isinstance(path, str):
-            raise TypeError("path can only be an instance of type str")
-        if not isinstance(open_mode, str):
-            raise TypeError("open_mode can only be an instance of type str")
-        if not isinstance(disposition, str):
-            raise TypeError("disposition can only be an instance of type str")
+        if type(path) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(open_mode) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(disposition) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(creation_mode, int):
             raise TypeError("creation_mode can only be an instance of type int")
         if not isinstance(offset, int):
@@ -12116,8 +12116,8 @@ class IGuestSession(Interface):
             Error querying information.
         
         """
-        if not isinstance(path, str):
-            raise TypeError("path can only be an instance of type str")
+        if type(path) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         info = self._call_method('fileQueryInfo',
                      in_p=[path])
         info = IGuestFsObjInfo(info)
@@ -12139,8 +12139,8 @@ class IGuestSession(Interface):
             Error querying file size.
         
         """
-        if not isinstance(path, str):
-            raise TypeError("path can only be an instance of type str")
+        if type(path) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         size = self._call_method('fileQuerySize',
                      in_p=[path])
         return size
@@ -12161,10 +12161,10 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        if not isinstance(source, str):
-            raise TypeError("source can only be an instance of type str")
-        if not isinstance(dest, str):
-            raise TypeError("dest can only be an instance of type str")
+        if type(source) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(dest) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
@@ -12186,10 +12186,10 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        if not isinstance(file_p, str):
-            raise TypeError("file_p can only be an instance of type str")
-        if not isinstance(acl, str):
-            raise TypeError("acl can only be an instance of type str")
+        if type(file_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(acl) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('fileSetACL',
                      in_p=[file_p, acl])
         
@@ -12247,18 +12247,18 @@ class IGuestSession(Interface):
             Error creating guest process.
         
         """
-        if not isinstance(command, str):
-            raise TypeError("command can only be an instance of type str")
+        if type(command) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(arguments, list):
             raise TypeError("arguments can only be an instance of type list")
         for a in arguments[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         if not isinstance(environment, list):
             raise TypeError("environment can only be an instance of type list")
         for a in environment[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
@@ -12315,18 +12315,18 @@ class IGuestSession(Interface):
             Guest process object of the newly created process.
 
         """
-        if not isinstance(command, str):
-            raise TypeError("command can only be an instance of type str")
+        if type(command) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(arguments, list):
             raise TypeError("arguments can only be an instance of type list")
         for a in arguments[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         if not isinstance(environment, list):
             raise TypeError("environment can only be an instance of type list")
         for a in environment[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
@@ -12380,10 +12380,10 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        if not isinstance(source, str):
-            raise TypeError("source can only be an instance of type str")
-        if not isinstance(target, str):
-            raise TypeError("target can only be an instance of type str")
+        if type(source) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(target) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(type_p, SymlinkType):
             raise TypeError("type_p can only be an instance of type SymlinkType")
         self._call_method('symlinkCreate',
@@ -12402,8 +12402,8 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        if not isinstance(symlink, str):
-            raise TypeError("symlink can only be an instance of type str")
+        if type(symlink) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         exists = self._call_method('symlinkExists',
                      in_p=[symlink])
         return exists
@@ -12424,8 +12424,8 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        if not isinstance(symlink, str):
-            raise TypeError("symlink can only be an instance of type str")
+        if type(symlink) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
@@ -12445,8 +12445,8 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        if not isinstance(path, str):
-            raise TypeError("path can only be an instance of type str")
+        if type(path) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('symlinkRemoveDirectory',
                      in_p=[path])
         
@@ -12460,8 +12460,8 @@ class IGuestSession(Interface):
             The method is not implemented yet.
         
         """
-        if not isinstance(file_p, str):
-            raise TypeError("file_p can only be an instance of type str")
+        if type(file_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('symlinkRemoveFile',
                      in_p=[file_p])
         
@@ -12702,8 +12702,8 @@ class IProcess(Interface):
         if not isinstance(data, list):
             raise TypeError("data can only be an instance of type list")
         for a in data[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         if not isinstance(timeout_ms, int):
             raise TypeError("timeout_ms can only be an instance of type int")
         written = self._call_method('write',
@@ -12742,8 +12742,8 @@ class IProcess(Interface):
         if not isinstance(data, list):
             raise TypeError("data can only be an instance of type list")
         for a in data[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         if not isinstance(timeout_ms, int):
             raise TypeError("timeout_ms can only be an instance of type int")
         written = self._call_method('writeArray',
@@ -12999,8 +12999,8 @@ class IFile(Interface):
             The method is not implemented yet.
         
         """
-        if not isinstance(acl, str):
-            raise TypeError("acl can only be an instance of type str")
+        if type(acl) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('setACL',
                      in_p=[acl])
         
@@ -13022,8 +13022,8 @@ class IFile(Interface):
         if not isinstance(data, list):
             raise TypeError("data can only be an instance of type list")
         for a in data[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         if not isinstance(timeout_ms, int):
             raise TypeError("timeout_ms can only be an instance of type int")
         written = self._call_method('write',
@@ -13056,8 +13056,8 @@ class IFile(Interface):
         if not isinstance(data, list):
             raise TypeError("data can only be an instance of type list")
         for a in data[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         if not isinstance(timeout_ms, int):
             raise TypeError("timeout_ms can only be an instance of type int")
         written = self._call_method('writeAt',
@@ -13328,8 +13328,8 @@ class IGuest(Interface):
 
     @memory_balloon_size.setter
     def memory_balloon_size(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('memoryBalloonSize', value)
 
     @property
@@ -13342,8 +13342,8 @@ class IGuest(Interface):
 
     @statistics_update_interval.setter
     def statistics_update_interval(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('statisticsUpdateInterval', value)
 
     def internal_get_statistics(self):
@@ -13456,12 +13456,12 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        if not isinstance(user_name, str):
-            raise TypeError("user_name can only be an instance of type str")
-        if not isinstance(password, str):
-            raise TypeError("password can only be an instance of type str")
-        if not isinstance(domain, str):
-            raise TypeError("domain can only be an instance of type str")
+        if type(user_name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(password) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(domain) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(allow_interactive_logon, bool):
             raise TypeError("allow_interactive_logon can only be an instance of type bool")
         self._call_method('setCredentials',
@@ -13513,8 +13513,8 @@ class IGuest(Interface):
         if not isinstance(formats, list):
             raise TypeError("formats can only be an instance of type list")
         for a in formats[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         result_action = self._call_method('dragHGEnter',
                      in_p=[screen_id, y, x, default_action, allowed_actions, formats])
         result_action = DragAndDropAction(result_action)
@@ -13566,8 +13566,8 @@ class IGuest(Interface):
         if not isinstance(formats, list):
             raise TypeError("formats can only be an instance of type list")
         for a in formats[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         result_action = self._call_method('dragHGMove',
                      in_p=[screen_id, x, y, default_action, allowed_actions, formats])
         result_action = DragAndDropAction(result_action)
@@ -13639,8 +13639,8 @@ class IGuest(Interface):
         if not isinstance(formats, list):
             raise TypeError("formats can only be an instance of type list")
         for a in formats[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         (format_p, result_action) = self._call_method('dragHGDrop',
                      in_p=[screen_id, x, y, default_action, allowed_actions, formats])
         result_action = DragAndDropAction(result_action)
@@ -13669,13 +13669,13 @@ class IGuest(Interface):
         """
         if not isinstance(screen_id, int):
             raise TypeError("screen_id can only be an instance of type int")
-        if not isinstance(format_p, str):
-            raise TypeError("format_p can only be an instance of type str")
+        if type(format_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(data, list):
             raise TypeError("data can only be an instance of type list")
         for a in data[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         progress = self._call_method('dragHGPutData',
                      in_p=[screen_id, format_p, data])
         progress = IProgress(progress)
@@ -13730,8 +13730,8 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        if not isinstance(format_p, str):
-            raise TypeError("format_p can only be an instance of type str")
+        if type(format_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(action, DragAndDropAction):
             raise TypeError("action can only be an instance of type DragAndDropAction")
         progress = self._call_method('dragGHDropped',
@@ -13802,14 +13802,14 @@ class IGuest(Interface):
             The newly created session object.
 
         """
-        if not isinstance(user, str):
-            raise TypeError("user can only be an instance of type str")
-        if not isinstance(password, str):
-            raise TypeError("password can only be an instance of type str")
-        if not isinstance(domain, str):
-            raise TypeError("domain can only be an instance of type str")
-        if not isinstance(session_name, str):
-            raise TypeError("session_name can only be an instance of type str")
+        if type(user) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(password) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(domain) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(session_name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         guest_session = self._call_method('createSession',
                      in_p=[user, password, domain, session_name])
         guest_session = IGuestSession(guest_session)
@@ -13826,8 +13826,8 @@ class IGuest(Interface):
             Array with all guest sessions found matching the name specified.
 
         """
-        if not isinstance(session_name, str):
-            raise TypeError("session_name can only be an instance of type str")
+        if type(session_name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         sessions = self._call_method('findSession',
                      in_p=[session_name])
         sessions = [IGuestSession(a) for a in sessions]
@@ -13865,8 +13865,8 @@ class IGuest(Interface):
             Error while updating.
         
         """
-        if not isinstance(source, str):
-            raise TypeError("source can only be an instance of type str")
+        if type(source) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
@@ -14066,8 +14066,8 @@ class IProgress(Interface):
 
     @timeout.setter
     def timeout(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('timeout', value)
 
     def set_current_operation_progress(self, percent):
@@ -14089,8 +14089,8 @@ class IProgress(Interface):
         in next_operations_weight of type int
 
         """
-        if not isinstance(next_operation_description, str):
-            raise TypeError("next_operation_description can only be an instance of type str")
+        if type(next_operation_description) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(next_operations_weight, int):
             raise TypeError("next_operations_weight can only be an instance of type int")
         self._call_method('setNextOperation',
@@ -14289,8 +14289,8 @@ class ISnapshot(Interface):
 
     @name.setter
     def name(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('name', value)
 
     @property
@@ -14305,8 +14305,8 @@ class ISnapshot(Interface):
 
     @description.setter
     def description(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('description', value)
 
     @property
@@ -14840,8 +14840,8 @@ class IMedium(Interface):
 
     @description.setter
     def description(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('description', value)
 
     @property
@@ -14897,8 +14897,8 @@ class IMedium(Interface):
 
     @location.setter
     def location(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('location', value)
 
     @property
@@ -15016,8 +15016,8 @@ class IMedium(Interface):
 
     @type_p.setter
     def type_p(self, value):
-        assert isinstance(value, MediumType), \
-                "value is not an instance of MediumType"
+        if not isinstance(value, MediumType):
+            raise TypeError("value is not an instance of MediumType")
         return self._set_attr('type', value)
 
     @property
@@ -15134,8 +15134,8 @@ class IMedium(Interface):
 
     @auto_reset.setter
     def auto_reset(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('autoReset', value)
 
     @property
@@ -15200,12 +15200,12 @@ class IMedium(Interface):
         """
         if not isinstance(set_image_id, bool):
             raise TypeError("set_image_id can only be an instance of type bool")
-        if not isinstance(image_id, str):
-            raise TypeError("image_id can only be an instance of type str")
+        if type(image_id) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(set_parent_id, bool):
             raise TypeError("set_parent_id can only be an instance of type bool")
-        if not isinstance(parent_id, str):
-            raise TypeError("parent_id can only be an instance of type str")
+        if type(parent_id) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('setIds',
                      in_p=[set_image_id, image_id, set_parent_id, parent_id])
         
@@ -15268,8 +15268,8 @@ class IMedium(Interface):
             Array of snapshot UUIDs of the given machine using this medium.
 
         """
-        if not isinstance(machine_id, str):
-            raise TypeError("machine_id can only be an instance of type str")
+        if type(machine_id) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         snapshot_ids = self._call_method('getSnapshotIds',
                      in_p=[machine_id])
         return snapshot_ids
@@ -15475,8 +15475,8 @@ class IMedium(Interface):
             @a name is @c null or empty.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         value = self._call_method('getProperty',
                      in_p=[name])
         return value
@@ -15505,10 +15505,10 @@ class IMedium(Interface):
             @a name is @c null or empty.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
-        if not isinstance(value, str):
-            raise TypeError("value can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('setProperty',
                      in_p=[name, value])
         
@@ -15543,8 +15543,8 @@ class IMedium(Interface):
             Values of returned properties.
 
         """
-        if not isinstance(names, str):
-            raise TypeError("names can only be an instance of type str")
+        if type(names) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         (return_names, return_values) = self._call_method('getProperties',
                      in_p=[names])
         return (return_names, return_values)
@@ -15582,13 +15582,13 @@ class IMedium(Interface):
         if not isinstance(names, list):
             raise TypeError("names can only be an instance of type list")
         for a in names[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         if not isinstance(values, list):
             raise TypeError("values can only be an instance of type list")
         for a in values[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         self._call_method('setProperties',
                      in_p=[names, values])
         
@@ -16633,8 +16633,8 @@ class IFramebuffer(Interface):
             raise TypeError("screen_id can only be an instance of type int")
         if not isinstance(pixel_format, int):
             raise TypeError("pixel_format can only be an instance of type int")
-        if not isinstance(vram, str):
-            raise TypeError("vram can only be an instance of type str")
+        if type(vram) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(bits_per_pixel, int):
             raise TypeError("bits_per_pixel can only be an instance of type int")
         if not isinstance(bytes_per_line, int):
@@ -16705,8 +16705,8 @@ class IFramebuffer(Interface):
             Number of elements copied to the @a rectangles array.
 
         """
-        if not isinstance(rectangles, str):
-            raise TypeError("rectangles can only be an instance of type str")
+        if type(rectangles) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(count, int):
             raise TypeError("count can only be an instance of type int")
         count_copied = self._call_method('getVisibleRegion',
@@ -16739,8 +16739,8 @@ class IFramebuffer(Interface):
             Number of @c RTRECT elements in the @a rectangles array.
 
         """
-        if not isinstance(rectangles, str):
-            raise TypeError("rectangles can only be an instance of type str")
+        if type(rectangles) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(count, int):
             raise TypeError("count can only be an instance of type int")
         self._call_method('setVisibleRegion',
@@ -16759,8 +16759,8 @@ class IFramebuffer(Interface):
             Pointer to VBOXVHWACMD containing the command to execute.
 
         """
-        if not isinstance(command, str):
-            raise TypeError("command can only be an instance of type str")
+        if type(command) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('processVHWACommand',
                      in_p=[command])
         
@@ -16776,8 +16776,8 @@ class IFramebuffer(Interface):
         """
         if not isinstance(type_p, int):
             raise TypeError("type_p can only be an instance of type int")
-        if not isinstance(reserved, str):
-            raise TypeError("reserved can only be an instance of type str")
+        if type(reserved) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('notify3DEvent',
                      in_p=[type_p, reserved])
         
@@ -16822,8 +16822,8 @@ class IFramebufferOverlay(IFramebuffer):
 
     @visible.setter
     def visible(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('visible', value)
 
     @property
@@ -16837,8 +16837,8 @@ class IFramebufferOverlay(IFramebuffer):
 
     @alpha.setter
     def alpha(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('alpha', value)
 
     def move(self, x, y):
@@ -17031,8 +17031,8 @@ class IDisplay(Interface):
         """
         if not isinstance(screen_id, int):
             raise TypeError("screen_id can only be an instance of type int")
-        if not isinstance(address, str):
-            raise TypeError("address can only be an instance of type str")
+        if type(address) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(width, int):
             raise TypeError("width can only be an instance of type int")
         if not isinstance(height, int):
@@ -17172,8 +17172,8 @@ class IDisplay(Interface):
         """
         if not isinstance(screen_id, int):
             raise TypeError("screen_id can only be an instance of type int")
-        if not isinstance(address, str):
-            raise TypeError("address can only be an instance of type str")
+        if type(address) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(x, int):
             raise TypeError("x can only be an instance of type int")
         if not isinstance(y, int):
@@ -17216,8 +17216,8 @@ class IDisplay(Interface):
             Pointer to VBOXVHWACMD containing the completed command.
 
         """
-        if not isinstance(command, str):
-            raise TypeError("command can only be an instance of type str")
+        if type(command) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('completeVHWACommand',
                      in_p=[command])
         
@@ -17284,8 +17284,8 @@ class INetworkAdapter(Interface):
 
     @adapter_type.setter
     def adapter_type(self, value):
-        assert isinstance(value, NetworkAdapterType), \
-                "value is not an instance of NetworkAdapterType"
+        if not isinstance(value, NetworkAdapterType):
+            raise TypeError("value is not an instance of NetworkAdapterType")
         return self._set_attr('adapterType', value)
 
     @property
@@ -17311,8 +17311,8 @@ class INetworkAdapter(Interface):
 
     @enabled.setter
     def enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('enabled', value)
 
     @property
@@ -17326,8 +17326,8 @@ class INetworkAdapter(Interface):
 
     @mac_address.setter
     def mac_address(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('MACAddress', value)
 
     @property
@@ -17340,8 +17340,8 @@ class INetworkAdapter(Interface):
 
     @attachment_type.setter
     def attachment_type(self, value):
-        assert isinstance(value, NetworkAttachmentType), \
-                "value is not an instance of NetworkAttachmentType"
+        if not isinstance(value, NetworkAttachmentType):
+            raise TypeError("value is not an instance of NetworkAttachmentType")
         return self._set_attr('attachmentType', value)
 
     @property
@@ -17354,8 +17354,8 @@ class INetworkAdapter(Interface):
 
     @bridged_interface.setter
     def bridged_interface(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('bridgedInterface', value)
 
     @property
@@ -17368,8 +17368,8 @@ class INetworkAdapter(Interface):
 
     @host_only_interface.setter
     def host_only_interface(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('hostOnlyInterface', value)
 
     @property
@@ -17382,8 +17382,8 @@ class INetworkAdapter(Interface):
 
     @internal_network.setter
     def internal_network(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('internalNetwork', value)
 
     @property
@@ -17396,8 +17396,8 @@ class INetworkAdapter(Interface):
 
     @nat_network.setter
     def nat_network(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('NATNetwork', value)
 
     @property
@@ -17410,8 +17410,8 @@ class INetworkAdapter(Interface):
 
     @generic_driver.setter
     def generic_driver(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('genericDriver', value)
 
     @property
@@ -17425,8 +17425,8 @@ class INetworkAdapter(Interface):
 
     @cable_connected.setter
     def cable_connected(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('cableConnected', value)
 
     @property
@@ -17439,8 +17439,8 @@ class INetworkAdapter(Interface):
 
     @line_speed.setter
     def line_speed(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('lineSpeed', value)
 
     @property
@@ -17454,8 +17454,8 @@ class INetworkAdapter(Interface):
 
     @promisc_mode_policy.setter
     def promisc_mode_policy(self, value):
-        assert isinstance(value, NetworkAdapterPromiscModePolicy), \
-                "value is not an instance of NetworkAdapterPromiscModePolicy"
+        if not isinstance(value, NetworkAdapterPromiscModePolicy):
+            raise TypeError("value is not an instance of NetworkAdapterPromiscModePolicy")
         return self._set_attr('promiscModePolicy', value)
 
     @property
@@ -17469,8 +17469,8 @@ class INetworkAdapter(Interface):
 
     @trace_enabled.setter
     def trace_enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('traceEnabled', value)
 
     @property
@@ -17484,8 +17484,8 @@ class INetworkAdapter(Interface):
 
     @trace_file.setter
     def trace_file(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('traceFile', value)
 
     @property
@@ -17509,8 +17509,8 @@ class INetworkAdapter(Interface):
 
     @boot_priority.setter
     def boot_priority(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('bootPriority', value)
 
     @property
@@ -17523,8 +17523,8 @@ class INetworkAdapter(Interface):
 
     @bandwidth_group.setter
     def bandwidth_group(self, value):
-        assert isinstance(value, IBandwidthGroup), \
-                "value is not an instance of IBandwidthGroup"
+        if not isinstance(value, IBandwidthGroup):
+            raise TypeError("value is not an instance of IBandwidthGroup")
         return self._set_attr('bandwidthGroup', value)
 
     def get_property(self, key):
@@ -17543,8 +17543,8 @@ class INetworkAdapter(Interface):
             @a name is @c null or empty.
         
         """
-        if not isinstance(key, str):
-            raise TypeError("key can only be an instance of type str")
+        if type(key) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         value = self._call_method('getProperty',
                      in_p=[key])
         return value
@@ -17565,10 +17565,10 @@ class INetworkAdapter(Interface):
             @a name is @c null or empty.
         
         """
-        if not isinstance(key, str):
-            raise TypeError("key can only be an instance of type str")
-        if not isinstance(value, str):
-            raise TypeError("value can only be an instance of type str")
+        if type(key) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('setProperty',
                      in_p=[key, value])
         
@@ -17597,8 +17597,8 @@ class INetworkAdapter(Interface):
             Values of returned properties.
 
         """
-        if not isinstance(names, str):
-            raise TypeError("names can only be an instance of type str")
+        if type(names) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         (return_names, return_values) = self._call_method('getProperties',
                      in_p=[names])
         return (return_names, return_values)
@@ -17652,8 +17652,8 @@ class ISerialPort(Interface):
 
     @enabled.setter
     def enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('enabled', value)
 
     @property
@@ -17666,8 +17666,8 @@ class ISerialPort(Interface):
 
     @io_base.setter
     def io_base(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('IOBase', value)
 
     @property
@@ -17680,8 +17680,8 @@ class ISerialPort(Interface):
 
     @irq.setter
     def irq(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('IRQ', value)
 
     @property
@@ -17697,8 +17697,8 @@ class ISerialPort(Interface):
 
     @host_mode.setter
     def host_mode(self, value):
-        assert isinstance(value, PortMode), \
-                "value is not an instance of PortMode"
+        if not isinstance(value, PortMode):
+            raise TypeError("value is not an instance of PortMode")
         return self._set_attr('hostMode', value)
 
     @property
@@ -17713,8 +17713,8 @@ class ISerialPort(Interface):
 
     @server.setter
     def server(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('server', value)
 
     @property
@@ -17731,8 +17731,8 @@ class ISerialPort(Interface):
 
     @path.setter
     def path(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('path', value)
 
 
@@ -17775,8 +17775,8 @@ class IParallelPort(Interface):
 
     @enabled.setter
     def enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('enabled', value)
 
     @property
@@ -17789,8 +17789,8 @@ class IParallelPort(Interface):
 
     @io_base.setter
     def io_base(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('IOBase', value)
 
     @property
@@ -17803,8 +17803,8 @@ class IParallelPort(Interface):
 
     @irq.setter
     def irq(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('IRQ', value)
 
     @property
@@ -17819,8 +17819,8 @@ class IParallelPort(Interface):
 
     @path.setter
     def path(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('path', value)
 
 
@@ -17845,10 +17845,10 @@ class IMachineDebugger(Interface):
             Reserved for future compression method indicator.
 
         """
-        if not isinstance(filename, str):
-            raise TypeError("filename can only be an instance of type str")
-        if not isinstance(compression, str):
-            raise TypeError("compression can only be an instance of type str")
+        if type(filename) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(compression) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('dumpGuestCore',
                      in_p=[filename, compression])
         
@@ -17865,10 +17865,10 @@ class IMachineDebugger(Interface):
             Reserved for future compression method indicator.
 
         """
-        if not isinstance(filename, str):
-            raise TypeError("filename can only be an instance of type str")
-        if not isinstance(compression, str):
-            raise TypeError("compression can only be an instance of type str")
+        if type(filename) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(compression) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('dumpHostProcessCore',
                      in_p=[filename, compression])
         
@@ -17888,10 +17888,10 @@ class IMachineDebugger(Interface):
             The into string.
 
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
-        if not isinstance(args, str):
-            raise TypeError("args can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(args) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         info = self._call_method('info',
                      in_p=[name, args])
         return info
@@ -17910,8 +17910,8 @@ class IMachineDebugger(Interface):
           release logger, prefix the string with "release:".
 
         """
-        if not isinstance(settings, str):
-            raise TypeError("settings can only be an instance of type str")
+        if type(settings) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('modifyLogGroups',
                      in_p=[settings])
         
@@ -17923,8 +17923,8 @@ class IMachineDebugger(Interface):
           release logger, prefix the string with "release:".
 
         """
-        if not isinstance(settings, str):
-            raise TypeError("settings can only be an instance of type str")
+        if type(settings) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('modifyLogFlags',
                      in_p=[settings])
         
@@ -17936,8 +17936,8 @@ class IMachineDebugger(Interface):
           release logger, prefix the string with "release:".
 
         """
-        if not isinstance(settings, str):
-            raise TypeError("settings can only be an instance of type str")
+        if type(settings) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('modifyLogDestinations',
                      in_p=[settings])
         
@@ -17988,8 +17988,8 @@ class IMachineDebugger(Interface):
         if not isinstance(bytes_p, list):
             raise TypeError("bytes_p can only be an instance of type list")
         for a in bytes_p[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         self._call_method('writePhysicalMemory',
                      in_p=[address, size, bytes_p])
         
@@ -18050,8 +18050,8 @@ class IMachineDebugger(Interface):
         if not isinstance(bytes_p, list):
             raise TypeError("bytes_p can only be an instance of type list")
         for a in bytes_p[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         self._call_method('writeVirtualMemory',
                      in_p=[cpu_id, address, size, bytes_p])
         
@@ -18087,8 +18087,8 @@ class IMachineDebugger(Interface):
         """
         if not isinstance(cpu_id, int):
             raise TypeError("cpu_id can only be an instance of type int")
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         value = self._call_method('getRegister',
                      in_p=[cpu_id, name])
         return value
@@ -18136,10 +18136,10 @@ class IMachineDebugger(Interface):
         """
         if not isinstance(cpu_id, int):
             raise TypeError("cpu_id can only be an instance of type int")
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
-        if not isinstance(value, str):
-            raise TypeError("value can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('setRegister',
                      in_p=[cpu_id, name, value])
         
@@ -18166,13 +18166,13 @@ class IMachineDebugger(Interface):
         if not isinstance(names, list):
             raise TypeError("names can only be an instance of type list")
         for a in names[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         if not isinstance(values, list):
             raise TypeError("values can only be an instance of type list")
         for a in values[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         self._call_method('setRegisters',
                      in_p=[cpu_id, names, values])
         
@@ -18202,8 +18202,8 @@ class IMachineDebugger(Interface):
             The selection pattern. A bit similar to filename globbing.
 
         """
-        if not isinstance(pattern, str):
-            raise TypeError("pattern can only be an instance of type str")
+        if type(pattern) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('resetStats',
                      in_p=[pattern])
         
@@ -18214,8 +18214,8 @@ class IMachineDebugger(Interface):
             The selection pattern. A bit similar to filename globbing.
 
         """
-        if not isinstance(pattern, str):
-            raise TypeError("pattern can only be an instance of type str")
+        if type(pattern) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('dumpStats',
                      in_p=[pattern])
         
@@ -18232,8 +18232,8 @@ class IMachineDebugger(Interface):
             The XML document containing the statistics.
 
         """
-        if not isinstance(pattern, str):
-            raise TypeError("pattern can only be an instance of type str")
+        if type(pattern) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(with_descriptions, bool):
             raise TypeError("with_descriptions can only be an instance of type bool")
         stats = self._call_method('getStats',
@@ -18250,8 +18250,8 @@ class IMachineDebugger(Interface):
 
     @single_step.setter
     def single_step(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('singleStep', value)
 
     @property
@@ -18264,8 +18264,8 @@ class IMachineDebugger(Interface):
 
     @recompile_user.setter
     def recompile_user(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('recompileUser', value)
 
     @property
@@ -18278,8 +18278,8 @@ class IMachineDebugger(Interface):
 
     @recompile_supervisor.setter
     def recompile_supervisor(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('recompileSupervisor', value)
 
     @property
@@ -18292,8 +18292,8 @@ class IMachineDebugger(Interface):
 
     @patm_enabled.setter
     def patm_enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('PATMEnabled', value)
 
     @property
@@ -18306,8 +18306,8 @@ class IMachineDebugger(Interface):
 
     @csam_enabled.setter
     def csam_enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('CSAMEnabled', value)
 
     @property
@@ -18320,8 +18320,8 @@ class IMachineDebugger(Interface):
 
     @log_enabled.setter
     def log_enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('logEnabled', value)
 
     @property
@@ -18450,8 +18450,8 @@ class IMachineDebugger(Interface):
 
     @virtual_time_rate.setter
     def virtual_time_rate(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('virtualTimeRate', value)
 
     @property
@@ -18488,8 +18488,8 @@ class IUSBController(Interface):
 
     @enabled.setter
     def enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('enabled', value)
 
     @property
@@ -18505,8 +18505,8 @@ class IUSBController(Interface):
 
     @enabled_ehci.setter
     def enabled_ehci(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('enabledEHCI', value)
 
     @property
@@ -18577,8 +18577,8 @@ class IUSBController(Interface):
             The virtual machine is not mutable.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         filter_p = self._call_method('createDeviceFilter',
                      in_p=[name])
         filter_p = IUSBDeviceFilter(filter_p)
@@ -18856,8 +18856,8 @@ class IUSBDeviceFilter(Interface):
 
     @name.setter
     def name(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('name', value)
 
     @property
@@ -18870,8 +18870,8 @@ class IUSBDeviceFilter(Interface):
 
     @active.setter
     def active(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('active', value)
 
     @property
@@ -18887,8 +18887,8 @@ class IUSBDeviceFilter(Interface):
 
     @vendor_id.setter
     def vendor_id(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('vendorId', value)
 
     @property
@@ -18904,8 +18904,8 @@ class IUSBDeviceFilter(Interface):
 
     @product_id.setter
     def product_id(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('productId', value)
 
     @property
@@ -18927,8 +18927,8 @@ class IUSBDeviceFilter(Interface):
 
     @revision.setter
     def revision(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('revision', value)
 
     @property
@@ -18941,8 +18941,8 @@ class IUSBDeviceFilter(Interface):
 
     @manufacturer.setter
     def manufacturer(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('manufacturer', value)
 
     @property
@@ -18955,8 +18955,8 @@ class IUSBDeviceFilter(Interface):
 
     @product.setter
     def product(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('product', value)
 
     @property
@@ -18969,8 +18969,8 @@ class IUSBDeviceFilter(Interface):
 
     @serial_number.setter
     def serial_number(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('serialNumber', value)
 
     @property
@@ -18983,8 +18983,8 @@ class IUSBDeviceFilter(Interface):
 
     @port.setter
     def port(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('port', value)
 
     @property
@@ -19000,8 +19000,8 @@ class IUSBDeviceFilter(Interface):
 
     @remote.setter
     def remote(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('remote', value)
 
     @property
@@ -19018,8 +19018,8 @@ class IUSBDeviceFilter(Interface):
 
     @masked_interfaces.setter
     def masked_interfaces(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('maskedInterfaces', value)
 
 
@@ -19079,8 +19079,8 @@ class IHostUSBDeviceFilter(IUSBDeviceFilter):
 
     @action.setter
     def action(self, value):
-        assert isinstance(value, USBDeviceFilterAction), \
-                "value is not an instance of USBDeviceFilterAction"
+        if not isinstance(value, USBDeviceFilterAction):
+            raise TypeError("value is not an instance of USBDeviceFilterAction")
         return self._set_attr('action', value)
 
 
@@ -19105,8 +19105,8 @@ class IAudioAdapter(Interface):
 
     @enabled.setter
     def enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('enabled', value)
 
     @property
@@ -19119,8 +19119,8 @@ class IAudioAdapter(Interface):
 
     @audio_controller.setter
     def audio_controller(self, value):
-        assert isinstance(value, AudioControllerType), \
-                "value is not an instance of AudioControllerType"
+        if not isinstance(value, AudioControllerType):
+            raise TypeError("value is not an instance of AudioControllerType")
         return self._set_attr('audioController', value)
 
     @property
@@ -19134,8 +19134,8 @@ class IAudioAdapter(Interface):
 
     @audio_driver.setter
     def audio_driver(self, value):
-        assert isinstance(value, AudioDriverType), \
-                "value is not an instance of AudioDriverType"
+        if not isinstance(value, AudioDriverType):
+            raise TypeError("value is not an instance of AudioDriverType")
         return self._set_attr('audioDriver', value)
 
 
@@ -19156,8 +19156,8 @@ class IVRDEServer(Interface):
 
     @enabled.setter
     def enabled(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('enabled', value)
 
     @property
@@ -19170,8 +19170,8 @@ class IVRDEServer(Interface):
 
     @auth_type.setter
     def auth_type(self, value):
-        assert isinstance(value, AuthType), \
-                "value is not an instance of AuthType"
+        if not isinstance(value, AuthType):
+            raise TypeError("value is not an instance of AuthType")
         return self._set_attr('authType', value)
 
     @property
@@ -19184,8 +19184,8 @@ class IVRDEServer(Interface):
 
     @auth_timeout.setter
     def auth_timeout(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('authTimeout', value)
 
     @property
@@ -19199,8 +19199,8 @@ class IVRDEServer(Interface):
 
     @allow_multi_connection.setter
     def allow_multi_connection(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('allowMultiConnection', value)
 
     @property
@@ -19215,8 +19215,8 @@ class IVRDEServer(Interface):
 
     @reuse_single_connection.setter
     def reuse_single_connection(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('reuseSingleConnection', value)
 
     @property
@@ -19230,8 +19230,8 @@ class IVRDEServer(Interface):
 
     @vrde_ext_pack.setter
     def vrde_ext_pack(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('VRDEExtPack', value)
 
     @property
@@ -19245,8 +19245,8 @@ class IVRDEServer(Interface):
 
     @auth_library.setter
     def auth_library(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('authLibrary', value)
 
     @property
@@ -19270,10 +19270,10 @@ class IVRDEServer(Interface):
             Value to assign to the key.
 
         """
-        if not isinstance(key, str):
-            raise TypeError("key can only be an instance of type str")
-        if not isinstance(value, str):
-            raise TypeError("value can only be an instance of type str")
+        if type(key) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('setVRDEProperty',
                      in_p=[key, value])
         
@@ -19290,8 +19290,8 @@ class IVRDEServer(Interface):
             Value of the requested key.
 
         """
-        if not isinstance(key, str):
-            raise TypeError("key can only be an instance of type str")
+        if type(key) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         value = self._call_method('getVRDEProperty',
                      in_p=[key])
         return value
@@ -19794,8 +19794,8 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        if not isinstance(id_p, str):
-            raise TypeError("id_p can only be an instance of type str")
+        if type(id_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(error, IVirtualBoxErrorInfo):
             raise TypeError("error can only be an instance of type IVirtualBoxErrorInfo")
         self._call_method('onUSBDeviceDetach',
@@ -19862,12 +19862,12 @@ class IInternalSessionControl(Interface):
             Session type is not direct.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
-        if not isinstance(value, str):
-            raise TypeError("value can only be an instance of type str")
-        if not isinstance(flags, str):
-            raise TypeError("flags can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(flags) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(is_setter, bool):
             raise TypeError("is_setter can only be an instance of type bool")
         (ret_value, ret_timestamp, ret_flags) = self._call_method('accessGuestProperty',
@@ -19905,8 +19905,8 @@ class IInternalSessionControl(Interface):
             Session type is not direct.
         
         """
-        if not isinstance(patterns, str):
-            raise TypeError("patterns can only be an instance of type str")
+        if type(patterns) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         (keys, values, timestamps, flags) = self._call_method('enumerateGuestProperties',
                      in_p=[patterns])
         return (keys, values, timestamps, flags)
@@ -20181,8 +20181,8 @@ class IStorageController(Interface):
 
     @instance.setter
     def instance(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('instance', value)
 
     @property
@@ -20198,8 +20198,8 @@ class IStorageController(Interface):
 
     @port_count.setter
     def port_count(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('portCount', value)
 
     @property
@@ -20227,8 +20227,8 @@ class IStorageController(Interface):
 
     @controller_type.setter
     def controller_type(self, value):
-        assert isinstance(value, StorageControllerType), \
-                "value is not an instance of StorageControllerType"
+        if not isinstance(value, StorageControllerType):
+            raise TypeError("value is not an instance of StorageControllerType")
         return self._set_attr('controllerType', value)
 
     @property
@@ -20250,8 +20250,8 @@ class IStorageController(Interface):
 
     @use_host_io_cache.setter
     def use_host_io_cache(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('useHostIOCache', value)
 
     @property
@@ -20478,8 +20478,8 @@ class IPerformanceCollector(Interface):
         if not isinstance(metric_names, list):
             raise TypeError("metric_names can only be an instance of type list")
         for a in metric_names[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         if not isinstance(objects, list):
             raise TypeError("objects can only be an instance of type list")
         for a in objects[:10]:
@@ -20523,8 +20523,8 @@ class IPerformanceCollector(Interface):
         if not isinstance(metric_names, list):
             raise TypeError("metric_names can only be an instance of type list")
         for a in metric_names[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         if not isinstance(objects, list):
             raise TypeError("objects can only be an instance of type list")
         for a in objects[:10]:
@@ -20564,8 +20564,8 @@ class IPerformanceCollector(Interface):
         if not isinstance(metric_names, list):
             raise TypeError("metric_names can only be an instance of type list")
         for a in metric_names[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         if not isinstance(objects, list):
             raise TypeError("objects can only be an instance of type list")
         for a in objects[:10]:
@@ -20601,8 +20601,8 @@ class IPerformanceCollector(Interface):
         if not isinstance(metric_names, list):
             raise TypeError("metric_names can only be an instance of type list")
         for a in metric_names[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         if not isinstance(objects, list):
             raise TypeError("objects can only be an instance of type list")
         for a in objects[:10]:
@@ -20690,8 +20690,8 @@ class IPerformanceCollector(Interface):
         if not isinstance(metric_names, list):
             raise TypeError("metric_names can only be an instance of type list")
         for a in metric_names[:10]:
-            if not isinstance(a, str):
-                raise TypeError("array can only contain objects of type str")
+            if a not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         if not isinstance(objects, list):
             raise TypeError("objects can only be an instance of type list")
         for a in objects[:10]:
@@ -20723,8 +20723,8 @@ class INATEngine(Interface):
 
     @network.setter
     def network(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('network', value)
 
     @property
@@ -20738,8 +20738,8 @@ class INATEngine(Interface):
 
     @host_ip.setter
     def host_ip(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('hostIP', value)
 
     @property
@@ -20753,8 +20753,8 @@ class INATEngine(Interface):
 
     @tftp_prefix.setter
     def tftp_prefix(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('TFTPPrefix', value)
 
     @property
@@ -20768,8 +20768,8 @@ class INATEngine(Interface):
 
     @tftp_boot_file.setter
     def tftp_boot_file(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('TFTPBootFile', value)
 
     @property
@@ -20784,8 +20784,8 @@ class INATEngine(Interface):
 
     @tftp_next_server.setter
     def tftp_next_server(self, value):
-        assert isinstance(value, str), \
-                "value is not an instance of str"
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return self._set_attr('TFTPNextServer', value)
 
     @property
@@ -20798,8 +20798,8 @@ class INATEngine(Interface):
 
     @alias_mode.setter
     def alias_mode(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('aliasMode', value)
 
     @property
@@ -20812,8 +20812,8 @@ class INATEngine(Interface):
 
     @dns_pass_domain.setter
     def dns_pass_domain(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('DNSPassDomain', value)
 
     @property
@@ -20827,8 +20827,8 @@ class INATEngine(Interface):
 
     @dns_proxy.setter
     def dns_proxy(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('DNSProxy', value)
 
     @property
@@ -20842,8 +20842,8 @@ class INATEngine(Interface):
 
     @dns_use_host_resolver.setter
     def dns_use_host_resolver(self, value):
-        assert isinstance(value, bool), \
-                "value is not an instance of bool"
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
         return self._set_attr('DNSUseHostResolver', value)
 
     @property
@@ -20933,16 +20933,16 @@ class INATEngine(Interface):
             The port number to forward.
 
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(proto, NATProtocol):
             raise TypeError("proto can only be an instance of type NATProtocol")
-        if not isinstance(host_ip, str):
-            raise TypeError("host_ip can only be an instance of type str")
+        if type(host_ip) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(host_port, int):
             raise TypeError("host_port can only be an instance of type int")
-        if not isinstance(guest_ip, str):
-            raise TypeError("guest_ip can only be an instance of type str")
+        if type(guest_ip) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(guest_port, int):
             raise TypeError("guest_port can only be an instance of type int")
         self._call_method('addRedirect',
@@ -20955,8 +20955,8 @@ class INATEngine(Interface):
             The name of the rule to delete.
 
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('removeRedirect',
                      in_p=[name])
         
@@ -21136,12 +21136,12 @@ class IExtPackBase(Interface):
             The license text.
 
         """
-        if not isinstance(preferred_locale, str):
-            raise TypeError("preferred_locale can only be an instance of type str")
-        if not isinstance(preferred_language, str):
-            raise TypeError("preferred_language can only be an instance of type str")
-        if not isinstance(format_p, str):
-            raise TypeError("format_p can only be an instance of type str")
+        if type(preferred_locale) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(preferred_language) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if type(format_p) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         license_text = self._call_method('queryLicense',
                      in_p=[preferred_locale, preferred_language, format_p])
         return license_text
@@ -21167,8 +21167,8 @@ class IExtPack(IExtPackBase):
             The queried interface.
 
         """
-        if not isinstance(obj_uuid, str):
-            raise TypeError("obj_uuid can only be an instance of type str")
+        if type(obj_uuid) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return_interface = self._call_method('queryObject',
                      in_p=[obj_uuid])
         return_interface = Interface(return_interface)
@@ -21208,8 +21208,8 @@ class IExtPackFile(IExtPackBase):
         """
         if not isinstance(replace, bool):
             raise TypeError("replace can only be an instance of type bool")
-        if not isinstance(display_info, str):
-            raise TypeError("display_info can only be an instance of type str")
+        if type(display_info) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         progess = self._call_method('install',
                      in_p=[replace, display_info])
         progess = IProgress(progess)
@@ -21247,8 +21247,8 @@ class IExtPackManager(Interface):
             No extension pack matching @a name was found.
         
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         return_data = self._call_method('find',
                      in_p=[name])
         return_data = IExtPack(return_data)
@@ -21266,8 +21266,8 @@ class IExtPackManager(Interface):
             The interface of the extension pack file object.
 
         """
-        if not isinstance(path, str):
-            raise TypeError("path can only be an instance of type str")
+        if type(path) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         file_p = self._call_method('openExtPackFile',
                      in_p=[path])
         file_p = IExtPackFile(file_p)
@@ -21290,12 +21290,12 @@ class IExtPackManager(Interface):
             Progress object for the operation.
 
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(forced_removal, bool):
             raise TypeError("forced_removal can only be an instance of type bool")
-        if not isinstance(display_info, str):
-            raise TypeError("display_info can only be an instance of type str")
+        if type(display_info) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         progess = self._call_method('uninstall',
                      in_p=[name, forced_removal, display_info])
         progess = IProgress(progess)
@@ -21320,8 +21320,8 @@ class IExtPackManager(Interface):
             Array containing the plug-in modules (full paths).
 
         """
-        if not isinstance(frontend_name, str):
-            raise TypeError("frontend_name can only be an instance of type str")
+        if type(frontend_name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         plug_in_modules = self._call_method('queryAllPlugInsForFrontend',
                      in_p=[frontend_name])
         return plug_in_modules
@@ -21336,8 +21336,8 @@ class IExtPackManager(Interface):
             Is the given extension pack loaded and usable.
 
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         usable = self._call_method('isExtPackUsable',
                      in_p=[name])
         return usable
@@ -21385,8 +21385,8 @@ class IBandwidthGroup(Interface):
 
     @max_bytes_per_sec.setter
     def max_bytes_per_sec(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('maxBytesPerSec', value)
 
 
@@ -21420,8 +21420,8 @@ class IBandwidthControl(Interface):
           entities attached to this group during one second.
 
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         if not isinstance(type_p, BandwidthGroupType):
             raise TypeError("type_p can only be an instance of type BandwidthGroupType")
         if not isinstance(max_bytes_per_sec, int):
@@ -21436,8 +21436,8 @@ class IBandwidthControl(Interface):
             Name of the bandwidth group to delete.
 
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('deleteBandwidthGroup',
                      in_p=[name])
         
@@ -21451,8 +21451,8 @@ class IBandwidthControl(Interface):
             Where to store the bandwidth group on success.
 
         """
-        if not isinstance(name, str):
-            raise TypeError("name can only be an instance of type str")
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         bandwidth_group = self._call_method('getBandwidthGroup',
                      in_p=[name])
         bandwidth_group = IBandwidthGroup(bandwidth_group)
@@ -23053,8 +23053,8 @@ class IVetoEvent(IEvent):
             Reason for veto, could be null or empty string.
 
         """
-        if not isinstance(reason, str):
-            raise TypeError("reason can only be an instance of type str")
+        if type(reason) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
         self._call_method('addVeto',
                      in_p=[reason])
         
@@ -23174,8 +23174,8 @@ class IShowWindowEvent(IEvent):
 
     @win_id.setter
     def win_id(self, value):
-        assert isinstance(value, int), \
-                "value is not an instance of int"
+        if not isinstance(value, int):
+            raise TypeError("value is not an instance of int")
         return self._set_attr('winId', value)
 
 
