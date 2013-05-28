@@ -5,14 +5,36 @@ import virtualbox
 from virtualbox import library
 from virtualbox.library import CloneMode
 from virtualbox.library import CloneOptions
-from virtualbox.library import VBoxErrorObjectNotFound
+from virtualbox.library import CleanupMode 
 """
  Provide some convenience functions which pull in some of the beauty of
- vboxmanage.
+ vboxmanage. 
 
 """
 
 vbox = virtualbox.VirtualBox()
+
+def unregister(vm, delete=True):
+    """Unregister and optionally delete associated config"""
+    if delete:
+        options = CleanupMode.detach_all_return_hard_disk_only
+    else:
+        options = CleanupMode.detach_all_return_none
+    media = vm.unregister(options)
+    if delete:
+        progress = machine.delete_config(media)
+        progress.wait_for_completion(-1)
+
+
+def startvm(vm, session_type='gui', environment=''):
+    """Start a VM
+
+    Return a session to the newly spawned VM
+    """
+    session = virtualbox.Session()
+    progress = vm.launch_vm_process(session, session_type, environment)
+    progress.wait_for_completion(-1)
+    return session
 
 
 def clonevm(vm, mode=CloneMode.machine_state, options=[CloneOptions.link],
