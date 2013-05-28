@@ -2353,7 +2353,7 @@ class INATNetwork(Interface):
     def network_name(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._network_name', value)
+        return self._set_attr(self._network_name, value)
     _network_name = 'NetworkName'
 
     @property
@@ -2366,7 +2366,7 @@ class INATNetwork(Interface):
     def enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._enabled', value)
+        return self._set_attr(self._enabled, value)
     _enabled = 'enabled'
 
     @property
@@ -2384,7 +2384,7 @@ class INATNetwork(Interface):
     def network(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._network', value)
+        return self._set_attr(self._network, value)
     _network = 'network'
 
     @property
@@ -2409,7 +2409,7 @@ class INATNetwork(Interface):
     def i_pv6_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._i_pv6_enabled', value)
+        return self._set_attr(self._i_pv6_enabled, value)
     _i_pv6_enabled = 'IPv6Enabled'
 
     @property
@@ -2424,7 +2424,7 @@ class INATNetwork(Interface):
     def i_pv6_prefix(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._i_pv6_prefix', value)
+        return self._set_attr(self._i_pv6_prefix, value)
     _i_pv6_prefix = 'IPv6Prefix'
 
     @property
@@ -2437,7 +2437,7 @@ class INATNetwork(Interface):
     def advertise_default_i_pv6_route_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._advertise_default_i_pv6_route_enabled', value)
+        return self._set_attr(self._advertise_default_i_pv6_route_enabled, value)
     _advertise_default_i_pv6_route_enabled = 'advertiseDefaultIPv6RouteEnabled'
 
     @property
@@ -2450,7 +2450,7 @@ class INATNetwork(Interface):
     def need_dhcp_server(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._need_dhcp_server', value)
+        return self._set_attr(self._need_dhcp_server, value)
     _need_dhcp_server = 'needDhcpServer'
 
     @property
@@ -2584,7 +2584,7 @@ class IDHCPServer(Interface):
     def enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._enabled', value)
+        return self._set_attr(self._enabled, value)
     _enabled = 'enabled'
 
     @property
@@ -5165,7 +5165,7 @@ class IBIOSSettings(Interface):
     def logo_fade_in(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._logo_fade_in', value)
+        return self._set_attr(self._logo_fade_in, value)
     _logo_fade_in = 'logoFadeIn'
 
     @property
@@ -5180,7 +5180,7 @@ class IBIOSSettings(Interface):
     def logo_fade_out(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._logo_fade_out', value)
+        return self._set_attr(self._logo_fade_out, value)
     _logo_fade_out = 'logoFadeOut'
 
     @property
@@ -5195,7 +5195,7 @@ class IBIOSSettings(Interface):
     def logo_display_time(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._logo_display_time', value)
+        return self._set_attr(self._logo_display_time, value)
     _logo_display_time = 'logoDisplayTime'
 
     @property
@@ -5211,7 +5211,7 @@ class IBIOSSettings(Interface):
     def logo_image_path(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._logo_image_path', value)
+        return self._set_attr(self._logo_image_path, value)
     _logo_image_path = 'logoImagePath'
 
     @property
@@ -5226,7 +5226,7 @@ class IBIOSSettings(Interface):
     def boot_menu_mode(self, value):
         if not isinstance(value, BIOSBootMenuMode):
             raise TypeError("value is not an instance of BIOSBootMenuMode")
-        return self._set_attr(self._boot_menu_mode', value)
+        return self._set_attr(self._boot_menu_mode, value)
     _boot_menu_mode = 'bootMenuMode'
 
     @property
@@ -5241,7 +5241,7 @@ class IBIOSSettings(Interface):
     def acpi_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._acpi_enabled', value)
+        return self._set_attr(self._acpi_enabled, value)
     _acpi_enabled = 'ACPIEnabled'
 
     @property
@@ -5257,7 +5257,7 @@ class IBIOSSettings(Interface):
     def ioapic_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._ioapic_enabled', value)
+        return self._set_attr(self._ioapic_enabled, value)
     _ioapic_enabled = 'IOAPICEnabled'
 
     @property
@@ -5276,7 +5276,7 @@ class IBIOSSettings(Interface):
     def time_offset(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._time_offset', value)
+        return self._set_attr(self._time_offset, value)
     _time_offset = 'timeOffset'
 
     @property
@@ -5292,7 +5292,7 @@ class IBIOSSettings(Interface):
     def pxe_debug_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._pxe_debug_enabled', value)
+        return self._set_attr(self._pxe_debug_enabled, value)
     _pxe_debug_enabled = 'PXEDebugEnabled'
 
 
@@ -5315,7 +5315,7 @@ class IPCIAddress(Interface):
     def bus(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._bus', value)
+        return self._set_attr(self._bus, value)
     _bus = 'bus'
 
     @property
@@ -5330,7 +5330,7 @@ class IPCIAddress(Interface):
     def device(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._device', value)
+        return self._set_attr(self._device, value)
     _device = 'device'
 
     @property
@@ -5345,7 +5345,7 @@ class IPCIAddress(Interface):
     def dev_function(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._dev_function', value)
+        return self._set_attr(self._dev_function, value)
     _dev_function = 'devFunction'
 
     def as_long(self):
@@ -5570,7 +5570,7 @@ class IMachine(Interface):
     def name(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._name', value)
+        return self._set_attr(self._name, value)
     _name = 'name'
 
     @property
@@ -5590,7 +5590,7 @@ class IMachine(Interface):
     def description(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._description', value)
+        return self._set_attr(self._description, value)
     _description = 'description'
 
     @property
@@ -5619,7 +5619,7 @@ class IMachine(Interface):
     def groups(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._groups', value)
+        return self._set_attr(self._groups, value)
     _groups = 'getGroups'
 
     @property
@@ -5641,7 +5641,7 @@ class IMachine(Interface):
     def os_type_id(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._os_type_id', value)
+        return self._set_attr(self._os_type_id, value)
     _os_type_id = 'OSTypeId'
 
     @property
@@ -5656,7 +5656,7 @@ class IMachine(Interface):
     def hardware_version(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._hardware_version', value)
+        return self._set_attr(self._hardware_version, value)
     _hardware_version = 'hardwareVersion'
 
     @property
@@ -5675,7 +5675,7 @@ class IMachine(Interface):
     def hardware_uuid(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._hardware_uuid', value)
+        return self._set_attr(self._hardware_uuid, value)
     _hardware_uuid = 'hardwareUUID'
 
     @property
@@ -5690,7 +5690,7 @@ class IMachine(Interface):
     def cpu_count(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._cpu_count', value)
+        return self._set_attr(self._cpu_count, value)
     _cpu_count = 'CPUCount'
 
     @property
@@ -5706,7 +5706,7 @@ class IMachine(Interface):
     def cpu_hot_plug_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._cpu_hot_plug_enabled', value)
+        return self._set_attr(self._cpu_hot_plug_enabled, value)
     _cpu_hot_plug_enabled = 'CPUHotPlugEnabled'
 
     @property
@@ -5723,7 +5723,7 @@ class IMachine(Interface):
     def cpu_execution_cap(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._cpu_execution_cap', value)
+        return self._set_attr(self._cpu_execution_cap, value)
     _cpu_execution_cap = 'CPUExecutionCap'
 
     @property
@@ -5738,7 +5738,7 @@ class IMachine(Interface):
     def memory_size(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._memory_size', value)
+        return self._set_attr(self._memory_size, value)
     _memory_size = 'memorySize'
 
     @property
@@ -5753,7 +5753,7 @@ class IMachine(Interface):
     def memory_balloon_size(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._memory_balloon_size', value)
+        return self._set_attr(self._memory_balloon_size, value)
     _memory_balloon_size = 'memoryBalloonSize'
 
     @property
@@ -5769,7 +5769,7 @@ class IMachine(Interface):
     def page_fusion_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._page_fusion_enabled', value)
+        return self._set_attr(self._page_fusion_enabled, value)
     _page_fusion_enabled = 'pageFusionEnabled'
 
     @property
@@ -5784,7 +5784,7 @@ class IMachine(Interface):
     def graphics_controller_type(self, value):
         if not isinstance(value, GraphicsControllerType):
             raise TypeError("value is not an instance of GraphicsControllerType")
-        return self._set_attr(self._graphics_controller_type', value)
+        return self._set_attr(self._graphics_controller_type, value)
     _graphics_controller_type = 'graphicsControllerType'
 
     @property
@@ -5799,7 +5799,7 @@ class IMachine(Interface):
     def vram_size(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._vram_size', value)
+        return self._set_attr(self._vram_size, value)
     _vram_size = 'VRAMSize'
 
     @property
@@ -5815,7 +5815,7 @@ class IMachine(Interface):
     def accelerate3_d_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._accelerate3_d_enabled', value)
+        return self._set_attr(self._accelerate3_d_enabled, value)
     _accelerate3_d_enabled = 'accelerate3DEnabled'
 
     @property
@@ -5831,7 +5831,7 @@ class IMachine(Interface):
     def accelerate2_d_video_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._accelerate2_d_video_enabled', value)
+        return self._set_attr(self._accelerate2_d_video_enabled, value)
     _accelerate2_d_video_enabled = 'accelerate2DVideoEnabled'
 
     @property
@@ -5849,7 +5849,7 @@ class IMachine(Interface):
     def monitor_count(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._monitor_count', value)
+        return self._set_attr(self._monitor_count, value)
     _monitor_count = 'monitorCount'
 
     @property
@@ -5865,7 +5865,7 @@ class IMachine(Interface):
     def video_capture_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._video_capture_enabled', value)
+        return self._set_attr(self._video_capture_enabled, value)
     _video_capture_enabled = 'VideoCaptureEnabled'
 
     @property
@@ -5881,7 +5881,7 @@ class IMachine(Interface):
     def video_capture_screens(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._video_capture_screens', value)
+        return self._set_attr(self._video_capture_screens, value)
     _video_capture_screens = 'getVideoCaptureScreens'
 
     @property
@@ -5897,7 +5897,7 @@ class IMachine(Interface):
     def video_capture_file(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._video_capture_file', value)
+        return self._set_attr(self._video_capture_file, value)
     _video_capture_file = 'VideoCaptureFile'
 
     @property
@@ -5912,7 +5912,7 @@ class IMachine(Interface):
     def video_capture_width(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._video_capture_width', value)
+        return self._set_attr(self._video_capture_width, value)
     _video_capture_width = 'VideoCaptureWidth'
 
     @property
@@ -5927,7 +5927,7 @@ class IMachine(Interface):
     def video_capture_height(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._video_capture_height', value)
+        return self._set_attr(self._video_capture_height, value)
     _video_capture_height = 'VideoCaptureHeight'
 
     @property
@@ -5944,7 +5944,7 @@ class IMachine(Interface):
     def video_capture_rate(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._video_capture_rate', value)
+        return self._set_attr(self._video_capture_rate, value)
     _video_capture_rate = 'VideoCaptureRate'
 
     @property
@@ -5962,7 +5962,7 @@ class IMachine(Interface):
     def video_capture_fps(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._video_capture_fps', value)
+        return self._set_attr(self._video_capture_fps, value)
     _video_capture_fps = 'VideoCaptureFps'
 
     @property
@@ -5987,7 +5987,7 @@ class IMachine(Interface):
     def firmware_type(self, value):
         if not isinstance(value, FirmwareType):
             raise TypeError("value is not an instance of FirmwareType")
-        return self._set_attr(self._firmware_type', value)
+        return self._set_attr(self._firmware_type, value)
     _firmware_type = 'firmwareType'
 
     @property
@@ -6004,7 +6004,7 @@ class IMachine(Interface):
     def pointing_hid_type(self, value):
         if not isinstance(value, PointingHIDType):
             raise TypeError("value is not an instance of PointingHIDType")
-        return self._set_attr(self._pointing_hid_type', value)
+        return self._set_attr(self._pointing_hid_type, value)
     _pointing_hid_type = 'pointingHIDType'
 
     @property
@@ -6021,7 +6021,7 @@ class IMachine(Interface):
     def keyboard_hid_type(self, value):
         if not isinstance(value, KeyboardHIDType):
             raise TypeError("value is not an instance of KeyboardHIDType")
-        return self._set_attr(self._keyboard_hid_type', value)
+        return self._set_attr(self._keyboard_hid_type, value)
     _keyboard_hid_type = 'keyboardHIDType'
 
     @property
@@ -6039,7 +6039,7 @@ class IMachine(Interface):
     def hpet_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._hpet_enabled', value)
+        return self._set_attr(self._hpet_enabled, value)
     _hpet_enabled = 'HPETEnabled'
 
     @property
@@ -6054,7 +6054,7 @@ class IMachine(Interface):
     def chipset_type(self, value):
         if not isinstance(value, ChipsetType):
             raise TypeError("value is not an instance of ChipsetType")
-        return self._set_attr(self._chipset_type', value)
+        return self._set_attr(self._chipset_type, value)
     _chipset_type = 'chipsetType'
 
     @property
@@ -6096,7 +6096,7 @@ class IMachine(Interface):
     def snapshot_folder(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._snapshot_folder', value)
+        return self._set_attr(self._snapshot_folder, value)
     _snapshot_folder = 'snapshotFolder'
 
     @property
@@ -6118,7 +6118,7 @@ class IMachine(Interface):
     def emulated_usb_webcamera_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._emulated_usb_webcamera_enabled', value)
+        return self._set_attr(self._emulated_usb_webcamera_enabled, value)
     _emulated_usb_webcamera_enabled = 'emulatedUSBWebcameraEnabled'
 
     @property
@@ -6131,7 +6131,7 @@ class IMachine(Interface):
     def emulated_usb_card_reader_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._emulated_usb_card_reader_enabled', value)
+        return self._set_attr(self._emulated_usb_card_reader_enabled, value)
     _emulated_usb_card_reader_enabled = 'emulatedUSBCardReaderEnabled'
 
     @property
@@ -6378,7 +6378,7 @@ class IMachine(Interface):
     def clipboard_mode(self, value):
         if not isinstance(value, ClipboardMode):
             raise TypeError("value is not an instance of ClipboardMode")
-        return self._set_attr(self._clipboard_mode', value)
+        return self._set_attr(self._clipboard_mode, value)
     _clipboard_mode = 'clipboardMode'
 
     @property
@@ -6393,7 +6393,7 @@ class IMachine(Interface):
     def drag_and_drop_mode(self, value):
         if not isinstance(value, DragAndDropMode):
             raise TypeError("value is not an instance of DragAndDropMode")
-        return self._set_attr(self._drag_and_drop_mode', value)
+        return self._set_attr(self._drag_and_drop_mode, value)
     _drag_and_drop_mode = 'dragAndDropMode'
 
     @property
@@ -6410,7 +6410,7 @@ class IMachine(Interface):
     def guest_property_notification_patterns(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._guest_property_notification_patterns', value)
+        return self._set_attr(self._guest_property_notification_patterns, value)
     _guest_property_notification_patterns = 'guestPropertyNotificationPatterns'
 
     @property
@@ -6430,7 +6430,7 @@ class IMachine(Interface):
     def teleporter_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._teleporter_enabled', value)
+        return self._set_attr(self._teleporter_enabled, value)
     _teleporter_enabled = 'teleporterEnabled'
 
     @property
@@ -6450,7 +6450,7 @@ class IMachine(Interface):
     def teleporter_port(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._teleporter_port', value)
+        return self._set_attr(self._teleporter_port, value)
     _teleporter_port = 'teleporterPort'
 
     @property
@@ -6466,7 +6466,7 @@ class IMachine(Interface):
     def teleporter_address(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._teleporter_address', value)
+        return self._set_attr(self._teleporter_address, value)
     _teleporter_address = 'teleporterAddress'
 
     @property
@@ -6486,7 +6486,7 @@ class IMachine(Interface):
     def teleporter_password(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._teleporter_password', value)
+        return self._set_attr(self._teleporter_password, value)
     _teleporter_password = 'teleporterPassword'
 
     @property
@@ -6503,7 +6503,7 @@ class IMachine(Interface):
     def fault_tolerance_state(self, value):
         if not isinstance(value, FaultToleranceState):
             raise TypeError("value is not an instance of FaultToleranceState")
-        return self._set_attr(self._fault_tolerance_state', value)
+        return self._set_attr(self._fault_tolerance_state, value)
     _fault_tolerance_state = 'faultToleranceState'
 
     @property
@@ -6519,7 +6519,7 @@ class IMachine(Interface):
     def fault_tolerance_port(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._fault_tolerance_port', value)
+        return self._set_attr(self._fault_tolerance_port, value)
     _fault_tolerance_port = 'faultTolerancePort'
 
     @property
@@ -6534,7 +6534,7 @@ class IMachine(Interface):
     def fault_tolerance_address(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._fault_tolerance_address', value)
+        return self._set_attr(self._fault_tolerance_address, value)
     _fault_tolerance_address = 'faultToleranceAddress'
 
     @property
@@ -6551,7 +6551,7 @@ class IMachine(Interface):
     def fault_tolerance_password(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._fault_tolerance_password', value)
+        return self._set_attr(self._fault_tolerance_password, value)
     _fault_tolerance_password = 'faultTolerancePassword'
 
     @property
@@ -6566,7 +6566,7 @@ class IMachine(Interface):
     def fault_tolerance_sync_interval(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._fault_tolerance_sync_interval', value)
+        return self._set_attr(self._fault_tolerance_sync_interval, value)
     _fault_tolerance_sync_interval = 'faultToleranceSyncInterval'
 
     @property
@@ -6583,7 +6583,7 @@ class IMachine(Interface):
     def rtc_use_utc(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._rtc_use_utc', value)
+        return self._set_attr(self._rtc_use_utc, value)
     _rtc_use_utc = 'RTCUseUTC'
 
     @property
@@ -6599,7 +6599,7 @@ class IMachine(Interface):
     def io_cache_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._io_cache_enabled', value)
+        return self._set_attr(self._io_cache_enabled, value)
     _io_cache_enabled = 'IOCacheEnabled'
 
     @property
@@ -6614,7 +6614,7 @@ class IMachine(Interface):
     def io_cache_size(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._io_cache_size', value)
+        return self._set_attr(self._io_cache_size, value)
     _io_cache_size = 'IOCacheSize'
 
     @property
@@ -6655,7 +6655,7 @@ class IMachine(Interface):
     def tracing_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._tracing_enabled', value)
+        return self._set_attr(self._tracing_enabled, value)
     _tracing_enabled = 'tracingEnabled'
 
     @property
@@ -6679,7 +6679,7 @@ class IMachine(Interface):
     def tracing_config(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._tracing_config', value)
+        return self._set_attr(self._tracing_config, value)
     _tracing_config = 'tracingConfig'
 
     @property
@@ -6701,7 +6701,7 @@ class IMachine(Interface):
     def allow_tracing_to_access_vm(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._allow_tracing_to_access_vm', value)
+        return self._set_attr(self._allow_tracing_to_access_vm, value)
     _allow_tracing_to_access_vm = 'allowTracingToAccessVM'
 
     @property
@@ -6716,7 +6716,7 @@ class IMachine(Interface):
     def autostart_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._autostart_enabled', value)
+        return self._set_attr(self._autostart_enabled, value)
     _autostart_enabled = 'autostartEnabled'
 
     @property
@@ -6731,7 +6731,7 @@ class IMachine(Interface):
     def autostart_delay(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._autostart_delay', value)
+        return self._set_attr(self._autostart_delay, value)
     _autostart_delay = 'autostartDelay'
 
     @property
@@ -6746,7 +6746,7 @@ class IMachine(Interface):
     def autostop_type(self, value):
         if not isinstance(value, AutostopType):
             raise TypeError("value is not an instance of AutostopType")
-        return self._set_attr(self._autostop_type', value)
+        return self._set_attr(self._autostop_type, value)
     _autostop_type = 'autostopType'
 
     @property
@@ -6771,7 +6771,7 @@ class IMachine(Interface):
     def default_frontend(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._default_frontend', value)
+        return self._set_attr(self._default_frontend, value)
     _default_frontend = 'defaultFrontend'
 
     def lock_machine(self, session, lock_type):
@@ -9466,7 +9466,7 @@ class IConsole(Interface):
     def use_host_clipboard(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._use_host_clipboard', value)
+        return self._set_attr(self._use_host_clipboard, value)
     _use_host_clipboard = 'useHostClipboard'
 
     def power_up(self):
@@ -11146,7 +11146,7 @@ class ISystemProperties(Interface):
     def default_machine_folder(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._default_machine_folder', value)
+        return self._set_attr(self._default_machine_folder, value)
     _default_machine_folder = 'defaultMachineFolder'
 
     @property
@@ -11216,7 +11216,7 @@ class ISystemProperties(Interface):
     def default_hard_disk_format(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._default_hard_disk_format', value)
+        return self._set_attr(self._default_hard_disk_format, value)
     _default_hard_disk_format = 'defaultHardDiskFormat'
 
     @property
@@ -11233,7 +11233,7 @@ class ISystemProperties(Interface):
     def free_disk_space_warning(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._free_disk_space_warning', value)
+        return self._set_attr(self._free_disk_space_warning, value)
     _free_disk_space_warning = 'freeDiskSpaceWarning'
 
     @property
@@ -11249,7 +11249,7 @@ class ISystemProperties(Interface):
     def free_disk_space_percent_warning(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._free_disk_space_percent_warning', value)
+        return self._set_attr(self._free_disk_space_percent_warning, value)
     _free_disk_space_percent_warning = 'freeDiskSpacePercentWarning'
 
     @property
@@ -11266,7 +11266,7 @@ class ISystemProperties(Interface):
     def free_disk_space_error(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._free_disk_space_error', value)
+        return self._set_attr(self._free_disk_space_error, value)
     _free_disk_space_error = 'freeDiskSpaceError'
 
     @property
@@ -11282,7 +11282,7 @@ class ISystemProperties(Interface):
     def free_disk_space_percent_error(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._free_disk_space_percent_error', value)
+        return self._set_attr(self._free_disk_space_percent_error, value)
     _free_disk_space_percent_error = 'freeDiskSpacePercentError'
 
     @property
@@ -11313,7 +11313,7 @@ class ISystemProperties(Interface):
     def vrde_auth_library(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._vrde_auth_library', value)
+        return self._set_attr(self._vrde_auth_library, value)
     _vrde_auth_library = 'VRDEAuthLibrary'
 
     @property
@@ -11349,7 +11349,7 @@ class ISystemProperties(Interface):
     def web_service_auth_library(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._web_service_auth_library', value)
+        return self._set_attr(self._web_service_auth_library, value)
     _web_service_auth_library = 'webServiceAuthLibrary'
 
     @property
@@ -11372,7 +11372,7 @@ class ISystemProperties(Interface):
     def default_vrde_ext_pack(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._default_vrde_ext_pack', value)
+        return self._set_attr(self._default_vrde_ext_pack, value)
     _default_vrde_ext_pack = 'defaultVRDEExtPack'
 
     @property
@@ -11387,7 +11387,7 @@ class ISystemProperties(Interface):
     def log_history_count(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._log_history_count', value)
+        return self._set_attr(self._log_history_count, value)
     _log_history_count = 'logHistoryCount'
 
     @property
@@ -11413,7 +11413,7 @@ class ISystemProperties(Interface):
     def autostart_database_path(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._autostart_database_path', value)
+        return self._set_attr(self._autostart_database_path, value)
     _autostart_database_path = 'autostartDatabasePath'
 
     @property
@@ -11429,7 +11429,7 @@ class ISystemProperties(Interface):
     def default_additions_iso(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._default_additions_iso', value)
+        return self._set_attr(self._default_additions_iso, value)
     _default_additions_iso = 'defaultAdditionsISO'
 
     @property
@@ -11453,7 +11453,7 @@ class ISystemProperties(Interface):
     def default_frontend(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._default_frontend', value)
+        return self._set_attr(self._default_frontend, value)
     _default_frontend = 'defaultFrontend'
 
     def get_max_network_adapters(self, chipset):
@@ -11993,7 +11993,7 @@ class IGuestSession(Interface):
     def timeout(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._timeout', value)
+        return self._set_attr(self._timeout, value)
     _timeout = 'timeout'
 
     @property
@@ -12017,7 +12017,7 @@ class IGuestSession(Interface):
     def environment(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._environment', value)
+        return self._set_attr(self._environment, value)
     _environment = 'getEnvironment'
 
     @property
@@ -13917,7 +13917,7 @@ class IGuest(Interface):
     def memory_balloon_size(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._memory_balloon_size', value)
+        return self._set_attr(self._memory_balloon_size, value)
     _memory_balloon_size = 'memoryBalloonSize'
 
     @property
@@ -13932,7 +13932,7 @@ class IGuest(Interface):
     def statistics_update_interval(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._statistics_update_interval', value)
+        return self._set_attr(self._statistics_update_interval, value)
     _statistics_update_interval = 'statisticsUpdateInterval'
 
     def internal_get_statistics(self):
@@ -14691,7 +14691,7 @@ class IProgress(Interface):
     def timeout(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._timeout', value)
+        return self._set_attr(self._timeout, value)
     _timeout = 'timeout'
 
     def set_current_operation_progress(self, percent):
@@ -14922,7 +14922,7 @@ class ISnapshot(Interface):
     def name(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._name', value)
+        return self._set_attr(self._name, value)
     _name = 'name'
 
     @property
@@ -14939,7 +14939,7 @@ class ISnapshot(Interface):
     def description(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._description', value)
+        return self._set_attr(self._description, value)
     _description = 'description'
 
     @property
@@ -15493,7 +15493,7 @@ class IMedium(Interface):
     def description(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._description', value)
+        return self._set_attr(self._description, value)
     _description = 'description'
 
     @property
@@ -15553,7 +15553,7 @@ class IMedium(Interface):
     def location(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._location', value)
+        return self._set_attr(self._location, value)
     _location = 'location'
 
     @property
@@ -15679,7 +15679,7 @@ class IMedium(Interface):
     def type_p(self, value):
         if not isinstance(value, MediumType):
             raise TypeError("value is not an instance of MediumType")
-        return self._set_attr(self._type_p', value)
+        return self._set_attr(self._type_p, value)
     _type_p = 'type'
 
     @property
@@ -15804,7 +15804,7 @@ class IMedium(Interface):
     def auto_reset(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._auto_reset', value)
+        return self._set_attr(self._auto_reset, value)
     _auto_reset = 'autoReset'
 
     @property
@@ -17557,7 +17557,7 @@ class IFramebufferOverlay(IFramebuffer):
     def visible(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._visible', value)
+        return self._set_attr(self._visible, value)
     _visible = 'visible'
 
     @property
@@ -17573,7 +17573,7 @@ class IFramebufferOverlay(IFramebuffer):
     def alpha(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._alpha', value)
+        return self._set_attr(self._alpha, value)
     _alpha = 'alpha'
 
     def move(self, x, y):
@@ -18039,7 +18039,7 @@ class INetworkAdapter(Interface):
     def adapter_type(self, value):
         if not isinstance(value, NetworkAdapterType):
             raise TypeError("value is not an instance of NetworkAdapterType")
-        return self._set_attr(self._adapter_type', value)
+        return self._set_attr(self._adapter_type, value)
     _adapter_type = 'adapterType'
 
     @property
@@ -18068,7 +18068,7 @@ class INetworkAdapter(Interface):
     def enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._enabled', value)
+        return self._set_attr(self._enabled, value)
     _enabled = 'enabled'
 
     @property
@@ -18084,7 +18084,7 @@ class INetworkAdapter(Interface):
     def mac_address(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._mac_address', value)
+        return self._set_attr(self._mac_address, value)
     _mac_address = 'MACAddress'
 
     @property
@@ -18099,7 +18099,7 @@ class INetworkAdapter(Interface):
     def attachment_type(self, value):
         if not isinstance(value, NetworkAttachmentType):
             raise TypeError("value is not an instance of NetworkAttachmentType")
-        return self._set_attr(self._attachment_type', value)
+        return self._set_attr(self._attachment_type, value)
     _attachment_type = 'attachmentType'
 
     @property
@@ -18114,7 +18114,7 @@ class INetworkAdapter(Interface):
     def bridged_interface(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._bridged_interface', value)
+        return self._set_attr(self._bridged_interface, value)
     _bridged_interface = 'bridgedInterface'
 
     @property
@@ -18129,7 +18129,7 @@ class INetworkAdapter(Interface):
     def host_only_interface(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._host_only_interface', value)
+        return self._set_attr(self._host_only_interface, value)
     _host_only_interface = 'hostOnlyInterface'
 
     @property
@@ -18144,7 +18144,7 @@ class INetworkAdapter(Interface):
     def internal_network(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._internal_network', value)
+        return self._set_attr(self._internal_network, value)
     _internal_network = 'internalNetwork'
 
     @property
@@ -18159,7 +18159,7 @@ class INetworkAdapter(Interface):
     def nat_network(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._nat_network', value)
+        return self._set_attr(self._nat_network, value)
     _nat_network = 'NATNetwork'
 
     @property
@@ -18174,7 +18174,7 @@ class INetworkAdapter(Interface):
     def generic_driver(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._generic_driver', value)
+        return self._set_attr(self._generic_driver, value)
     _generic_driver = 'genericDriver'
 
     @property
@@ -18190,7 +18190,7 @@ class INetworkAdapter(Interface):
     def cable_connected(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._cable_connected', value)
+        return self._set_attr(self._cable_connected, value)
     _cable_connected = 'cableConnected'
 
     @property
@@ -18205,7 +18205,7 @@ class INetworkAdapter(Interface):
     def line_speed(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._line_speed', value)
+        return self._set_attr(self._line_speed, value)
     _line_speed = 'lineSpeed'
 
     @property
@@ -18221,7 +18221,7 @@ class INetworkAdapter(Interface):
     def promisc_mode_policy(self, value):
         if not isinstance(value, NetworkAdapterPromiscModePolicy):
             raise TypeError("value is not an instance of NetworkAdapterPromiscModePolicy")
-        return self._set_attr(self._promisc_mode_policy', value)
+        return self._set_attr(self._promisc_mode_policy, value)
     _promisc_mode_policy = 'promiscModePolicy'
 
     @property
@@ -18237,7 +18237,7 @@ class INetworkAdapter(Interface):
     def trace_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._trace_enabled', value)
+        return self._set_attr(self._trace_enabled, value)
     _trace_enabled = 'traceEnabled'
 
     @property
@@ -18253,7 +18253,7 @@ class INetworkAdapter(Interface):
     def trace_file(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._trace_file', value)
+        return self._set_attr(self._trace_file, value)
     _trace_file = 'traceFile'
 
     @property
@@ -18280,7 +18280,7 @@ class INetworkAdapter(Interface):
     def boot_priority(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._boot_priority', value)
+        return self._set_attr(self._boot_priority, value)
     _boot_priority = 'bootPriority'
 
     @property
@@ -18295,7 +18295,7 @@ class INetworkAdapter(Interface):
     def bandwidth_group(self, value):
         if not isinstance(value, IBandwidthGroup):
             raise TypeError("value is not an instance of IBandwidthGroup")
-        return self._set_attr(self._bandwidth_group', value)
+        return self._set_attr(self._bandwidth_group, value)
     _bandwidth_group = 'bandwidthGroup'
 
     def get_property(self, key):
@@ -18429,7 +18429,7 @@ class ISerialPort(Interface):
     def enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._enabled', value)
+        return self._set_attr(self._enabled, value)
     _enabled = 'enabled'
 
     @property
@@ -18444,7 +18444,7 @@ class ISerialPort(Interface):
     def io_base(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._io_base', value)
+        return self._set_attr(self._io_base, value)
     _io_base = 'IOBase'
 
     @property
@@ -18459,7 +18459,7 @@ class ISerialPort(Interface):
     def irq(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._irq', value)
+        return self._set_attr(self._irq, value)
     _irq = 'IRQ'
 
     @property
@@ -18477,7 +18477,7 @@ class ISerialPort(Interface):
     def host_mode(self, value):
         if not isinstance(value, PortMode):
             raise TypeError("value is not an instance of PortMode")
-        return self._set_attr(self._host_mode', value)
+        return self._set_attr(self._host_mode, value)
     _host_mode = 'hostMode'
 
     @property
@@ -18494,7 +18494,7 @@ class ISerialPort(Interface):
     def server(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._server', value)
+        return self._set_attr(self._server, value)
     _server = 'server'
 
     @property
@@ -18513,7 +18513,7 @@ class ISerialPort(Interface):
     def path(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._path', value)
+        return self._set_attr(self._path, value)
     _path = 'path'
 
 
@@ -18559,7 +18559,7 @@ class IParallelPort(Interface):
     def enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._enabled', value)
+        return self._set_attr(self._enabled, value)
     _enabled = 'enabled'
 
     @property
@@ -18574,7 +18574,7 @@ class IParallelPort(Interface):
     def io_base(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._io_base', value)
+        return self._set_attr(self._io_base, value)
     _io_base = 'IOBase'
 
     @property
@@ -18589,7 +18589,7 @@ class IParallelPort(Interface):
     def irq(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._irq', value)
+        return self._set_attr(self._irq, value)
     _irq = 'IRQ'
 
     @property
@@ -18606,7 +18606,7 @@ class IParallelPort(Interface):
     def path(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._path', value)
+        return self._set_attr(self._path, value)
     _path = 'path'
 
 
@@ -19058,7 +19058,7 @@ class IMachineDebugger(Interface):
     def single_step(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._single_step', value)
+        return self._set_attr(self._single_step, value)
     _single_step = 'singleStep'
 
     @property
@@ -19073,7 +19073,7 @@ class IMachineDebugger(Interface):
     def recompile_user(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._recompile_user', value)
+        return self._set_attr(self._recompile_user, value)
     _recompile_user = 'recompileUser'
 
     @property
@@ -19088,7 +19088,7 @@ class IMachineDebugger(Interface):
     def recompile_supervisor(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._recompile_supervisor', value)
+        return self._set_attr(self._recompile_supervisor, value)
     _recompile_supervisor = 'recompileSupervisor'
 
     @property
@@ -19103,7 +19103,7 @@ class IMachineDebugger(Interface):
     def patm_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._patm_enabled', value)
+        return self._set_attr(self._patm_enabled, value)
     _patm_enabled = 'PATMEnabled'
 
     @property
@@ -19118,7 +19118,7 @@ class IMachineDebugger(Interface):
     def csam_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._csam_enabled', value)
+        return self._set_attr(self._csam_enabled, value)
     _csam_enabled = 'CSAMEnabled'
 
     @property
@@ -19133,7 +19133,7 @@ class IMachineDebugger(Interface):
     def log_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._log_enabled', value)
+        return self._set_attr(self._log_enabled, value)
     _log_enabled = 'logEnabled'
 
     @property
@@ -19277,7 +19277,7 @@ class IMachineDebugger(Interface):
     def virtual_time_rate(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._virtual_time_rate', value)
+        return self._set_attr(self._virtual_time_rate, value)
     _virtual_time_rate = 'virtualTimeRate'
 
     @property
@@ -19317,7 +19317,7 @@ class IUSBController(Interface):
     def enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._enabled', value)
+        return self._set_attr(self._enabled, value)
     _enabled = 'enabled'
 
     @property
@@ -19335,7 +19335,7 @@ class IUSBController(Interface):
     def enabled_ehci(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._enabled_ehci', value)
+        return self._set_attr(self._enabled_ehci, value)
     _enabled_ehci = 'enabledEHCI'
 
     @property
@@ -19705,7 +19705,7 @@ class IUSBDeviceFilter(Interface):
     def name(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._name', value)
+        return self._set_attr(self._name, value)
     _name = 'name'
 
     @property
@@ -19720,7 +19720,7 @@ class IUSBDeviceFilter(Interface):
     def active(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._active', value)
+        return self._set_attr(self._active, value)
     _active = 'active'
 
     @property
@@ -19738,7 +19738,7 @@ class IUSBDeviceFilter(Interface):
     def vendor_id(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._vendor_id', value)
+        return self._set_attr(self._vendor_id, value)
     _vendor_id = 'vendorId'
 
     @property
@@ -19756,7 +19756,7 @@ class IUSBDeviceFilter(Interface):
     def product_id(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._product_id', value)
+        return self._set_attr(self._product_id, value)
     _product_id = 'productId'
 
     @property
@@ -19780,7 +19780,7 @@ class IUSBDeviceFilter(Interface):
     def revision(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._revision', value)
+        return self._set_attr(self._revision, value)
     _revision = 'revision'
 
     @property
@@ -19795,7 +19795,7 @@ class IUSBDeviceFilter(Interface):
     def manufacturer(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._manufacturer', value)
+        return self._set_attr(self._manufacturer, value)
     _manufacturer = 'manufacturer'
 
     @property
@@ -19810,7 +19810,7 @@ class IUSBDeviceFilter(Interface):
     def product(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._product', value)
+        return self._set_attr(self._product, value)
     _product = 'product'
 
     @property
@@ -19825,7 +19825,7 @@ class IUSBDeviceFilter(Interface):
     def serial_number(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._serial_number', value)
+        return self._set_attr(self._serial_number, value)
     _serial_number = 'serialNumber'
 
     @property
@@ -19840,7 +19840,7 @@ class IUSBDeviceFilter(Interface):
     def port(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._port', value)
+        return self._set_attr(self._port, value)
     _port = 'port'
 
     @property
@@ -19858,7 +19858,7 @@ class IUSBDeviceFilter(Interface):
     def remote(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._remote', value)
+        return self._set_attr(self._remote, value)
     _remote = 'remote'
 
     @property
@@ -19877,7 +19877,7 @@ class IUSBDeviceFilter(Interface):
     def masked_interfaces(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._masked_interfaces', value)
+        return self._set_attr(self._masked_interfaces, value)
     _masked_interfaces = 'maskedInterfaces'
 
 
@@ -19940,7 +19940,7 @@ class IHostUSBDeviceFilter(IUSBDeviceFilter):
     def action(self, value):
         if not isinstance(value, USBDeviceFilterAction):
             raise TypeError("value is not an instance of USBDeviceFilterAction")
-        return self._set_attr(self._action', value)
+        return self._set_attr(self._action, value)
     _action = 'action'
 
 
@@ -19967,7 +19967,7 @@ class IAudioAdapter(Interface):
     def enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._enabled', value)
+        return self._set_attr(self._enabled, value)
     _enabled = 'enabled'
 
     @property
@@ -19982,7 +19982,7 @@ class IAudioAdapter(Interface):
     def audio_controller(self, value):
         if not isinstance(value, AudioControllerType):
             raise TypeError("value is not an instance of AudioControllerType")
-        return self._set_attr(self._audio_controller', value)
+        return self._set_attr(self._audio_controller, value)
     _audio_controller = 'audioController'
 
     @property
@@ -19998,7 +19998,7 @@ class IAudioAdapter(Interface):
     def audio_driver(self, value):
         if not isinstance(value, AudioDriverType):
             raise TypeError("value is not an instance of AudioDriverType")
-        return self._set_attr(self._audio_driver', value)
+        return self._set_attr(self._audio_driver, value)
     _audio_driver = 'audioDriver'
 
 
@@ -20021,7 +20021,7 @@ class IVRDEServer(Interface):
     def enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._enabled', value)
+        return self._set_attr(self._enabled, value)
     _enabled = 'enabled'
 
     @property
@@ -20036,7 +20036,7 @@ class IVRDEServer(Interface):
     def auth_type(self, value):
         if not isinstance(value, AuthType):
             raise TypeError("value is not an instance of AuthType")
-        return self._set_attr(self._auth_type', value)
+        return self._set_attr(self._auth_type, value)
     _auth_type = 'authType'
 
     @property
@@ -20051,7 +20051,7 @@ class IVRDEServer(Interface):
     def auth_timeout(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._auth_timeout', value)
+        return self._set_attr(self._auth_timeout, value)
     _auth_timeout = 'authTimeout'
 
     @property
@@ -20067,7 +20067,7 @@ class IVRDEServer(Interface):
     def allow_multi_connection(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._allow_multi_connection', value)
+        return self._set_attr(self._allow_multi_connection, value)
     _allow_multi_connection = 'allowMultiConnection'
 
     @property
@@ -20084,7 +20084,7 @@ class IVRDEServer(Interface):
     def reuse_single_connection(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._reuse_single_connection', value)
+        return self._set_attr(self._reuse_single_connection, value)
     _reuse_single_connection = 'reuseSingleConnection'
 
     @property
@@ -20100,7 +20100,7 @@ class IVRDEServer(Interface):
     def vrde_ext_pack(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._vrde_ext_pack', value)
+        return self._set_attr(self._vrde_ext_pack, value)
     _vrde_ext_pack = 'VRDEExtPack'
 
     @property
@@ -20116,7 +20116,7 @@ class IVRDEServer(Interface):
     def auth_library(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._auth_library', value)
+        return self._set_attr(self._auth_library, value)
     _auth_library = 'authLibrary'
 
     @property
@@ -21099,7 +21099,7 @@ class IStorageController(Interface):
     def instance(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._instance', value)
+        return self._set_attr(self._instance, value)
     _instance = 'instance'
 
     @property
@@ -21117,7 +21117,7 @@ class IStorageController(Interface):
     def port_count(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._port_count', value)
+        return self._set_attr(self._port_count, value)
     _port_count = 'portCount'
 
     @property
@@ -21148,7 +21148,7 @@ class IStorageController(Interface):
     def controller_type(self, value):
         if not isinstance(value, StorageControllerType):
             raise TypeError("value is not an instance of StorageControllerType")
-        return self._set_attr(self._controller_type', value)
+        return self._set_attr(self._controller_type, value)
     _controller_type = 'controllerType'
 
     @property
@@ -21172,7 +21172,7 @@ class IStorageController(Interface):
     def use_host_io_cache(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._use_host_io_cache', value)
+        return self._set_attr(self._use_host_io_cache, value)
     _use_host_io_cache = 'useHostIOCache'
 
     @property
@@ -21666,7 +21666,7 @@ class INATEngine(Interface):
     def network(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._network', value)
+        return self._set_attr(self._network, value)
     _network = 'network'
 
     @property
@@ -21682,7 +21682,7 @@ class INATEngine(Interface):
     def host_ip(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._host_ip', value)
+        return self._set_attr(self._host_ip, value)
     _host_ip = 'hostIP'
 
     @property
@@ -21698,7 +21698,7 @@ class INATEngine(Interface):
     def tftp_prefix(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._tftp_prefix', value)
+        return self._set_attr(self._tftp_prefix, value)
     _tftp_prefix = 'TFTPPrefix'
 
     @property
@@ -21714,7 +21714,7 @@ class INATEngine(Interface):
     def tftp_boot_file(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._tftp_boot_file', value)
+        return self._set_attr(self._tftp_boot_file, value)
     _tftp_boot_file = 'TFTPBootFile'
 
     @property
@@ -21731,7 +21731,7 @@ class INATEngine(Interface):
     def tftp_next_server(self, value):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        return self._set_attr(self._tftp_next_server', value)
+        return self._set_attr(self._tftp_next_server, value)
     _tftp_next_server = 'TFTPNextServer'
 
     @property
@@ -21746,7 +21746,7 @@ class INATEngine(Interface):
     def alias_mode(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._alias_mode', value)
+        return self._set_attr(self._alias_mode, value)
     _alias_mode = 'aliasMode'
 
     @property
@@ -21761,7 +21761,7 @@ class INATEngine(Interface):
     def dns_pass_domain(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._dns_pass_domain', value)
+        return self._set_attr(self._dns_pass_domain, value)
     _dns_pass_domain = 'DNSPassDomain'
 
     @property
@@ -21777,7 +21777,7 @@ class INATEngine(Interface):
     def dns_proxy(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._dns_proxy', value)
+        return self._set_attr(self._dns_proxy, value)
     _dns_proxy = 'DNSProxy'
 
     @property
@@ -21793,7 +21793,7 @@ class INATEngine(Interface):
     def dns_use_host_resolver(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
-        return self._set_attr(self._dns_use_host_resolver', value)
+        return self._set_attr(self._dns_use_host_resolver, value)
     _dns_use_host_resolver = 'DNSUseHostResolver'
 
     @property
@@ -22371,7 +22371,7 @@ class IBandwidthGroup(Interface):
     def max_bytes_per_sec(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._max_bytes_per_sec', value)
+        return self._set_attr(self._max_bytes_per_sec, value)
     _max_bytes_per_sec = 'maxBytesPerSec'
 
 
@@ -24268,7 +24268,7 @@ class IShowWindowEvent(IEvent):
     def win_id(self, value):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
-        return self._set_attr(self._win_id', value)
+        return self._set_attr(self._win_id, value)
     _win_id = 'winId'
 
 

@@ -318,7 +318,7 @@ ATTR_SET = '''
     @%(pname)s.setter
     def %(pname)s(self, value):
 %(assert_type)s
-        return self._set_attr(self._%(pname)s', value)'''
+        return self._set_attr(self._%(pname)s, value)'''
 
 ATTR_SET_ASSERT_INST = '''\
         if not isinstance(value, %(ntype)s):
