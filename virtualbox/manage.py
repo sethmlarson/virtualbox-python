@@ -1,14 +1,17 @@
 from __future__ import print_function
 import os
 import shutil
+import tempfile
 import sys
+import contextlib
+import atexit
 
 import virtualbox
 from virtualbox import library
 from virtualbox.library import CloneMode
 from virtualbox.library import CloneOptions
 from virtualbox.library import CleanupMode 
-
+from virtualbox.library import IMachine
 
 """
  Provide some convenience functions which pull in some of the beauty of
@@ -19,25 +22,23 @@ from virtualbox.library import CleanupMode
 vbox = virtualbox.VirtualBox()
 
 
-def show_progress(progress, file=sys.stderr):
+def show_progress(progress, ofile=sys.stderr):
     """Print the current progress out to file"""
     try:
-        print(progress, file=file)
-        sys.stderr
         while not progress.completed:
-            print(progress, file=file)
+            print(progress, file=ofile)
             progress.wait_for_completion(100)
     except KeyboardInterrupt:
         if progress.cancelable:
             progress.cancel()
 
-    print(progress, file=file)
-    print("Progress state: %s" % progress.result_code, file=file)
+    print(progress, file=ofile)
+    print("Progress state: %s" % progress.result_code, file=ofile)
     if progress.error_info:
-        print(progress.error_info.text)
+        print(progress.error_info.text, file=ofile)
 
 
-def unregister(machine_name_or_id, delete=True):
+def remove(machine_or_name_or_id, delete=True):
     """Unregister and optionally delete associated config
     Required:
         machine_or_name_or_id - value can be either IMachine, name, or id   
@@ -46,7 +47,8 @@ def unregister(machine_name_or_id, delete=True):
 
     Return the (vm, media) 
     """
-    if machine_or_name_or_id in [str, unicode]:
+    # TODO: clean up any open sessions to this vm before 
+    if type(machine_or_name_or_id) in [str, unicode]:
         vm = vbox.find_machine(machine_or_name_or_id)
     else:
         vm = machine_or_name_or_id
@@ -63,7 +65,7 @@ def unregister(machine_name_or_id, delete=True):
     return (vm, media)
 
 
-def startvm(machine_name_or_id, session_type='gui', environment=''):
+def start(machine_or_name_or_id, session_type='gui', environment=''):
     """Start a VM
     Required:
         machine_or_name_or_id - value can be either IMachine, name, or id
@@ -79,7 +81,7 @@ def startvm(machine_name_or_id, session_type='gui', environment=''):
 
     Return the vm which was just started 
     """
-    if machine_or_name_or_id in [str, unicode]:
+    if type(machine_or_name_or_id) in [str, unicode]:
         vm = vbox.find_machine(machine_or_name_or_id)
     else:
         vm = machine_or_name_or_id
@@ -91,7 +93,7 @@ def startvm(machine_name_or_id, session_type='gui', environment=''):
     return vm
 
 
-def clonevm(machine_or_name_or_id, snapshot_name_or_id=None,
+def clone(machine_or_name_or_id, snapshot_name_or_id=None,
         mode=CloneMode.machine_state, options=[CloneOptions.link],
         name=None, uuid=None, groups=[], basefolder='', register=True):
     """Clone a Machine 
@@ -107,10 +109,12 @@ def clonevm(machine_or_name_or_id, snapshot_name_or_id=None,
         groups - specify which groups the new VM will exist under
         basefolder - specify which folder to set the VM up under
         register - register this VM with the server
+    
+    Note: Default values create a linked clone from the current machine state
 
     Return a IMachine object for the vm 
     """
-    if machine_or_name_or_id in [str, unicode]:
+    if type(machine_or_name_or_id) in [str, unicode]:
         vm = vbox.find_machine(machine_or_name_or_id)
     else:
         vm = machine_or_name_or_id
@@ -155,6 +159,50 @@ def clonevm(machine_or_name_or_id, snapshot_name_or_id=None,
     return vm_clone
 
 
+def temp_clone_create(machine_or_name_or_id, snapshot_name_or_id=None,
+                        daemon=False):
+    """Create a linked clone 
+
+    Required:
+        machine_or_name_or_id - value can be either IMachine, name, or id
+    Options:
+        snapshot_name_or_id - 
+        daemon - if daemon is True, the cleanup of the cloned machine is now
+                 the responsibility of the calling function
+
+    Return a IMachine object for the new cloned vm 
+    """
+    def atexit_cleanup(vm_clone):
+        try:
+            remove(vm_clone)
+        except Exception as exc:
+            print("Failed to remove %s - %s" % (vm_clone.name, exc))
+
+    vm_clone = clone(machine_or_name_or_id,
+                     snapshot_name_or_id=snapshot_name_or_id,
+                     basefolder=tempfile.gettempdir())
+    if not daemon:
+        atexit.register(lambda : atexit_cleanup(vm_clone))
+    return vm_clone
+
+
+@contextlib.contextmanager
+def temp_clone(machine_or_name_or_id, snapshot_name_or_id=None):
+    """Load a temp clone in a managed context to ensure it is removed after use
+
+    with temp_clone('test_vm') as vm:
+        # do stuff with the vm
+
+    # automatically cleaned up after use... 
+
+    """
+    vm = temp_clone_create(machine_or_name_or_id,
+                           snapshot_name_or_id=snapshot_name_or_id,
+                           daemon=True)
+    try:
+        yield vm
+    finally:
+        remove(vm)
 
 
 
