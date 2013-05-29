@@ -34,10 +34,20 @@ class ISession(library.ISession):
 
 class IMachine(library.IMachine):
     __doc__ = library.IMachine.__doc__
-    
+
     # Testing showed that deleteConfig was just 'delete'
     _delete_config = 'delete'
 
+
+_progress_template = """\
+(%(o)s/%(oc)s) %(od)s %(p)-3s%% (%(tr)s s remaining)"""
+class IProgress(library.IProgress):
+    __doct__ = library.IProgress.__doc__
+
+    def __str__(self):
+       return _progress_template % dict(o=self.operation, p=self.percent,
+               oc=self.operation_count, od=self.operation_description, 
+               tr=self.time_remaining)
 
 
 # Replace original with extension
