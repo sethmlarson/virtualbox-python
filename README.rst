@@ -105,6 +105,10 @@ which have a running vboxapi.
 Change log
 ==========
 
+version 0.0.3 (30/05/2012)
+
+* added manage
+
 version 0.0.2 (28/05/2013)
 
 * library ext module
