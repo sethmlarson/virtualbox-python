@@ -114,6 +114,9 @@ class Interface(object):
         else:
             self._i = interface
 
+    def __nonzero__(self):
+        return bool(self._i)
+
     def _cast_to_valuetype(self, value):
         def cast_to_valuetype(value):
             if isinstance(value, Interface):
