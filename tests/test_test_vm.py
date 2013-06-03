@@ -1,6 +1,7 @@
 import unittest 
 import os
 import time
+import contextlib
 
 import virtualbox
 from virtualbox import library
@@ -92,25 +93,37 @@ class TestGuestSession(unittest.TestCase):
         self.vbox = virtualbox.VirtualBox()
         self.session = virtualbox.Session()
         self.vm = self.vbox.find_machine('test_vm')
-        p = self.vm.launch_vm_process(self.session, "gui", "")
-        p.wait_for_completion(5000)
-        self.guest_session = self.session.console.guest.create_session(\
+        if self.vm.state < virtualbox.library.MachineState.running:
+            p = self.vm.launch_vm_process(self.session, "gui", "")
+            p.wait_for_completion(5000)
+        else:
+            self.vm.lock_machine(self.session,
+                    virtualbox.library.LockType.shared)
+
+    def tearDown(self):
+        self.session.console.power_down()
+        while self.vm.state >= virtualbox.library.MachineState.running:
+            time.sleep(1)
+
+    @contextlib.contextmanager
+    def guest_session(self):
+        guest_session = self.session.console.guest.create_session(\
                 username, password, '', 'TestGuestSession')
         # Wait until the guest service comes online
         while True:
             try:
-                self.guest_session.file_query_info(CMD_EXE)
+                guest_session.file_query_info(CMD_EXE)
             except virtualbox.library.VBoxError:
                 time.sleep(0.5)
                 continue
             else:
                 break
+        try:
+            yield guest_session
+        finally:
+            print ("close guest session")
+            guest_session.close()
 
-    def tearDown(self):
-        self.guest_session.close()
-        self.session.console.power_down()
-        while self.vm.state >= virtualbox.library.MachineState.running:
-            time.sleep(1)
 
     def test_execute(self):
         """test execute ping localhost"""
@@ -124,6 +137,7 @@ class TestGuestSession(unittest.TestCase):
                      virtualbox.library.ProcessCreateFlag.wait_for_std_out],
                     10000)
 
+            # wait until the process has started
             process.wait_for(int(virtualbox.library.ProcessWaitResult.start),
                             5000)
 
@@ -133,15 +147,21 @@ class TestGuestSession(unittest.TestCase):
             # TODO Seems that reading data from stderr sometimes causes a 
             #      VBoxErrorIptrError - which tends to break the guest service
             while process.status == virtualbox.library.ProcessStatus.started:
-                try:
-                    o = process.read(1, 65000, 1000)
-                    stdout.append(o)
-                    e = process.read(2, 65000, 1000)
-                    stderr.append(e)
-                except virtualbox.library.VBoxErrorIprtError:
-                    pass
+                #try:
+                o = process.read(1, 65000, 1000)
+                stdout.append(o)
+                e = process.read(2, 65000, 1000)
+                stderr.append(e)
+                #except virtualbox.library.VBoxErrorIprtError:
+                #    pass
                 time.sleep(0.2)
-            
+
+            #
+            o = process.read(1, 65000, 1000)
+            stdout.append(o)
+            e = process.read(2, 65000, 1000)
+            stderr.append(e)
+    
             self.assertEqual(process.status,
                     virtualbox.library.ProcessStatus.terminated_normally)
             
@@ -149,15 +169,17 @@ class TestGuestSession(unittest.TestCase):
             stderr = "".join(stderr)
             return process.exit_code, stdout, stderr
 
-        _, stdout, _ = execute(self.guest_session, CMD_EXE, 
-                [r'/C', 'ping', '127.0.0.1'])
-        self.assertTrue('Pinging' in stdout)
+        with self.guest_session() as guest_session:
+            _, stdout, _ = execute(guest_session, CMD_EXE, 
+                    [r'/C', 'ping', '127.0.0.1'])
+            self.assertTrue('Pinging' in stdout)
 
-#       # failing...  need to figure out whats going on
-#       for i in xrange(100):
-#           _, stdout, _ = execute(self.guest_session, CMD_EXE, 
-#               [r'/C', 'netstat', '-nao'])
-#           print stdout
+            # failing...  need to figure out whats going on
+            for i in xrange(1000):
+                print "Test %s " % (i + 1)
+                _, stdout, _ = execute(guest_session, CMD_EXE, 
+                        [r'/C', 'netstat', '-nao'])
+                print stdout
 
  
 
