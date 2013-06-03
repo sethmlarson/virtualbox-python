@@ -4,6 +4,7 @@ import shutil
 import tempfile
 import sys
 import contextlib
+import time
 import atexit
 
 import virtualbox
@@ -12,6 +13,9 @@ from virtualbox.library import CloneMode
 from virtualbox.library import CloneOptions
 from virtualbox.library import CleanupMode 
 from virtualbox.library import IMachine
+from virtualbox.library import ProcessCreateFlag
+from virtualbox.library import ProcessInputFlag
+from virtualbox.library import LockType 
 
 """
  Provide some convenience functions which pull in some of the beauty of
@@ -38,7 +42,7 @@ def show_progress(progress, ofile=sys.stderr):
         print(progress.error_info.text, file=ofile)
 
 
-def remove(machine_or_name_or_id, delete=True):
+def removevm(machine_or_name_or_id, delete=True):
     """Unregister and optionally delete associated config
     Required:
         machine_or_name_or_id - value can be either IMachine, name, or id   
@@ -65,19 +69,17 @@ def remove(machine_or_name_or_id, delete=True):
     return (vm, media)
 
 
-def start(machine_or_name_or_id, session_type='gui', environment=''):
+def startvm(machine_or_name_or_id, session_type='gui', environment=''):
     """Start a VM
     Required:
         machine_or_name_or_id - value can be either IMachine, name, or id
     Options: 
         session_type - 'gui', 'headless', 'sdl', 'emergencystop'
         environment - specify the env for the VM 
-        ie.
-            NAME[=VALUE] 
-            
-            NAME[=VALUE] 
-
-            ...
+            ie.
+                NAME[=VALUE]    
+                NAME[=VALUE]
+                ...
 
     Return the vm which was just started 
     """
@@ -93,7 +95,7 @@ def start(machine_or_name_or_id, session_type='gui', environment=''):
     return vm
 
 
-def clone(machine_or_name_or_id, snapshot_name_or_id=None,
+def clonevm(machine_or_name_or_id, snapshot_name_or_id=None,
         mode=CloneMode.machine_state, options=[CloneOptions.link],
         name=None, uuid=None, groups=[], basefolder='', register=True):
     """Clone a Machine 
@@ -159,7 +161,7 @@ def clone(machine_or_name_or_id, snapshot_name_or_id=None,
     return vm_clone
 
 
-def temp_clone_create(machine_or_name_or_id, snapshot_name_or_id=None,
+def temp_clonevm(machine_or_name_or_id, snapshot_name_or_id=None,
                         daemon=False):
     """Create a linked clone 
 
@@ -187,7 +189,7 @@ def temp_clone_create(machine_or_name_or_id, snapshot_name_or_id=None,
 
 
 @contextlib.contextmanager
-def temp_clone(machine_or_name_or_id, snapshot_name_or_id=None):
+def temp_clonevm_context(machine_or_name_or_id, snapshot_name_or_id=None):
     """Load a temp clone in a managed context to ensure it is removed after use
 
     Required:
@@ -196,13 +198,13 @@ def temp_clone(machine_or_name_or_id, snapshot_name_or_id=None):
         snapshot_name_or_id - value can be either ISnapshot, name, or id 
 
     Example:
-    > with temp_clone('test_vm') as vm:
+    > with temp_clonevm_context('test_vm') as vm:
     >    # do stuff with the vm
     >
     > # automatically cleaned up after use... 
 
     """
-    vm = temp_clone_create(machine_or_name_or_id,
+    vm = temp_clonevm_create(machine_or_name_or_id,
                            snapshot_name_or_id=snapshot_name_or_id,
                            daemon=True)
     try:
@@ -211,4 +213,130 @@ def temp_clone(machine_or_name_or_id, snapshot_name_or_id=None):
         remove(vm)
 
 
+def updatevm(self, machine_or_name_or_id,):
+    """Update a VM with to the latest [VMNAME].[VERSION] release"""
+    pass
+
+
+CMD_EXE = r"C:\Windows\System32\cmd.exe"
+def guest_session(machine_or_name_or_id, username, password, domain='',
+                          alive_file=CMD_EXE, timeout_ms=None):
+    """Create and yield a guest session object
+
+    Required:
+        machine_or_name_or_id - value can be either IMachine, name, or id
+        username - a valid username for the guest session to log into to
+    Options:
+        password - user account password
+        domain - domain name of the user account 
+        alive_file - if not None the session is not yield until the file can be
+                     queried
+        timeout_ms - set to None for an infinite wait 
+
+    returns a valid IGuestSession
+    """
+    if type(machine_or_name_or_id) in [str, unicode]:
+        vm = vbox.find_machine(machine_or_name_or_id)
+    else:
+        vm = machine_or_name_or_id
+
+    session = virtualbox.Session()
+    vm.lock_machine(session, LockType.shared)
+
+    guest_session = session.console.guest.create_session(username, password,
+                            domain, 'virtualbox.manage.guest_session_context')
+
+    # Wait until the guest service is alive
+    if alive_file is not None:
+        while True:
+            try:
+                guest_session.file_query_info(CMD_EXE)
+            except virtualbox.library.VBoxError:
+                time.sleep(0.5)
+                if timeout_ms is not None:
+                    ttl -= 500
+                    if ttl < 0:
+                        raise 
+                continue
+            else:
+                break
+    return guest_session
+
+
+@contextlib.contextmanager
+def guest_session_context(*a, **k):
+    # yield our guest session
+    gs = guest_session(*a, **k)
+    try:
+        yield gs
+    finally:
+        gs.close()
+guest_session_context.__doc__ = guest_session.__doc__
+
+
+def guest_execute(guest_session, cmd, args=[], stdin=[],
+        process_create_flags=[ProcessCreateFlag.wait_for_std_err,
+                              ProcessCreateFlag.wait_for_std_out,
+                              ProcessCreateFlag.hidden,
+                              ProcessCreateFlag.ignore_orphaned_processes],
+        environment=[], timeout_ms=None):
+    """Execute a cmd on the guest
+    
+    Required:
+        guest_session - an connected and established IGuestSession
+        cmd - cmd to execute in the guest
+
+    Options:
+        args - arguments for the 'cmd'
+        stdin - 
+        process_create_flags - refer to virtualbox.library.ProcessCreateFlag
+        environment - specify the env for the VM 
+            ie.
+                NAME[=VALUE]           
+                NAME[=VALUE] 
+                ...
+        timeout_ms - limit the guest process' running time.
+
+    For more details refer to virtualbox.library.IGuestSession.process_create 
+
+    return IGuestProcess object
+    """
+    def read_out(process, process_create_flags, stdout, stderr):
+        if ProcessCreateFlag.wait_for_std_err in process_create_flags:
+            e = process.read(2, 65000, 1000)
+            stderr.append(e)
+        if ProcessCreateFlag.wait_for_std_out in process_create_flags:
+            o = process.read(1, 65000, 1000)
+            stdout.append(o)
+
+    # set timeout to infinite if None
+    if timeout_ms is None:
+        timeout_ms = 0  
+
+    # create the new guest process
+    process = guest_session.process_create(cmd, args, environment,
+                                            process_create_flags, timeout_ms)
+
+    # wait for process session to start
+    process.wait_for(int(virtualbox.library.ProcessWaitResult.start), -1)
+
+    # write stdin to the process 
+    if stdin:
+        index = 0
+        while index < len(stdin):
+            index += process.write(0, [ProcessInputFlag.none], 
+                                    stdin[index:], 0)
+        process.write(0, [ProcessInputFlag.end_of_file], 0)
+
+    # read the process output and wait for 
+    stdout = []
+    stderr = []
+    while process.status == virtualbox.library.ProcessStatus.started:
+        read_out(process, process_create_flags, stdout, stderr)
+        time.sleep(0.2)
+    
+    # make sure we have read the remainder of the out
+    read_out(process, process_create_flags, stdout, stderr)
+
+    return process, "".join(stdout), "".join(stderr)
 
