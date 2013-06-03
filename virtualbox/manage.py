@@ -166,7 +166,7 @@ def temp_clone_create(machine_or_name_or_id, snapshot_name_or_id=None,
     Required:
         machine_or_name_or_id - value can be either IMachine, name, or id
     Options:
-        snapshot_name_or_id - 
+        snapshot_name_or_id - value can be either ISnapshot, name, or id 
         daemon - if daemon is True, the cleanup of the cloned machine is now
                  the responsibility of the calling function
 
@@ -190,10 +190,16 @@ def temp_clone_create(machine_or_name_or_id, snapshot_name_or_id=None,
 def temp_clone(machine_or_name_or_id, snapshot_name_or_id=None):
     """Load a temp clone in a managed context to ensure it is removed after use
 
-    with temp_clone('test_vm') as vm:
-        # do stuff with the vm
+    Required:
+        machine_or_name_or_id - value can be either IMachine, name, or id
+    Options:
+        snapshot_name_or_id - value can be either ISnapshot, name, or id 
 
-    # automatically cleaned up after use... 
+    Example:
+    > with temp_clone('test_vm') as vm:
+    >    # do stuff with the vm
+    >
+    > # automatically cleaned up after use... 
 
     """
     vm = temp_clone_create(machine_or_name_or_id,
