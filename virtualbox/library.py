@@ -74,7 +74,7 @@ __doc__ = """\
 lib_version = 1.3
 lib_app_uuid = '819B4D85-9CEE-493C-B6FC-64FFE759B3C9'
 lib_uuid = 'd7569351-1750-46f0-936e-bd127d5bc264'
-xidl_hash = '70f8753a7114e292a89ee309fd2a4f77'
+xidl_hash = 'a9b7feb17700195e941757f274d8941e'
 
 
 def pythonic_name(name):
@@ -651,9 +651,15 @@ class LockType(Enum):
     __uuid__ = '168a6a8e-12fd-4878-a1f9-38a750a56089'
     _enums = [\
         ('Write', 2, 
-         '''Lock the machine for writing.'''),
+         '''Lock the machine for writing. This requests an exclusive lock, i.e.
+        there cannot be any other API client holding any type of lock for this
+        VM concurrently. Remember that a VM process counts as an API client
+        which implicitly holds the equivalent of a shared lock during the
+        entire VM runtime.'''),
         ('Shared', 1, 
-         '''Request only a shared read lock for remote-controlling the machine.'''),
+         '''Request only a shared lock for remote-controlling the machine.
+        Such a lock allows changing certain VM settings which can be safely
+        modified for a running VM.'''),
         ('VM', 3, 
          '''Lock the machine for writing, and create objects necessary for
         running a VM in this process.'''),
