@@ -94,7 +94,6 @@ def startvm(machine_or_name_or_id, session_type='gui', environment=''):
 
     Return the vm which was just started 
     """
-
     if type(machine_or_name_or_id) in [str, unicode]:
         vbox = virtualbox.VirtualBox()
         vm = vbox.find_machine(machine_or_name_or_id)
@@ -238,7 +237,61 @@ def temp_clonevm_context(machine_or_name_or_id, snapshot_name_or_id=None):
         removevm(vm)
 
 
-def updatevm(self, machine_or_name_or_id,):
+def snapshot_take(machine_or_name_or_id, name, description=''):
+    """Take a snapshot of the machine
+    
+    Required:
+        machine_or_name_or_id - value can be either IMachine, name, or id
+        name - short name for the snapshot
+    Options:
+        description - description of the snapshot
+    """
+    if type(machine_or_name_or_id) in [str, unicode]:
+        vbox = virtualbox.VirtualBox()
+        vm = vbox.find_machine(machine_or_name_or_id)
+    else:
+        vm = machine_or_name_or_id
+
+    # take snapshot
+    session = virtualbox.Session()
+    vm.lock_machine(session, LockType.shared)
+    progress = session.console.take_snapshot(snapshot, name, description)
+    show_progress(progress)
+    session.unlock_machine()
+    return vm
+
+
+def snapshot_restore(machine_or_name_or_id, snapshot_name_or_id=None):
+    """Restore to a snapshot
+    
+    Required:
+        machine_or_name_or_id - value can be either IMachine, name, or id
+    Options:
+        snapshot_name_or_id - value can be either ISnapshot, name, or id 
+
+    return IMachine object    
+    """
+    if type(machine_or_name_or_id) in [str, unicode]:
+        vbox = virtualbox.VirtualBox()
+        vm = vbox.find_machine(machine_or_name_or_id)
+    else:
+        vm = machine_or_name_or_id
+
+    if snapshot_name_or_id is not None:
+        snapshot = vm.find_snapshot(snapshot_name_or_id)
+    else:
+        snapshot = vm.current_snapshot
+
+    # restore snapshot
+    session = virtualbox.Session()
+    vm.lock_machine(session, LockType.shared)
+    progress = session.console.restore_snapshot(snapshot)
+    show_progress(progress)
+    session.unlock_machine()
+    return vm
+
+    
+def updatevm(self, machine_or_name_or_id):
     """Update a VM with to the latest [VMNAME].[VERSION] release"""
     pass
 
