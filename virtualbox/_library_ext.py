@@ -14,6 +14,11 @@ manager = vboxapi.VirtualBoxManager(None, None)
 """
 
 
+# Import the IMachine extension class object
+from virtualbox._machine_ext import IMachine
+
+
+# Configure IVirtualBox bootstrap to build from vboxapi getVirtualBox
 class IVirtualBox(library.IVirtualBox):
     __doc__ = library.IVirtualBox.__doc__
     def __init__(self, interface=None):
@@ -23,6 +28,7 @@ class IVirtualBox(library.IVirtualBox):
             self._i = interface
 
 
+# Configure ISession bootstrap to build from vboxapi getSessionObject
 class ISession(library.ISession):
     __doc__ = library.ISession.__doc__
     def __init__(self, interface=None):
@@ -32,13 +38,8 @@ class ISession(library.ISession):
             self._i = interface
 
 
-class IMachine(library.IMachine):
-    __doc__ = library.IMachine.__doc__
-
-    # Testing showed that deleteConfig was just 'delete'
-    _delete_config = 'delete'
-
-
+# Helper function for IProgress to print out a current progress state
+# in __str__ 
 _progress_template = """\
 (%(o)s/%(oc)s) %(od)s %(p)-3s%% (%(tr)s s remaining)"""
 class IProgress(library.IProgress):
