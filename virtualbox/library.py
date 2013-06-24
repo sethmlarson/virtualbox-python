@@ -74,7 +74,7 @@ __doc__ = """\
 lib_version = 1.3
 lib_app_uuid = '819B4D85-9CEE-493C-B6FC-64FFE759B3C9'
 lib_uuid = 'd7569351-1750-46f0-936e-bd127d5bc264'
-xidl_hash = 'a9b7feb17700195e941757f274d8941e'
+xidl_hash = '83f5052a018626366471935c42865214'
 
 
 def pythonic_name(name):
@@ -135,10 +135,7 @@ class Enum(object):
 class Interface(object):
     """Interface objects provide a wrapper for the VirtualBox COM objects"""
     def __init__(self, interface=None):
-        if interface is None:
-            self._i = interface
-        else:
-            self._i = interface
+        self._i = interface
 
     def __nonzero__(self):
         return bool(self._i)
@@ -1759,7 +1756,7 @@ class MouseButtonState(Enum):
 
 class FramebufferPixelFormat(Enum):
     """Format of the video memory buffer. Constants represented by this enum can
-      be used to test for particular values of <link to="IFramebuffer::pixelFormat"/>. See also <link to="IFramebuffer::requestResize"/>.
+      be used to test for particular values of <link to="IFramebuffer::pixelFormat"/>.
 
       See also www.fourcc.org for more information about FOURCC pixel formats."""
     __uuid__ = '7acfd5ed-29e3-45e3-8136-73c9224f3d2d'
@@ -2061,7 +2058,7 @@ class BandwidthGroupType(Enum):
 class VBoxEventType(Enum):
     """Type of an event.
       See <link to="IEvent"/> for an introduction to VirtualBox event handling."""
-    __uuid__ = 'c51645b3-7108-4dce-b5a3-bbf5e4f69ed2'
+    __uuid__ = 'f019b8c7-22a6-468a-9f7c-3443b7b6c40a'
     _enums = [\
         ('Invalid', 0, 
          '''Invalid event, must be first.'''),
@@ -2208,7 +2205,9 @@ class VBoxEventType(Enum):
 
         <note internal="yes">For performance reasons this is a separate event to
           not unnecessarily overflow the event queue.'''),
-        ('Last', 91, 
+        ('OnVideoCaptureChanged', 91, 
+         '''See <link to="IVideoCaptureChangedEvent">IVideoCapturedChangeEvent</link>.'''),
+        ('Last', 92, 
          '''Must be last event, used for iterations and structures relying on numerical event values.'''),
         ] 
 
@@ -2349,7 +2348,7 @@ class INATNetwork(Interface):
     
     @property
     def network_name(self):
-        """Get or set str value for 'NetworkName'
+        """Get or set str value for 'networkName'
         TBD: the idea, technically we can start any number of the NAT networks,
         but we should expect that at some point we will get collisions because of
         port-forwanding rules. so perhaps we should support only single instance of NAT
@@ -2363,7 +2362,7 @@ class INATNetwork(Interface):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
         return self._set_attr(self._network_name, value)
-    _network_name = 'NetworkName'
+    _network_name = 'networkName'
 
     @property
     def enabled(self):
@@ -2424,7 +2423,9 @@ class INATNetwork(Interface):
     @property
     def i_pv6_prefix(self):
         """Get or set str value for 'IPv6Prefix'
-        This a CIDR IPv6 defining prefix for link-local addresses autoconfiguration     within network. Note: ignored if attribute ipv6enabled is false.
+        This a CIDR IPv6 defining prefix for link-local addresses
+        autoconfiguration within network. Note: ignored if attribute
+        IPv6Enabled is false.
         """
         ret = self._get_attr(self._i_pv6_prefix)
         return ret
@@ -5309,8 +5310,8 @@ class IPCIAddress(Interface):
     """
     Address on the PCI bus.
     """
-    __uuid__ = 'D88B324F-DB19-4D3B-A1A9-BF5B127199A8'
-    __wsmap__ = 'struct'
+    __uuid__ = 'c984d15f-e191-400b-840e-970f3dad7296'
+    __wsmap__ = 'managed'
     
     @property
     def bus(self):
@@ -5460,7 +5461,7 @@ class IMachine(Interface):
 
       <link to="ISession"/>, <link to="IConsole"/>
     """
-    __uuid__ = '258f4e55-40f6-4804-a162-60c302a34d99'
+    __uuid__ = 'f6258810-a760-11e2-9e96-0800200c9a66'
     __wsmap__ = 'managed'
     
     @property
@@ -5471,6 +5472,21 @@ class IMachine(Interface):
         ret = self._get_attr(self._parent)
         return IVirtualBox(ret)
     _parent = 'parent'
+
+    @property
+    def icon(self):
+        """Get or set str value for 'getIcon'
+        Overriden VM Icon details.
+        """
+        ret = self._call_method(self._icon)
+        return ret
+
+    @icon.setter
+    def icon(self, value):
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        return self._set_attr(self._icon, value)
+    _icon = 'getIcon'
 
     @property
     def accessible(self):
@@ -5863,7 +5879,7 @@ class IMachine(Interface):
 
     @property
     def video_capture_enabled(self):
-        """Get or set bool value for 'VideoCaptureEnabled'
+        """Get or set bool value for 'videoCaptureEnabled'
         This setting determines whether VirtualBox uses video recording to
         record VM session.
         """
@@ -5875,7 +5891,7 @@ class IMachine(Interface):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
         return self._set_attr(self._video_capture_enabled, value)
-    _video_capture_enabled = 'VideoCaptureEnabled'
+    _video_capture_enabled = 'videoCaptureEnabled'
 
     @property
     def video_capture_screens(self):
@@ -5895,9 +5911,14 @@ class IMachine(Interface):
 
     @property
     def video_capture_file(self):
-        """Get or set str value for 'VideoCaptureFile'
+        """Get or set str value for 'videoCaptureFile'
         This setting determines the filename VirtualBox uses to save
-        the recorded content.
+        the recorded content. This setting cannot be changed while video
+        capturing is enabled. 
+        
+          When setting this attribute, the specified path has to be
+          absolute (full path). When reading this attribute, a full path is
+          always returned.
         """
         ret = self._get_attr(self._video_capture_file)
         return ret
@@ -5907,12 +5928,14 @@ class IMachine(Interface):
         if type(value) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
         return self._set_attr(self._video_capture_file, value)
-    _video_capture_file = 'VideoCaptureFile'
+    _video_capture_file = 'videoCaptureFile'
 
     @property
     def video_capture_width(self):
-        """Get or set int value for 'VideoCaptureWidth'
-        This setting determines the horizontal resolution of the recorded video.
+        """Get or set int value for 'videoCaptureWidth'
+        This setting determines the horizontal resolution of the recorded
+        video. This setting cannot be changed while video capturing is
+        enabled.
         """
         ret = self._get_attr(self._video_capture_width)
         return ret
@@ -5922,12 +5945,14 @@ class IMachine(Interface):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
         return self._set_attr(self._video_capture_width, value)
-    _video_capture_width = 'VideoCaptureWidth'
+    _video_capture_width = 'videoCaptureWidth'
 
     @property
     def video_capture_height(self):
-        """Get or set int value for 'VideoCaptureHeight'
-        This setting determines the vertical resolution of the recorded video.
+        """Get or set int value for 'videoCaptureHeight'
+        This setting determines the vertical resolution of the recorded
+        video. This setting cannot be changed while video capturing is
+        enabled.
         """
         ret = self._get_attr(self._video_capture_height)
         return ret
@@ -5937,14 +5962,15 @@ class IMachine(Interface):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
         return self._set_attr(self._video_capture_height, value)
-    _video_capture_height = 'VideoCaptureHeight'
+    _video_capture_height = 'videoCaptureHeight'
 
     @property
     def video_capture_rate(self):
-        """Get or set int value for 'VideoCaptureRate'
+        """Get or set int value for 'videoCaptureRate'
         This setting determines the bitrate in kilobits per second.
         Increasing this value makes the video look better for the
-        cost of an increased file size.
+        cost of an increased file size. This setting cannot be changed
+        while video capturing is enabled.
         """
         ret = self._get_attr(self._video_capture_rate)
         return ret
@@ -5954,15 +5980,16 @@ class IMachine(Interface):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
         return self._set_attr(self._video_capture_rate, value)
-    _video_capture_rate = 'VideoCaptureRate'
+    _video_capture_rate = 'videoCaptureRate'
 
     @property
     def video_capture_fps(self):
-        """Get or set int value for 'VideoCaptureFps'
+        """Get or set int value for 'videoCaptureFPS'
         This setting determines the maximum number of frames per second.
         Frames with a higher frequency will be skipped. Reducing this
-        value increses the number of skipped frames but reduces the
-        file size.
+        value increases the number of skipped frames and reduces the
+        file size. This setting cannot be changed while video capturing
+        is enabled.
         """
         ret = self._get_attr(self._video_capture_fps)
         return ret
@@ -5972,7 +5999,7 @@ class IMachine(Interface):
         if not isinstance(value, int):
             raise TypeError("value is not an instance of int")
         return self._set_attr(self._video_capture_fps, value)
-    _video_capture_fps = 'VideoCaptureFps'
+    _video_capture_fps = 'videoCaptureFPS'
 
     @property
     def bios_settings(self):
@@ -6765,7 +6792,7 @@ class IMachine(Interface):
         this VM through the <link to="IMachine::launchVMProcess"/> method.
         Empty or @c null strings do not define a particular default, it is up
         to <link to="IMachine::launchVMProcess"/> to select one. See the
-        description of <link to="IMachine::launchVMProcess"/>  for the valid
+        description of <link to="IMachine::launchVMProcess"/> for the valid
         frontend types.
 
         This per-VM setting overrides the default defined by
@@ -11017,7 +11044,7 @@ class ISystemProperties(Interface):
       and parameters. Most of the properties are read-only, but some can be
       changed by a user.
     """
-    __uuid__ = '413ea94c-efd9-491e-81fc-5df0c4d864bb'
+    __uuid__ = '55699910-cc50-11e2-8b8b-0800200c9a66'
     __wsmap__ = 'managed'
     
     @property
@@ -11157,6 +11184,21 @@ class ISystemProperties(Interface):
             raise TypeError("value is not a str or unicode")
         return self._set_attr(self._default_machine_folder, value)
     _default_machine_folder = 'defaultMachineFolder'
+
+    @property
+    def logging_level(self):
+        """Get or set str value for 'loggingLevel'
+        Specifies the logging level in current use by VirtualBox.
+        """
+        ret = self._get_attr(self._logging_level)
+        return ret
+
+    @logging_level.setter
+    def logging_level(self, value):
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        return self._set_attr(self._logging_level, value)
+    _logging_level = 'loggingLevel'
 
     @property
     def medium_formats(self):
@@ -13846,7 +13888,7 @@ class IGuest(Interface):
       Guest Additions are installed and other OS-specific virtual machine
       properties.
     """
-    __uuid__ = '19c32350-0618-4ede-b0c3-2b4311bf0d9b'
+    __uuid__ = '1a1969c1-a583-4975-9810-1dd0f0e3a8ae'
     __wsmap__ = 'managed'
     
     @property
@@ -14448,7 +14490,7 @@ class IGuest(Interface):
         return sessions
     _find_session = 'findSession'
 
-    def update_guest_additions(self, source, flags):
+    def update_guest_additions(self, source, arguments, flags):
         """Automatically updates already installed Guest Additions in a VM.
 
         At the moment only Windows guests are supported.
@@ -14464,7 +14506,12 @@ class IGuest(Interface):
         <link to="AdditionsUpdateFlag"/> for more information.
 
         in source of type str
-            Path to the Guest Additions .ISO file to use for the upate.
+            Path to the Guest Additions .ISO file to use for the update.
+
+        in arguments of type str
+            Optional command line arguments to use for the Guest Additions
+          installer. Useful for retrofitting features which weren't installed
+          before on the guest.
 
         in flags of type AdditionsUpdateFlag
             <link to="AdditionsUpdateFlag"/> flags.
@@ -14482,6 +14529,11 @@ class IGuest(Interface):
         """
         if type(source) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
+        if not isinstance(arguments, list):
+            raise TypeError("arguments can only be an instance of type list")
+        for a in arguments[:10]:
+            if type(a) not in [str, unicode]:
+                raise TypeError("array can only contain str or unicode")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
@@ -14489,7 +14541,7 @@ class IGuest(Interface):
                 raise TypeError(\
                         "array can only contain objects of type AdditionsUpdateFlag")
         progress = self._call_method(self._update_guest_additions,
-                     in_p=[source, flags])
+                     in_p=[source, arguments, flags])
         progress = IProgress(progress)
         return progress
     _update_guest_additions = 'updateGuestAdditions'
@@ -15526,7 +15578,7 @@ class IMedium(Interface):
     def variant(self):
         """Get MediumVariant value for 'getVariant'
         Returns the storage format variant information for this medium
-        as an aaray of the flags described at <link to="MediumVariant"/>.
+        as an array of the flags described at <link to="MediumVariant"/>.
         Before <link to="#refreshState"/> is called this method returns
         an undefined value.
         """
@@ -17101,7 +17153,7 @@ class IFramebuffer(Interface):
     Address of the start byte of the frame buffer.
     """
     __uuid__ = 'e3f122c0-adab-4fc9-a8dc-da112fb48428'
-    __wsmap__ = 'suppress'
+    __wsmap__ = 'managed'
     
     @property
     def address(self):
@@ -17155,8 +17207,8 @@ class IFramebuffer(Interface):
         """Get int value for 'pixelFormat'
         Frame buffer pixel format. It's either one of the values defined by <link to="FramebufferPixelFormat"/> or a raw FOURCC code.
         
-          This attribute must never return <link to="FramebufferPixelFormat_Opaque"/> -- the format of the buffer
-          <link to="#address"/> points to must be always known.
+          This attribute must never (and will never) return <link to="FramebufferPixelFormat_Opaque"/> -- the format of the frame
+          buffer must be always known.
         """
         ret = self._get_attr(self._pixel_format)
         return ret
@@ -17166,7 +17218,7 @@ class IFramebuffer(Interface):
     def uses_guest_vram(self):
         """Get bool value for 'usesGuestVRAM'
         Defines whether this frame buffer uses the virtual video card's memory
-        buffer (guest VRAM) directly or not. See <link to="IFramebuffer::requestResize"/> for more information.
+        buffer (guest VRAM) directly or not.
         """
         ret = self._get_attr(self._uses_guest_vram)
         return ret
@@ -17534,7 +17586,7 @@ class IFramebufferOverlay(IFramebuffer):
       make it more suitable for the front end.
     """
     __uuid__ = '0bcc1c7e-e415-47d2-bfdb-e4c705fb0f47'
-    __wsmap__ = 'suppress'
+    __wsmap__ = 'managed'
     
     @property
     def x(self):
@@ -17614,7 +17666,7 @@ class IDisplay(Interface):
       IFramebuffer interface. Examples of the output target are a window on
       the host computer or an RDP session's display on a remote computer.
     """
-    __uuid__ = '0598a3df-3dc0-43c7-a79c-237fb5bb633d'
+    __uuid__ = '23efdcab-1ae5-47ee-951e-e0f9a3935f2a'
     __wsmap__ = 'managed'
     
     def get_screen_resolution(self, screen_id):
@@ -17863,40 +17915,6 @@ class IDisplay(Interface):
                      in_p=[screen_id, width, height])
         return screen_data
     _take_screen_shot_png_to_array = 'takeScreenShotPNGToArray'
-
-    def enable_video_capture(self, screens):
-        """Start/continue video capture.
-
-        in screens of type bool
-            The screens to start/continue capturing.
-
-        """
-        if not isinstance(screens, list):
-            raise TypeError("screens can only be an instance of type list")
-        for a in screens[:10]:
-            if not isinstance(a, bool):
-                raise TypeError(\
-                        "array can only contain objects of type bool")
-        self._call_method(self._enable_video_capture,
-                     in_p=[screens])
-    _enable_video_capture = 'enableVideoCapture'
-
-    def disable_video_capture(self, screens):
-        """Stop video capture.
-
-        in screens of type bool
-            The screens to stop capturing.
-
-        """
-        if not isinstance(screens, list):
-            raise TypeError("screens can only be an instance of type list")
-        for a in screens[:10]:
-            if not isinstance(a, bool):
-                raise TypeError(\
-                        "array can only contain objects of type bool")
-        self._call_method(self._disable_video_capture,
-                     in_p=[screens])
-    _disable_video_capture = 'disableVideoCapture'
 
     def draw_to_screen(self, screen_id, address, x, y, width, height):
         """Draws a 32-bpp image of the specified size from the given buffer
@@ -18625,7 +18643,7 @@ class IMachineDebugger(Interface):
 
         See include/VBox/dbgfcorefmt.h for details on the file format.
     """
-    __uuid__ = '1eeeb3c2-0089-4448-878e-414aee00e03b'
+    __uuid__ = '5e4534dc-21b8-4f6b-8a08-eef50e1a0aa1'
     __wsmap__ = 'managed'
     
     def dump_guest_core(self, filename, compression):
@@ -19101,6 +19119,23 @@ class IMachineDebugger(Interface):
     _recompile_supervisor = 'recompileSupervisor'
 
     @property
+    def execute_all_in_iem(self):
+        """Get or set bool value for 'executeAllInIEM'
+        Whether to execute all the code in the instruction interpreter. This
+        is mainly for testing the interpreter and not an execution mode
+        intended for general consumption.
+        """
+        ret = self._get_attr(self._execute_all_in_iem)
+        return ret
+
+    @execute_all_in_iem.setter
+    def execute_all_in_iem(self, value):
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
+        return self._set_attr(self._execute_all_in_iem, value)
+    _execute_all_in_iem = 'executeAllInIEM'
+
+    @property
     def patm_enabled(self):
         """Get or set bool value for 'PATMEnabled'
         Switch for enabling and disabling the PATM component.
@@ -19292,8 +19327,8 @@ class IMachineDebugger(Interface):
     @property
     def vm(self):
         """Get int value for 'VM'
-        Gets the user-mode VM handle, with a reference.  Must be passed to
-        VMR3ReleaseUVM when done.  This is only for internal use while we carve
+        Gets the user-mode VM handle, with a reference. Must be passed to
+        VMR3ReleaseUVM when done. This is only for internal use while we carve
         the details of this interface.
         """
         ret = self._get_attr(self._vm)
@@ -20616,6 +20651,13 @@ class IInternalSessionControl(Interface):
                      in_p=[restart])
     _on_vrde_server_change = 'onVRDEServerChange'
 
+    def on_video_capture_change(self):
+        """Triggered when video capture settings have changed.
+
+        """
+        self._call_method(self._on_video_capture_change)
+    _on_video_capture_change = 'onVideoCaptureChange'
+
     def on_usb_controller_change(self):
         """Triggered when settings of the USB controller object of the
         associated virtual machine have changed.
@@ -21585,14 +21627,15 @@ class IPerformanceCollector(Interface):
           form metric/object pairs.
         
         
-          Data collection continues behind the scenes after call to @c
-          queryMetricsData. The return data can be seen as the snapshot of the
-          current state at the time of @c queryMetricsData call. The internally
-          kept metric values are not cleared by the call. This makes possible
-          querying different subsets of metrics or aggregates with subsequent
-          calls. If periodic querying is needed it is highly suggested to query
-          the values with @c interval*count period to avoid confusion. This way
-          a completely new set of data values will be provided by each query.
+          Data collection continues behind the scenes after call to
+          @c queryMetricsData. The return data can be seen as the snapshot of
+          the current state at the time of @c queryMetricsData call. The
+          internally kept metric values are not cleared by the call. This
+          allows querying different subsets of metrics or aggregates with
+          subsequent calls. If periodic querying is needed it is highly
+          suggested to query the values with @c interval*count period to avoid
+          confusion. This way a completely new set of data values will be
+          provided by each query.
 
         in metric_names of type str
             Metric name filter. Comma-separated list of metrics with wildcard
@@ -23903,6 +23946,14 @@ class IVRDEServerInfoChangedEvent(IEvent):
     __wsmap__ = 'managed'
     id = VBoxEventType.on_vrde_server_info_changed
 
+class IVideoCaptureChangedEvent(IEvent):
+    """
+    Notification when video capture settings have changed.
+    """
+    __uuid__ = '6215d169-25dd-4719-ab34-c908701efb58'
+    __wsmap__ = 'managed'
+    id = VBoxEventType.on_video_capture_changed
+
 class IUSBControllerChangedEvent(IEvent):
     """
     Notification when a property of the virtual
@@ -24555,10 +24606,10 @@ class INATNetworkChangedEvent(IEvent):
     id = VBoxEventType.on_nat_network_changed
     @property
     def network_name(self):
-        """Get str value for 'NetworkName'"""
+        """Get str value for 'networkName'"""
         ret = self._get_attr(self._network_name)
         return ret
-    _network_name = 'NetworkName'
+    _network_name = 'networkName'
 
 
 class INATNetworkStartStopEvent(INATNetworkChangedEvent):
