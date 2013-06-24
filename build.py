@@ -109,10 +109,7 @@ class Enum(object):
 class Interface(object):
     """Interface objects provide a wrapper for the VirtualBox COM objects"""
     def __init__(self, interface=None):
-        if interface is None:
-            self._i = interface
-        else:
-            self._i = interface
+        self._i = interface
 
     def __nonzero__(self):
         return bool(self._i)
