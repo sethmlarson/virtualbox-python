@@ -1,14 +1,12 @@
-
+from virtualbox import library 
 
 """
  This module contains the extension implementation for the IMachine object
 """
 
-
-
 class Path(object):
-    def __init__(self):
-        self.os = self
+    def __init__(self, os):
+        self.os = os
 
     @property
     def sep(self):
@@ -28,8 +26,8 @@ class Path(object):
 
 
 class Network(object):
-    def __init__(self):
-        self.os = self
+    def __init__(self, os):
+        self.os = os
 
     def ifconfig(self):
         """get the networking interface configuration"""
@@ -41,8 +39,8 @@ class Network(object):
 
 
 class OperatingSystem(object):
-    def __init__(self, session):
-        self._s = session
+    def __init__(self, machine):
+        self._m = machine
         self.path = Path(self)
         self.network = Network(self)
 
@@ -87,7 +85,7 @@ class OperatingSystem(object):
 class IMachine(library.IMachine):
     __doc__ = library.IMachine.__doc__
     def __init__(self, interface=None):
-        library.IMachine(self, interface)
+        self._i = interface 
         self.os = OperatingSystem(self)
 
     # Testing showed that deleteConfig was just 'delete'
