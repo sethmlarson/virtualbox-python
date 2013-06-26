@@ -119,16 +119,16 @@ class IKeyboard(library.IKeyboard):
     }
 
     def put_keys(self, press_keys=[], hold_keys=[]):
-        """Put scancodes that represent keys defined in the keyword arguments.
+        """Put scancodes that represent keys defined in the sequences provided.
         
         Arguments: 
            press_keys: Press a sequence of keys 
            
            hold_keys: While pressing the sequence of keys, hold down the keys
-                      provided in this sequence. 
+                      defined in hold_keys. 
 
         Note: Both press_keys and hold_keys are interable objects that yield 
-              SCANCODE.keys() keys. 
+              self.SCANCODE.keys() keys. 
         """
         release_codes = set()
         try:
