@@ -121,6 +121,8 @@ CODES = {
     'E_RIGHT':[0xE04D, 0xCD], 
     'E_UP':   [0xE048, 0xC8], 
     'E_DOWN': [0xE050, 0xD0], 
+    'RALT':   [RALT_DOWN, RALT_UP], 
+    'RCTRL':  [RCTRL_DOWN, RCTRL_UP], 
 }
 
 
@@ -133,7 +135,7 @@ class IKeyboard(library.IKeyboard):
         held_codes = set()
         for k in hold_keys:
             if len(CODES[k]) != 2:
-                msg = "Can't hold '%s'. It has more than 2 codes" % k
+                msg = "Can't hold '%s'. It has more than 2 scancodes" % k
                 raise ValueError(msg)
             self.put_scancode(CODES[k][0])
             held_codes.add(CODES[k][0])
