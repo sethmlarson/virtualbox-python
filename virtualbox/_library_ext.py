@@ -14,8 +14,8 @@ manager = vboxapi.VirtualBoxManager(None, None)
 """
 
 
-# Import the IMachine extension class object
-from virtualbox._machine_ext import IMachine
+# Import the IConsole extension class object
+from virtualbox._keyboard_ext import IKeyboard
 
 
 # Configure IVirtualBox bootstrap to build from vboxapi getVirtualBox
@@ -36,6 +36,14 @@ class ISession(library.ISession):
             self._i = manager.platform.getSessionObject(None)
         else:
             self._i = interface
+
+
+# Fix a what seems to be a buggy definition for deleting machine config
+class IMachine(library.IMachine):
+    __doc__ = library.IMachine.__doc__
+
+    # Testing showed that deleteConfig was just 'delete'
+    _delete_config = 'delete'
 
 
 # Helper function for IProgress to print out a current progress state
