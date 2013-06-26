@@ -128,16 +128,22 @@ class IKeyboard(library.IKeyboard):
     __doc__ = library.IKeyboard.__doc__
 
     def put_keys(self, press_keys=[], hold_keys=[]):
-        """drive the scancodes that represent the keys defined in the 
+        """Drive the scancodes that represent the keys defined in the 
         iterable 'keys' argument"""
+        held_codes = set()
         for k in hold_keys:
-            codes = CODES[k]
-            self.put_scancodes(codes[:len(codes)/2])
+            if len(CODES[k]) != 2:
+                msg = "Can't hold '%s'. It has more than 2 codes" % k
+                raise ValueError(msg)
+            self.put_scancode(CODES[k][0])
+            held_codes.add(CODES[k][0])
         for k in press_keys:
+            # Avoid releasing held codes
+            if CODES[k][0] in held_codes:
+                continue
             self.put_scancodes(CODES[k])
         for k in hold_keys:
-            codes = CODES[k]
-            self.put_scancodes(codes[len(codes)/2:])
+            self.put_scancode(CODES[k][1])
 
 
 
