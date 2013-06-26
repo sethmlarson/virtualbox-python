@@ -14,7 +14,7 @@ manager = vboxapi.VirtualBoxManager(None, None)
 """
 
 
-# Import the IConsole extension class object
+# Import the IKeyboard extension class object
 from virtualbox._keyboard_ext import IKeyboard
 
 
