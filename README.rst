@@ -53,7 +53,7 @@ Listing machines::
      + win8
      + test_vm
 
-Start screen shot stop::
+Launch vm, take a screen shot, stop vm::
 
     > ipython
     In [1]: import virtualbox
@@ -85,7 +85,7 @@ Start screen shot stop::
     In [12]: session.console.power_down()
 
 
-Write some text into a notepad window in a running machine::
+Write text into a window on a running machine::
 
     > ipython
     In [1]: import virtualbox
