@@ -127,10 +127,17 @@ CODES = {
 class IKeyboard(library.IKeyboard):
     __doc__ = library.IKeyboard.__doc__
 
-    def put_keys(self, keys):
+    def put_keys(self, press_keys=[], hold_keys=[]):
         """drive the scancodes that represent the keys defined in the 
         iterable 'keys' argument"""
-        for k in keys:
+        for k in hold_keys:
+            codes = CODES[k]
+            self.put_scancodes(codes[:len(codes)/2])
+        for k in press_keys:
             self.put_scancodes(CODES[k])
-            time.sleep(0.01)
+        for k in hold_keys:
+            codes = CODES[k]
+            self.put_scancodes(codes[len(codes)/2:])
+
+
 
