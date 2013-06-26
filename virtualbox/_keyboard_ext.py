@@ -1,5 +1,4 @@
 from virtualbox import library
-import time
 
 """
 Add helper code to the default IKeyboard class.
