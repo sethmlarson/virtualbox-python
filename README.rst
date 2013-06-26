@@ -85,6 +85,21 @@ Start screen shot stop::
     In [12]: session.console.power_down()
 
 
+Write some text into a notepad window in a running machine::
+
+    > ipython
+    In [1]: import virtualbox
+
+    In [2]: vbox = virtualbox.VirtualBox()
+
+    In [3]: vm = vbox.find_machine('test_vm')
+
+    In [4]: session = virtualbox.Session()
+
+    In [5]: vm.lock_machine(session, virtualbox.library.LockType.shared)
+
+    In [6]: session.console.keyboard.put_keys("Q: 'You want control?'\nA: 'Yes, but just a tad...'")
+
 
 Issues
 ======
