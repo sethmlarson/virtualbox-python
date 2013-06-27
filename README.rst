@@ -7,7 +7,7 @@ What's in pyvbox:
 * Create a VirtualBox instance and seamlessly explore the potential of
   VirtualBox's amazing Main API 
 * Pythonic functions and names.
-* Introspection, documentation strings, getters and setters...
+* Introspection, documentation strings, getters and setters, and more...
 
 
 Project hosting provided by `github.com`_.
@@ -24,8 +24,8 @@ or `PyPi`_::
     > pip install pyvbox
     
 
-Getting started examples
-========================
+Getting started 
+===============
 
 Exploring the library::
     
@@ -59,7 +59,7 @@ Listing machines::
      + test_vm
 
 
-Launch vm, take a screen shot, stop vm::
+Launch machine, take a screen shot, stop machine::
 
     > ipython
     In [1]: import virtualbox
@@ -105,7 +105,7 @@ Write text into a window on a running machine::
     In [5]: session.console.keyboard.put_keys("Q: 'You want control?'\nA: 'Yes, but just a tad...'")
 
 
-Execute a command through the guest::
+Execute a command in the guest::
 
     > ipython
     In [1]: import virtualbox
@@ -150,7 +150,7 @@ Execute a command through the guest::
     tasklist.exe                 124 Console                 0      4,584 K
 
 
-Using context to manage open sessions and locks::
+Using context to manage opened sessions and locks::
 
     > ipython
     In [1]: import virtualbox
