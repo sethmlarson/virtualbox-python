@@ -5,7 +5,6 @@ Add helper code to the default IKeyboard class.
 """
 
 
-
 class IKeyboard(library.IKeyboard):
     __doc__ = library.IKeyboard.__doc__
 
