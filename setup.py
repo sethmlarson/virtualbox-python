@@ -26,7 +26,8 @@ def load_version(filename='./virtualbox/version.py'):
 setup(
     name="pyvbox",
     version=load_version(),
-    packages=["virtualbox"],
+    packages=["virtualbox",
+              "virtualbox._library_ext"],
     author="Michael Dorman",
     author_email="mjdorma+pyvbox@gmail.com",
     url="https://github.com/mjdorma/pyvbox",
