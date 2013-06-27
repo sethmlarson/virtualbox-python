@@ -118,7 +118,7 @@ Execute a command through the guest::
 
     In [5]: gs = session.console.guest.create_session('Michael Dorman', 'password')
 
-    In [6]: process, stdout, stderr = gs.execute('C:\\Windows\\System32\\cmd.exe' , ['/C', 'tasklist'])
+    In [6]: process, stdout, stderr = gs.execute('C:\\Windows\\System32\\cmd.exe', ['/C', 'tasklist'])
 
     In [7]: print stdout
 
@@ -184,6 +184,10 @@ which have a running vboxapi.
 
 Change log
 ==========
+
+version 0.0.4 (27/06/2013)
+
+* added execute, context and keyboard
 
 version 0.0.3 (30/05/2012)
 
