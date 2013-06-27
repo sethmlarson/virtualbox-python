@@ -74,7 +74,7 @@ __doc__ = """\
 lib_version = 1.3
 lib_app_uuid = '819B4D85-9CEE-493C-B6FC-64FFE759B3C9'
 lib_uuid = 'd7569351-1750-46f0-936e-bd127d5bc264'
-xidl_hash = '83f5052a018626366471935c42865214'
+xidl_hash = 'b83e546cc6122b1546fb59c63c794244'
 
 
 def pythonic_name(name):
@@ -1956,6 +1956,21 @@ class AuthType(Enum):
          ''''''),
         ('Guest', 2, 
          ''''''),
+        ] 
+
+
+class Reason(Enum):
+    """Internal event reason type."""
+    __uuid__ = 'e7e8e097-299d-4e98-8bbc-c31c2d47d0cc'
+    _enums = [\
+        ('Unspecified', 0, 
+         '''Null value, means "no known reason".'''),
+        ('HostSuspend', 1, 
+         '''Host is being suspended (power management event).'''),
+        ('HostResume', 2, 
+         '''Host is being resumed (power management event).'''),
+        ('HostBatteryLow', 3, 
+         '''Host is running low on battery (power management event).'''),
         ] 
 
 
@@ -20337,7 +20352,7 @@ class IInternalSessionControl(Interface):
     """
     PID of the process that has created this Session object.
     """
-    __uuid__ = '0ba8d8b3-204b-448e-99c2-242eaa666ea8'
+    __uuid__ = 'cddf451c-a006-4c33-8245-63b3c9ae6586'
     __wsmap__ = 'suppress'
     
     def get_pid(self):
@@ -20951,6 +20966,83 @@ class IInternalSessionControl(Interface):
         self._call_method(self._enable_vmm_statistics,
                      in_p=[enable])
     _enable_vmm_statistics = 'enableVMMStatistics'
+
+    def pause_with_reason(self, reason):
+        """Internal method for triggering a VM pause with a specified reason code.
+        The reason code can be interpreted by device/drivers and thus it might
+        behave slightly differently than a normal VM pause.
+
+        
+        <link to="IConsole::pause"/>
+
+        in reason of type Reason
+            Specify the best matching reason code please.
+
+        raises VBOX_E_INVALID_VM_STATE
+            Virtual machine not in Running state.
+        
+        raises VBOX_E_VM_ERROR
+            Virtual machine error in suspend operation.
+        
+        """
+        if not isinstance(reason, Reason):
+            raise TypeError("reason can only be an instance of type Reason")
+        self._call_method(self._pause_with_reason,
+                     in_p=[reason])
+    _pause_with_reason = 'pauseWithReason'
+
+    def resume_with_reason(self, reason):
+        """Internal method for triggering a VM resume with a specified reason code.
+        The reason code can be interpreted by device/drivers and thus it might
+        behave slightly differently than a normal VM resume.
+
+        
+        <link to="IConsole::resume"/>
+
+        in reason of type Reason
+            Specify the best matching reason code please.
+
+        raises VBOX_E_INVALID_VM_STATE
+            Virtual machine not in Paused state.
+        
+        raises VBOX_E_VM_ERROR
+            Virtual machine error in resume operation.
+        
+        """
+        if not isinstance(reason, Reason):
+            raise TypeError("reason can only be an instance of type Reason")
+        self._call_method(self._resume_with_reason,
+                     in_p=[reason])
+    _resume_with_reason = 'resumeWithReason'
+
+    def save_state_with_reason(self, reason):
+        """Internal method for triggering a VM save state with a specified reason
+        code. The reason code can be interpreted by device/drivers and thus it
+        might behave slightly differently than a normal VM save state.
+
+        
+        <link to="IConsole::saveState"/>
+
+        in reason of type Reason
+            Specify the best matching reason code please.
+
+        return progress of type IProgress
+            Progress object to track the operation completion.
+
+        raises VBOX_E_INVALID_VM_STATE
+            Virtual machine state neither Running nor Paused.
+        
+        raises VBOX_E_FILE_ERROR
+            Failed to create directory for saved state file.
+        
+        """
+        if not isinstance(reason, Reason):
+            raise TypeError("reason can only be an instance of type Reason")
+        progress = self._call_method(self._save_state_with_reason,
+                     in_p=[reason])
+        progress = IProgress(progress)
+        return progress
+    _save_state_with_reason = 'saveStateWithReason'
 
 
 class ISession(Interface):
