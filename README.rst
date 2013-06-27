@@ -12,8 +12,8 @@ What's in pyvbox:
 
 Project hosting provided by `github.com`_.
 
-Install and run
-===============
+Install 
+=======
 
 Simply run the following::
 
@@ -23,6 +23,10 @@ or `PyPi`_::
 
     > pip install pyvbox
     
+
+Getting started examples
+========================
+
 Exploring the library::
     
     > ipython
@@ -38,6 +42,7 @@ Exploring the library::
 
     In [6]: virtualbox.library.MachineState.teleported?
 
+
 Listing machines::
 
     > ipython
@@ -52,6 +57,7 @@ Listing machines::
      + win7
      + win8
      + test_vm
+
 
 Launch vm, take a screen shot, stop vm::
 
@@ -94,11 +100,70 @@ Write text into a window on a running machine::
 
     In [3]: vm = vbox.find_machine('test_vm')
 
-    In [4]: session = virtualbox.Session()
+    In [4]: session = vm.create_session() 
 
-    In [5]: vm.lock_machine(session, virtualbox.library.LockType.shared)
+    In [5]: session.console.keyboard.put_keys("Q: 'You want control?'\nA: 'Yes, but just a tad...'")
 
-    In [6]: session.console.keyboard.put_keys("Q: 'You want control?'\nA: 'Yes, but just a tad...'")
+
+Execute a command through the guest::
+
+    > ipython
+    In [1]: import virtualbox
+
+    In [2]: vbox = virtualbox.VirtualBox()
+
+    In [3]: vm = vbox.find_machine('test_vm')
+
+    In [4]: session = vm.create_session() 
+
+    In [5]: gs = session.console.guest.create_session('Michael Dorman', 'password')
+
+    In [6]: process, stdout, stderr = gs.execute('C:\\Windows\\System32\\cmd.exe' , ['/C', 'tasklist'])
+
+    In [7]: print stdout
+
+    Image Name                   PID Session Name     Session#    Mem Usage
+    ========================= ====== ================ ======== ============
+    System Idle Process            0 Console                 0         28 K
+    System                         4 Console                 0        236 K
+    smss.exe                     532 Console                 0        432 K
+    csrss.exe                    596 Console                 0      3,440 K
+    winlogon.exe                 620 Console                 0      2,380 K
+    services.exe                 664 Console                 0      3,780 K
+    lsass.exe                    676 Console                 0      6,276 K
+    VBoxService.exe              856 Console                 0      3,972 K
+    svchost.exe                  900 Console                 0      4,908 K
+    svchost.exe                 1016 Console                 0      4,264 K
+    svchost.exe                 1144 Console                 0     18,344 K
+    svchost.exe                 1268 Console                 0      2,992 K
+    svchost.exe                 1372 Console                 0      3,948 K
+    spoolsv.exe                 1468 Console                 0      4,712 K
+    svchost.exe                 2000 Console                 0      3,856 K
+    wuauclt.exe                  400 Console                 0      7,176 K
+    alg.exe                     1092 Console                 0      3,656 K
+    wscntfy.exe                 1532 Console                 0      2,396 K
+    explorer.exe                1728 Console                 0     14,796 K
+    wmiprvse.exe                1832 Console                 0      7,096 K
+    VBoxTray.exe                1940 Console                 0      3,196 K
+    ctfmon.exe                  1948 Console                 0      3,292 K
+    cmd.exe                     1284 Console                 0      2,576 K
+    tasklist.exe                 124 Console                 0      4,584 K
+
+
+Using context to manage open sessions and locks::
+
+    > ipython
+    In [1]: import virtualbox
+
+    In [2]: vbox = virtualbox.VirtualBox()
+
+    In [3]: vm = vbox.find_machine('test_vm')
+
+    In [4]: with vm.create_session() as session:
+       ...:     with session.console.guest.create_session('Michael Dorman', 'password') as gs:
+       ...:         print(gs.directory_exists("C:\\Windows"))
+       ...:         
+    True
 
 
 Issues
