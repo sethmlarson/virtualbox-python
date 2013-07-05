@@ -2,25 +2,32 @@ from _library_ext import library
 
 __doc__ = library.__doc__
 
+
 VirtualBox = library.IVirtualBox
 Session = library.ISession
 
+
 class Manager(object):
-    """Create a default Manager object
-    
-    Builds a singleton VirtualBoxManager object
-    """
     manager = None
     def __init__(self):
+        """Create a default Manager object
+        
+        Builds a singleton VirtualBoxManager object.
+
+        Note: It is not necessary to build this object when defining an
+        Session or VirtualBox object as both of these classes will default
+        to this object's global singleton during construction. 
+        """
         if Manager.manager is None:
             import vboxapi
             Manager.manager = vboxapi.VirtualBoxManager(None, None)
+        self.manager = Manager.manager
 
     def get_virtualbox(self):
-        return Manager.manager.getVirtualBox()
+        return self.manager.getVirtualBox()
 
     def get_session(self):
-        return Manager.manager.getSessionObject(None)
+        return self.manager.getSessionObject(None)
 
 
 class WebServiceManager(Manager):
@@ -34,16 +41,10 @@ class WebServiceManager(Manager):
 
         Example:
             manager = WebServiceManager(user="mick", password="password")
-            vbox = IVirtualBox(manager=manager)
+            vbox = VirtualBox(manager=manager)
             ...
         """
         import vboxapi
         params = (url, user, password)
         self.manager = vboxapi.VirtualBoxManager("WEBSERVICE", params)
 
-    def get_virtualbox(self):
-        return self.manager.getVirtualBox()
-
-    def get_session(self):
-        return self.manager.getSessionObject(None)
-    
