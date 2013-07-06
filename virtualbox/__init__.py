@@ -1,4 +1,4 @@
-from _library_ext import library
+from library_ext import library
 
 __doc__ = library.__doc__
 
@@ -27,7 +27,12 @@ class Manager(object):
         return self.manager.getVirtualBox()
 
     def get_session(self):
-        return self.manager.getSessionObject(None)
+        # The inconsistent vboxapi implementation makes this annoying...
+        if hasattr(self.manager, 'mgr'):
+            manager = getattr(self.manager, 'mgr')
+        else:
+            manager = self.manager
+        return manager.getSessionObject(None)
 
 
 class WebServiceManager(Manager):
