@@ -14,7 +14,7 @@ class Manager(object):
         
         Builds a singleton VirtualBoxManager object.
 
-        Note: It is not necessary to build this object when defining an
+        Note: It is not necessary to build this object when defining a
         Session or VirtualBox object as both of these classes will default
         to this object's global singleton during construction. 
         """
@@ -24,15 +24,22 @@ class Manager(object):
         self.manager = Manager.manager
 
     def get_virtualbox(self):
-        return self.manager.getVirtualBox()
+        """Return a VirtualBox interface"""
+        return VirtualBox(interface=self.manager.getVirtualBox())
 
     def get_session(self):
+        """Return a Session interface"""
         # The inconsistent vboxapi implementation makes this annoying...
         if hasattr(self.manager, 'mgr'):
             manager = getattr(self.manager, 'mgr')
         else:
             manager = self.manager
-        return manager.getSessionObject(None)
+        return Session(interface=manager.getSessionObject(None))
+
+    @property
+    def bin_path(self):
+        """return the virtualbox install directory"""
+        return self.manager.getBinDir()
 
 
 class WebServiceManager(Manager):
