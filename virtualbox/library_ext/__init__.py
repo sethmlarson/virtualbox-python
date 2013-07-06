@@ -26,10 +26,10 @@ class IVirtualBox(library.IVirtualBox):
         if interface is not None:
             self._i = interface
         elif manager is not None:
-            self._i = manager.get_virtualbox()
+            self._i = manager.get_virtualbox()._i
         else:
             manager = virtualbox.Manager()
-            self._i = manager.get_virtualbox()
+            self._i = manager.get_virtualbox()._i
 
 
 # Configure ISession bootstrap to build from vboxapi getSessionObject
@@ -39,10 +39,10 @@ class ISession(library.ISession):
         if interface is not None:
             self._i = interface
         elif manager is not None:
-            self._i = manager.get_session()
+            self._i = manager.get_session()._i
         else:
             manager = virtualbox.Manager()
-            self._i = manager.get_session()
+            self._i = manager.get_session()._i
     
     def __enter__(self):
         return self
