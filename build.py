@@ -36,6 +36,7 @@ LIB_IMPORTS = """\
 #       VirtualBox project's VirtualBox.xidl Main API definition.
 #
 import re
+import inspect
 try:
     import __builtin__ as builtin 
 except:
@@ -127,18 +128,45 @@ class Interface(object):
         else:
             return cast_to_valuetype(value)
 
-    def _set_attr(self, name, value):
-        setattr(self._i, name, self._cast_to_valuetype(value))
+    def _search_attr(self, name, prefix=None):
+        attr_name = name
+        attr = getattr(self._i, attr_name, None)
+        # if a prefix is defined, try to get that prefixed name and use that
+        # attribute instead, else, stick with the attr value pulled out above
+        if prefix is not None:
+            prefix_name = prefix + name[0].upper() + name[1:]
+            attr = getattr(self._i, prefix_name, attr)
+        if attr is not None:
+            return attr
+        raise AttributeError("Could not find '%s' in Interface %s" % (name,
+                              self._i))
 
     def _get_attr(self, name):
-        return getattr(self._i, name)
+        attr = self._search_attr(name, prefix='get')
+        if inspect.isfunction(attr) or inspect.ismethod(attr):
+            return self._call_method(attr)
+        else:
+            return attr
 
-    def _call_method(self, name, in_p=[]):
+    def _set_attr(self, name, value):
+        attr = self._search_attr(name, prefix='set')
+        if inspect.isfunction(attr) or inspect.ismethod(attr):
+            return self._call_method(attr, value)
+        else:
+            return setattr(self._i, name, value)
+
+    def _call(self, name, in_p=[]):
         global vbox_error
-        m = getattr(self._i, name)
+        method = self._search_attr(name)
+        if inspect.isfunction(method) or inspect.ismethod(method):
+            return self._call_method(method, in_p=in_p)
+        else:
+            return method
+
+    def _call_method(self, method, in_p=[]):
         in_params = [self._cast_to_valuetype(p) for p in in_p]
         try:
-            ret = m(*in_params)
+            ret = method(*in_params)
         except Exception as exc:
             if hasattr(exc, 'errno'):
                 errno = exc.errno & 0xFFFFFFFF
@@ -266,10 +294,6 @@ class %(name)s(%(extends)s):
     __wsmap__ = '%(wsmap)s'
     %(event_id)s'''
 
-INTERFACE_VAR = """\
-    _%(pname)s = '%(name)s'
-"""
-
 def process_interface(node):
     name = node.getAttribute('name')
     uuid = node.getAttribute('uuid')
@@ -311,14 +335,14 @@ ATTR_GET = '''\
     @property
     def %(pname)s(self):
         """%(doc_action)s %(ntype)s value for '%(name)s'%(doc)s"""
-        ret = self.%(callname)s
+        ret = self._get_attr("%(name)s")
         return %(retval)s'''
 
 ATTR_SET = '''
     @%(pname)s.setter
     def %(pname)s(self, value):
 %(assert_type)s
-        return self._set_attr(self._%(pname)s, value)'''
+        return self._set_attr("%(name)s", value)'''
 
 ATTR_SET_ASSERT_INST = '''\
         if not isinstance(value, %(ntype)s):
@@ -369,21 +393,20 @@ def process_interface_attribute(node):
     code = []
     pname = pythonic_name(name)
     if array:
-        name = 'get%s' % name[0].upper() + name[1:]
-        callname = "_call_method(self._%s)" % (pname)
         if ntype not in python_types:
             retval = "[%s(a) for a in ret]" % ntype
         else:
             retval = 'ret'
     else:
-        callname = "_get_attr(self._%s)" % pname
         if ntype not in python_types:
             retval = "%s(ret)" % (ntype)
         else:
             retval = 'ret'
-    code.append(ATTR_GET % dict(name=name, pname=pname, callname=callname,
+    code.append(ATTR_GET % dict(name=name, pname=pname,
                 ntype=ntype, doc=doc, doc_action=doc_action,
                 retval=retval))
+
+    # build setter
     if not readonly:
         if rdoc: 
             doc = "\n        %s\n        " % (rdoc)
@@ -394,8 +417,7 @@ def process_interface_attribute(node):
             assert_type = ATTR_SET_ASSERT_INST % (dict(ntype=ntype))
         code.append(ATTR_SET % dict(name=name, pname=pname,
                                     assert_type=assert_type))
-
-    code.append(INTERFACE_VAR % dict(name=name, pname=pname))
+    code.append('')
     return code
 
 
@@ -437,7 +459,7 @@ METHOD_ASSERT_ARRAY_IN_STR = '''\
                 raise TypeError("array can only contain str or unicode")'''
 
 METHOD_CALL = '''\
-        %(outvars)sself._call_method(self._%(pname)s%(in_p)s)'''
+        %(outvars)sself._call("%(name)s"%(in_p)s)'''
 
 METHOD_OUT_CONV = '''\
         %(name)s = %(convfunc)s'''
@@ -566,7 +588,7 @@ def process_interface_method(node):
         retvars = ''
 
     func.append(METHOD_CALL % dict(outvars=outvars,
-                                   pname=pythonic_name(method_name),
+                                   name=method_name,
                                    in_p=in_p))
 
     for name, atype, array in out_p:
@@ -582,8 +604,7 @@ def process_interface_method(node):
     if retvars:
         retcmd = "return %s" % retvars 
         func.append(METHOD_RETURN % dict(retcmd=retcmd))
-    func.append(INTERFACE_VAR % dict(pname=pythonic_name(method_name),
-                                        name=method_name))
+    func.append('')
     return func
 
 
