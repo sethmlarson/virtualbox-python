@@ -1,5 +1,7 @@
 import time
+import os
 
+import virtualbox
 from virtualbox import library
 
 """
@@ -33,5 +35,18 @@ class IGuest(library.IGuest):
         return session
     create_session.__doc__ = library.IGuest.create_session.__doc__
 
-
+    # Update guest additions helper
+    def update_guest_additions(self, source=None, arguments=[], 
+                                     flags=[library.AdditionsUpdateFlag.none]):
+        if source is None:
+            manager = virtualbox.Manager()
+            source = os.path.join(manager.bin_path, "VBoxGuestAdditions.iso")
+        if not os.path.exists(source):
+            raise IOError("ISO path '%s' not found" % source)
+        # Interface bug - doesn't seem to actually take "arguments"
+        #super(IGuest, self).update_guest_additions(source, arguments, flags)
+        p = super(IGuest, self).update_guest_additions(source, flags)
+        return p
+    update_guest_additions.__doc__ = \
+                       library.IGuest.update_guest_additions.__doc__
 
