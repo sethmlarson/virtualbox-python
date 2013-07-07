@@ -43,9 +43,11 @@ class IGuest(library.IGuest):
             source = os.path.join(manager.bin_path, "VBoxGuestAdditions.iso")
         if not os.path.exists(source):
             raise IOError("ISO path '%s' not found" % source)
-        # Interface bug - doesn't seem to actually take "arguments"
+        
+        #BUG:doesn't take "arguments" as specified in xidl
         #super(IGuest, self).update_guest_additions(source, arguments, flags)
-        p = super(IGuest, self).update_guest_additions(source, flags)
+        p = self._call('updateGuestAdditions', in_p=[source, flags])
+        p = library.IProgress(p)
         return p
     update_guest_additions.__doc__ = \
                        library.IGuest.update_guest_additions.__doc__
