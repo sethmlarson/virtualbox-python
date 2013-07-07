@@ -49,8 +49,8 @@ class IMachine(library.IMachine):
             media = []
         return media
 
-    # Fix a what seems to be a buggy definition for deleting machine config
-    # Testing showed that deleteConfig was just 'delete'
+    # BUG: xidl describes this function as deleteConfig.  The interface seems
+    #      to export plain "delete" instead... 
     def delete_config(self, media):
         if not isinstance(media, list):
             raise TypeError("media can only be an instance of type list")
