@@ -27,7 +27,7 @@ setup(
     name="pyvbox",
     version=load_version(),
     packages=["virtualbox",
-              "virtualbox._library_ext"],
+              "virtualbox.library_ext"],
     author="Michael Dorman",
     author_email="mjdorma+pyvbox@gmail.com",
     url="https://github.com/mjdorma/pyvbox",
