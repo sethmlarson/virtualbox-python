@@ -185,6 +185,12 @@ which have a running vboxapi.
 Change log
 ==========
 
+version 0.0.5 (23/07/2013)
+
+* moved manage into library_ext Interfaces
+* made library.py compatible with differences found between xpcom and COM
+  (Linux Vs Windows)
+
 version 0.0.4 (27/06/2013)
 
 * added execute, context and keyboard
