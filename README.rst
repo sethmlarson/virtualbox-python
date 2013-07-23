@@ -9,8 +9,13 @@ What's in pyvbox:
 * Pythonic functions and names.
 * Introspection, documentation strings, getters and setters, and more...
 
+See Project documentation at `readthedocs.org`_.
 
 Project hosting provided by `github.com`_.
+
+
+[mjdorma+pyvbox@gmail.com]
+
 
 Install 
 =======
@@ -216,6 +221,6 @@ version 0.0.0 (20/05/2013)
 
 
 
-
+.. _readthedocs.org: https://pyvbox.readthedocs.org/en/latest/
 .. _github.com: https://github.com/mjdorma/pyvbox
 .. _PyPi: http://pypi.python.org/pypi/pyvbox
