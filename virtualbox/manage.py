@@ -76,33 +76,6 @@ def removevm(machine_or_name_or_id, delete=True):
     return (vm, media)
 
 
-def startvm(machine_or_name_or_id, session_type='gui', environment=''):
-    """Start a VM
-    Required:
-        machine_or_name_or_id - value can be either IMachine, name, or id
-    Options: 
-        session_type - 'gui', 'headless', 'sdl', 'emergencystop'
-        environment - specify the env for the VM 
-            ie.
-                NAME[=VALUE]    
-                NAME[=VALUE]
-                ...
-
-    Return the vm which was just started 
-    """
-    if type(machine_or_name_or_id) in [str, unicode]:
-        vbox = virtualbox.VirtualBox()
-        vm = vbox.find_machine(machine_or_name_or_id)
-    else:
-        vm = machine_or_name_or_id
-
-    session = virtualbox.Session()
-    progress = vm.launch_vm_process(session, session_type, environment)
-    show_progress(progress)
-    session.unlock_machine()
-    return vm
-
-
 _clone_lock = Lock()
 def clonevm(machine_or_name_or_id, snapshot_name_or_id=None,
         mode=CloneMode.machine_state, options=[CloneOptions.link],
