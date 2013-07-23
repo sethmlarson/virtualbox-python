@@ -75,7 +75,7 @@ __doc__ = """\
 lib_version = 1.3
 lib_app_uuid = '819B4D85-9CEE-493C-B6FC-64FFE759B3C9'
 lib_uuid = 'd7569351-1750-46f0-936e-bd127d5bc264'
-xidl_hash = 'b83e546cc6122b1546fb59c63c794244'
+xidl_hash = '00e579f9eefcd8af7d7eb3f0b9f46d87'
 
 
 def pythonic_name(name):
@@ -869,6 +869,139 @@ class KeyboardHIDType(Enum):
         ('ComboKeyboard', 4, 
          '''Combined device, working as PS/2 or USB keyboard, depending on guest behavior.
       Using of such device can have negative performance implications.'''),
+        ] 
+
+
+class DhcpOpt(Enum):
+    """"""
+    __uuid__ = '40d99bd3-3ece-44d2-a07e-1085fe9c4f0b'
+    _enums = [\
+        ('SubnetMask', 1, 
+         ''''''),
+        ('TimeOffset', 2, 
+         ''''''),
+        ('Router', 3, 
+         ''''''),
+        ('TimeServer', 4, 
+         ''''''),
+        ('NameServer', 5, 
+         ''''''),
+        ('DomainNameServer', 6, 
+         ''''''),
+        ('LogServer', 7, 
+         ''''''),
+        ('Cookie', 8, 
+         ''''''),
+        ('LPRServer', 9, 
+         ''''''),
+        ('ImpressServer', 10, 
+         ''''''),
+        ('ResourseLocationServer', 11, 
+         ''''''),
+        ('HostName', 12, 
+         ''''''),
+        ('BootFileSize', 13, 
+         ''''''),
+        ('MeritDumpFile', 14, 
+         ''''''),
+        ('DomainName', 15, 
+         ''''''),
+        ('SwapServer', 16, 
+         ''''''),
+        ('RootPath', 17, 
+         ''''''),
+        ('ExtensionPath', 18, 
+         ''''''),
+        ('IPForwardingEnableDisable', 19, 
+         ''''''),
+        ('NonLocalSourceRoutingEnableDisable', 20, 
+         ''''''),
+        ('PolicyFilter', 21, 
+         ''''''),
+        ('MaximumDatagramReassemblySize', 22, 
+         ''''''),
+        ('DefaultIPTime2Live', 23, 
+         ''''''),
+        ('PathMTUAgingTimeout', 24, 
+         ''''''),
+        ('IPLayerParametersPerInterface', 25, 
+         ''''''),
+        ('InterfaceMTU', 26, 
+         ''''''),
+        ('AllSubnetsAreLocal', 27, 
+         ''''''),
+        ('BroadcastAddress', 28, 
+         ''''''),
+        ('PerformMaskDiscovery', 29, 
+         ''''''),
+        ('MaskSupplier', 30, 
+         ''''''),
+        ('PerformRouteDiscovery', 31, 
+         ''''''),
+        ('RouterSolicitationAddress', 32, 
+         ''''''),
+        ('StaticRoute', 33, 
+         ''''''),
+        ('TrailerEncapsulation', 34, 
+         ''''''),
+        ('ARPCacheTimeout', 35, 
+         ''''''),
+        ('EthernetEncapsulation', 36, 
+         ''''''),
+        ('TCPDefaultTTL', 37, 
+         ''''''),
+        ('TCPKeepAliveInterval', 38, 
+         ''''''),
+        ('TCPKeepAliveGarbage', 39, 
+         ''''''),
+        ('NetworkInformationServiceDomain', 40, 
+         ''''''),
+        ('NetworkInformationServiceServers', 41, 
+         ''''''),
+        ('NetworkTimeProtocolServers', 42, 
+         ''''''),
+        ('VendorSpecificInformation', 43, 
+         ''''''),
+        ('Option_44', 44, 
+         ''''''),
+        ('Option_45', 45, 
+         ''''''),
+        ('Option_46', 46, 
+         ''''''),
+        ('Option_47', 47, 
+         ''''''),
+        ('Option_48', 48, 
+         ''''''),
+        ('Option_49', 49, 
+         ''''''),
+        ('IPAddressLeaseTime', 51, 
+         ''''''),
+        ('Option_64', 64, 
+         ''''''),
+        ('Option_65', 65, 
+         ''''''),
+        ('TFTPServerName', 66, 
+         ''''''),
+        ('BootfileName', 67, 
+         ''''''),
+        ('Option_68', 68, 
+         ''''''),
+        ('Option_69', 69, 
+         ''''''),
+        ('Option_70', 70, 
+         ''''''),
+        ('Option_71', 71, 
+         ''''''),
+        ('Option_72', 72, 
+         ''''''),
+        ('Option_73', 73, 
+         ''''''),
+        ('Option_74', 74, 
+         ''''''),
+        ('Option_75', 75, 
+         ''''''),
+        ('Option_119', 119, 
+         ''''''),
         ] 
 
 
@@ -2601,9 +2734,15 @@ class IDHCPServer(Interface):
       To enumerate all the DHCP servers on the host, use the
       <link to="IVirtualBox::DHCPServers"/> attribute.
     """
-    __uuid__ = '6cfe387c-74fb-4ca7-bff6-973bec8af7a3'
+    __uuid__ = 'ff0774c5-1f62-4bc3-919c-7fc942bf1d25'
     __wsmap__ = 'managed'
     
+    @property
+    def event_source(self):
+        """Get IEventSource value for 'eventSource'"""
+        ret = self._get_attr("eventSource")
+        return IEventSource(ret)
+
     @property
     def enabled(self):
         """Get or set bool value for 'enabled'
@@ -2657,6 +2796,103 @@ class IDHCPServer(Interface):
         """
         ret = self._get_attr("upperIP")
         return ret
+
+    def add_global_option(self, option, value):
+        """
+
+        in option of type DhcpOpt
+
+        in value of type str
+
+        """
+        if not isinstance(option, DhcpOpt):
+            raise TypeError("option can only be an instance of type DhcpOpt")
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        self._call("addGlobalOption",
+                     in_p=[option, value])
+
+    @property
+    def global_options(self):
+        """Get str value for 'globalOptions'"""
+        ret = self._get_attr("globalOptions")
+        return ret
+
+    @property
+    def vm_configs(self):
+        """Get str value for 'vmConfigs'"""
+        ret = self._get_attr("vmConfigs")
+        return ret
+
+    def add_vm_slot_option(self, vmname, slot, option, value):
+        """
+
+        in vmname of type str
+
+        in slot of type int
+
+        in option of type DhcpOpt
+
+        in value of type str
+
+        """
+        if type(vmname) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if not isinstance(slot, int):
+            raise TypeError("slot can only be an instance of type int")
+        if not isinstance(option, DhcpOpt):
+            raise TypeError("option can only be an instance of type DhcpOpt")
+        if type(value) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        self._call("addVmSlotOption",
+                     in_p=[vmname, slot, option, value])
+
+    def remove_vm_slot_options(self, vmname, slot):
+        """
+
+        in vmname of type str
+
+        in slot of type int
+
+        """
+        if type(vmname) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if not isinstance(slot, int):
+            raise TypeError("slot can only be an instance of type int")
+        self._call("removeVmSlotOptions",
+                     in_p=[vmname, slot])
+
+    def get_vm_slot_options(self, vmname, slot):
+        """
+
+        in vmname of type str
+
+        in slot of type int
+
+        return option of type str
+
+        """
+        if type(vmname) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if not isinstance(slot, int):
+            raise TypeError("slot can only be an instance of type int")
+        option = self._call("getVmSlotOptions",
+                     in_p=[vmname, slot])
+        return option
+
+    def get_mac_options(self, mac):
+        """
+
+        in mac of type str
+
+        return option of type str
+
+        """
+        if type(mac) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        option = self._call("getMacOptions",
+                     in_p=[mac])
+        return option
 
     def set_configuration(self, ip_address, network_mask, from_ip_address, to_ip_address):
         """configures the server
@@ -5786,7 +6022,7 @@ class IMachine(Interface):
         """Get or set str value for 'videoCaptureFile'
         This setting determines the filename VirtualBox uses to save
         the recorded content. This setting cannot be changed while video
-        capturing is enabled. 
+        capturing is enabled.
         
           When setting this attribute, the specified path has to be
           absolute (full path). When reading this attribute, a full path is
@@ -10161,7 +10397,7 @@ class IHost(Interface):
       and so on) and also allows for manipulating some of the host's hardware,
       such as global USB device filters and host interface networking.
     """
-    __uuid__ = '30678943-32df-4830-b413-931b25ac86a0'
+    __uuid__ = 'a6107246-f939-42c4-82b6-8aca40327b6d'
     __wsmap__ = 'managed'
     
     @property
@@ -10226,6 +10462,30 @@ class IHost(Interface):
         """
         ret = self._get_attr("networkInterfaces")
         return [IHostNetworkInterface(a) for a in ret]
+
+    @property
+    def name_servers(self):
+        """Get str value for 'nameServers'
+        The list of nameservers registered in host's name resolving system.
+        """
+        ret = self._get_attr("nameServers")
+        return ret
+
+    @property
+    def domain_name(self):
+        """Get str value for 'domainName'
+        Domain name used for name resoving.
+        """
+        ret = self._get_attr("domainName")
+        return ret
+
+    @property
+    def search_strings(self):
+        """Get str value for 'searchStrings'
+        Search string registered for name resoving.
+        """
+        ret = self._get_attr("searchStrings")
+        return ret
 
     @property
     def processor_count(self):
