@@ -10,6 +10,10 @@ What's in pyvbox:
 * Introspection, documentation strings, getters and setters, and more...
 
 
+
+Project hosting provided by `github.com`_.
+
+
 [mjdorma+yara-ctypes@gmail.com]
 
 
@@ -33,4 +37,10 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+
+
+.. _github.com: https://github.com/mjdorma/pyvbox
+.. _yara-ctypes/issues: https://github.com/mjdorma/pyvbox/issues
+.. _yara-ctypes documentation: http://packages.python.org/yara/
 
