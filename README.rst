@@ -9,7 +9,7 @@ What's in pyvbox:
 * Pythonic functions and names.
 * Introspection, documentation strings, getters and setters, and more...
 
-See Project documentation at `readthedocs.org`_.
+Project documentation at `readthedocs.org`_.
 
 Project hosting provided by `github.com`_.
 
