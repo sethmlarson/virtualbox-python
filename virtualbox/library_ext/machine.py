@@ -1,6 +1,8 @@
 from __future__ import print_function
 import time
 import sys
+import os
+import shutil
 
 import virtualbox
 from virtualbox import library
@@ -38,6 +40,8 @@ class IMachine(library.IMachine):
             session.unlock_machine()
             time.sleep(0.5) # TODO figure out how to ensure session is 
                             # really unlocked...
+
+        settings_dir = os.path.dirname(self.settings_file_path)
         if delete:
             option = library.CleanupMode.detach_all_return_hard_disks_only
         else:
@@ -47,7 +51,80 @@ class IMachine(library.IMachine):
             progress = self.delete_config(media)
             progress.wait_for_completion(-1)
             media = []
+        
+        # if delete - let's remove the settings folder too
+        if delete:
+            shutil.rmtree(settings_dir)
+
         return media
+
+    def clone(self, snapshot_name_or_id=None, 
+                    mode=library.CloneMode.machine_state, 
+                    options=[library.CloneOptions.link], name=None, 
+                    uuid=None, groups=[], basefolder='', register=True):
+        """Clone this Machine 
+
+        Options: 
+            snapshot_name_or_id - value can be either ISnapshot, name, or id
+            mode - set the CloneMode value
+            options - define the CloneOptions options 
+            name - define a name of the new VM
+            uuid - set the uuid of the new VM
+            groups - specify which groups the new VM will exist under
+            basefolder - specify which folder to set the VM up under
+            register - register this VM with the server
+        
+        Note: Default values create a linked clone from the current machine
+              state
+
+        Return a IMachine object for the newly cloned vm 
+        """
+        vbox = virtualbox.VirtualBox()
+
+        if snapshot_name_or_id is not None:
+            if snapshot_name_or_id in [str, unicode]:
+                snapshot = self.find_snapshot(snapshot_name_or_id)
+            else:
+                snapshot = snapshot_name_or_id
+            vm = snapshot.machine
+        else:
+            # linked clone can only be created from a snapshot... 
+            # try grabbing the current_snapshot
+            if library.CloneOptions.link in options:
+                vm = self.current_snapshot.machine
+            else:
+                vm = self
+
+        if name is None:
+            name = "%s Clone" % vm.name
+
+        # Build the settings file 
+        create_flags = ''
+        if uuid is not None:
+            create_flags = "UUID=%s" % uuid
+        primary_group = ''
+        if groups:
+            primary_group = groups[0]
+        
+        # Make sure this settings file does not already exist
+        test_name = name
+        for i in range(1, 1000):
+            settings_file = vbox.compose_machine_filename(test_name,
+                                    primary_group, create_flags, basefolder)
+            if not os.path.exists(os.path.dirname(settings_file)):
+                break
+            test_name = "%s (%s)" % (name, i)
+        name = test_name
+
+        # Create the new machine and clone it!
+        vm_clone = vbox.create_machine(settings_file, name, groups, '', 
+                                        create_flags)
+        progress = vm.clone_to(vm_clone, mode, options)
+        progress.wait_for_completion(-1)
+
+        if register:
+            vbox.register_machine(vm_clone)
+        return vm_clone
 
     # BUG: xidl describes this function as deleteConfig.  The interface seems
     #      to export plain "delete" instead... 
@@ -55,11 +132,11 @@ class IMachine(library.IMachine):
         if not isinstance(media, list):
             raise TypeError("media can only be an instance of type list")
         for a in media[:10]:
-            if not isinstance(a, IMedium):
+            if not isinstance(a, library.IMedium):
                 raise TypeError(\
                         "array can only contain objects of type IMedium")
         progress = self._call("delete", in_p=[media])
-        progress = IProgress(progress)
+        progress = library.IProgress(progress)
         return progress
     delete_config.__doc__ = library.IMachine.delete_config.__doc__
 
