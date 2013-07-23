@@ -1,16 +1,30 @@
-.. pyvbox documentation master file, created by
-   sphinx-quickstart on Mon Jun  3 12:59:24 2013.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Welcome to pyvbox 
+*****************
 
-Welcome to pyvbox's documentation!
-==================================
+What's in pyvbox:
 
-Contents:
+* A complete implementation of the VirtualBox Main API
+* Create a VirtualBox instance and seamlessly explore the potential of
+  VirtualBox's amazing Main API 
+* Pythonic functions and names.
+* Introspection, documentation strings, getters and setters, and more...
+
+
+[mjdorma+yara-ctypes@gmail.com]
+
+
+See pyvbox's :doc:`roadmap`.
+
+
+Reference
+=========
 
 .. toctree::
    :maxdepth: 2
 
+   virtualbox/virtualbox.rst
+   virtualbox/library.rst
+   virtualbox/library_ext.rst
 
 
 Indices and tables
