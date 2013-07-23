@@ -17,6 +17,7 @@ class Pool(object):
 
     def _update_pool(self):
         # load configuration for pool
+        pass
     
     def open(self, block=True):
         """get a Machine resource from the pool"""
@@ -27,7 +28,8 @@ class Pool(object):
             if not '_pool_' in vm.name:
                 continue
             # check state, acquire resource
-            if vm.machine_state ???
+#            if vm.machine_state ???
+#                pass
                 #
 
         return Machine(machine, session)
