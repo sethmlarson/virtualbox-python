@@ -37,45 +37,6 @@ def show_progress(progress, ofile=sys.stderr):
         print(progress.error_info.text, file=ofile)
 
 
-def removevm(machine_or_name_or_id, delete=True):
-    """Unregister and optionally delete associated config
-    Required:
-        machine_or_name_or_id - value can be either IMachine, name, or id   
-    Options:
-        delete - remove all elements of this VM from the system
-
-    Return the (vm, media) 
-    """
-    if type(machine_or_name_or_id) in [str, unicode]:
-        vbox = virtualbox.VirtualBox()
-        vm = vbox.find_machine(machine_or_name_or_id)
-    else:
-        vm = machine_or_name_or_id
-
-    if vm.state >= MachineState.running:
-        session = virtualbox.Session()
-        vm.lock_machine(session, LockType.shared)
-        try:
-            progress = session.console.power_down()
-            show_progress(progress)
-        except Exception as exc:
-            print("Error powering off machine %s" % progress)
-            pass
-        session.unlock_machine()
-        time.sleep(1)
-
-    if delete:
-        options = CleanupMode.detach_all_return_hard_disks_only
-    else:
-        options = CleanupMode.detach_all_return_none
-    media = vm.unregister(options)
-    if delete:
-        progress = vm.delete_config(media)
-        show_progress(progress)
-        media = []
-    return (vm, media)
-
-
 _clone_lock = Lock()
 def clonevm(machine_or_name_or_id, snapshot_name_or_id=None,
         mode=CloneMode.machine_state, options=[CloneOptions.link],
