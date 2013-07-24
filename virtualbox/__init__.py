@@ -36,6 +36,12 @@ class Manager(object):
             manager = self.manager
         return Session(interface=manager.getSessionObject(None))
 
+    def cast_object(self, interface_object, interface_class):
+        """Cast the obj to the interface class"""
+        name = interface_class.__name__
+        i = self.manager.queryInterface(interface_object._i, name)
+        return interface_class(interface=i)
+
     @property
     def bin_path(self):
         """return the virtualbox install directory"""

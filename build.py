@@ -110,7 +110,15 @@ class Enum(object):
 class Interface(object):
     """Interface objects provide a wrapper for the VirtualBox COM objects"""
     def __init__(self, interface=None):
-        self._i = interface
+        if isinstance(interface, Interface):
+            self._i = interface.cast_to(self.__class__)._i
+        else:
+            self._i = interface
+
+    def cast_to(self, interface_class):
+        import virtualbox 
+        manager = virtualbox.Manager()
+        return manager.cast_object(self, interface_class)
 
     def __nonzero__(self):
         return bool(self._i)

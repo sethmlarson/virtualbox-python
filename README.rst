@@ -171,6 +171,38 @@ Using context to manage opened sessions and locks::
     True
 
 
+Register to receive on guest keyboard events::
+
+    >ipython
+    In [1]: from virtualbox import library
+
+    In [2]: import virtualbox
+
+    In [3]: vbox = virtualbox.VirtualBox()
+
+    In [4]: vm = vbox.find_machine('test_vm')
+
+    In [5]: s = vm.create_session()
+
+    In [6]: def test(a):
+       ...:     print(a.scancodes)
+       ...:     
+
+    In [7]: s.console.keyboard.event_source.register_callback(test, library.VBoxEventType.on_guest_keyboard)
+    Out[7]: 140448201250560
+
+    In [8]: [35]
+    [23]
+    [163]
+    [151]
+    [57]
+    [185]
+    [35]
+    [24]
+    [163]
+    [152]
+
+
 Issues
 ======
 
