@@ -8,9 +8,14 @@ import threading
 import virtualbox
 from virtualbox import library
 
+"""
+Manage VBoxEvent, registration, listening and processing
+"""
 
 _lookup = {} 
 def type_to_interface(event_type):
+    """Return the event interface object that corresponds to the event type
+    enumeration"""
     global _lookup
     if not isinstance(event_type, library.VBoxEventType):
         raise TypeError("event_type was not of VBoxEventType")
@@ -39,11 +44,11 @@ def _event_monitor(callback, event_source, listener, event_interface, quit):
                 event = event_source.get_event(listener, 1000)
             except library.VBoxError:
                 print("Unregistering %s due to VBoxError on get_event" %
-                        listener)
+                        listener, file=sys.stderr)
                 break
             if event:
                 try:
-                    callback(event.cast_to(event_interface))
+                    callback(event_interface(event))
                 except:
                     print("Unhanded exception in callback: \n%s" % \
                             traceback.format_exc(), file=sys.stderr)

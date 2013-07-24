@@ -171,7 +171,7 @@ Using context to manage opened sessions and locks::
     True
 
 
-Register to receive on guest keyboard events::
+On an already running VM, register to receive on guest keyboard events::
 
     >ipython
     In [1]: from virtualbox import library
@@ -201,6 +201,7 @@ Register to receive on guest keyboard events::
     [24]
     [163]
     [152]
+
 
 
 Issues
