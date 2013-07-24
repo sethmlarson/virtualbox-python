@@ -188,7 +188,7 @@ On an already running VM, register to receive on guest keyboard events::
        ...:     print(a.scancodes)
        ...:     
 
-    In [7]: s.console.keyboard.event_source.register_callback(test, library.VBoxEventType.on_guest_keyboard)
+    In [7]: s.console.keyboard.set_on_guest_keyboard(test)
     Out[7]: 140448201250560
 
     In [8]: [35]
