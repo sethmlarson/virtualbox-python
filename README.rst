@@ -223,6 +223,10 @@ which have a running vboxapi.
 Change log
 ==========
 
+version 0.0.6 (25/07/2013)
+
+* now with event support
+
 version 0.0.5 (23/07/2013)
 
 * moved manage into library_ext Interfaces
