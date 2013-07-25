@@ -22,9 +22,7 @@ class IVirtualBox(library.IVirtualBox):
 
         Callback receives a ISnapshotDeletedEvent object.
 
-        Example:
-            def callback(event):
-                print(event.snapshot_id)
+        Returns the callback_id 
         """
         return self.event_source.register_callback(callback,
                             library.VBoxEventType.on_snapshot_deleted)
@@ -33,10 +31,8 @@ class IVirtualBox(library.IVirtualBox):
         """Set the callback function to consume on snapshot taken events.
 
         Callback receives a ISnapshotTakenEvent object.
-
-        Example:
-            def callback(event):
-                print(event.snapshot_id)
+        
+        Returns the callback_id 
         """
         return self.event_source.register_callback(callback,
                             library.VBoxEventType.on_snapshot_taken)
@@ -45,13 +41,22 @@ class IVirtualBox(library.IVirtualBox):
         """Set the callback function to consume on snapshot changed events
         which occur when snapshot properties have been changed.
 
-        Callback receives a ISnapshotDeleteEvent object.
-
-        Example:
-            def callback(event):
-                print(event.snapshot_id)
+        Callback receives a ISnapshotChangedEvent object.
+        
+        Returns the callback_id 
         """
         return self.event_source.register_callback(callback,
                             library.VBoxEventType.on_snapshot_changed)
+
+    def set_on_guest_property_changed(self, callback):
+        """Set the callback function to consume on guest property changed 
+        events.
+
+        Callback receives a IGuestPropertyChangedEvent object.
+        
+        Returns the callback_id 
+        """
+        return self.event_source.register_callback(callback,
+                            library.VBoxEventType.on_guest_property_changed)
 
 
