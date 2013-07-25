@@ -95,9 +95,12 @@ def unregister_callback(callback_id):
     """unregister a callback registration"""
     global _callbacks
     obj = _callbacks.pop(callback_id, None)
+    threads = []
     if obj is not None:
         t, quit = obj
         quit.set()
+        threads.append(t)
+    for t in threads:
         t.join()
 
 
