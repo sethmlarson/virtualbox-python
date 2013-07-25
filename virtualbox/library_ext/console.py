@@ -26,11 +26,7 @@ class IConsole(library.IConsole):
 
         Callback receives a INetworkAdapterChangedEvent object.
 
-        Example:
-            def callback(event):
-                adapter = event.network_adapter
-                print("Enabled = %s, connected = %s" % (adapter.enabled,
-                                    adapter.cable_connected))
+        Returns the callback_id 
         """
         return self.event_source.register_callback(callback,
                             library.VBoxEventType.on_network_adapter_changed)
@@ -45,9 +41,7 @@ class IConsole(library.IConsole):
         Note: Interested callees should query IGuest attributes to find out
               what has changed.
 
-        Example:
-            def callback(event):
-                print("change...")
+        Returns the callback_id 
         """
         return self.event_source.register_callback(callback,
                             library.VBoxEventType.on_additions_state_change)
@@ -58,9 +52,7 @@ class IConsole(library.IConsole):
 
         Callback receives a IStateChangeEvent object.
 
-        Example:
-            def callback(event):
-                print("State changed to %s" % event.state)
+        Returns the callback_id 
         """
         return self.event_source.register_callback(callback,
                             library.VBoxEventType.on_state_changed)
