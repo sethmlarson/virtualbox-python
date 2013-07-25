@@ -27,8 +27,9 @@ Reference
    :maxdepth: 2
 
    virtualbox/virtualbox.rst
-   virtualbox/library.rst
    virtualbox/library_ext.rst
+   virtualbox/events.rst
+   virtualbox/library.rst
 
 
 Indices and tables
