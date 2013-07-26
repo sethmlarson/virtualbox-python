@@ -17,9 +17,14 @@ Project hosting provided by `github.com`_.
 [mjdorma+yara-ctypes@gmail.com]
 
 
-See pyvbox's :doc:`roadmap`.
+Project
+=======
 
-See pyvbox's :doc:`todo`.
+.. toctree::
+    :maxdepth: 2
+
+    roadmap.rst
+    todo.rst
 
 
 Reference

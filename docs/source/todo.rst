@@ -1,10 +1,9 @@
 Outstanding TODOs
 =================
 
-Events
-------
-
-Need to figure out which sources each of these events belong to::
+Link remaining event types to event sources.
+--------------------------------------------
+Need to figure out which event sources each of these events types belong to::
 
     IStorageControllerChangedEvent
     ICPUChangedEvent
@@ -48,12 +47,12 @@ Need to figure out which sources each of these events belong to::
     INATNetworkPortForwardEvent
 
 
-NATNetworks
------------
+VirtualBox.nat_networks fails.
+------------------------------
 
-Attempting to get the NATNetworks from the VirtualBox object is failing...
-need to debug this and figure out what the COM name is (or if there is a bug
-somewhere in vboxapi's xpcom implementation).
+Attempting to get the NATNetworks from the VirtualBox object is failing.
+Need to debug this to figure out if the wrong COM name has been documented,
+or if there is a genuine bug in the API...
 
 
 
