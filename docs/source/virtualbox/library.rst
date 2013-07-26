@@ -19,7 +19,8 @@ library.py.
 .. note::
 
     The remainder of this page is the result of using *automodule* to generate
-    code for the entire *virtualbox.library* module.
+    code for the entire *virtualbox.library* module, followed by *autoclass*
+    to generate doc for the extended classes found in `library_ext`.
 
 .. automodule:: virtualbox.library
     :members: 

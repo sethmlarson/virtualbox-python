@@ -7,11 +7,11 @@
 .. sectionauthor:: Michael Dorman <mjdorma+pyvbox@gmail.com>
 
 
-This module is the root module for the pyvbox project.  The name has been chosen
-to enable explicit naming when using this package.  The author suggests that
-people new to VirtualBox's extensive COM interface should take some time to
-delve into the API's documentation to understand how this package can be used
-and how it will help you to win at controlling VirtualBox.  
+This module is the root module for the pyvbox project.  The name 'virtualbox'
+has been chosen to enable explicit naming when using this package.  The author
+suggests that people new to VirtualBox's extensive COM interface should take
+a moment to delve into the API's documentation which will assist in
+understanding how VirtualBox's client server module functions.
 
 
 .. py:class:: VirtualBox([interface, manager])
