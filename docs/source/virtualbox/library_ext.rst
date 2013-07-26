@@ -31,10 +31,10 @@ function parameters).
     COM API.  The default constructor can take a `library.Interface` object or
     a `virtualbox.Manager` object.
 
-    .. method:: set_on_snapshot_deleted(callback)
+    .. method:: register_on_snapshot_deleted(callback)
 
-        The *callback* function is called on a snapshot deleted event and
-        receives a *ISnapshotDeletedEvent* object. 
+        The *callback* function is called with a *ISnapshotDeletedEvent*
+        argument when a snapshot deleted event occurs.
 
         :: 
             
@@ -42,25 +42,12 @@ function parameters).
                 print(event.snapshot_id)
 
             vbox = virtualbox.VirtualBox()
-            vbox.set_on_snapshot_deleted(callback)
+            vbox.register_on_snapshot_deleted(callback)
  
-    .. method:: set_on_snapshot_taken(callback)
+    .. method:: register_on_snapshot_taken(callback)
 
-        The *callback* function is called on a snapshot taken event and
-        receives a *ISnapshotTakenEvent* object. 
-
-        :: 
-                    
-            def callback(event):
-                print(event.snapshot_id)
-
-            vbox = virtualbox.VirtualBox()
-            vbox.set_on_snapshot_taken(callback)
-
-    .. method:: set_on_snapshot_changed(callback)
-
-        The *callback* function is called on a snapshot changed event and
-        receives a *ISnapshotChangedEvent* object. 
+        The *callback* function is called with a *ISnapshotTakenEvent*
+        argument when a snapshot taken event occurs.
 
         :: 
                     
@@ -68,12 +55,25 @@ function parameters).
                 print(event.snapshot_id)
 
             vbox = virtualbox.VirtualBox()
-            vbox.set_on_snapshot_changed(callback)
+            vbox.register_on_snapshot_taken(callback)
 
-    .. method:: set_on_guest_property_changed(callback)
+    .. method:: register_on_snapshot_changed(callback)
 
-        The *callback* function is called on a guest property changed event and
-        receives a *IGuestPropertyChangedEvent* object.
+        The *callback* function is called with a *ISnapshotChangedEvent* 
+        argument when a snapshot changed event occurs.
+
+        :: 
+                    
+            def callback(event):
+                print(event.snapshot_id)
+
+            vbox = virtualbox.VirtualBox()
+            vbox.register_on_snapshot_changed(callback)
+
+    .. method:: register_on_guest_property_changed(callback)
+
+        The *callback* function is called with a *IGuestPropertyChangedEvent*
+        argument when a guest property changed event occurs.
 
         :: 
                     
@@ -81,7 +81,7 @@ function parameters).
                 print("%s %s %s" % (event.name, event.value, event.flags))
 
             vbox = virtualbox.VirtualBox()
-            vbox.set_on_guest_property_changed(callback)
+            vbox.register_on_guest_property_changed(callback)
 
 
 .. py:class:: ISession()
@@ -177,25 +177,25 @@ function parameters).
         
             virtualbox.library.IKeyboard.SCANCODES.keys()
         
-    .. method:: set_on_guest_keyboard(callback)
+    .. method:: register_on_guest_keyboard(callback)
 
-        The *callback* function is called when a guest keyboard event is
-        raised and receives a *IGuestKeyboardEvent* object. 
+        The *callback* function is called with a *IGuestKeyboardEvent* argument
+        when a guest keyboard event occurs. 
 
         :: 
                     
             def callback(event):
                 print(event.scancodes)
 
-            session.console.keyboard.set_on_guest_keyboard(callback)
+            session.console.keyboard.register_on_guest_keyboard(callback)
 
 
 .. py:class:: IMouse()
 
-    .. method:: set_on_guest_mouse(callback)
+    .. method:: register_on_guest_mouse(callback)
 
-        The *callback* function is called when a mouse event is raised
-        and receives a *IGuestMouseEvent* object.
+        The *callback* function is called with a *IGuestMouseEvent* argument
+        when mouse event occurs. 
 
         :: 
                     
@@ -271,10 +271,10 @@ function parameters).
         attempt to pull the *machine.current_snapshot* is made, if there is no
         snapshot available, an Exception is raised.
 
-    .. method:: set_on_network_adapter_changed(callback)
+    .. method:: register_on_network_adapter_changed(callback)
 
-        The *callback* function is called when a network adapter changed event
-        is raised and receives a *INetworkAdapterChangedEvent* object. 
+        The *callback* function is called with a *INetworkAdapterChangedEvent*
+        argument when a network adapter changed event occurs.
 
         :: 
                     
@@ -283,33 +283,34 @@ function parameters).
                 print("Enabled = %s, connected = %s" % (adapter.enabled,
                                                  adapter.cable_connected))
 
-            session.console.set_on_network_adapter_changed(callback)
+            session.console.register_on_network_adapter_changed(callback)
         
 
-    .. method:: set_on_additions_state_changed(callback)
+    .. method:: register_on_additions_state_changed(callback)
 
-        The *callback* function is called when a change has occurred to the
-        guest additions and receives a *IAdditionsStateChangedEvent* object.  A
-        query to IGuest attributes is required to find out what has changed.  
+        The *callback* function is called with a *IAdditionsStateChangedEvent*
+        argument when a change has occurred to the guest additions state.  To
+        find out what has changed, a probe into the attributes of IGuest is
+        required.
 
         :: 
                     
             def callback(event):
                 print("State changed in IGuest...")
 
-            session.console.set_on_additions_state_changed(callback)
+            session.console.register_on_additions_state_changed(callback)
 
 
-    .. method:: set_on_state_changed(callback)
+    .. method:: register_on_state_changed(callback)
 
-        The *callback* function is called when a change has occurred to the
-        state of the machine and receives a *IStateChangedEvent* object.
+        The *callback* function is called with a *IStateChangedEvent* when a
+        change has occurred in the state of the machine.
 
         :: 
                     
             def callback(event):
                 print("State changed to %s" % event.state)
 
-            session.console.set_on_state_changed(callback)
+            session.console.register_on_state_changed(callback)
 
 

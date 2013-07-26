@@ -20,7 +20,7 @@ class IConsole(library.IConsole):
         return super(IConsole, self).restore_snapshot(snapshot)
     restore_snapshot.__doc__ = library.IConsole.restore_snapshot.__doc__
 
-    def set_on_network_adapter_changed(self, callback):
+    def register_on_network_adapter_changed(self, callback):
         """Set the callback function to consume on network adapter changed
         events.
 
@@ -32,7 +32,7 @@ class IConsole(library.IConsole):
                             library.VBoxEventType.on_network_adapter_changed)
 
 
-    def set_on_additions_state_changed(self, callback):
+    def register_on_additions_state_changed(self, callback):
         """Set the callback function to consume on additions state changed
         events.
 
@@ -46,7 +46,7 @@ class IConsole(library.IConsole):
         return self.event_source.register_callback(callback,
                             library.VBoxEventType.on_additions_state_change)
 
-    def set_on_state_changed(self, callback):
+    def register_on_state_changed(self, callback):
         """Set the callback function to consume on state changed events
         which are generated when the state of the machine changes.
 

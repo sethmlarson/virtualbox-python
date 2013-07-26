@@ -17,7 +17,7 @@ class IVirtualBox(library.IVirtualBox):
             manager = virtualbox.Manager()
             self._i = manager.get_virtualbox()._i
 
-    def set_on_snapshot_deleted(self, callback):
+    def register_on_snapshot_deleted(self, callback):
         """Set the callback function to consume on snapshot deleted events.
 
         Callback receives a ISnapshotDeletedEvent object.
@@ -27,7 +27,7 @@ class IVirtualBox(library.IVirtualBox):
         return self.event_source.register_callback(callback,
                             library.VBoxEventType.on_snapshot_deleted)
 
-    def set_on_snapshot_taken(self, callback):
+    def register_on_snapshot_taken(self, callback):
         """Set the callback function to consume on snapshot taken events.
 
         Callback receives a ISnapshotTakenEvent object.
@@ -37,7 +37,7 @@ class IVirtualBox(library.IVirtualBox):
         return self.event_source.register_callback(callback,
                             library.VBoxEventType.on_snapshot_taken)
 
-    def set_on_snapshot_changed(self, callback):
+    def register_on_snapshot_changed(self, callback):
         """Set the callback function to consume on snapshot changed events
         which occur when snapshot properties have been changed.
 
@@ -48,7 +48,7 @@ class IVirtualBox(library.IVirtualBox):
         return self.event_source.register_callback(callback,
                             library.VBoxEventType.on_snapshot_changed)
 
-    def set_on_guest_property_changed(self, callback):
+    def register_on_guest_property_changed(self, callback):
         """Set the callback function to consume on guest property changed 
         events.
 

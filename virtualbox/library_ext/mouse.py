@@ -9,7 +9,7 @@ Add helper code to the default IMouse class.
 class IMouse(library.IMouse):
     __doc__ = library.IMouse.__doc__
 
-    def set_on_guest_mouse(self, callback):
+    def register_on_guest_mouse(self, callback):
         """Set the callback function to consume on guest mouse events.
         
         Callback receives a IGuestMouseEvent object.

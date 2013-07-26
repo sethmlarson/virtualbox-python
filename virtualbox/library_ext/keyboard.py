@@ -157,7 +157,7 @@ class IKeyboard(library.IKeyboard):
             for code in release_codes:
                 self.put_scancode(code)
 
-    def set_on_guest_keyboard(self, callback):
+    def register_on_guest_keyboard(self, callback):
         """Set the callback function to consume on guest keyboard events
         
         Callback receives a IGuestKeyboardEvent object.
