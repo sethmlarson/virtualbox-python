@@ -19,6 +19,8 @@ Project hosting provided by `github.com`_.
 
 See pyvbox's :doc:`roadmap`.
 
+See pyvbox's :doc:`todo`.
+
 
 Reference
 =========
