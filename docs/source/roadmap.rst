@@ -3,8 +3,8 @@ Roadmap
 
 This is a rough roadmap for the first beta release of *pyvbox*.
 
-Version 0.1 - *Automate provisioning VMs and Guest instrumentation*
--------------------------------------------------------------------
+Version 0.1 - *Automate provisioning of VMs and Guest instrumentation*
+----------------------------------------------------------------------
 
 * Support code for the various event_source objects and their event types.
 * A machine pool manager. 
