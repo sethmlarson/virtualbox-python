@@ -31,10 +31,54 @@ function parameters).
     COM API.  The default constructor can take a `library.Interface` object or
     a `virtualbox.Manager` object.
 
-    .. method:: register_on_snapshot_deleted(callback)
+    .. method:: register_on_machine_state_changed(callback)
+
+        The *callback* function is called with a *IMachineStateChangedEvent*
+        argument on a machine state changed event.
+
+        :: 
+            
+            def callback(event):
+                print("Machine %s state changed to %s" % (event.machine_id,
+                                                          event.state))
+
+            vbox = virtualbox.VirtualBox()
+            vbox.register_on_machine_state_changed(callback)
+
+    .. method:: register_on_machine_data_changed(callback)
+
+        The *callback* function is called with a *IMachineDataChangedEvent*
+        argument on a machine state changed event.
+
+        :: 
+          
+            def callback(event):
+                print("Settings data changed for %s" % event.machine_id)
+
+            vbox = virtualbox.VirtualBox()
+            vbox.register_on_machine_data_changed(callback)
+
+    .. method:: register_on_machine_registered(callback)
+
+        The *callback* function is called with a *IMachineRegisteredEvent*
+        argument on a machine registered event.
+
+        :: 
+             
+            def callback(event):
+                if event.registered:
+                    action = 'registered'
+                else:
+                    action = 'unregistered'
+                print("%s was %s" % (event.machine_id, action))
+
+            vbox = virtualbox.VirtualBox()
+            vbox.register_on_machine_registered(callback)
+
+     .. method:: register_on_snapshot_deleted(callback)
 
         The *callback* function is called with a *ISnapshotDeletedEvent*
-        argument when a snapshot deleted event occurs.
+        argument on a snapshot deleted event.
 
         :: 
             
@@ -47,7 +91,7 @@ function parameters).
     .. method:: register_on_snapshot_taken(callback)
 
         The *callback* function is called with a *ISnapshotTakenEvent*
-        argument when a snapshot taken event occurs.
+        argument on a snapshot taken event.
 
         :: 
                     
@@ -60,7 +104,7 @@ function parameters).
     .. method:: register_on_snapshot_changed(callback)
 
         The *callback* function is called with a *ISnapshotChangedEvent* 
-        argument when a snapshot changed event occurs.
+        argument on a snapshot changed event.
 
         :: 
                     
@@ -73,7 +117,7 @@ function parameters).
     .. method:: register_on_guest_property_changed(callback)
 
         The *callback* function is called with a *IGuestPropertyChangedEvent*
-        argument when a guest property changed event occurs.
+        argument on a guest property changed event.
 
         :: 
                     
@@ -82,6 +126,72 @@ function parameters).
 
             vbox = virtualbox.VirtualBox()
             vbox.register_on_guest_property_changed(callback)
+
+    .. method:: register_on_session_state_changed(callback)
+
+        The *callback* function is called with a *ISessionStateChangedEvent*
+        argument on a session state changed event.
+
+        :: 
+                    
+            def callback(event):
+                print("Session on machine %s is %s" % (event.machine_id,
+                                                       event.state))
+
+            vbox = virtualbox.VirtualBox()
+            vbox.register_on_session_state_changed(callback)
+
+    .. method:: register_on_event_source_changed(callback)
+
+        The *callback* function is called with a *IEventSourceChangedEvent* on a
+        event source changed event.  This occurs when a listener is added or
+        removed.
+
+        :: 
+                    
+            def callback(event):
+                if event.add:
+                    action = 'added'
+                else:
+                    action = 'removed'
+                print("A listener was %s from vbox's event_source %s" % \
+                        action)
+
+            vbox.register_on_event_source_changed(callback)
+
+    .. method:: register_on_extra_data_changed(callback)
+
+        The *callback* function is called with a *IExtraDataChangedEvent*
+        argument on a extra data changed event.
+
+        :: 
+                    
+            def callback(event):
+                print("%s %s=%s" % (event.machine_id, event.key, event.value))
+
+            vbox = virtualbox.VirtualBox()
+            vbox.register_on_extra_data_changed(callback)
+
+    .. method:: register_on_extra_data_can_change(callback)
+
+        The *callback* function is called with a *IExtraDataCanChangeEvent*
+        argument on a extra data can change event.
+
+        :: 
+                    
+            def callback(event):
+                if event.key == 'blah':
+                    print("Veto served")
+                    event.add_veto("blah is mine...")
+                else:
+                    print("Allow %s %s" % (event.key, event.value))
+
+            vbox = virtualbox.VirtualBox()
+            vbox.register_on_extra_data_can_change(callback)
+
+        To see this work simply run the following vboxmanage command::
+        
+            vboxmanage setextradata global blah winner
 
 
 .. py:class:: ISession()
@@ -161,7 +271,6 @@ function parameters).
         provide a helper function that wraps the *events.register_callback*
         method.  *callback* is the function to be called back when this
         *IEventSource* raises *event_type*. 
-
 
 
 .. py:class:: IKeyboard()
@@ -284,14 +393,89 @@ function parameters).
                                                  adapter.cable_connected))
 
             session.console.register_on_network_adapter_changed(callback)
-        
+
+     .. method:: register_on_serial_port_changed(callback)
+
+        The *callback* function is called with a *ISerialPortChangedEvent*
+        argument when a serial port changed event occurs.
+
+        :: 
+
+            def callback(event):
+                port = event.serial_port
+                print("Enabled = %s, path = %s" % (port.enabled,
+                                                   port.path))
+
+            session.console.register_on_serial_port_changed(callback)
+
+     .. method:: register_on_parallel_port_changed(callback)
+
+        The *callback* function is called with a *IParallelPortChangedEvent*
+        argument on a parallel port changed event.
+
+        :: 
+                    
+            def callback(event):
+                port = event.parallel_port
+                print("Enabled = %s, path = %s" % (port.enabled,
+                                                   port.path))
+
+            session.console.register_on_parallel_port_changed(callback)       
+
+    .. method:: register_on_medium_changed(callback)
+
+        The *callback* function is called with a *IMediumChangedEvent* on a
+        medium changed event.
+
+        :: 
+                    
+            def callback(event):
+                medium = event.medimum_attachment
+                print(medium.controller)
+
+            session.console.register_on_medium_changed(callback)
+
+    .. method:: register_on_clipboard_mode_changed(callback)
+
+        The *callback* function is called with a *IClipboardModeChangedEvent*
+        on a clipboard mode changed event.
+
+        :: 
+                    
+            def callback(event):
+                print(event.clipboard_mode)
+
+            session.console.register_on_clipboard_mode_changed(callback)
+
+    .. method:: register_on_drag_and_drop_mode_changed(callback)
+
+        The *callback* function is called with a *IDragAndDropModeChangedEvent*
+        on a drag and drop mode changed event.
+
+        :: 
+                    
+            def callback(event):
+                print(event.drag_and_drop_mode)
+
+            session.console.register_on_drag_and_drop_mode_changed(callback)
+
+    .. method:: register_on_vrde_server_changed(callback)
+
+        The *callback* function is called with a *IVRDEServerChangedEvent*
+        on a drag and drop mode changed event.
+
+        :: 
+                    
+            def callback(event):
+                print("VirtualBox remote display extension server changed")
+
+            session.console.register_vdre_server_changed(callback)
 
     .. method:: register_on_additions_state_changed(callback)
 
         The *callback* function is called with a *IAdditionsStateChangedEvent*
-        argument when a change has occurred to the guest additions state.  To
-        find out what has changed, a probe into the attributes of IGuest is
-        required.
+        argument on a additions state changed event.  To find out what has
+        changed, a probe into the attributes of IGuest is required.
 
         :: 
                     
@@ -300,11 +484,22 @@ function parameters).
 
             session.console.register_on_additions_state_changed(callback)
 
+    .. method:: register_on_shared_folder_changed(callback)
+
+        The *callback* function is called with a *ISharedFolderChangedEvent*
+        argument on a shared folder changed event.
+
+        :: 
+                    
+            def callback(event):
+                print("Folder changed scope %s" % event.scope)
+
+            session.console.register_on_shared_folder_changed(callback)
 
     .. method:: register_on_state_changed(callback)
 
-        The *callback* function is called with a *IStateChangedEvent* when a
-        change has occurred in the state of the machine.
+        The *callback* function is called with a *IStateChangedEvent* on a
+        machine state changed event.
 
         :: 
                     
@@ -312,5 +507,52 @@ function parameters).
                 print("State changed to %s" % event.state)
 
             session.console.register_on_state_changed(callback)
+
+    .. method:: register_on_event_source_changed(callback)
+
+        The *callback* function is called with a *IEventSourceChangedEvent* on a
+        event source changed event.  This occurs when a listener is added or
+        removed.
+
+        :: 
+                    
+            def callback(event):
+                if event.add:
+                    action = 'added'
+                else:
+                    action = 'removed'
+                print("A listener was %s from console's event_source %s" % \
+                        action)
+
+            session.console.register_on_event_source_changed(callback)
+
+    .. method:: register_on_can_show_window(callback)
+
+        The *callback* function is called with a *ICanShowWindowEvent* on a
+        show window event.  This occurs when the console window is to be
+        activated and brought to the foreground of the desktop of the host PC.
+        If this behaviour is not desired a call to event.add_veto will stop
+        this from happening. 
+
+        :: 
+                    
+            def callback(event):
+                print("veto this event")
+                event.add_veto("No you shall never do this!")
+
+            session.console.register_on_can_show_window(callback)
+
+    .. method:: register_on_show_window(callback)
+
+        The *callback* function is called with a *IShowWindowEvent* on a show
+        window event.  This occurs when the console window is to be activated
+        and brought to the foreground of the desktop of the host PC.
+
+        :: 
+                    
+            def callback(event):
+                print("Window id = %s" % event.win_id)
+
+            session.console.register_on_show_window(callback)
 
 

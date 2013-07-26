@@ -17,6 +17,36 @@ class IVirtualBox(library.IVirtualBox):
             manager = virtualbox.Manager()
             self._i = manager.get_virtualbox()._i
 
+    def register_on_machine_state_changed(self, callback):
+        """Set the callback function to consume on machine state changed events.
+
+        Callback receives a IMachineStateChangedEvent object.
+
+        Returns the callback_id 
+        """
+        return self.event_source.register_callback(callback,
+                            library.VBoxEventType.on_machine_state_changed)
+
+    def register_on_machine_data_changed(self, callback):
+        """Set the callback function to consume on machine data changed events.
+
+        Callback receives a IMachineDataChangedEvent object.
+
+        Returns the callback_id 
+        """
+        return self.event_source.register_callback(callback,
+                            library.VBoxEventType.on_machine_data_changed)
+
+    def register_on_machine_registered(self, callback):
+        """Set the callback function to consume on machine registered events.
+
+        Callback receives a IMachineRegisteredEvent object.
+
+        Returns the callback_id 
+        """
+        return self.event_source.register_callback(callback,
+                            library.VBoxEventType.on_machine_registered)
+
     def register_on_snapshot_deleted(self, callback):
         """Set the callback function to consume on snapshot deleted events.
 
@@ -58,5 +88,55 @@ class IVirtualBox(library.IVirtualBox):
         """
         return self.event_source.register_callback(callback,
                             library.VBoxEventType.on_guest_property_changed)
+
+    def register_on_session_state_changed(self, callback):
+        """Set the callback function to consume on session state changed
+        events.
+
+        Callback receives a ISessionStateChangedEvent object.
+        
+        Returns the callback_id 
+        """
+        return self.event_source.register_callback(callback,
+                            library.VBoxEventType.on_session_state_changed)
+
+    def register_on_event_source_changed(self, callback):
+        """Set the callback function to consume on event source changed
+        events.  This occurs when a listener is added or removed.
+
+        Callback receives a IEventSourceChangedEvent object.
+        
+        Returns the callback_id 
+        """
+        return self.event_source.register_callback(callback,
+                            library.VBoxEventType.on_event_source_changed)
+
+    def register_on_extra_data_changed(self, callback):
+        """Set the callback function to consume on extra data changed
+        events.
+
+        Callback receives a IExtraDataChangedEvent object.
+        
+        Returns the callback_id 
+        """
+        return self.event_source.register_callback(callback,
+                            library.VBoxEventType.on_extra_data_changed)
+
+    def register_on_extra_data_can_change(self, callback):
+        """Set the callback function to consume on extra data changed
+        events.
+
+        Callback receives a IExtraDataCanChangeEvent object.
+        
+        Returns the callback_id 
+        """
+        return self.event_source.register_callback(callback,
+                            library.VBoxEventType.on_extra_data_can_change)
+
+
+
+
+
+
 
 
