@@ -394,7 +394,7 @@ function parameters).
 
             session.console.register_on_network_adapter_changed(callback)
 
-     .. method:: register_on_serial_port_changed(callback)
+    .. method:: register_on_serial_port_changed(callback)
 
         The *callback* function is called with a *ISerialPortChangedEvent*
         argument when a serial port changed event occurs.
@@ -408,7 +408,7 @@ function parameters).
 
             session.console.register_on_serial_port_changed(callback)
 
-     .. method:: register_on_parallel_port_changed(callback)
+    .. method:: register_on_parallel_port_changed(callback)
 
         The *callback* function is called with a *IParallelPortChangedEvent*
         argument on a parallel port changed event.
