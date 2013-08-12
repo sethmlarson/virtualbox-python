@@ -47,13 +47,10 @@ Need to figure out which event sources each of these events types belong to::
     INATNetworkPortForwardEvent
 
 
-VirtualBox.nat_networks fails.
-------------------------------
+VirtualBox.nat_networks 
+-----------------------
 
-Attempting to get the NATNetworks from the VirtualBox object is failing.
-Need to debug this to figure out if the wrong COM name has been documented,
-or if there is a genuine bug in the API...
-
-
+Waiting for the VirtualBox team to implement this function :)... It's going to
+be super useful! 
 
 

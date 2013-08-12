@@ -6,15 +6,14 @@ import contextlib
 import virtualbox
 from virtualbox import library
 
+import shlex
+import os
 
 # Read creds from the file called test_vm.creds
 #  USERNAME PASSWORD
-if os.path.exists('test_vm.creds'):
-    with open('test_vm.creds', 'wb') as f:
-        d = f.read()
-        username, password = d.split()
-else:
-    username, password = ['Michael Dorman', 'password']
+path = os.path.join(os.path.dirname(__file__), 'test_vm.creds')
+with open(path, 'rb') as f:
+    username, password = shlex.split(f.read())
 
 
 class TestTestVM(unittest.TestCase):
@@ -63,19 +62,6 @@ class TestTestVM(unittest.TestCase):
         s.unlock_machine()
         self.assertRaises(library.VBoxError, s.unlock_machine)
 
-    def atest_power_up_down_via_console(self):
-        """power up than down the test_vm via console"""
-        vbox = virtualbox.VirtualBox()
-        vm = vbox.find_machine('test_vm')
-        s = virtualbox.Session()
-        vm.lock_machine(s, virtualbox.library.LockType.vm)
-        try:
-            progress = s.console.power_up()
-            progress.wait_for_completion(5000)
-            s.console.power_down()
-        finally:
-            s.unlock_machine()
-
     def test_power_up_down_vm(self):
         """power up than down the test_vm via launch"""
         vbox = virtualbox.VirtualBox()
@@ -91,95 +77,28 @@ CMD_EXE = r"C:\Windows\System32\cmd.exe"
 class TestGuestSession(unittest.TestCase):
     def setUp(self):
         self.vbox = virtualbox.VirtualBox()
-        self.session = virtualbox.Session()
         self.vm = self.vbox.find_machine('test_vm')
+        self._powered_up = False
         if self.vm.state < virtualbox.library.MachineState.running:
-            p = self.vm.launch_vm_process(self.session, "gui", "")
-            p.wait_for_completion(5000)
-        else:
-            self.vm.lock_machine(self.session,
-                    virtualbox.library.LockType.shared)
+            self._powered_up = True
+            p = self.vm.launch_vm_process()
+            p.wait_for_completion()
+        self.session = self.vm.create_session()
 
     def tearDown(self):
-        self.session.console.power_down()
-        while self.vm.state >= virtualbox.library.MachineState.running:
-            time.sleep(1)
-
-    @contextlib.contextmanager
-    def guest_session(self):
-        guest_session = self.session.console.guest.create_session(\
-                username, password, '', 'TestGuestSession')
-        # Wait until the guest service comes online
-        while True:
-            try:
-                guest_session.file_query_info(CMD_EXE)
-            except virtualbox.library.VBoxError:
-                time.sleep(0.5)
-                continue
-            else:
-                break
-        try:
-            yield guest_session
-        finally:
-            print ("close guest session")
-            guest_session.close()
-
+        if self._powered_up:
+            self.session.console.power_down()
+            while self.vm.state >= virtualbox.library.MachineState.running:
+                time.sleep(1)
 
     def test_execute(self):
-        """test execute ping localhost"""
-
-        # TODO This technique is unstable
-        def execute(guest_session, cmd, args):
-            # Now to run a process
-            print "Execute %s " % cmd
-            process = guest_session.process_create(cmd, args, [],
-                    [virtualbox.library.ProcessCreateFlag.wait_for_std_err,
-                     virtualbox.library.ProcessCreateFlag.wait_for_std_out],
-                    10000)
-
-            # wait until the process has started
-            process.wait_for(int(virtualbox.library.ProcessWaitResult.start),
-                            5000)
-
-            # NOTE : XP guest svc doesn't support StdOut or StdErr wait flags
-            stdout = []
-            stderr = []
-            # TODO Seems that reading data from stderr sometimes causes a 
-            #      VBoxErrorIptrError - which tends to break the guest service
-            while process.status == virtualbox.library.ProcessStatus.started:
-                #try:
-                o = process.read(1, 65000, 1000)
-                stdout.append(o)
-                e = process.read(2, 65000, 1000)
-                stderr.append(e)
-                #except virtualbox.library.VBoxErrorIprtError:
-                #    pass
-                time.sleep(0.2)
-
-            #
-            o = process.read(1, 65000, 1000)
-            stdout.append(o)
-            e = process.read(2, 65000, 1000)
-            stderr.append(e)
-    
-            self.assertEqual(process.status,
-                    virtualbox.library.ProcessStatus.terminated_normally)
-            
-            stdout = "".join(stdout)
-            stderr = "".join(stderr)
-            return process.exit_code, stdout, stderr
-
-        with self.guest_session() as guest_session:
-            _, stdout, _ = execute(guest_session, CMD_EXE, 
-                    [r'/C', 'ping', '127.0.0.1'])
-            self.assertTrue('Pinging' in stdout)
-
-            # failing...  need to figure out whats going on
-            for i in xrange(1000):
-                print "Test %s " % (i + 1)
-                _, stdout, _ = execute(guest_session, CMD_EXE, 
-                        [r'/C', 'netstat', '-nao'])
-                print stdout
+        guest = self.session.console.guest.create_session(username, password,
+                                timeout_ms=10000)
+        p, o, e = guest.execute(CMD_EXE, [r'/C', 'ping', '127.0.0.1'])
+        self.assertTrue('Pinging' in o)
+        
+        p, o, e = guest.execute(CMD_EXE, [r'/C', 'netstat', '-nao'])
+        self.assertTrue('Active Connections' in o)
 
  
 

@@ -17,4 +17,6 @@ class IProgress(library.IProgress):
                oc=self.operation_count, od=self.operation_description, 
                tr=self.time_remaining)
 
-
+    def wait_for_completion(self, timeout=-1):
+        super(IProgress, self).wait_for_completion(timeout)
+    wait_for_completion.__doc__ = library.IProgress.wait_for_completion.__doc__
