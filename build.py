@@ -143,8 +143,7 @@ class Interface(object):
             attr = getattr(self._i, prefix_name, attr)
         if attr is not None:
             return attr
-        raise AttributeError("Could not find '%s' in Interface %s" % (name,
-                              self._i))
+        return None
 
     def _get_attr(self, name):
         attr = self._search_attr(name, prefix='get')
