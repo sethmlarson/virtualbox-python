@@ -93,7 +93,7 @@ class TestGuestSession(unittest.TestCase):
 
     def test_execute(self):
         guest = self.session.console.guest.create_session(username, password,
-                                timeout_ms=10000)
+                                timeout_ms=60*1000)
         p, o, e = guest.execute(CMD_EXE, [r'/C', 'ping', '127.0.0.1'])
         self.assertTrue('Pinging' in o)
         
