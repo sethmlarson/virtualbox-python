@@ -10,9 +10,9 @@ import funconf
 import virtualbox
 from virtualbox import library
 
-config = funconf.Config('test_vm.conf')
-username = config.username
-password = password
+config = funconf.Config('tests/test_vm.conf', 'test_vm.conf')
+username = config.machine.username
+password = config.machine.password
 
 class TestTestVM(unittest.TestCase):
     
@@ -91,7 +91,7 @@ class TestGuestSession(unittest.TestCase):
 
     def test_execute(self):
         guest = self.session.console.guest.create_session(username, password,
-                                timeout_ms=60*1000)
+                                timeout_ms=60*2000)
         p, o, e = guest.execute(CMD_EXE, [r'/C', 'ping', '127.0.0.1'])
         self.assertTrue('Pinging' in o)
         
