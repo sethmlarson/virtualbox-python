@@ -155,7 +155,23 @@ class IMachine(library.IMachine):
         """ 
         if session is None:
             session = library.ISession()
-        self.lock_machine(session, lock_type)
+        # NOTE: The following hack handles the issue of unknown machine state.
+        #       This occurs most frequently when a machine is powered off and
+        #       in spite waiting for the completion event to end, the state of
+        #       machine still raises the following Error:
+        #          virtualbox.library.VBoxErrorVmError: 0x80bb0003 (Failed to \
+        #          get a console object from the direct session (Unknown \
+        #          Status 0x80BB0002))
+        for i in range(10):
+            try:
+                self.lock_machine(session, lock_type)
+            except Exception as exc:
+                time.sleep(1)
+                continue
+            else:
+                break
+        else:
+            raise Exception("Failed to create clone - %s" % exc)
         return session
 
     # Simplify the launch_vm_process. Build a ISession if it has not been 
