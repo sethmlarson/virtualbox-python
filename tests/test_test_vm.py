@@ -2,19 +2,17 @@ import unittest
 import os
 import time
 import contextlib
+import shlex
+import os
+
+import funconf
 
 import virtualbox
 from virtualbox import library
 
-import shlex
-import os
-
-# Read creds from the file called test_vm.creds
-#  USERNAME PASSWORD
-path = os.path.join(os.path.dirname(__file__), 'test_vm.creds')
-with open(path, 'rb') as f:
-    username, password = shlex.split(f.read())
-
+config = funconf.Config('test_vm.conf')
+username = config.username
+password = password
 
 class TestTestVM(unittest.TestCase):
     

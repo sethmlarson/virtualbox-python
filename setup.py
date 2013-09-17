@@ -10,7 +10,7 @@ import sys
 
 
 install_requires = []
-tests_require = []
+tests_require = ['begins', 'funconf']
 
 def load_version(filename='./virtualbox/version.py'):
     """Parse a __version__ number from a source file"""
