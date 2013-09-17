@@ -330,7 +330,8 @@ def process_interface(node):
         elif name == 'method':
             code.extend(process_interface_method(n))
         else:
-            raise Exception("Unknown interface a member %s" % name)
+            raise Exception("Unknown interface a member '%s' \n%s" % \
+                    (name, class_def))
     code.append('')
     return "\n".join(code) 
 
@@ -612,6 +613,25 @@ def process_interface_method(node):
     return func
 
 
+def preprocess(xidl, target):
+    lines = []
+    emit = True
+    for line in xidl.splitlines():
+        line = line.strip()
+        if line.startswith('<if target='):
+            if target in line:
+                emit = True
+            else:
+                emit = False
+            continue
+        elif line == '</if>':
+            emit = True
+            continue
+        if emit:
+            lines.append(line)
+    return "\n".join(lines)
+
+
 ###########################################################
 #
 #  Where it all begins... 
@@ -629,6 +649,7 @@ def main(virtualbox_xidl):
 
     print("Create new virtualbox/library.py")
     xidl = open(virtualbox_xidl, 'rb').read()
+    xidl = preprocess(xidl, target='xpidl')
         
     xml = minidom.parseString(xidl)
     
