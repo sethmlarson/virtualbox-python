@@ -201,7 +201,7 @@ vbox_error = {}
 remove = ['desc', 'pre', 'tt', 'ul', 'li', 'note', 'b', 'ol', 'i', 'h3',
            'tr', 'td', 'table', 'see']
 
-def get_doc(node):
+def get_doc(node, whitespace=12):
     docnode = node.getElementsByTagName('desc')
     if docnode:
         xml = docnode[0].toxml()
@@ -210,7 +210,8 @@ def get_doc(node):
         for r in remove:
             html = html.replace('<%s>' % r, '').replace('</%s>' % r, '')
         html, _ = re.subn('(<result).*(</result>)', '', html, flags=re.DOTALL)
-        return html.strip()
+        doc = [l.strip() for l in html.splitlines()]
+        return ("\n" + " " * whitespace).join(doc).rstrip().strip()
     else:
         return ''
 
@@ -247,7 +248,8 @@ def process_result(node):
 ###########################################################
 ENUM_DEFINE = '''\
 class %(name)s(Enum):
-    """%(doc)s"""
+    """%(doc)s
+    """
     __uuid__ = %(uuid)s
     _enums = %(enums)s '''
 ENUM_VALUE = """\
@@ -261,7 +263,7 @@ def process_enum(node):
     name = node.getAttribute('name')
     uuid = "'%s'" % node.getAttribute('uuid')
     code = []
-    enum_doc = get_doc(node)
+    enum_doc = get_doc(node, 4)
     enums = ['[\\']
     for child in node.childNodes:
         tagname = getattr(child, 'tagName', None)
@@ -307,7 +309,7 @@ def process_interface(node):
     elif extends == '$errorinfo':
         extends = 'Interface'
     wsmap = node.getAttribute('wsmap')
-    doc = get_doc(node)
+    doc = get_doc(node, 4)
     if doc:
         doc = "\n    %s\n    "%doc
     event_id = node.getAttribute('id')
@@ -389,7 +391,7 @@ def process_interface_attribute(node):
         if array:
             print "TODO: %s %s get or set with array" % (name, atype)
         doc_action = "Get or set"
-    rdoc = get_doc(node)
+    rdoc = get_doc(node, 8)
     if rdoc:
         doc = "\n        %s\n        " % (rdoc)
     else:
@@ -484,7 +486,7 @@ def process_interface_method(node):
         return (cname, cdoc)
 
     method_name = node.getAttribute('name')
-    method_doc = get_doc(node)
+    method_doc = get_doc(node, 8)
 
     ret_param = None
     params = []
@@ -657,7 +659,7 @@ def main(virtualbox_xidl):
     idl = xml.getElementsByTagName('idl')
     assert len(idl) == 1
     idl = idl[0]
-    lib_doc = '''__doc__ = """\\\n  %s\n"""\n\n''' %get_doc(idl)
+    lib_doc = '''__doc__ = """\\\n  %s\n"""\n\n''' %get_doc(idl, 0)
 
     # Process the library
     library = xml.getElementsByTagName('library')
