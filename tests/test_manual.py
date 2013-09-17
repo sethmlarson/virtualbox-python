@@ -9,7 +9,17 @@ import begin
 import funconf
 from virtualbox import pool
 
-config = funconf.Config('tests/test_vm.conf', 'test_vm.conf')
+
+config = funconf.Config(['tests/test_vm.conf', 'test_vm.conf'])
+vbox = pool.VirtualBox()
+
+
+def on_machine_state_changed(event):
+    machine = vbox.find_machine(event.machine_id)
+    print("Machine '%s' state has changed to %s" % (machine.name, event.state))
+
+vbox.register_on_machine_state_changed(on_machine_state_changed)
+
 
 @begin.subcommand
 @config
@@ -19,12 +29,10 @@ def seed(machine_name, machine_username, machine_password, seed_count):
     sessions = []
     for i in range(seed_count):
         s = mp.acquire(machine_username, machine_password)
-        print("Acquired %s" % s.machine.name)
         sessions.append(s)
     time.sleep(4)
     for s in sessions:
-        s.unlock_machine()
-        print("Released %s" % s.machine.name)
+        machine = mp.release(s)
 
 @begin.subcommand
 @config
