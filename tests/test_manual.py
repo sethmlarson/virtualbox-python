@@ -11,20 +11,35 @@ from virtualbox import pool
 
 
 config = funconf.Config(['tests/test_vm.conf', 'test_vm.conf'])
-vbox = pool.VirtualBox()
 
 
 def on_machine_state_changed(event):
+    vbox = pool.VirtualBox()
     machine = vbox.find_machine(event.machine_id)
-    print("Machine '%s' state has changed to %s" % (machine.name, event.state))
+    print("Machine '%s' state has changed to %s" % (machine.name, 
+            event.state))
 
-vbox.register_on_machine_state_changed(on_machine_state_changed)
+# TODO :  BUG found in vboxapi ... 
+#         If a call to vboxapi.VirtualBoxManager is made in the main process 
+#         followed by another call in a forked multiprocess Process, the call 
+#         in the subprocess freezes and will not return...  Bug in one of the
+#         lower level APIs
+#if __name__ == '__main__':
+#    vbox = pool.VirtualBox()
+#    vbox.register_on_machine_state_changed(on_machine_state_changed)
+
+# Note: python3.x this maybe solved using set_start_method
 
 
 @begin.subcommand
 @config
 def seed(machine_name, machine_username, machine_password, seed_count):
     "Test seeding vms"
+    # register here - can't do it in scope of module due to bug in 
+    # low level API.
+    vbox = pool.VirtualBox()
+    vbox.register_on_machine_state_changed(on_machine_state_changed)
+
     mp = pool.MachinePool(machine_name)
     sessions = []
     for i in range(seed_count):
@@ -42,8 +57,8 @@ def seed_multiproc(machine_name,
                    seed_count):
     "Test seeding vms from multiple processes"
     procs = []
-    args=(machine_name, machine_username, machine_password, seed_count)
-    for i in range(int(count)):
+    args=(machine_name, machine_username, machine_password, 1)
+    for i in range(seed_count):
         p = Process(target=seed, args=args)
         p.start()
         procs.append(p)
@@ -52,15 +67,18 @@ def seed_multiproc(machine_name,
 
 @begin.subcommand
 @config
-def seed_multithread(machine, count, username, password):
+def seed_multithread(machine_name, 
+                     machine_username, 
+                     machine_password, 
+                     seed_count):
     "Test seeding vms from multiple threads"
     threads = []
-    args=(machine_name, machine_username, machine_password, seed_count)
-    for i in range(int(count)):
-        t = Process(target=seed, args=args)
+    args=(machine_name, machine_username, machine_password, 1)
+    for i in range(seed_count):
+        t = Thread(target=seed, args=args)
         t.start()
         threads.append(t)
-    for t in procs:
+    for t in threads:
         t.join()
 
 @begin.start

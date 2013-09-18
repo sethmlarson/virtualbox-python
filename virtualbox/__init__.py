@@ -1,15 +1,16 @@
 from library_ext import library
+from multiprocessing import current_process
+from threading import current_thread
 
 __doc__ = library.__doc__
-
 
 VirtualBox = library.IVirtualBox
 Session = library.ISession
 
-
+_manager = {} 
 class Manager(object):
-    manager = None
-    def __init__(self):
+    @property
+    def manager(self):
         """Create a default Manager object
         
         Builds a singleton VirtualBoxManager object.
@@ -18,10 +19,12 @@ class Manager(object):
         Session or VirtualBox object as both of these classes will default
         to this object's global singleton during construction. 
         """
-        if Manager.manager is None:
+        global _manager
+        pid = current_process().ident
+        if pid not in _manager:
             import vboxapi
-            Manager.manager = vboxapi.VirtualBoxManager(None, None)
-        self.manager = Manager.manager
+            _manager[pid] = vboxapi.VirtualBoxManager(None, None)
+        return _manager[pid]
 
     def get_virtualbox(self):
         """Return a VirtualBox interface"""
