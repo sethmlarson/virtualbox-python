@@ -16,7 +16,7 @@ class MachinePool(object):
     """
     def __init__(self, machine_name):
         self.machine_name = machine_name
-        with self._lock(10*1000) as session:
+        with self._lock() as session:
             if not session.machine.current_snapshot:
                 console = session.console
                 p = console.take_snapshot('initialised', 'root machine')
