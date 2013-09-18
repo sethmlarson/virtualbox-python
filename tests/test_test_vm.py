@@ -10,7 +10,7 @@ import funconf
 import virtualbox
 from virtualbox import library
 
-config = funconf.Config('tests/test_vm.conf', 'test_vm.conf')
+config = funconf.Config(['tests/test_vm.conf', 'test_vm.conf'])
 username = config.machine.username
 password = config.machine.password
 
