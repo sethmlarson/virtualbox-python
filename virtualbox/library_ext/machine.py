@@ -189,5 +189,28 @@ class IMachine(library.IMachine):
         return p
     launch_vm_process.__doc__ = library.IMachine.launch_vm_process.__doc__
 
+    # BUG: xidl describes this function as exportTo.  The interface seems
+    #      to export plain "export" instead... 
+    def export_to(self, appliance, location):
+        """Exports the machine to an OVF appliance. See <link to="IAppliance"/> for the
+        steps required to export VirtualBox machines to OVF.
 
+        in appliance of type IAppliance
+            Appliance to export this machine to.
+
+        in location of type str
+            The target location.
+
+        return description of type IVirtualSystemDescription
+            VirtualSystemDescription object which is created for this machine.
+
+        """
+        if not isinstance(appliance, IAppliance):
+            raise TypeError("appliance can only be an instance of type IAppliance")
+        if type(location) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        description = self._call("export",
+                     in_p=[appliance, location])
+        description = IVirtualSystemDescription(description)
+        return description
 
