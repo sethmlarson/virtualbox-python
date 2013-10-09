@@ -223,6 +223,10 @@ which have a running vboxapi.
 Change log
 ==========
 
+version 0.0.7 (09/10/2013)
+
+* machine pool
+
 version 0.0.6 (25/07/2013)
 
 * now with event support
