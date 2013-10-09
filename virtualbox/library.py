@@ -75,7 +75,7 @@ about how to call a method or attribute from a specific programming language.
 lib_version = 1.3
 lib_app_uuid = '819B4D85-9CEE-493C-B6FC-64FFE759B3C9'
 lib_uuid = 'd7569351-1750-46f0-936e-bd127d5bc264'
-xidl_hash = '91596d7ebc49f274534ee228958afe61'
+xidl_hash = '12a27e233fec0d0c30ecbff39e687a1d'
 
 
 def pythonic_name(name):
@@ -2097,7 +2097,7 @@ class FramebufferPixelFormat(Enum):
 class NetworkAttachmentType(Enum):
     """Network attachment type.
     """
-    __uuid__ = '2ac4bc71-6b82-417a-acd1-f7426d2570d6'
+    __uuid__ = '524a8f9d-4b86-4b51-877d-1aa27c4ebeac'
     _enums = [\
         ('Null', 0, 
          '''Null value, also means "not attached".'''),
@@ -2110,6 +2110,8 @@ class NetworkAttachmentType(Enum):
         ('HostOnly', 4, 
          ''''''),
         ('Generic', 5, 
+         ''''''),
+        ('NATNetwork', 6, 
          ''''''),
         ] 
 
@@ -2430,7 +2432,7 @@ class VBoxEventType(Enum):
     """Type of an event.
     See <link to="IEvent"/> for an introduction to VirtualBox event handling.
     """
-    __uuid__ = 'e40cbdc9-ef63-4407-9b7b-2d1201a39bd1'
+    __uuid__ = '5248e377-e578-47d7-b07b-84b1db6db8a8'
     _enums = [\
         ('Invalid', 0, 
          '''Invalid event, must be first.'''),
@@ -2583,7 +2585,9 @@ class VBoxEventType(Enum):
          '''See <link to="IGuestUserStateChangedEvent">IGuestUserStateChangedEvent</link>.'''),
         ('OnGuestMultiTouch', 93, 
          '''See <link to="IGuestMouseEvent">IGuestMouseEvent</link>.'''),
-        ('Last', 94, 
+        ('OnHostNameResolutionConfigurationChange', 94, 
+         '''See <link to="IHostNameResolutionConfigurationChangeEvent">IHostNameResolutionConfigurationChangeEvent</link>.'''),
+        ('Last', 95, 
          '''Must be last event, used for iterations and structures relying on numerical event values.'''),
         ] 
 
@@ -2746,8 +2750,8 @@ class INATNetwork(Interface):
 
     @network_name.setter
     def network_name(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("networkName", value)
 
     @property
@@ -2775,8 +2779,8 @@ class INATNetwork(Interface):
 
     @network.setter
     def network(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("network", value)
 
     @property
@@ -2814,8 +2818,8 @@ class INATNetwork(Interface):
 
     @i_pv6_prefix.setter
     def i_pv6_prefix(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("IPv6Prefix", value)
 
     @property
@@ -5587,8 +5591,8 @@ class IBIOSSettings(Interface):
 
     @logo_image_path.setter
     def logo_image_path(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("logoImagePath", value)
 
     @property
@@ -5666,6 +5670,17 @@ class IBIOSSettings(Interface):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
         return self._set_attr("PXEDebugEnabled", value)
+
+    @property
+    def non_volatile_storage_file(self):
+        """Get str value for 'nonVolatileStorageFile'
+        The location of the file storing the non-volatile memory content when
+        the VM is powered off.  The file does not always exist.
+        
+        This feature will be realized after VirtualBox v4.3.0.
+        """
+        ret = self._get_attr("nonVolatileStorageFile")
+        return ret
 
 
 class IPCIAddress(Interface):
@@ -5814,7 +5829,7 @@ class IMachine(Interface):
     
     <link to="ISession"/>, <link to="IConsole"/>
     """
-    __uuid__ = '59b33148-7f87-4224-82a7-d141ef49fc0d'
+    __uuid__ = '480cf695-2d8d-4256-9c7c-cce4184fa048'
     __wsmap__ = 'managed'
     
     @property
@@ -5835,8 +5850,8 @@ class IMachine(Interface):
 
     @icon.setter
     def icon(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("icon", value)
 
     @property
@@ -5942,8 +5957,8 @@ class IMachine(Interface):
 
     @name.setter
     def name(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("name", value)
 
     @property
@@ -5961,8 +5976,8 @@ class IMachine(Interface):
 
     @description.setter
     def description(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("description", value)
 
     @property
@@ -5988,8 +6003,8 @@ class IMachine(Interface):
 
     @groups.setter
     def groups(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("groups", value)
 
     @property
@@ -6009,8 +6024,8 @@ class IMachine(Interface):
 
     @os_type_id.setter
     def os_type_id(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("OSTypeId", value)
 
     @property
@@ -6023,8 +6038,8 @@ class IMachine(Interface):
 
     @hardware_version.setter
     def hardware_version(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("hardwareVersion", value)
 
     @property
@@ -6041,8 +6056,8 @@ class IMachine(Interface):
 
     @hardware_uuid.setter
     def hardware_uuid(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("hardwareUUID", value)
 
     @property
@@ -6254,8 +6269,8 @@ class IMachine(Interface):
 
     @video_capture_file.setter
     def video_capture_file(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("videoCaptureFile", value)
 
     @property
@@ -6448,8 +6463,8 @@ class IMachine(Interface):
 
     @snapshot_folder.setter
     def snapshot_folder(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("snapshotFolder", value)
 
     @property
@@ -6739,8 +6754,8 @@ class IMachine(Interface):
 
     @guest_property_notification_patterns.setter
     def guest_property_notification_patterns(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("guestPropertyNotificationPatterns", value)
 
     @property
@@ -6792,8 +6807,8 @@ class IMachine(Interface):
 
     @teleporter_address.setter
     def teleporter_address(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("teleporterAddress", value)
 
     @property
@@ -6811,8 +6826,8 @@ class IMachine(Interface):
 
     @teleporter_password.setter
     def teleporter_password(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("teleporterPassword", value)
 
     @property
@@ -6856,8 +6871,8 @@ class IMachine(Interface):
 
     @fault_tolerance_address.setter
     def fault_tolerance_address(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("faultToleranceAddress", value)
 
     @property
@@ -6872,8 +6887,8 @@ class IMachine(Interface):
 
     @fault_tolerance_password.setter
     def fault_tolerance_password(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("faultTolerancePassword", value)
 
     @property
@@ -6992,8 +7007,8 @@ class IMachine(Interface):
 
     @tracing_config.setter
     def tracing_config(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("tracingConfig", value)
 
     @property
@@ -7079,8 +7094,8 @@ class IMachine(Interface):
 
     @default_frontend.setter
     def default_frontend(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("defaultFrontend", value)
 
     @property
@@ -7789,6 +7804,53 @@ created differencing media, should not happen).
             raise TypeError("discard can only be an instance of type bool")
         self._call("setAutoDiscardForDevice",
                      in_p=[name, controller_port, device, discard])
+
+    def set_hot_pluggable_for_device(self, name, controller_port, device, hot_pluggable):
+        """Sets a flag in the device information which indicates that the attached
+        device is hot pluggable or not. This may or may not be supported by a
+        particular controller and/or drive, and is silently ignored in the
+        latter case. Changing the setting while the VM is running is forbidden.
+        The device must already exist; see <link to="IMachine::attachDevice"/>
+        for how to attach a new device.
+        
+        The @a controllerPort and @a device parameters specify the device slot and
+        have have the same meaning as with <link to="IMachine::attachDevice"/>.
+
+        in name of type str
+            Name of the storage controller.
+
+        in controller_port of type int
+            Storage controller port.
+
+        in device of type int
+            Device slot in the given port.
+
+        in hot_pluggable of type bool
+            New value for the hot-pluggable device flag.
+
+        raises E_INVALIDARG
+            SATA device, SATA port, IDE port or IDE slot out of range.
+        
+        raises VBOX_E_INVALID_OBJECT_STATE
+            Attempt to modify an unregistered virtual machine.
+        
+        raises VBOX_E_INVALID_VM_STATE
+            Invalid machine state.
+        
+        raises VBOX_E_NOT_SUPPORTED
+            Controller doesn't support hot plugging.
+        
+        """
+        if type(name) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        if not isinstance(controller_port, int):
+            raise TypeError("controller_port can only be an instance of type int")
+        if not isinstance(device, int):
+            raise TypeError("device can only be an instance of type int")
+        if not isinstance(hot_pluggable, bool):
+            raise TypeError("hot_pluggable can only be an instance of type bool")
+        self._call("setHotPluggableForDevice",
+                     in_p=[name, controller_port, device, hot_pluggable])
 
     def set_bandwidth_group_for_device(self, name, controller_port, device, bandwidth_group):
         """Sets the bandwidth group of an existing storage device.
@@ -8646,6 +8708,37 @@ created differencing media, should not happen).
             raise TypeError("value can only be an instance of type bool")
         self._call("setHWVirtExProperty",
                      in_p=[property_p, value])
+
+    def set_settings_file_path(self, settings_file_path):
+        """Currently, it is an error to change this property on any machine.
+        Later this will allow setting a new path for the settings file, with
+        automatic relocation of all files (including snapshots and disk images)
+        which are inside the base directory. This operation is only allowed
+        when there are no pending unsaved settings.
+        
+        
+        Setting this property to @c null or to an empty string is forbidden.
+        When setting this property, the specified path must be absolute.
+        The specified path may not exist, it will be created when necessary.
+
+        in settings_file_path of type str
+            New settings file path, will be used to determine the new
+            location for the attached media if it is in the same directory or
+            below as the original settings file.
+
+        return progress of type IProgress
+            Progress object to track the operation completion.
+
+        raises E_NOTIMPL
+            The operation is not implemented yet.
+        
+        """
+        if type(settings_file_path) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        progress = self._call("setSettingsFilePath",
+                     in_p=[settings_file_path])
+        progress = IProgress(progress)
+        return progress
 
     def save_settings(self):
         """Saves any changes to machine settings made since the session
@@ -10747,6 +10840,38 @@ class IHostNetworkInterface(Interface):
         self._call("DHCPRediscover")
 
 
+class IHostVideoInputDevice(Interface):
+    """
+    Represents one of host's video capture devices, for example a webcam.
+    """
+    __uuid__ = 'a1ceae44-d65e-4156-9359-d390f93ee9a0'
+    __wsmap__ = 'managed'
+    
+    @property
+    def name(self):
+        """Get str value for 'name'
+        User friendly name.
+        """
+        ret = self._get_attr("name")
+        return ret
+
+    @property
+    def path(self):
+        """Get str value for 'path'
+        The host path of the device.
+        """
+        ret = self._get_attr("path")
+        return ret
+
+    @property
+    def alias(self):
+        """Get str value for 'alias'
+        An alias which can be used for IConsole::webcamAttach
+        """
+        ret = self._get_attr("alias")
+        return ret
+
+
 class IHost(Interface):
     """
     The IHost interface represents the physical machine that this VirtualBox
@@ -10759,7 +10884,7 @@ class IHost(Interface):
     and so on) and also allows for manipulating some of the host's hardware,
     such as global USB device filters and host interface networking.
     """
-    __uuid__ = 'a6107246-f939-42c4-82b6-8aca40327b6d'
+    __uuid__ = '93269330-48ca-4096-b4a2-1189df336267'
     __wsmap__ = 'managed'
     
     @property
@@ -10871,6 +10996,14 @@ class IHost(Interface):
         Number of physical processor cores installed in the host system.
         """
         ret = self._get_attr("processorCoreCount")
+        return ret
+
+    @property
+    def processor_online_core_count(self):
+        """Get int value for 'processorOnlineCoreCount'
+        Number of physical processor cores online in the host system.
+        """
+        ret = self._get_attr("processorOnlineCoreCount")
         return ret
 
     def get_processor_speed(self, cpu_id):
@@ -11301,6 +11434,14 @@ class IHost(Interface):
         address = self._call("generateMACAddress")
         return address
 
+    @property
+    def video_input_devices(self):
+        """Get IHostVideoInputDevice value for 'videoInputDevices'
+        List of currently available host video capture devices.
+        """
+        ret = self._get_attr("videoInputDevices")
+        return [IHostVideoInputDevice(a) for a in ret]
+
 
 class ISystemProperties(Interface):
     """
@@ -11453,8 +11594,8 @@ class ISystemProperties(Interface):
 
     @default_machine_folder.setter
     def default_machine_folder(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("defaultMachineFolder", value)
 
     @property
@@ -11467,8 +11608,8 @@ class ISystemProperties(Interface):
 
     @logging_level.setter
     def logging_level(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("loggingLevel", value)
 
     @property
@@ -11535,8 +11676,8 @@ class ISystemProperties(Interface):
 
     @default_hard_disk_format.setter
     def default_hard_disk_format(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("defaultHardDiskFormat", value)
 
     @property
@@ -11627,8 +11768,8 @@ class ISystemProperties(Interface):
 
     @vrde_auth_library.setter
     def vrde_auth_library(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("VRDEAuthLibrary", value)
 
     @property
@@ -11662,8 +11803,8 @@ class ISystemProperties(Interface):
 
     @web_service_auth_library.setter
     def web_service_auth_library(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("webServiceAuthLibrary", value)
 
     @property
@@ -11684,8 +11825,8 @@ class ISystemProperties(Interface):
 
     @default_vrde_ext_pack.setter
     def default_vrde_ext_pack(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("defaultVRDEExtPack", value)
 
     @property
@@ -11722,8 +11863,8 @@ class ISystemProperties(Interface):
 
     @autostart_database_path.setter
     def autostart_database_path(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("autostartDatabasePath", value)
 
     @property
@@ -11737,8 +11878,8 @@ class ISystemProperties(Interface):
 
     @default_additions_iso.setter
     def default_additions_iso(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("defaultAdditionsISO", value)
 
     @property
@@ -11760,8 +11901,8 @@ class ISystemProperties(Interface):
 
     @default_frontend.setter
     def default_frontend(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("defaultFrontend", value)
 
     def get_max_network_adapters(self, chipset):
@@ -12313,8 +12454,8 @@ class IGuestSession(Interface):
 
     @environment.setter
     def environment(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("environment", value)
 
     @property
@@ -12859,7 +13000,9 @@ option was requested.
             
             "ca": Creates a new file, always. Overwrites an existing file.
             "ce": Creates a new file if it does not exist. Fail if exist.
-            "oc": Opens and existing file or create it if it does not exist.
+            "oa": Opens an existing file and places the file pointer at the
+            end of the file, if opened with write access. Create the file if it does not exist.
+            "oc": Opens an existing file or create it if it does not exist.
             "oe": Opens an existing file or fail if it does not exist.
             "ot": Opens and truncate an existing file or fail if it does not exist.
 
@@ -12913,13 +13056,15 @@ option was requested.
             
             "ca": Creates a new file, always. Overwrites an existing file.
             "ce": Creates a new file if it does not exist. Fail if exist.
-            "oc": Opens and existing file or create it if it does not exist.
+            "oa": Opens an existing file and places the file pointer at the
+            end of the file, if opened with write access. Create the file if it does not exist.
+            "oc": Opens an existing file or create it if it does not exist.
             "oe": Opens an existing file or fail if it does not exist.
             "ot": Opens and truncate an existing file or fail if it does not exist.
 
         in sharing_mode of type str
             The file sharing mode on the guest. This parameter
-            is not implemented yet.
+            is not implemented yet. Pass an empty string here.
 
         in creation_mode of type int
             The mode to create the file with. Must be a three-digit octal number which
@@ -15183,8 +15328,8 @@ class ISnapshot(Interface):
 
     @name.setter
     def name(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("name", value)
 
     @property
@@ -15199,8 +15344,8 @@ class ISnapshot(Interface):
 
     @description.setter
     def description(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("description", value)
 
     @property
@@ -15444,7 +15589,7 @@ class IMediumAttachment(Interface):
     without losing the contents of the differencing hard disk actually
     attached to the machine in place of it.
     """
-    __uuid__ = '5ee464d6-0613-4331-b154-7ce12170ef9f'
+    __uuid__ = '4b252567-5d4e-4db8-b3c8-569ec1c9236c'
     __wsmap__ = 'struct'
     
     @property
@@ -15531,6 +15676,14 @@ class IMediumAttachment(Interface):
         Whether the associated medium supports discarding unused blocks.
         """
         ret = self._get_attr("discard")
+        return ret
+
+    @property
+    def hot_pluggable(self):
+        """Get bool value for 'hotPluggable'
+        Whether this attachment is hot pluggable or not.
+        """
+        ret = self._get_attr("hotPluggable")
         return ret
 
     @property
@@ -15696,7 +15849,7 @@ class IMedium(Interface):
     that, you may call any of the methods that create a new hard disk storage
     unit and they will use the generated UUID and file name.
     """
-    __uuid__ = '8df5fc17-503a-4171-85bc-039b6f24d86b'
+    __uuid__ = '05f2bbb6-a3a6-4fb9-9b49-6d0dda7142ac'
     __wsmap__ = 'managed'
     
     @property
@@ -15734,8 +15887,8 @@ class IMedium(Interface):
 
     @description.setter
     def description(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("description", value)
 
     @property
@@ -15767,33 +15920,15 @@ class IMedium(Interface):
 
     @property
     def location(self):
-        """Get or set str value for 'location'
+        """Get str value for 'location'
         Location of the storage unit holding medium data.
         
         The format of the location string is medium type specific. For medium
         types using regular files in a host's file system, the location
         string is the full file name.
-        
-        Some medium types may support changing the storage unit location by
-        simply changing the value of this property. If this operation is not
-        supported, the implementation will return E_NOTIMPL in attempt to set
-        this attribute's value.
-        
-        When setting a value of the location attribute which is a regular file
-        in the host's file system, the given file name may be either relative to
-        the <link to="IVirtualBox::homeFolder">VirtualBox home folder</link> or
-        absolute. Note that if the given location specification does not contain
-        the file extension part then a proper default extension will be
-        automatically appended by the implementation depending on the medium type.
         """
         ret = self._get_attr("location")
         return ret
-
-    @location.setter
-    def location(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        return self._set_attr("location", value)
 
     @property
     def name(self):
@@ -16781,6 +16916,46 @@ operations are supported. See
                         "array can only contain objects of type MediumVariant")
         progress = self._call("cloneToBase",
                      in_p=[target, variant])
+        progress = IProgress(progress)
+        return progress
+
+    def set_location(self, location):
+        """Changes the location of this medium. Some medium types may support
+        changing the storage unit location by simply changing the value of the
+        associated property. In this case the operation is performed
+        immediately, and @a progress is returning a @c null reference.
+        Otherwise on success there is a progress object returned, which
+        signals progress and completion of the operation. This distinction is
+        necessary because for some formats the operation is very fast, while
+        for others it can be very slow (moving the image file by copying all
+        data), and in the former case it'd be a waste of resources to create
+        a progress object which will immediately signal completion.
+        
+        When setting a location for a medium which corresponds to a/several
+        regular file(s) in the host's file system, the given file name may be
+        either relative to the <link to="IVirtualBox::homeFolder">VirtualBox
+        home folder</link> or absolute. Note that if the given location
+        specification does not contain the file extension part then a proper
+        default extension will be automatically appended by the implementation
+        depending on the medium type.
+
+        in location of type str
+            New location.
+
+        return progress of type IProgress
+            Progress object to track the operation completion.
+
+        raises E_NOTIMPL
+            The operation is not implemented yet.
+        
+        raises VBOX_E_NOT_SUPPORTED
+            Medium format does not support changing the location.
+        
+        """
+        if type(location) not in [str, unicode]:
+            raise TypeError("value is not a str or unicode")
+        progress = self._call("setLocation",
+                     in_p=[location])
         progress = IProgress(progress)
         return progress
 
@@ -18283,8 +18458,8 @@ class INetworkAdapter(Interface):
 
     @mac_address.setter
     def mac_address(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("MACAddress", value)
 
     @property
@@ -18311,8 +18486,8 @@ class INetworkAdapter(Interface):
 
     @bridged_interface.setter
     def bridged_interface(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("bridgedInterface", value)
 
     @property
@@ -18325,8 +18500,8 @@ class INetworkAdapter(Interface):
 
     @host_only_interface.setter
     def host_only_interface(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("hostOnlyInterface", value)
 
     @property
@@ -18339,8 +18514,8 @@ class INetworkAdapter(Interface):
 
     @internal_network.setter
     def internal_network(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("internalNetwork", value)
 
     @property
@@ -18353,8 +18528,8 @@ class INetworkAdapter(Interface):
 
     @nat_network.setter
     def nat_network(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("NATNetwork", value)
 
     @property
@@ -18367,8 +18542,8 @@ class INetworkAdapter(Interface):
 
     @generic_driver.setter
     def generic_driver(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("genericDriver", value)
 
     @property
@@ -18441,8 +18616,8 @@ class INetworkAdapter(Interface):
 
     @trace_file.setter
     def trace_file(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("traceFile", value)
 
     @property
@@ -18688,8 +18863,8 @@ class ISerialPort(Interface):
 
     @path.setter
     def path(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("path", value)
 
 
@@ -18776,8 +18951,8 @@ class IParallelPort(Interface):
 
     @path.setter
     def path(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("path", value)
 
 
@@ -19827,8 +20002,8 @@ class IUSBDeviceFilter(Interface):
 
     @name.setter
     def name(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("name", value)
 
     @property
@@ -19858,8 +20033,8 @@ class IUSBDeviceFilter(Interface):
 
     @vendor_id.setter
     def vendor_id(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("vendorId", value)
 
     @property
@@ -19875,8 +20050,8 @@ class IUSBDeviceFilter(Interface):
 
     @product_id.setter
     def product_id(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("productId", value)
 
     @property
@@ -19898,8 +20073,8 @@ class IUSBDeviceFilter(Interface):
 
     @revision.setter
     def revision(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("revision", value)
 
     @property
@@ -19912,8 +20087,8 @@ class IUSBDeviceFilter(Interface):
 
     @manufacturer.setter
     def manufacturer(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("manufacturer", value)
 
     @property
@@ -19926,8 +20101,8 @@ class IUSBDeviceFilter(Interface):
 
     @product.setter
     def product(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("product", value)
 
     @property
@@ -19940,8 +20115,8 @@ class IUSBDeviceFilter(Interface):
 
     @serial_number.setter
     def serial_number(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("serialNumber", value)
 
     @property
@@ -19954,8 +20129,8 @@ class IUSBDeviceFilter(Interface):
 
     @port.setter
     def port(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("port", value)
 
     @property
@@ -19971,8 +20146,8 @@ class IUSBDeviceFilter(Interface):
 
     @remote.setter
     def remote(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("remote", value)
 
     @property
@@ -20201,8 +20376,8 @@ class IVRDEServer(Interface):
 
     @vrde_ext_pack.setter
     def vrde_ext_pack(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("VRDEExtPack", value)
 
     @property
@@ -20216,8 +20391,8 @@ class IVRDEServer(Interface):
 
     @auth_library.setter
     def auth_library(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("authLibrary", value)
 
     @property
@@ -21755,8 +21930,8 @@ class INATEngine(Interface):
 
     @network.setter
     def network(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("network", value)
 
     @property
@@ -21770,8 +21945,8 @@ class INATEngine(Interface):
 
     @host_ip.setter
     def host_ip(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("hostIP", value)
 
     @property
@@ -21785,8 +21960,8 @@ class INATEngine(Interface):
 
     @tftp_prefix.setter
     def tftp_prefix(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("TFTPPrefix", value)
 
     @property
@@ -21800,8 +21975,8 @@ class INATEngine(Interface):
 
     @tftp_boot_file.setter
     def tftp_boot_file(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("TFTPBootFile", value)
 
     @property
@@ -21816,8 +21991,8 @@ class INATEngine(Interface):
 
     @tftp_next_server.setter
     def tftp_next_server(self, value):
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
         return self._set_attr("TFTPNextServer", value)
 
     @property
@@ -24708,3 +24883,9 @@ class INATNetworkPortForwardEvent(INATNetworkAlterEvent):
         ret = self._get_attr("guestPort")
         return ret
 
+
+class IHostNameResolutionConfigurationChangeEvent(IEvent):
+    """"""
+    __uuid__ = 'f9b9e1cf-cb63-47a1-84fb-02c4894b89a9'
+    __wsmap__ = 'managed'
+    id = VBoxEventType.on_host_name_resolution_configuration_change

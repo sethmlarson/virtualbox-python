@@ -356,8 +356,8 @@ ATTR_SET_ASSERT_INST = '''\
             raise TypeError("value is not an instance of %(ntype)s")'''
 
 ATTR_SET_ASSERT_STR  = '''\
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")'''
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")'''
 
 
 known_types = {'wstring':'str',
