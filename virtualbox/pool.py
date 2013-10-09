@@ -9,7 +9,8 @@ from virtualbox import Session
 from virtualbox.library import LockType
 from virtualbox.library import SessionState 
 from virtualbox.library import MachineState 
-
+from virtualbox.library import DeviceType 
+from virtualbox.library import DeviceActivity 
 
 class MachinePool(object):
     """
@@ -72,7 +73,6 @@ class MachinePool(object):
             if session.state == SessionState.locked:
                 session.unlock_machine()
 
-
     def acquire(self, username, password):
         "Acquire a Machine resource"
         with self._lock() as root_session:
@@ -96,7 +96,14 @@ class MachinePool(object):
                 console = session.console
                 guest = console.guest
                 try:
-                    guest_session = guest.create_session(username, password)
+                    guest_session = guest.create_session(username, password,
+                                                         timeout_ms=5*60*1000)
+                    idle_count = 0
+                    while idle_count < 5:
+                        act = console.get_device_activity(DeviceType.hard_disk)
+                        if act == DeviceActivity.idle:
+                            idle_count += 1
+                        time.sleep(1)
                     guest_session.close()
                     console.pause()
                     p = console.take_snapshot('initialised', 'machine pool')
