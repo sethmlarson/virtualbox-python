@@ -192,14 +192,14 @@ class IMachine(library.IMachine):
     # BUG: xidl describes this function as exportTo.  The interface seems
     #      to export plain "export" instead... 
     def export_to(self, appliance, location):
-        if not isinstance(appliance, IAppliance):
+        if not isinstance(appliance, library.IAppliance):
             msg = "appliance can only be an instance of type IAppliance"
             raise TypeError(msg)
         if not isinstance(location, basestring):
             raise TypeError("value is not an instance of basestring")
         description = self._call("export",
                      in_p=[appliance, location])
-        description = IVirtualSystemDescription(description)
+        description = library.IVirtualSystemDescription(description)
         return description
     export_to.__doc__ = library.IMachine.export_to.__doc__
 
