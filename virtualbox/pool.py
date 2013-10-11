@@ -99,11 +99,13 @@ class MachinePool(object):
                     guest_session = guest.create_session(username, password,
                                                          timeout_ms=5*60*1000)
                     idle_count = 0
-                    while idle_count < 5:
+                    timeout = 60
+                    while idle_count < 5 and timeout > 0:
                         act = console.get_device_activity(DeviceType.hard_disk)
                         if act == DeviceActivity.idle:
                             idle_count += 1
-                        time.sleep(1)
+                        time.sleep(0.5)
+                        timeout -= 0.5
                     guest_session.close()
                     console.pause()
                     p = console.take_snapshot('initialised', 'machine pool')
