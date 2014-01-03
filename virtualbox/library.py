@@ -2916,10 +2916,10 @@ class INATNetwork(Interface):
         in offset of type int
 
         """
-        if type(hostid) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(offset, int):
-            raise TypeError("offset can only be an instance of type int")
+        if not isinstance(hostid, basestring):
+            raise TypeError("hostid can only be an instance of type basestring")
+        if not isinstance(offset, baseinteger):
+            raise TypeError("offset can only be an instance of type baseinteger")
         self._call("addLocalMapping",
                      in_p=[hostid, offset])
 
@@ -2974,18 +2974,18 @@ class INATNetwork(Interface):
         """
         if not isinstance(is_ipv6, bool):
             raise TypeError("is_ipv6 can only be an instance of type bool")
-        if type(rule_name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(rule_name, basestring):
+            raise TypeError("rule_name can only be an instance of type basestring")
         if not isinstance(proto, NATProtocol):
             raise TypeError("proto can only be an instance of type NATProtocol")
-        if type(host_ip) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(host_port, int):
-            raise TypeError("host_port can only be an instance of type int")
-        if type(guest_ip) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(guest_port, int):
-            raise TypeError("guest_port can only be an instance of type int")
+        if not isinstance(host_ip, basestring):
+            raise TypeError("host_ip can only be an instance of type basestring")
+        if not isinstance(host_port, baseinteger):
+            raise TypeError("host_port can only be an instance of type baseinteger")
+        if not isinstance(guest_ip, basestring):
+            raise TypeError("guest_ip can only be an instance of type basestring")
+        if not isinstance(guest_port, baseinteger):
+            raise TypeError("guest_port can only be an instance of type baseinteger")
         self._call("addPortForwardRule",
                      in_p=[is_ipv6, rule_name, proto, host_ip, host_port, guest_ip, guest_port])
 
@@ -2999,8 +2999,8 @@ class INATNetwork(Interface):
         """
         if not isinstance(i_sipv6, bool):
             raise TypeError("i_sipv6 can only be an instance of type bool")
-        if type(rule_name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(rule_name, basestring):
+            raise TypeError("rule_name can only be an instance of type basestring")
         self._call("removePortForwardRule",
                      in_p=[i_sipv6, rule_name])
 
@@ -3011,8 +3011,8 @@ class INATNetwork(Interface):
             Type of internal network trunk.
 
         """
-        if type(trunk_type) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(trunk_type, basestring):
+            raise TypeError("trunk_type can only be an instance of type basestring")
         self._call("start",
                      in_p=[trunk_type])
 
@@ -3103,8 +3103,8 @@ class IDHCPServer(Interface):
         """
         if not isinstance(option, DhcpOpt):
             raise TypeError("option can only be an instance of type DhcpOpt")
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value can only be an instance of type basestring")
         self._call("addGlobalOption",
                      in_p=[option, value])
 
@@ -3132,14 +3132,14 @@ class IDHCPServer(Interface):
         in value of type str
 
         """
-        if type(vmname) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(slot, int):
-            raise TypeError("slot can only be an instance of type int")
+        if not isinstance(vmname, basestring):
+            raise TypeError("vmname can only be an instance of type basestring")
+        if not isinstance(slot, baseinteger):
+            raise TypeError("slot can only be an instance of type baseinteger")
         if not isinstance(option, DhcpOpt):
             raise TypeError("option can only be an instance of type DhcpOpt")
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(value, basestring):
+            raise TypeError("value can only be an instance of type basestring")
         self._call("addVmSlotOption",
                      in_p=[vmname, slot, option, value])
 
@@ -3151,10 +3151,10 @@ class IDHCPServer(Interface):
         in slot of type int
 
         """
-        if type(vmname) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(slot, int):
-            raise TypeError("slot can only be an instance of type int")
+        if not isinstance(vmname, basestring):
+            raise TypeError("vmname can only be an instance of type basestring")
+        if not isinstance(slot, baseinteger):
+            raise TypeError("slot can only be an instance of type baseinteger")
         self._call("removeVmSlotOptions",
                      in_p=[vmname, slot])
 
@@ -3168,10 +3168,10 @@ class IDHCPServer(Interface):
         return option of type str
 
         """
-        if type(vmname) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(slot, int):
-            raise TypeError("slot can only be an instance of type int")
+        if not isinstance(vmname, basestring):
+            raise TypeError("vmname can only be an instance of type basestring")
+        if not isinstance(slot, baseinteger):
+            raise TypeError("slot can only be an instance of type baseinteger")
         option = self._call("getVmSlotOptions",
                      in_p=[vmname, slot])
         return option
@@ -3184,8 +3184,8 @@ class IDHCPServer(Interface):
         return option of type str
 
         """
-        if type(mac) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(mac, basestring):
+            raise TypeError("mac can only be an instance of type basestring")
         option = self._call("getMacOptions",
                      in_p=[mac])
         return option
@@ -3209,14 +3209,14 @@ class IDHCPServer(Interface):
             invalid configuration supplied
         
         """
-        if type(ip_address) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(network_mask) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(from_ip_address) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(to_ip_address) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(ip_address, basestring):
+            raise TypeError("ip_address can only be an instance of type basestring")
+        if not isinstance(network_mask, basestring):
+            raise TypeError("network_mask can only be an instance of type basestring")
+        if not isinstance(from_ip_address, basestring):
+            raise TypeError("from_ip_address can only be an instance of type basestring")
+        if not isinstance(to_ip_address, basestring):
+            raise TypeError("to_ip_address can only be an instance of type basestring")
         self._call("setConfiguration",
                      in_p=[ip_address, network_mask, from_ip_address, to_ip_address])
 
@@ -3236,12 +3236,12 @@ class IDHCPServer(Interface):
             Failed to start the process.
         
         """
-        if type(network_name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(trunk_name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(trunk_type) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(network_name, basestring):
+            raise TypeError("network_name can only be an instance of type basestring")
+        if not isinstance(trunk_name, basestring):
+            raise TypeError("trunk_name can only be an instance of type basestring")
+        if not isinstance(trunk_type, basestring):
+            raise TypeError("trunk_type can only be an instance of type basestring")
         self._call("start",
                      in_p=[network_name, trunk_name, trunk_type])
 
@@ -3562,14 +3562,14 @@ class IVirtualBox(Interface):
             Fully qualified path where the machine would be created.
 
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(group) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(create_flags) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(base_folder) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(group, basestring):
+            raise TypeError("group can only be an instance of type basestring")
+        if not isinstance(create_flags, basestring):
+            raise TypeError("create_flags can only be an instance of type basestring")
+        if not isinstance(base_folder, basestring):
+            raise TypeError("base_folder can only be an instance of type basestring")
         file_p = self._call("composeMachineFilename",
                      in_p=[name, group, create_flags, base_folder])
         return file_p
@@ -3673,19 +3673,20 @@ exists or could not be created due to an I/O error.
             @a name is empty or @c null.
         
         """
-        if type(settings_file) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(settings_file, basestring):
+            raise TypeError("settings_file can only be an instance of type basestring")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         if not isinstance(groups, list):
             raise TypeError("groups can only be an instance of type list")
         for a in groups[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
-        if type(os_type_id) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(flags) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
+        if not isinstance(os_type_id, basestring):
+            raise TypeError("os_type_id can only be an instance of type basestring")
+        if not isinstance(flags, basestring):
+            raise TypeError("flags can only be an instance of type basestring")
         machine = self._call("createMachine",
                      in_p=[settings_file, name, groups, os_type_id, flags])
         machine = IMachine(machine)
@@ -3715,8 +3716,8 @@ exists or could not be created due to an I/O error.
             Settings file name invalid, not found or sharing violation.
         
         """
-        if type(settings_file) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(settings_file, basestring):
+            raise TypeError("settings_file can only be an instance of type basestring")
         machine = self._call("openMachine",
                      in_p=[settings_file])
         machine = IMachine(machine)
@@ -3763,8 +3764,8 @@ exists or could not be created due to an I/O error.
             Could not find registered machine matching @a nameOrId.
         
         """
-        if type(name_or_id) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name_or_id, basestring):
+            raise TypeError("name_or_id can only be an instance of type basestring")
         machine = self._call("findMachine",
                      in_p=[name_or_id])
         machine = IMachine(machine)
@@ -3785,8 +3786,9 @@ exists or could not be created due to an I/O error.
         if not isinstance(groups, list):
             raise TypeError("groups can only be an instance of type list")
         for a in groups[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
         machines = self._call("getMachinesByGroups",
                      in_p=[groups])
         machines = [IMachine(a) for a in machines]
@@ -3873,10 +3875,10 @@ exists or could not be created due to an I/O error.
             @a location is a not valid file name (for file-based formats only).
         
         """
-        if type(format_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(location) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(format_p, basestring):
+            raise TypeError("format_p can only be an instance of type basestring")
+        if not isinstance(location, basestring):
+            raise TypeError("location can only be an instance of type basestring")
         medium = self._call("createHardDisk",
                      in_p=[format_p, location])
         medium = IMedium(medium)
@@ -3971,8 +3973,8 @@ at the specified location.
             Medium has already been added to a media registry.
         
         """
-        if type(location) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(location, basestring):
+            raise TypeError("location can only be an instance of type basestring")
         if not isinstance(device_type, DeviceType):
             raise TypeError("device_type can only be an instance of type DeviceType")
         if not isinstance(access_mode, AccessMode):
@@ -4008,8 +4010,8 @@ at the specified location.
             @a id is not a valid Guest OS type.
         
         """
-        if type(id_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(id_p, basestring):
+            raise TypeError("id_p can only be an instance of type basestring")
         type_p = self._call("getGuestOSType",
                      in_p=[id_p])
         type_p = IGuestOSType(type_p)
@@ -4038,10 +4040,10 @@ at the specified location.
             or not.
 
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(host_path) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(host_path, basestring):
+            raise TypeError("host_path can only be an instance of type basestring")
         if not isinstance(writable, bool):
             raise TypeError("writable can only be an instance of type bool")
         if not isinstance(automount, bool):
@@ -4061,8 +4063,8 @@ at the specified location.
             Logical name of the shared folder to remove.
 
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         self._call("removeSharedFolder",
                      in_p=[name])
 
@@ -4096,8 +4098,8 @@ at the specified location.
             Could not parse the settings file.
         
         """
-        if type(key) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(key, basestring):
+            raise TypeError("key can only be an instance of type basestring")
         value = self._call("getExtraData",
                      in_p=[key])
         return value
@@ -4137,10 +4139,10 @@ at the specified location.
             Modification request refused.
         
         """
-        if type(key) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(key, basestring):
+            raise TypeError("key can only be an instance of type basestring")
+        if not isinstance(value, basestring):
+            raise TypeError("value can only be an instance of type basestring")
         self._call("setExtraData",
                      in_p=[key, value])
 
@@ -4155,8 +4157,8 @@ at the specified location.
             Virtual machine is not mutable.
         
         """
-        if type(password) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(password, basestring):
+            raise TypeError("password can only be an instance of type basestring")
         self._call("setSettingsSecret",
                      in_p=[password])
 
@@ -4173,8 +4175,8 @@ at the specified location.
             Host network interface @a name already exists.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         server = self._call("createDHCPServer",
                      in_p=[name])
         server = IDHCPServer(server)
@@ -4193,8 +4195,8 @@ at the specified location.
             Host network interface @a name already exists.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         server = self._call("findDHCPServerByNetworkName",
                      in_p=[name])
         server = IDHCPServer(server)
@@ -4223,8 +4225,8 @@ at the specified location.
         return network of type INATNetwork
 
         """
-        if type(network_name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(network_name, basestring):
+            raise TypeError("network_name can only be an instance of type basestring")
         network = self._call("createNATNetwork",
                      in_p=[network_name])
         network = INATNetwork(network)
@@ -4238,8 +4240,8 @@ at the specified location.
         return network of type INATNetwork
 
         """
-        if type(network_name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(network_name, basestring):
+            raise TypeError("network_name can only be an instance of type basestring")
         network = self._call("findNATNetworkByName",
                      in_p=[network_name])
         network = INATNetwork(network)
@@ -4280,8 +4282,8 @@ at the specified location.
         """
         if not isinstance(firmware_type, FirmwareType):
             raise TypeError("firmware_type can only be an instance of type FirmwareType")
-        if type(version) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(version, basestring):
+            raise TypeError("version can only be an instance of type basestring")
         (url, file_p, result) = self._call("checkFirmwarePresent",
                      in_p=[firmware_type, version])
         return (url, file_p, result)
@@ -4336,8 +4338,8 @@ class IVFSExplorer(Interface):
             Progress object to track the operation completion.
 
         """
-        if type(dir_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(dir_p, basestring):
+            raise TypeError("dir_p can only be an instance of type basestring")
         progress = self._call("cd",
                      in_p=[dir_p])
         progress = IProgress(progress)
@@ -4388,8 +4390,9 @@ class IVFSExplorer(Interface):
         if not isinstance(names, list):
             raise TypeError("names can only be an instance of type list")
         for a in names[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
         exists = self._call("exists",
                      in_p=[names])
         return exists
@@ -4407,8 +4410,9 @@ class IVFSExplorer(Interface):
         if not isinstance(names, list):
             raise TypeError("names can only be an instance of type list")
         for a in names[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
         progress = self._call("remove",
                      in_p=[names])
         progress = IProgress(progress)
@@ -4579,8 +4583,8 @@ class IAppliance(Interface):
             Progress object to track the operation completion.
 
         """
-        if type(file_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(file_p, basestring):
+            raise TypeError("file_p can only be an instance of type basestring")
         progress = self._call("read",
                      in_p=[file_p])
         progress = IProgress(progress)
@@ -4647,8 +4651,8 @@ class IAppliance(Interface):
             <desc/>
 
         """
-        if type(uri) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(uri, basestring):
+            raise TypeError("uri can only be an instance of type basestring")
         explorer = self._call("createVFSExplorer",
                      in_p=[uri])
         explorer = IVFSExplorer(explorer)
@@ -4679,16 +4683,16 @@ class IAppliance(Interface):
             Progress object to track the operation completion.
 
         """
-        if type(format_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(format_p, basestring):
+            raise TypeError("format_p can only be an instance of type basestring")
         if not isinstance(options, list):
             raise TypeError("options can only be an instance of type list")
         for a in options[:10]:
             if not isinstance(a, ExportOptions):
                 raise TypeError(\
                         "array can only contain objects of type ExportOptions")
-        if type(path) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(path, basestring):
+            raise TypeError("path can only be an instance of type basestring")
         progress = self._call("write",
                      in_p=[format_p, options, path])
         progress = IProgress(progress)
@@ -4945,13 +4949,15 @@ class IVirtualSystemDescription(Interface):
         if not isinstance(v_box_values, list):
             raise TypeError("v_box_values can only be an instance of type list")
         for a in v_box_values[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
         if not isinstance(extra_config_values, list):
             raise TypeError("extra_config_values can only be an instance of type list")
         for a in extra_config_values[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
         self._call("setFinalValues",
                      in_p=[enabled, v_box_values, extra_config_values])
 
@@ -4973,10 +4979,10 @@ class IVirtualSystemDescription(Interface):
         """
         if not isinstance(type_p, VirtualSystemDescriptionType):
             raise TypeError("type_p can only be an instance of type VirtualSystemDescriptionType")
-        if type(v_box_value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(extra_config_value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(v_box_value, basestring):
+            raise TypeError("v_box_value can only be an instance of type basestring")
+        if not isinstance(extra_config_value, basestring):
+            raise TypeError("extra_config_value can only be an instance of type basestring")
         self._call("addDescription",
                      in_p=[type_p, v_box_value, extra_config_value])
 
@@ -5043,8 +5049,8 @@ class IInternalMachineControl(Interface):
         in result of type int
 
         """
-        if not isinstance(result, int):
-            raise TypeError("result can only be an instance of type int")
+        if not isinstance(result, baseinteger):
+            raise TypeError("result can only be an instance of type baseinteger")
         self._call("endPowerUp",
                      in_p=[result])
 
@@ -5079,10 +5085,10 @@ class IInternalMachineControl(Interface):
             Could not parse the settings file.
         
         """
-        if not isinstance(result, int):
-            raise TypeError("result can only be an instance of type int")
-        if type(err_msg) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(result, baseinteger):
+            raise TypeError("result can only be an instance of type baseinteger")
+        if not isinstance(err_msg, basestring):
+            raise TypeError("err_msg can only be an instance of type basestring")
         self._call("endPoweringDown",
                      in_p=[result, err_msg])
 
@@ -5117,8 +5123,8 @@ class IInternalMachineControl(Interface):
         in id_p of type str
 
         """
-        if type(id_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(id_p, basestring):
+            raise TypeError("id_p can only be an instance of type basestring")
         self._call("captureUSBDevice",
                      in_p=[id_p])
 
@@ -5138,8 +5144,8 @@ class IInternalMachineControl(Interface):
         in done of type bool
 
         """
-        if type(id_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(id_p, basestring):
+            raise TypeError("id_p can only be an instance of type basestring")
         if not isinstance(done, bool):
             raise TypeError("done can only be an instance of type bool")
         self._call("detachUSBDevice",
@@ -5227,10 +5233,10 @@ class IInternalMachineControl(Interface):
             Could not parse the settings file.
         
         """
-        if not isinstance(result, int):
-            raise TypeError("result can only be an instance of type int")
-        if type(err_msg) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(result, baseinteger):
+            raise TypeError("result can only be an instance of type baseinteger")
+        if not isinstance(err_msg, basestring):
+            raise TypeError("err_msg can only be an instance of type basestring")
         self._call("endSavingState",
                      in_p=[result, err_msg])
 
@@ -5244,8 +5250,8 @@ class IInternalMachineControl(Interface):
             Invalid saved state file path.
         
         """
-        if type(saved_state_file) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(saved_state_file, basestring):
+            raise TypeError("saved_state_file can only be an instance of type basestring")
         self._call("adoptSavedState",
                      in_p=[saved_state_file])
 
@@ -5288,10 +5294,10 @@ class IInternalMachineControl(Interface):
         """
         if not isinstance(initiator, IConsole):
             raise TypeError("initiator can only be an instance of type IConsole")
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(description) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(description, basestring):
+            raise TypeError("description can only be an instance of type basestring")
         if not isinstance(console_progress, IProgress):
             raise TypeError("console_progress can only be an instance of type IProgress")
         if not isinstance(f_taking_snapshot_online, bool):
@@ -5345,10 +5351,10 @@ not meet the linearity condition.
         """
         if not isinstance(initiator, IConsole):
             raise TypeError("initiator can only be an instance of type IConsole")
-        if type(start_id) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(end_id) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(start_id, basestring):
+            raise TypeError("start_id can only be an instance of type basestring")
+        if not isinstance(end_id, basestring):
+            raise TypeError("end_id can only be an instance of type basestring")
         if not isinstance(delete_all_children, bool):
             raise TypeError("delete_all_children can only be an instance of type bool")
         (machine_state, progress) = self._call("deleteSnapshot",
@@ -5430,14 +5436,14 @@ not meet the linearity condition.
             The flags of the property.
 
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(timestamp, int):
-            raise TypeError("timestamp can only be an instance of type int")
-        if type(flags) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(value, basestring):
+            raise TypeError("value can only be an instance of type basestring")
+        if not isinstance(timestamp, baseinteger):
+            raise TypeError("timestamp can only be an instance of type baseinteger")
+        if not isinstance(flags, basestring):
+            raise TypeError("flags can only be an instance of type basestring")
         self._call("pushGuestProperty",
                      in_p=[name, value, timestamp, flags])
 
@@ -5535,38 +5541,38 @@ not meet the linearity condition.
             Network transmit rate for VM.
 
         """
-        if not isinstance(valid_stats, int):
-            raise TypeError("valid_stats can only be an instance of type int")
-        if not isinstance(cpu_user, int):
-            raise TypeError("cpu_user can only be an instance of type int")
-        if not isinstance(cpu_kernel, int):
-            raise TypeError("cpu_kernel can only be an instance of type int")
-        if not isinstance(cpu_idle, int):
-            raise TypeError("cpu_idle can only be an instance of type int")
-        if not isinstance(mem_total, int):
-            raise TypeError("mem_total can only be an instance of type int")
-        if not isinstance(mem_free, int):
-            raise TypeError("mem_free can only be an instance of type int")
-        if not isinstance(mem_balloon, int):
-            raise TypeError("mem_balloon can only be an instance of type int")
-        if not isinstance(mem_shared, int):
-            raise TypeError("mem_shared can only be an instance of type int")
-        if not isinstance(mem_cache, int):
-            raise TypeError("mem_cache can only be an instance of type int")
-        if not isinstance(paged_total, int):
-            raise TypeError("paged_total can only be an instance of type int")
-        if not isinstance(mem_alloc_total, int):
-            raise TypeError("mem_alloc_total can only be an instance of type int")
-        if not isinstance(mem_free_total, int):
-            raise TypeError("mem_free_total can only be an instance of type int")
-        if not isinstance(mem_balloon_total, int):
-            raise TypeError("mem_balloon_total can only be an instance of type int")
-        if not isinstance(mem_shared_total, int):
-            raise TypeError("mem_shared_total can only be an instance of type int")
-        if not isinstance(vm_net_rx, int):
-            raise TypeError("vm_net_rx can only be an instance of type int")
-        if not isinstance(vm_net_tx, int):
-            raise TypeError("vm_net_tx can only be an instance of type int")
+        if not isinstance(valid_stats, baseinteger):
+            raise TypeError("valid_stats can only be an instance of type baseinteger")
+        if not isinstance(cpu_user, baseinteger):
+            raise TypeError("cpu_user can only be an instance of type baseinteger")
+        if not isinstance(cpu_kernel, baseinteger):
+            raise TypeError("cpu_kernel can only be an instance of type baseinteger")
+        if not isinstance(cpu_idle, baseinteger):
+            raise TypeError("cpu_idle can only be an instance of type baseinteger")
+        if not isinstance(mem_total, baseinteger):
+            raise TypeError("mem_total can only be an instance of type baseinteger")
+        if not isinstance(mem_free, baseinteger):
+            raise TypeError("mem_free can only be an instance of type baseinteger")
+        if not isinstance(mem_balloon, baseinteger):
+            raise TypeError("mem_balloon can only be an instance of type baseinteger")
+        if not isinstance(mem_shared, baseinteger):
+            raise TypeError("mem_shared can only be an instance of type baseinteger")
+        if not isinstance(mem_cache, baseinteger):
+            raise TypeError("mem_cache can only be an instance of type baseinteger")
+        if not isinstance(paged_total, baseinteger):
+            raise TypeError("paged_total can only be an instance of type baseinteger")
+        if not isinstance(mem_alloc_total, baseinteger):
+            raise TypeError("mem_alloc_total can only be an instance of type baseinteger")
+        if not isinstance(mem_free_total, baseinteger):
+            raise TypeError("mem_free_total can only be an instance of type baseinteger")
+        if not isinstance(mem_balloon_total, baseinteger):
+            raise TypeError("mem_balloon_total can only be an instance of type baseinteger")
+        if not isinstance(mem_shared_total, baseinteger):
+            raise TypeError("mem_shared_total can only be an instance of type baseinteger")
+        if not isinstance(vm_net_rx, baseinteger):
+            raise TypeError("vm_net_rx can only be an instance of type baseinteger")
+        if not isinstance(vm_net_tx, baseinteger):
+            raise TypeError("vm_net_tx can only be an instance of type baseinteger")
         self._call("reportVmStatistics",
                      in_p=[valid_stats, cpu_user, cpu_kernel, cpu_idle, mem_total, mem_free, mem_balloon, mem_shared, mem_cache, paged_total, mem_alloc_total, mem_free_total, mem_balloon_total, mem_shared_total, vm_net_rx, vm_net_tx])
 
@@ -5788,8 +5794,8 @@ class IPCIAddress(Interface):
         in number of type int
 
         """
-        if not isinstance(number, int):
-            raise TypeError("number can only be an instance of type int")
+        if not isinstance(number, baseinteger):
+            raise TypeError("number can only be an instance of type baseinteger")
         self._call("fromLong",
                      in_p=[number])
 
@@ -7353,10 +7359,10 @@ class IMachine(Interface):
         """
         if not isinstance(session, ISession):
             raise TypeError("session can only be an instance of type ISession")
-        if type(type_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(environment) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(type_p, basestring):
+            raise TypeError("type_p can only be an instance of type basestring")
+        if not isinstance(environment, basestring):
+            raise TypeError("environment can only be an instance of type basestring")
         progress = self._call("launchVMProcess",
                      in_p=[session, type_p, environment])
         progress = IProgress(progress)
@@ -7386,8 +7392,8 @@ class IMachine(Interface):
             Booting from USB @a device currently not supported.
         
         """
-        if not isinstance(position, int):
-            raise TypeError("position can only be an instance of type int")
+        if not isinstance(position, baseinteger):
+            raise TypeError("position can only be an instance of type baseinteger")
         if not isinstance(device, DeviceType):
             raise TypeError("device can only be an instance of type DeviceType")
         self._call("setBootOrder",
@@ -7419,8 +7425,8 @@ class IMachine(Interface):
             Boot @a position out of range.
         
         """
-        if not isinstance(position, int):
-            raise TypeError("position can only be an instance of type int")
+        if not isinstance(position, baseinteger):
+            raise TypeError("position can only be an instance of type baseinteger")
         device = self._call("getBootOrder",
                      in_p=[position])
         device = DeviceType(device)
@@ -7514,12 +7520,12 @@ file or UUID not found.
             A medium is already attached to this or another virtual machine.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(controller_port, int):
-            raise TypeError("controller_port can only be an instance of type int")
-        if not isinstance(device, int):
-            raise TypeError("device can only be an instance of type int")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(controller_port, baseinteger):
+            raise TypeError("controller_port can only be an instance of type baseinteger")
+        if not isinstance(device, baseinteger):
+            raise TypeError("device can only be an instance of type baseinteger")
         if not isinstance(type_p, DeviceType):
             raise TypeError("type_p can only be an instance of type DeviceType")
         if not isinstance(medium, IMedium):
@@ -7608,12 +7614,12 @@ file or UUID not found.
             A medium is already attached to this or another virtual machine.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(controller_port, int):
-            raise TypeError("controller_port can only be an instance of type int")
-        if not isinstance(device, int):
-            raise TypeError("device can only be an instance of type int")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(controller_port, baseinteger):
+            raise TypeError("controller_port can only be an instance of type baseinteger")
+        if not isinstance(device, baseinteger):
+            raise TypeError("device can only be an instance of type baseinteger")
         if not isinstance(type_p, DeviceType):
             raise TypeError("type_p can only be an instance of type DeviceType")
         self._call("attachDeviceWithoutMedium",
@@ -7659,12 +7665,12 @@ file or UUID not found.
 created differencing media, should not happen).
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(controller_port, int):
-            raise TypeError("controller_port can only be an instance of type int")
-        if not isinstance(device, int):
-            raise TypeError("device can only be an instance of type int")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(controller_port, baseinteger):
+            raise TypeError("controller_port can only be an instance of type baseinteger")
+        if not isinstance(device, baseinteger):
+            raise TypeError("device can only be an instance of type baseinteger")
         self._call("detachDevice",
                      in_p=[name, controller_port, device])
 
@@ -7700,12 +7706,12 @@ created differencing media, should not happen).
             Invalid machine state.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(controller_port, int):
-            raise TypeError("controller_port can only be an instance of type int")
-        if not isinstance(device, int):
-            raise TypeError("device can only be an instance of type int")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(controller_port, baseinteger):
+            raise TypeError("controller_port can only be an instance of type baseinteger")
+        if not isinstance(device, baseinteger):
+            raise TypeError("device can only be an instance of type baseinteger")
         if not isinstance(passthrough, bool):
             raise TypeError("passthrough can only be an instance of type bool")
         self._call("passthroughDevice",
@@ -7743,12 +7749,12 @@ created differencing media, should not happen).
             Invalid machine state.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(controller_port, int):
-            raise TypeError("controller_port can only be an instance of type int")
-        if not isinstance(device, int):
-            raise TypeError("device can only be an instance of type int")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(controller_port, baseinteger):
+            raise TypeError("controller_port can only be an instance of type baseinteger")
+        if not isinstance(device, baseinteger):
+            raise TypeError("device can only be an instance of type baseinteger")
         if not isinstance(temporary_eject, bool):
             raise TypeError("temporary_eject can only be an instance of type bool")
         self._call("temporaryEjectDevice",
@@ -7789,12 +7795,12 @@ created differencing media, should not happen).
             Invalid machine state.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(controller_port, int):
-            raise TypeError("controller_port can only be an instance of type int")
-        if not isinstance(device, int):
-            raise TypeError("device can only be an instance of type int")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(controller_port, baseinteger):
+            raise TypeError("controller_port can only be an instance of type baseinteger")
+        if not isinstance(device, baseinteger):
+            raise TypeError("device can only be an instance of type baseinteger")
         if not isinstance(non_rotational, bool):
             raise TypeError("non_rotational can only be an instance of type bool")
         self._call("nonRotationalDevice",
@@ -7835,12 +7841,12 @@ created differencing media, should not happen).
             Invalid machine state.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(controller_port, int):
-            raise TypeError("controller_port can only be an instance of type int")
-        if not isinstance(device, int):
-            raise TypeError("device can only be an instance of type int")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(controller_port, baseinteger):
+            raise TypeError("controller_port can only be an instance of type baseinteger")
+        if not isinstance(device, baseinteger):
+            raise TypeError("device can only be an instance of type baseinteger")
         if not isinstance(discard, bool):
             raise TypeError("discard can only be an instance of type bool")
         self._call("setAutoDiscardForDevice",
@@ -7882,12 +7888,12 @@ created differencing media, should not happen).
             Controller doesn't support hot plugging.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(controller_port, int):
-            raise TypeError("controller_port can only be an instance of type int")
-        if not isinstance(device, int):
-            raise TypeError("device can only be an instance of type int")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(controller_port, baseinteger):
+            raise TypeError("controller_port can only be an instance of type baseinteger")
+        if not isinstance(device, baseinteger):
+            raise TypeError("device can only be an instance of type baseinteger")
         if not isinstance(hot_pluggable, bool):
             raise TypeError("hot_pluggable can only be an instance of type bool")
         self._call("setHotPluggableForDevice",
@@ -7923,12 +7929,12 @@ created differencing media, should not happen).
             Invalid machine state.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(controller_port, int):
-            raise TypeError("controller_port can only be an instance of type int")
-        if not isinstance(device, int):
-            raise TypeError("device can only be an instance of type int")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(controller_port, baseinteger):
+            raise TypeError("controller_port can only be an instance of type baseinteger")
+        if not isinstance(device, baseinteger):
+            raise TypeError("device can only be an instance of type baseinteger")
         if not isinstance(bandwidth_group, IBandwidthGroup):
             raise TypeError("bandwidth_group can only be an instance of type IBandwidthGroup")
         self._call("setBandwidthGroupForDevice",
@@ -7960,12 +7966,12 @@ created differencing media, should not happen).
             Invalid machine state.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(controller_port, int):
-            raise TypeError("controller_port can only be an instance of type int")
-        if not isinstance(device, int):
-            raise TypeError("device can only be an instance of type int")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(controller_port, baseinteger):
+            raise TypeError("controller_port can only be an instance of type baseinteger")
+        if not isinstance(device, baseinteger):
+            raise TypeError("device can only be an instance of type baseinteger")
         self._call("setNoBandwidthGroupForDevice",
                      in_p=[name, controller_port, device])
 
@@ -8017,12 +8023,12 @@ created differencing media, should not happen).
             Medium not attached to specified port, device, controller.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(controller_port, int):
-            raise TypeError("controller_port can only be an instance of type int")
-        if not isinstance(device, int):
-            raise TypeError("device can only be an instance of type int")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(controller_port, baseinteger):
+            raise TypeError("controller_port can only be an instance of type baseinteger")
+        if not isinstance(device, baseinteger):
+            raise TypeError("device can only be an instance of type baseinteger")
         if not isinstance(force, bool):
             raise TypeError("force can only be an instance of type bool")
         self._call("unmountMedium",
@@ -8078,12 +8084,12 @@ created differencing media, should not happen).
             Medium already attached to this or another virtual machine.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(controller_port, int):
-            raise TypeError("controller_port can only be an instance of type int")
-        if not isinstance(device, int):
-            raise TypeError("device can only be an instance of type int")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(controller_port, baseinteger):
+            raise TypeError("controller_port can only be an instance of type baseinteger")
+        if not isinstance(device, baseinteger):
+            raise TypeError("device can only be an instance of type baseinteger")
         if not isinstance(medium, IMedium):
             raise TypeError("medium can only be an instance of type IMedium")
         if not isinstance(force, bool):
@@ -8117,12 +8123,12 @@ created differencing media, should not happen).
             No medium attached to given slot/bus.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(controller_port, int):
-            raise TypeError("controller_port can only be an instance of type int")
-        if not isinstance(device, int):
-            raise TypeError("device can only be an instance of type int")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(controller_port, baseinteger):
+            raise TypeError("controller_port can only be an instance of type baseinteger")
+        if not isinstance(device, baseinteger):
+            raise TypeError("device can only be an instance of type baseinteger")
         medium = self._call("getMedium",
                      in_p=[name, controller_port, device])
         medium = IMedium(medium)
@@ -8140,8 +8146,8 @@ created differencing media, should not happen).
             A storage controller with given name doesn't exist.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         medium_attachments = self._call("getMediumAttachmentsOfController",
                      in_p=[name])
         medium_attachments = [IMediumAttachment(a) for a in medium_attachments]
@@ -8163,12 +8169,12 @@ created differencing media, should not happen).
             No attachment exists for the given controller/port/device combination.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(controller_port, int):
-            raise TypeError("controller_port can only be an instance of type int")
-        if not isinstance(device, int):
-            raise TypeError("device can only be an instance of type int")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(controller_port, baseinteger):
+            raise TypeError("controller_port can only be an instance of type baseinteger")
+        if not isinstance(device, baseinteger):
+            raise TypeError("device can only be an instance of type baseinteger")
         attachment = self._call("getMediumAttachment",
                      in_p=[name, controller_port, device])
         attachment = IMediumAttachment(attachment)
@@ -8203,10 +8209,10 @@ created differencing media, should not happen).
             Hardware or host OS doesn't allow PCI device passthrough.
         
         """
-        if not isinstance(host_address, int):
-            raise TypeError("host_address can only be an instance of type int")
-        if not isinstance(desired_guest_address, int):
-            raise TypeError("desired_guest_address can only be an instance of type int")
+        if not isinstance(host_address, baseinteger):
+            raise TypeError("host_address can only be an instance of type baseinteger")
+        if not isinstance(desired_guest_address, baseinteger):
+            raise TypeError("desired_guest_address can only be an instance of type baseinteger")
         if not isinstance(try_to_unbind, bool):
             raise TypeError("try_to_unbind can only be an instance of type bool")
         self._call("attachHostPCIDevice",
@@ -8236,8 +8242,8 @@ created differencing media, should not happen).
             Hardware or host OS doesn't allow PCI device passthrough.
         
         """
-        if not isinstance(host_address, int):
-            raise TypeError("host_address can only be an instance of type int")
+        if not isinstance(host_address, baseinteger):
+            raise TypeError("host_address can only be an instance of type baseinteger")
         self._call("detachHostPCIDevice",
                      in_p=[host_address])
 
@@ -8256,8 +8262,8 @@ created differencing media, should not happen).
             Invalid @a slot number.
         
         """
-        if not isinstance(slot, int):
-            raise TypeError("slot can only be an instance of type int")
+        if not isinstance(slot, baseinteger):
+            raise TypeError("slot can only be an instance of type baseinteger")
         adapter = self._call("getNetworkAdapter",
                      in_p=[slot])
         adapter = INetworkAdapter(adapter)
@@ -8290,8 +8296,8 @@ created differencing media, should not happen).
             Invalid @a controllerType.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         if not isinstance(connection_type, StorageBus):
             raise TypeError("connection_type can only be an instance of type StorageBus")
         controller = self._call("addStorageController",
@@ -8310,8 +8316,8 @@ created differencing media, should not happen).
             A storage controller with given name doesn't exist.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         storage_controller = self._call("getStorageControllerByName",
                      in_p=[name])
         storage_controller = IStorageController(storage_controller)
@@ -8328,8 +8334,8 @@ created differencing media, should not happen).
             A storage controller with given instance number doesn't exist.
         
         """
-        if not isinstance(instance, int):
-            raise TypeError("instance can only be an instance of type int")
+        if not isinstance(instance, baseinteger):
+            raise TypeError("instance can only be an instance of type baseinteger")
         storage_controller = self._call("getStorageControllerByInstance",
                      in_p=[instance])
         storage_controller = IStorageController(storage_controller)
@@ -8348,8 +8354,8 @@ created differencing media, should not happen).
 created differencing media, should not happen).
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         self._call("removeStorageController",
                      in_p=[name])
 
@@ -8367,8 +8373,8 @@ created differencing media, should not happen).
             Another storage controller is marked as bootable already.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         if not isinstance(bootable, bool):
             raise TypeError("bootable can only be an instance of type bool")
         self._call("setStorageControllerBootable",
@@ -8391,8 +8397,8 @@ created differencing media, should not happen).
             Invalid @a controllerType.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         if not isinstance(type_p, USBControllerType):
             raise TypeError("type_p can only be an instance of type USBControllerType")
         controller = self._call("addUSBController",
@@ -8409,8 +8415,8 @@ created differencing media, should not happen).
             A USB controller with given type doesn't exist.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         self._call("removeUSBController",
                      in_p=[name])
 
@@ -8425,8 +8431,8 @@ created differencing media, should not happen).
             A USB controller with given name doesn't exist.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         controller = self._call("getUSBControllerByName",
                      in_p=[name])
         controller = IUSBController(controller)
@@ -8461,8 +8467,8 @@ created differencing media, should not happen).
             Invalid @a slot number.
         
         """
-        if not isinstance(slot, int):
-            raise TypeError("slot can only be an instance of type int")
+        if not isinstance(slot, baseinteger):
+            raise TypeError("slot can only be an instance of type baseinteger")
         port = self._call("getSerialPort",
                      in_p=[slot])
         port = ISerialPort(port)
@@ -8483,8 +8489,8 @@ created differencing media, should not happen).
             Invalid @a slot number.
         
         """
-        if not isinstance(slot, int):
-            raise TypeError("slot can only be an instance of type int")
+        if not isinstance(slot, baseinteger):
+            raise TypeError("slot can only be an instance of type baseinteger")
         port = self._call("getParallelPort",
                      in_p=[slot])
         port = IParallelPort(port)
@@ -8520,8 +8526,8 @@ created differencing media, should not happen).
             Could not parse the settings file.
         
         """
-        if type(key) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(key, basestring):
+            raise TypeError("key can only be an instance of type basestring")
         value = self._call("getExtraData",
                      in_p=[key])
         return value
@@ -8563,10 +8569,10 @@ created differencing media, should not happen).
             Could not parse the settings file.
         
         """
-        if type(key) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(key, basestring):
+            raise TypeError("key can only be an instance of type basestring")
+        if not isinstance(value, basestring):
+            raise TypeError("value can only be an instance of type basestring")
         self._call("setExtraData",
                      in_p=[key, value])
 
@@ -8638,8 +8644,8 @@ created differencing media, should not happen).
             Invalid id.
         
         """
-        if not isinstance(id_p, int):
-            raise TypeError("id_p can only be an instance of type int")
+        if not isinstance(id_p, baseinteger):
+            raise TypeError("id_p can only be an instance of type baseinteger")
         (val_eax, val_ebx, val_ecx, val_edx) = self._call("getCPUIDLeaf",
                      in_p=[id_p])
         return (val_eax, val_ebx, val_ecx, val_edx)
@@ -8677,16 +8683,16 @@ created differencing media, should not happen).
             Invalid id.
         
         """
-        if not isinstance(id_p, int):
-            raise TypeError("id_p can only be an instance of type int")
-        if not isinstance(val_eax, int):
-            raise TypeError("val_eax can only be an instance of type int")
-        if not isinstance(val_ebx, int):
-            raise TypeError("val_ebx can only be an instance of type int")
-        if not isinstance(val_ecx, int):
-            raise TypeError("val_ecx can only be an instance of type int")
-        if not isinstance(val_edx, int):
-            raise TypeError("val_edx can only be an instance of type int")
+        if not isinstance(id_p, baseinteger):
+            raise TypeError("id_p can only be an instance of type baseinteger")
+        if not isinstance(val_eax, baseinteger):
+            raise TypeError("val_eax can only be an instance of type baseinteger")
+        if not isinstance(val_ebx, baseinteger):
+            raise TypeError("val_ebx can only be an instance of type baseinteger")
+        if not isinstance(val_ecx, baseinteger):
+            raise TypeError("val_ecx can only be an instance of type baseinteger")
+        if not isinstance(val_edx, baseinteger):
+            raise TypeError("val_edx can only be an instance of type baseinteger")
         self._call("setCPUIDLeaf",
                      in_p=[id_p, val_eax, val_ebx, val_ecx, val_edx])
 
@@ -8700,8 +8706,8 @@ created differencing media, should not happen).
             Invalid id.
         
         """
-        if not isinstance(id_p, int):
-            raise TypeError("id_p can only be an instance of type int")
+        if not isinstance(id_p, baseinteger):
+            raise TypeError("id_p can only be an instance of type baseinteger")
         self._call("removeCPUIDLeaf",
                      in_p=[id_p])
 
@@ -8774,8 +8780,8 @@ created differencing media, should not happen).
             The operation is not implemented yet.
         
         """
-        if type(settings_file_path) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(settings_file_path, basestring):
+            raise TypeError("settings_file_path can only be an instance of type basestring")
         progress = self._call("setSettingsFilePath",
                      in_p=[settings_file_path])
         progress = IProgress(progress)
@@ -8989,8 +8995,8 @@ created differencing media, should not happen).
         """
         if not isinstance(appliance, IAppliance):
             raise TypeError("appliance can only be an instance of type IAppliance")
-        if type(location) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(location, basestring):
+            raise TypeError("location can only be an instance of type basestring")
         description = self._call("exportTo",
                      in_p=[appliance, location])
         description = IVirtualSystemDescription(description)
@@ -9015,8 +9021,8 @@ created differencing media, should not happen).
             Virtual machine has no snapshots or snapshot not found.
         
         """
-        if type(name_or_id) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name_or_id, basestring):
+            raise TypeError("name_or_id can only be an instance of type basestring")
         snapshot = self._call("findSnapshot",
                      in_p=[name_or_id])
         snapshot = ISnapshot(snapshot)
@@ -9048,10 +9054,10 @@ created differencing media, should not happen).
             Shared folder @a hostPath not accessible.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(host_path) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(host_path, basestring):
+            raise TypeError("host_path can only be an instance of type basestring")
         if not isinstance(writable, bool):
             raise TypeError("writable can only be an instance of type bool")
         if not isinstance(automount, bool):
@@ -9074,8 +9080,8 @@ created differencing media, should not happen).
             Shared folder @a name does not exist.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         self._call("removeSharedFolder",
                      in_p=[name])
 
@@ -9148,8 +9154,8 @@ created differencing media, should not happen).
             Machine session is not open.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         (value, timestamp, flags) = self._call("getGuestProperty",
                      in_p=[name])
         return (value, timestamp, flags)
@@ -9168,8 +9174,8 @@ created differencing media, should not happen).
             Machine session is not open.
         
         """
-        if type(property_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(property_p, basestring):
+            raise TypeError("property_p can only be an instance of type basestring")
         value = self._call("getGuestPropertyValue",
                      in_p=[property_p])
         return value
@@ -9188,8 +9194,8 @@ created differencing media, should not happen).
             Machine session is not open.
         
         """
-        if type(property_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(property_p, basestring):
+            raise TypeError("property_p can only be an instance of type basestring")
         value = self._call("getGuestPropertyTimestamp",
                      in_p=[property_p])
         return value
@@ -9224,12 +9230,12 @@ created differencing media, should not happen).
             Cannot set transient property when machine not running.
         
         """
-        if type(property_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(flags) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(property_p, basestring):
+            raise TypeError("property_p can only be an instance of type basestring")
+        if not isinstance(value, basestring):
+            raise TypeError("value can only be an instance of type basestring")
+        if not isinstance(flags, basestring):
+            raise TypeError("flags can only be an instance of type basestring")
         self._call("setGuestProperty",
                      in_p=[property_p, value, flags])
 
@@ -9256,10 +9262,10 @@ created differencing media, should not happen).
             Cannot set transient property when machine not running.
         
         """
-        if type(property_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(property_p, basestring):
+            raise TypeError("property_p can only be an instance of type basestring")
+        if not isinstance(value, basestring):
+            raise TypeError("value can only be an instance of type basestring")
         self._call("setGuestPropertyValue",
                      in_p=[property_p, value])
 
@@ -9273,8 +9279,8 @@ created differencing media, should not happen).
             Machine session is not open.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         self._call("deleteGuestProperty",
                      in_p=[name])
 
@@ -9302,8 +9308,8 @@ created differencing media, should not happen).
             corresponding entries in the @a name array.
 
         """
-        if type(patterns) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(patterns, basestring):
+            raise TypeError("patterns can only be an instance of type basestring")
         (names, values, timestamps, flags) = self._call("enumerateGuestProperties",
                      in_p=[patterns])
         return (names, values, timestamps, flags)
@@ -9330,8 +9336,8 @@ created differencing media, should not happen).
             Whether the monitor is enabled in the guest.
 
         """
-        if not isinstance(screen_id, int):
-            raise TypeError("screen_id can only be an instance of type int")
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
         (origin_x, origin_y, width, height, enabled) = self._call("querySavedGuestScreenInfo",
                      in_p=[screen_id])
         return (origin_x, origin_y, width, height, enabled)
@@ -9352,8 +9358,8 @@ created differencing media, should not happen).
             Bitmap height.
 
         """
-        if not isinstance(screen_id, int):
-            raise TypeError("screen_id can only be an instance of type int")
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
         (size, width, height) = self._call("querySavedThumbnailSize",
                      in_p=[screen_id])
         return (size, width, height)
@@ -9378,8 +9384,8 @@ created differencing media, should not happen).
             Array with resulting bitmap data.
 
         """
-        if not isinstance(screen_id, int):
-            raise TypeError("screen_id can only be an instance of type int")
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
         if not isinstance(bgr, bool):
             raise TypeError("bgr can only be an instance of type bool")
         (width, height, data) = self._call("readSavedThumbnailToArray",
@@ -9402,8 +9408,8 @@ created differencing media, should not happen).
             Array with resulting PNG data.
 
         """
-        if not isinstance(screen_id, int):
-            raise TypeError("screen_id can only be an instance of type int")
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
         (width, height, data) = self._call("readSavedThumbnailPNGToArray",
                      in_p=[screen_id])
         return (width, height, data)
@@ -9424,8 +9430,8 @@ created differencing media, should not happen).
             Image height.
 
         """
-        if not isinstance(screen_id, int):
-            raise TypeError("screen_id can only be an instance of type int")
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
         (size, width, height) = self._call("querySavedScreenshotPNGSize",
                      in_p=[screen_id])
         return (size, width, height)
@@ -9446,8 +9452,8 @@ created differencing media, should not happen).
             Array with resulting PNG data.
 
         """
-        if not isinstance(screen_id, int):
-            raise TypeError("screen_id can only be an instance of type int")
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
         (width, height, data) = self._call("readSavedScreenshotPNGToArray",
                      in_p=[screen_id])
         return (width, height, data)
@@ -9459,8 +9465,8 @@ created differencing media, should not happen).
             The CPU id to insert.
 
         """
-        if not isinstance(cpu, int):
-            raise TypeError("cpu can only be an instance of type int")
+        if not isinstance(cpu, baseinteger):
+            raise TypeError("cpu can only be an instance of type baseinteger")
         self._call("hotPlugCPU",
                      in_p=[cpu])
 
@@ -9471,8 +9477,8 @@ created differencing media, should not happen).
             The CPU id to remove.
 
         """
-        if not isinstance(cpu, int):
-            raise TypeError("cpu can only be an instance of type int")
+        if not isinstance(cpu, baseinteger):
+            raise TypeError("cpu can only be an instance of type baseinteger")
         self._call("hotUnplugCPU",
                      in_p=[cpu])
 
@@ -9486,8 +9492,8 @@ created differencing media, should not happen).
             Status of the CPU.
 
         """
-        if not isinstance(cpu, int):
-            raise TypeError("cpu can only be an instance of type int")
+        if not isinstance(cpu, baseinteger):
+            raise TypeError("cpu can only be an instance of type baseinteger")
         attached = self._call("getCPUStatus",
                      in_p=[cpu])
         return attached
@@ -9503,8 +9509,8 @@ created differencing media, should not happen).
             On return the full path to the log file or an empty string on error.
 
         """
-        if not isinstance(idx, int):
-            raise TypeError("idx can only be an instance of type int")
+        if not isinstance(idx, baseinteger):
+            raise TypeError("idx can only be an instance of type baseinteger")
         filename = self._call("queryLogFilename",
                      in_p=[idx])
         return filename
@@ -9529,12 +9535,12 @@ created differencing media, should not happen).
             the system the server is running on.
 
         """
-        if not isinstance(idx, int):
-            raise TypeError("idx can only be an instance of type int")
-        if not isinstance(offset, int):
-            raise TypeError("offset can only be an instance of type int")
-        if not isinstance(size, int):
-            raise TypeError("size can only be an instance of type int")
+        if not isinstance(idx, baseinteger):
+            raise TypeError("idx can only be an instance of type baseinteger")
+        if not isinstance(offset, baseinteger):
+            raise TypeError("offset can only be an instance of type baseinteger")
+        if not isinstance(size, baseinteger):
+            raise TypeError("size can only be an instance of type baseinteger")
         data = self._call("readLog",
                      in_p=[idx, offset, size])
         return data
@@ -9602,10 +9608,10 @@ class IEmulatedUSB(Interface):
             Optional settings.
 
         """
-        if type(path) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(settings) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(path, basestring):
+            raise TypeError("path can only be an instance of type basestring")
+        if not isinstance(settings, basestring):
+            raise TypeError("settings can only be an instance of type basestring")
         self._call("webcamAttach",
                      in_p=[path, settings])
 
@@ -9616,8 +9622,8 @@ class IEmulatedUSB(Interface):
             The host path of the capture device to detach.
 
         """
-        if type(path) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(path, basestring):
+            raise TypeError("path can only be an instance of type basestring")
         self._call("webcamDetach",
                      in_p=[path])
 
@@ -10203,8 +10209,8 @@ class IConsole(Interface):
             Virtual machine state neither PoweredOff nor Aborted.
         
         """
-        if type(saved_state_file) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(saved_state_file, basestring):
+            raise TypeError("saved_state_file can only be an instance of type basestring")
         self._call("adoptSavedState",
                      in_p=[saved_state_file])
 
@@ -10282,8 +10288,8 @@ class IConsole(Interface):
             Virtual machine does not have a USB controller.
         
         """
-        if type(id_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(id_p, basestring):
+            raise TypeError("id_p can only be an instance of type basestring")
         self._call("attachUSBDevice",
                      in_p=[id_p])
 
@@ -10312,8 +10318,8 @@ class IConsole(Interface):
             USB device not attached to this virtual machine.
         
         """
-        if type(id_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(id_p, basestring):
+            raise TypeError("id_p can only be an instance of type basestring")
         device = self._call("detachUSBDevice",
                      in_p=[id_p])
         device = IUSBDevice(device)
@@ -10337,8 +10343,8 @@ class IConsole(Interface):
             Given @c name does not correspond to any USB device.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         device = self._call("findUSBDeviceByAddress",
                      in_p=[name])
         device = IUSBDevice(device)
@@ -10361,8 +10367,8 @@ class IConsole(Interface):
             Given @c id does not correspond to any USB device.
         
         """
-        if type(id_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(id_p, basestring):
+            raise TypeError("id_p can only be an instance of type basestring")
         device = self._call("findUSBDeviceById",
                      in_p=[id_p])
         device = IUSBDevice(device)
@@ -10394,10 +10400,10 @@ class IConsole(Interface):
             Shared folder already exists or not accessible.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(host_path) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(host_path, basestring):
+            raise TypeError("host_path can only be an instance of type basestring")
         if not isinstance(writable, bool):
             raise TypeError("writable can only be an instance of type bool")
         if not isinstance(automount, bool):
@@ -10420,8 +10426,8 @@ class IConsole(Interface):
             Shared folder does not exists.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         self._call("removeSharedFolder",
                      in_p=[name])
 
@@ -10458,10 +10464,10 @@ class IConsole(Interface):
             Virtual machine currently changing state.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(description) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(description, basestring):
+            raise TypeError("description can only be an instance of type basestring")
         progress = self._call("takeSnapshot",
                      in_p=[name, description])
         progress = IProgress(progress)
@@ -10535,8 +10541,8 @@ deleted without trouble while a VM is running. The error message
 text explains the reason for the failure.
         
         """
-        if type(id_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(id_p, basestring):
+            raise TypeError("id_p can only be an instance of type basestring")
         progress = self._call("deleteSnapshot",
                      in_p=[id_p])
         progress = IProgress(progress)
@@ -10572,8 +10578,8 @@ text explains the reason for the failure.
             The method is not implemented yet.
         
         """
-        if type(id_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(id_p, basestring):
+            raise TypeError("id_p can only be an instance of type basestring")
         progress = self._call("deleteSnapshotAndAllChildren",
                      in_p=[id_p])
         progress = IProgress(progress)
@@ -10614,10 +10620,10 @@ text explains the reason for the failure.
             The method is not implemented yet.
         
         """
-        if type(start_id) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(end_id) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(start_id, basestring):
+            raise TypeError("start_id can only be an instance of type basestring")
+        if not isinstance(end_id, basestring):
+            raise TypeError("end_id can only be an instance of type basestring")
         progress = self._call("deleteSnapshotRange",
                      in_p=[start_id, end_id])
         progress = IProgress(progress)
@@ -10698,14 +10704,14 @@ text explains the reason for the failure.
             Virtual machine not running or paused.
         
         """
-        if type(hostname) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(tcpport, int):
-            raise TypeError("tcpport can only be an instance of type int")
-        if type(password) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(max_downtime, int):
-            raise TypeError("max_downtime can only be an instance of type int")
+        if not isinstance(hostname, basestring):
+            raise TypeError("hostname can only be an instance of type basestring")
+        if not isinstance(tcpport, baseinteger):
+            raise TypeError("tcpport can only be an instance of type baseinteger")
+        if not isinstance(password, basestring):
+            raise TypeError("password can only be an instance of type basestring")
+        if not isinstance(max_downtime, baseinteger):
+            raise TypeError("max_downtime can only be an instance of type baseinteger")
         progress = self._call("teleport",
                      in_p=[hostname, tcpport, password, max_downtime])
         progress = IProgress(progress)
@@ -10844,10 +10850,10 @@ class IHostNetworkInterface(Interface):
             network mask.
 
         """
-        if type(ip_address) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(network_mask) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(ip_address, basestring):
+            raise TypeError("ip_address can only be an instance of type basestring")
+        if not isinstance(network_mask, basestring):
+            raise TypeError("network_mask can only be an instance of type basestring")
         self._call("enableStaticIPConfig",
                      in_p=[ip_address, network_mask])
 
@@ -10861,10 +10867,10 @@ class IHostNetworkInterface(Interface):
             network mask.
 
         """
-        if type(ipv6_address) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(ipv6_network_mask_prefix_length, int):
-            raise TypeError("ipv6_network_mask_prefix_length can only be an instance of type int")
+        if not isinstance(ipv6_address, basestring):
+            raise TypeError("ipv6_address can only be an instance of type basestring")
+        if not isinstance(ipv6_network_mask_prefix_length, baseinteger):
+            raise TypeError("ipv6_network_mask_prefix_length can only be an instance of type baseinteger")
         self._call("enableStaticIPConfigV6",
                      in_p=[ipv6_address, ipv6_network_mask_prefix_length])
 
@@ -11059,8 +11065,8 @@ class IHost(Interface):
             invalid.
 
         """
-        if not isinstance(cpu_id, int):
-            raise TypeError("cpu_id can only be an instance of type int")
+        if not isinstance(cpu_id, baseinteger):
+            raise TypeError("cpu_id can only be an instance of type baseinteger")
         speed = self._call("getProcessorSpeed",
                      in_p=[cpu_id])
         return speed
@@ -11095,8 +11101,8 @@ class IHost(Interface):
             @a cpuId is invalid.
 
         """
-        if not isinstance(cpu_id, int):
-            raise TypeError("cpu_id can only be an instance of type int")
+        if not isinstance(cpu_id, baseinteger):
+            raise TypeError("cpu_id can only be an instance of type baseinteger")
         description = self._call("getProcessorDescription",
                      in_p=[cpu_id])
         return description
@@ -11131,12 +11137,12 @@ class IHost(Interface):
             CPUID leaf value for register edx.
 
         """
-        if not isinstance(cpu_id, int):
-            raise TypeError("cpu_id can only be an instance of type int")
-        if not isinstance(leaf, int):
-            raise TypeError("leaf can only be an instance of type int")
-        if not isinstance(sub_leaf, int):
-            raise TypeError("sub_leaf can only be an instance of type int")
+        if not isinstance(cpu_id, baseinteger):
+            raise TypeError("cpu_id can only be an instance of type baseinteger")
+        if not isinstance(leaf, baseinteger):
+            raise TypeError("leaf can only be an instance of type baseinteger")
+        if not isinstance(sub_leaf, baseinteger):
+            raise TypeError("sub_leaf can only be an instance of type baseinteger")
         (val_eax, val_ebx, val_ecx, val_edx) = self._call("getProcessorCPUIDLeaf",
                      in_p=[cpu_id, leaf, sub_leaf])
         return (val_eax, val_ebx, val_ecx, val_edx)
@@ -11220,8 +11226,8 @@ class IHost(Interface):
             No host network interface matching @a id found.
         
         """
-        if type(id_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(id_p, basestring):
+            raise TypeError("id_p can only be an instance of type basestring")
         progress = self._call("removeHostOnlyNetworkInterface",
                      in_p=[id_p])
         progress = IProgress(progress)
@@ -11244,8 +11250,8 @@ class IHost(Interface):
             Created filter object.
 
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         filter_p = self._call("createUSBDeviceFilter",
                      in_p=[name])
         filter_p = IHostUSBDeviceFilter(filter_p)
@@ -11283,8 +11289,8 @@ class IHost(Interface):
             USB device filter already in list.
         
         """
-        if not isinstance(position, int):
-            raise TypeError("position can only be an instance of type int")
+        if not isinstance(position, baseinteger):
+            raise TypeError("position can only be an instance of type baseinteger")
         if not isinstance(filter_p, IHostUSBDeviceFilter):
             raise TypeError("filter_p can only be an instance of type IHostUSBDeviceFilter")
         self._call("insertUSBDeviceFilter",
@@ -11312,8 +11318,8 @@ class IHost(Interface):
             USB device filter list empty or invalid @a position.
         
         """
-        if not isinstance(position, int):
-            raise TypeError("position can only be an instance of type int")
+        if not isinstance(position, baseinteger):
+            raise TypeError("position can only be an instance of type baseinteger")
         self._call("removeUSBDeviceFilter",
                      in_p=[position])
 
@@ -11330,8 +11336,8 @@ class IHost(Interface):
             Given @c name does not correspond to any host drive.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         drive = self._call("findHostDVDDrive",
                      in_p=[name])
         drive = IMedium(drive)
@@ -11350,8 +11356,8 @@ class IHost(Interface):
             Given @c name does not correspond to any host floppy drive.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         drive = self._call("findHostFloppyDrive",
                      in_p=[name])
         drive = IMedium(drive)
@@ -11371,8 +11377,8 @@ class IHost(Interface):
             Found host network interface object.
 
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         network_interface = self._call("findHostNetworkInterfaceByName",
                      in_p=[name])
         network_interface = IHostNetworkInterface(network_interface)
@@ -11392,8 +11398,8 @@ class IHost(Interface):
             Found host network interface object.
 
         """
-        if type(id_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(id_p, basestring):
+            raise TypeError("id_p can only be an instance of type basestring")
         network_interface = self._call("findHostNetworkInterfaceById",
                      in_p=[id_p])
         network_interface = IHostNetworkInterface(network_interface)
@@ -11433,8 +11439,8 @@ class IHost(Interface):
             Given @c id does not correspond to any USB device.
         
         """
-        if type(id_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(id_p, basestring):
+            raise TypeError("id_p can only be an instance of type basestring")
         device = self._call("findUSBDeviceById",
                      in_p=[id_p])
         device = IHostUSBDevice(device)
@@ -11458,8 +11464,8 @@ class IHost(Interface):
             Given @c name does not correspond to any USB device.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         device = self._call("findUSBDeviceByAddress",
                      in_p=[name])
         device = IHostUSBDevice(device)
@@ -12567,10 +12573,10 @@ class IGuestSession(Interface):
             Error starting the copy operation.
         
         """
-        if type(source) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(dest) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(source, basestring):
+            raise TypeError("source can only be an instance of type basestring")
+        if not isinstance(dest, basestring):
+            raise TypeError("dest can only be an instance of type basestring")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
@@ -12601,10 +12607,10 @@ class IGuestSession(Interface):
             Error starting the copy operation.
         
         """
-        if type(source) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(dest) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(source, basestring):
+            raise TypeError("source can only be an instance of type basestring")
+        if not isinstance(dest, basestring):
+            raise TypeError("dest can only be an instance of type basestring")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
@@ -12632,10 +12638,10 @@ class IGuestSession(Interface):
             Error while creating the directory.
         
         """
-        if type(path) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(mode, int):
-            raise TypeError("mode can only be an instance of type int")
+        if not isinstance(path, basestring):
+            raise TypeError("path can only be an instance of type basestring")
+        if not isinstance(mode, baseinteger):
+            raise TypeError("mode can only be an instance of type baseinteger")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
@@ -12686,12 +12692,12 @@ include a non-existing path or an insecure path when the secure
 option was requested.
         
         """
-        if type(template_name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(mode, int):
-            raise TypeError("mode can only be an instance of type int")
-        if type(path) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(template_name, basestring):
+            raise TypeError("template_name can only be an instance of type basestring")
+        if not isinstance(mode, baseinteger):
+            raise TypeError("mode can only be an instance of type baseinteger")
+        if not isinstance(path, basestring):
+            raise TypeError("path can only be an instance of type basestring")
         if not isinstance(secure, bool):
             raise TypeError("secure can only be an instance of type bool")
         directory = self._call("directoryCreateTemp",
@@ -12711,8 +12717,8 @@ option was requested.
             Error while checking existence of the directory specified.
         
         """
-        if type(path) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(path, basestring):
+            raise TypeError("path can only be an instance of type basestring")
         exists = self._call("directoryExists",
                      in_p=[path])
         return exists
@@ -12740,10 +12746,10 @@ option was requested.
             Error while opening the directory.
         
         """
-        if type(path) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(filter_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(path, basestring):
+            raise TypeError("path can only be an instance of type basestring")
+        if not isinstance(filter_p, basestring):
+            raise TypeError("filter_p can only be an instance of type basestring")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
@@ -12771,8 +12777,8 @@ option was requested.
             Error querying information.
         
         """
-        if type(path) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(path, basestring):
+            raise TypeError("path can only be an instance of type basestring")
         info = self._call("directoryQueryInfo",
                      in_p=[path])
         info = IGuestFsObjInfo(info)
@@ -12785,8 +12791,8 @@ option was requested.
             Full path of directory to remove.
 
         """
-        if type(path) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(path, basestring):
+            raise TypeError("path can only be an instance of type basestring")
         self._call("directoryRemove",
                      in_p=[path])
 
@@ -12804,8 +12810,8 @@ option was requested.
             yet and therefore this method call will block until deletion is completed.
 
         """
-        if type(path) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(path, basestring):
+            raise TypeError("path can only be an instance of type basestring")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
@@ -12830,10 +12836,10 @@ option was requested.
             Rename flags; see <link to="PathRenameFlag"/> for more information.
 
         """
-        if type(source) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(dest) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(source, basestring):
+            raise TypeError("source can only be an instance of type basestring")
+        if not isinstance(dest, basestring):
+            raise TypeError("dest can only be an instance of type basestring")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
@@ -12856,10 +12862,10 @@ option was requested.
             The method is not implemented yet.
         
         """
-        if type(path) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(acl) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(path, basestring):
+            raise TypeError("path can only be an instance of type basestring")
+        if not isinstance(acl, basestring):
+            raise TypeError("acl can only be an instance of type basestring")
         self._call("directorySetACL",
                      in_p=[path, acl])
 
@@ -12886,8 +12892,8 @@ option was requested.
             Error while getting the value of the session environment variable.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         value = self._call("environmentGet",
                      in_p=[name])
         return value
@@ -12905,10 +12911,10 @@ option was requested.
             Error while setting the session environment variable.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(value, basestring):
+            raise TypeError("value can only be an instance of type basestring")
         self._call("environmentSet",
                      in_p=[name, value])
 
@@ -12922,8 +12928,8 @@ option was requested.
             Error while unsetting the session environment variable.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         self._call("environmentUnset",
                      in_p=[name])
 
@@ -12968,12 +12974,12 @@ a non-existing path or an insecure path when the secure
 option was requested.
         
         """
-        if type(template_name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(mode, int):
-            raise TypeError("mode can only be an instance of type int")
-        if type(path) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(template_name, basestring):
+            raise TypeError("template_name can only be an instance of type basestring")
+        if not isinstance(mode, baseinteger):
+            raise TypeError("mode can only be an instance of type baseinteger")
+        if not isinstance(path, basestring):
+            raise TypeError("path can only be an instance of type basestring")
         if not isinstance(secure, bool):
             raise TypeError("secure can only be an instance of type bool")
         file_p = self._call("fileCreateTemp",
@@ -12994,8 +13000,8 @@ option was requested.
             Error while checking existence of the file specified.
         
         """
-        if type(path) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(path, basestring):
+            raise TypeError("path can only be an instance of type basestring")
         exists = self._call("fileExists",
                      in_p=[path])
         return exists
@@ -13013,8 +13019,8 @@ option was requested.
             Error while removing the file.
         
         """
-        if type(path) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(path, basestring):
+            raise TypeError("path can only be an instance of type basestring")
         self._call("fileRemove",
                      in_p=[path])
 
@@ -13061,14 +13067,14 @@ option was requested.
             Error while opening the file.
         
         """
-        if type(path) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(open_mode) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(disposition) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(creation_mode, int):
-            raise TypeError("creation_mode can only be an instance of type int")
+        if not isinstance(path, basestring):
+            raise TypeError("path can only be an instance of type basestring")
+        if not isinstance(open_mode, basestring):
+            raise TypeError("open_mode can only be an instance of type basestring")
+        if not isinstance(disposition, basestring):
+            raise TypeError("disposition can only be an instance of type basestring")
+        if not isinstance(creation_mode, baseinteger):
+            raise TypeError("creation_mode can only be an instance of type baseinteger")
         file_p = self._call("fileOpen",
                      in_p=[path, open_mode, disposition, creation_mode])
         file_p = IGuestFile(file_p)
@@ -13124,18 +13130,18 @@ option was requested.
             Error while opening the file.
         
         """
-        if type(path) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(open_mode) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(disposition) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(sharing_mode) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(creation_mode, int):
-            raise TypeError("creation_mode can only be an instance of type int")
-        if not isinstance(offset, int):
-            raise TypeError("offset can only be an instance of type int")
+        if not isinstance(path, basestring):
+            raise TypeError("path can only be an instance of type basestring")
+        if not isinstance(open_mode, basestring):
+            raise TypeError("open_mode can only be an instance of type basestring")
+        if not isinstance(disposition, basestring):
+            raise TypeError("disposition can only be an instance of type basestring")
+        if not isinstance(sharing_mode, basestring):
+            raise TypeError("sharing_mode can only be an instance of type basestring")
+        if not isinstance(creation_mode, baseinteger):
+            raise TypeError("creation_mode can only be an instance of type baseinteger")
+        if not isinstance(offset, baseinteger):
+            raise TypeError("offset can only be an instance of type baseinteger")
         file_p = self._call("fileOpenEx",
                      in_p=[path, open_mode, disposition, sharing_mode, creation_mode, offset])
         file_p = IGuestFile(file_p)
@@ -13157,8 +13163,8 @@ option was requested.
             Error querying information.
         
         """
-        if type(path) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(path, basestring):
+            raise TypeError("path can only be an instance of type basestring")
         info = self._call("fileQueryInfo",
                      in_p=[path])
         info = IGuestFsObjInfo(info)
@@ -13180,8 +13186,8 @@ option was requested.
             Error querying file size.
         
         """
-        if type(path) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(path, basestring):
+            raise TypeError("path can only be an instance of type basestring")
         size = self._call("fileQuerySize",
                      in_p=[path])
         return size
@@ -13199,10 +13205,10 @@ option was requested.
             Rename flags; see <link to="PathRenameFlag"/> for more information.
 
         """
-        if type(source) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(dest) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(source, basestring):
+            raise TypeError("source can only be an instance of type basestring")
+        if not isinstance(dest, basestring):
+            raise TypeError("dest can only be an instance of type basestring")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
@@ -13225,10 +13231,10 @@ option was requested.
             The method is not implemented yet.
         
         """
-        if type(file_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(acl) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(file_p, basestring):
+            raise TypeError("file_p can only be an instance of type basestring")
+        if not isinstance(acl, basestring):
+            raise TypeError("acl can only be an instance of type basestring")
         self._call("fileSetACL",
                      in_p=[file_p, acl])
 
@@ -13280,26 +13286,28 @@ option was requested.
             Error creating guest process.
         
         """
-        if type(command) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(command, basestring):
+            raise TypeError("command can only be an instance of type basestring")
         if not isinstance(arguments, list):
             raise TypeError("arguments can only be an instance of type list")
         for a in arguments[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
         if not isinstance(environment, list):
             raise TypeError("environment can only be an instance of type list")
         for a in environment[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
             if not isinstance(a, ProcessCreateFlag):
                 raise TypeError(\
                         "array can only contain objects of type ProcessCreateFlag")
-        if not isinstance(timeout_ms, int):
-            raise TypeError("timeout_ms can only be an instance of type int")
+        if not isinstance(timeout_ms, baseinteger):
+            raise TypeError("timeout_ms can only be an instance of type baseinteger")
         guest_process = self._call("processCreate",
                      in_p=[command, arguments, environment, flags, timeout_ms])
         guest_process = IGuestProcess(guest_process)
@@ -13349,34 +13357,36 @@ option was requested.
             Guest process object of the newly created process.
 
         """
-        if type(command) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(command, basestring):
+            raise TypeError("command can only be an instance of type basestring")
         if not isinstance(arguments, list):
             raise TypeError("arguments can only be an instance of type list")
         for a in arguments[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
         if not isinstance(environment, list):
             raise TypeError("environment can only be an instance of type list")
         for a in environment[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
             if not isinstance(a, ProcessCreateFlag):
                 raise TypeError(\
                         "array can only contain objects of type ProcessCreateFlag")
-        if not isinstance(timeout_ms, int):
-            raise TypeError("timeout_ms can only be an instance of type int")
+        if not isinstance(timeout_ms, baseinteger):
+            raise TypeError("timeout_ms can only be an instance of type baseinteger")
         if not isinstance(priority, ProcessPriority):
             raise TypeError("priority can only be an instance of type ProcessPriority")
         if not isinstance(affinity, list):
             raise TypeError("affinity can only be an instance of type list")
         for a in affinity[:10]:
-            if not isinstance(a, int):
+            if not isinstance(a, baseinteger):
                 raise TypeError(\
-                        "array can only contain objects of type int")
+                        "array can only contain objects of type baseinteger")
         guest_process = self._call("processCreateEx",
                      in_p=[command, arguments, environment, flags, timeout_ms, priority, affinity])
         guest_process = IGuestProcess(guest_process)
@@ -13392,8 +13402,8 @@ option was requested.
             Guest process of specified process ID (PID).
 
         """
-        if not isinstance(pid, int):
-            raise TypeError("pid can only be an instance of type int")
+        if not isinstance(pid, baseinteger):
+            raise TypeError("pid can only be an instance of type baseinteger")
         guest_process = self._call("processGet",
                      in_p=[pid])
         guest_process = IGuestProcess(guest_process)
@@ -13416,10 +13426,10 @@ option was requested.
             The method is not implemented yet.
         
         """
-        if type(source) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(target) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(source, basestring):
+            raise TypeError("source can only be an instance of type basestring")
+        if not isinstance(target, basestring):
+            raise TypeError("target can only be an instance of type basestring")
         if not isinstance(type_p, SymlinkType):
             raise TypeError("type_p can only be an instance of type SymlinkType")
         self._call("symlinkCreate",
@@ -13438,8 +13448,8 @@ option was requested.
             The method is not implemented yet.
         
         """
-        if type(symlink) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(symlink, basestring):
+            raise TypeError("symlink can only be an instance of type basestring")
         exists = self._call("symlinkExists",
                      in_p=[symlink])
         return exists
@@ -13460,8 +13470,8 @@ option was requested.
             The method is not implemented yet.
         
         """
-        if type(symlink) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(symlink, basestring):
+            raise TypeError("symlink can only be an instance of type basestring")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
@@ -13482,8 +13492,8 @@ option was requested.
             The method is not implemented yet.
         
         """
-        if type(path) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(path, basestring):
+            raise TypeError("path can only be an instance of type basestring")
         self._call("symlinkRemoveDirectory",
                      in_p=[path])
 
@@ -13497,8 +13507,8 @@ option was requested.
             The method is not implemented yet.
         
         """
-        if type(file_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(file_p, basestring):
+            raise TypeError("file_p can only be an instance of type basestring")
         self._call("symlinkRemoveFile",
                      in_p=[file_p])
 
@@ -13518,10 +13528,10 @@ option was requested.
             see <link to="GuestSessionWaitResult"/> for more information.
 
         """
-        if not isinstance(wait_for, int):
-            raise TypeError("wait_for can only be an instance of type int")
-        if not isinstance(timeout_ms, int):
-            raise TypeError("timeout_ms can only be an instance of type int")
+        if not isinstance(wait_for, baseinteger):
+            raise TypeError("wait_for can only be an instance of type baseinteger")
+        if not isinstance(timeout_ms, baseinteger):
+            raise TypeError("timeout_ms can only be an instance of type baseinteger")
         reason = self._call("waitFor",
                      in_p=[wait_for, timeout_ms])
         reason = GuestSessionWaitResult(reason)
@@ -13550,8 +13560,8 @@ option was requested.
             if not isinstance(a, GuestSessionWaitForFlag):
                 raise TypeError(\
                         "array can only contain objects of type GuestSessionWaitForFlag")
-        if not isinstance(timeout_ms, int):
-            raise TypeError("timeout_ms can only be an instance of type int")
+        if not isinstance(timeout_ms, baseinteger):
+            raise TypeError("timeout_ms can only be an instance of type baseinteger")
         reason = self._call("waitForArray",
                      in_p=[wait_for, timeout_ms])
         reason = GuestSessionWaitResult(reason)
@@ -13647,10 +13657,10 @@ class IProcess(Interface):
             see <link to="ProcessWaitResult"/> for more information.
 
         """
-        if not isinstance(wait_for, int):
-            raise TypeError("wait_for can only be an instance of type int")
-        if not isinstance(timeout_ms, int):
-            raise TypeError("timeout_ms can only be an instance of type int")
+        if not isinstance(wait_for, baseinteger):
+            raise TypeError("wait_for can only be an instance of type baseinteger")
+        if not isinstance(timeout_ms, baseinteger):
+            raise TypeError("timeout_ms can only be an instance of type baseinteger")
         reason = self._call("waitFor",
                      in_p=[wait_for, timeout_ms])
         reason = ProcessWaitResult(reason)
@@ -13679,8 +13689,8 @@ class IProcess(Interface):
             if not isinstance(a, ProcessWaitForFlag):
                 raise TypeError(\
                         "array can only contain objects of type ProcessWaitForFlag")
-        if not isinstance(timeout_ms, int):
-            raise TypeError("timeout_ms can only be an instance of type int")
+        if not isinstance(timeout_ms, baseinteger):
+            raise TypeError("timeout_ms can only be an instance of type baseinteger")
         reason = self._call("waitForArray",
                      in_p=[wait_for, timeout_ms])
         reason = ProcessWaitResult(reason)
@@ -13703,12 +13713,12 @@ class IProcess(Interface):
             Array of data read.
 
         """
-        if not isinstance(handle, int):
-            raise TypeError("handle can only be an instance of type int")
-        if not isinstance(to_read, int):
-            raise TypeError("to_read can only be an instance of type int")
-        if not isinstance(timeout_ms, int):
-            raise TypeError("timeout_ms can only be an instance of type int")
+        if not isinstance(handle, baseinteger):
+            raise TypeError("handle can only be an instance of type baseinteger")
+        if not isinstance(to_read, baseinteger):
+            raise TypeError("to_read can only be an instance of type baseinteger")
+        if not isinstance(timeout_ms, baseinteger):
+            raise TypeError("timeout_ms can only be an instance of type baseinteger")
         data = self._call("read",
                      in_p=[handle, to_read, timeout_ms])
         return data
@@ -13734,17 +13744,18 @@ class IProcess(Interface):
             How much bytes were written.
 
         """
-        if not isinstance(handle, int):
-            raise TypeError("handle can only be an instance of type int")
-        if not isinstance(flags, int):
-            raise TypeError("flags can only be an instance of type int")
+        if not isinstance(handle, baseinteger):
+            raise TypeError("handle can only be an instance of type baseinteger")
+        if not isinstance(flags, baseinteger):
+            raise TypeError("flags can only be an instance of type baseinteger")
         if not isinstance(data, list):
             raise TypeError("data can only be an instance of type list")
         for a in data[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
-        if not isinstance(timeout_ms, int):
-            raise TypeError("timeout_ms can only be an instance of type int")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
+        if not isinstance(timeout_ms, baseinteger):
+            raise TypeError("timeout_ms can only be an instance of type baseinteger")
         written = self._call("write",
                      in_p=[handle, flags, data, timeout_ms])
         return written
@@ -13771,8 +13782,8 @@ class IProcess(Interface):
             How much bytes were written.
 
         """
-        if not isinstance(handle, int):
-            raise TypeError("handle can only be an instance of type int")
+        if not isinstance(handle, baseinteger):
+            raise TypeError("handle can only be an instance of type baseinteger")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
@@ -13782,10 +13793,11 @@ class IProcess(Interface):
         if not isinstance(data, list):
             raise TypeError("data can only be an instance of type list")
         for a in data[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
-        if not isinstance(timeout_ms, int):
-            raise TypeError("timeout_ms can only be an instance of type int")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
+        if not isinstance(timeout_ms, baseinteger):
+            raise TypeError("timeout_ms can only be an instance of type baseinteger")
         written = self._call("writeArray",
                      in_p=[handle, flags, data, timeout_ms])
         return written
@@ -13982,10 +13994,10 @@ class IFile(Interface):
             The method is not implemented yet.
         
         """
-        if not isinstance(to_read, int):
-            raise TypeError("to_read can only be an instance of type int")
-        if not isinstance(timeout_ms, int):
-            raise TypeError("timeout_ms can only be an instance of type int")
+        if not isinstance(to_read, baseinteger):
+            raise TypeError("to_read can only be an instance of type baseinteger")
+        if not isinstance(timeout_ms, baseinteger):
+            raise TypeError("timeout_ms can only be an instance of type baseinteger")
         data = self._call("read",
                      in_p=[to_read, timeout_ms])
         return data
@@ -14010,12 +14022,12 @@ class IFile(Interface):
             The method is not implemented yet.
         
         """
-        if not isinstance(offset, int):
-            raise TypeError("offset can only be an instance of type int")
-        if not isinstance(to_read, int):
-            raise TypeError("to_read can only be an instance of type int")
-        if not isinstance(timeout_ms, int):
-            raise TypeError("timeout_ms can only be an instance of type int")
+        if not isinstance(offset, baseinteger):
+            raise TypeError("offset can only be an instance of type baseinteger")
+        if not isinstance(to_read, baseinteger):
+            raise TypeError("to_read can only be an instance of type baseinteger")
+        if not isinstance(timeout_ms, baseinteger):
+            raise TypeError("timeout_ms can only be an instance of type baseinteger")
         data = self._call("readAt",
                      in_p=[offset, to_read, timeout_ms])
         return data
@@ -14033,8 +14045,8 @@ class IFile(Interface):
             The method is not implemented yet.
         
         """
-        if not isinstance(offset, int):
-            raise TypeError("offset can only be an instance of type int")
+        if not isinstance(offset, baseinteger):
+            raise TypeError("offset can only be an instance of type baseinteger")
         if not isinstance(whence, FileSeekType):
             raise TypeError("whence can only be an instance of type FileSeekType")
         self._call("seek",
@@ -14050,8 +14062,8 @@ class IFile(Interface):
             The method is not implemented yet.
         
         """
-        if type(acl) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(acl, basestring):
+            raise TypeError("acl can only be an instance of type basestring")
         self._call("setACL",
                      in_p=[acl])
 
@@ -14073,10 +14085,11 @@ class IFile(Interface):
         if not isinstance(data, list):
             raise TypeError("data can only be an instance of type list")
         for a in data[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
-        if not isinstance(timeout_ms, int):
-            raise TypeError("timeout_ms can only be an instance of type int")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
+        if not isinstance(timeout_ms, baseinteger):
+            raise TypeError("timeout_ms can only be an instance of type baseinteger")
         written = self._call("write",
                      in_p=[data, timeout_ms])
         return written
@@ -14102,15 +14115,16 @@ class IFile(Interface):
             The method is not implemented yet.
         
         """
-        if not isinstance(offset, int):
-            raise TypeError("offset can only be an instance of type int")
+        if not isinstance(offset, baseinteger):
+            raise TypeError("offset can only be an instance of type baseinteger")
         if not isinstance(data, list):
             raise TypeError("data can only be an instance of type list")
         for a in data[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
-        if not isinstance(timeout_ms, int):
-            raise TypeError("timeout_ms can only be an instance of type int")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
+        if not isinstance(timeout_ms, baseinteger):
+            raise TypeError("timeout_ms can only be an instance of type baseinteger")
         written = self._call("writeAt",
                      in_p=[offset, data, timeout_ms])
         return written
@@ -14515,12 +14529,12 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        if type(user_name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(password) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(domain) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(user_name, basestring):
+            raise TypeError("user_name can only be an instance of type basestring")
+        if not isinstance(password, basestring):
+            raise TypeError("password can only be an instance of type basestring")
+        if not isinstance(domain, basestring):
+            raise TypeError("domain can only be an instance of type basestring")
         if not isinstance(allow_interactive_logon, bool):
             raise TypeError("allow_interactive_logon can only be an instance of type bool")
         self._call("setCredentials",
@@ -14556,12 +14570,12 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        if not isinstance(screen_id, int):
-            raise TypeError("screen_id can only be an instance of type int")
-        if not isinstance(y, int):
-            raise TypeError("y can only be an instance of type int")
-        if not isinstance(x, int):
-            raise TypeError("x can only be an instance of type int")
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
+        if not isinstance(y, baseinteger):
+            raise TypeError("y can only be an instance of type baseinteger")
+        if not isinstance(x, baseinteger):
+            raise TypeError("x can only be an instance of type baseinteger")
         if not isinstance(default_action, DragAndDropAction):
             raise TypeError("default_action can only be an instance of type DragAndDropAction")
         if not isinstance(allowed_actions, list):
@@ -14573,8 +14587,9 @@ class IGuest(Interface):
         if not isinstance(formats, list):
             raise TypeError("formats can only be an instance of type list")
         for a in formats[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
         result_action = self._call("dragHGEnter",
                      in_p=[screen_id, y, x, default_action, allowed_actions, formats])
         result_action = DragAndDropAction(result_action)
@@ -14610,12 +14625,12 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        if not isinstance(screen_id, int):
-            raise TypeError("screen_id can only be an instance of type int")
-        if not isinstance(x, int):
-            raise TypeError("x can only be an instance of type int")
-        if not isinstance(y, int):
-            raise TypeError("y can only be an instance of type int")
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
+        if not isinstance(x, baseinteger):
+            raise TypeError("x can only be an instance of type baseinteger")
+        if not isinstance(y, baseinteger):
+            raise TypeError("y can only be an instance of type baseinteger")
         if not isinstance(default_action, DragAndDropAction):
             raise TypeError("default_action can only be an instance of type DragAndDropAction")
         if not isinstance(allowed_actions, list):
@@ -14627,8 +14642,9 @@ class IGuest(Interface):
         if not isinstance(formats, list):
             raise TypeError("formats can only be an instance of type list")
         for a in formats[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
         result_action = self._call("dragHGMove",
                      in_p=[screen_id, x, y, default_action, allowed_actions, formats])
         result_action = DragAndDropAction(result_action)
@@ -14646,8 +14662,8 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        if not isinstance(screen_id, int):
-            raise TypeError("screen_id can only be an instance of type int")
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
         self._call("dragHGLeave",
                      in_p=[screen_id])
 
@@ -14684,12 +14700,12 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        if not isinstance(screen_id, int):
-            raise TypeError("screen_id can only be an instance of type int")
-        if not isinstance(x, int):
-            raise TypeError("x can only be an instance of type int")
-        if not isinstance(y, int):
-            raise TypeError("y can only be an instance of type int")
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
+        if not isinstance(x, baseinteger):
+            raise TypeError("x can only be an instance of type baseinteger")
+        if not isinstance(y, baseinteger):
+            raise TypeError("y can only be an instance of type baseinteger")
         if not isinstance(default_action, DragAndDropAction):
             raise TypeError("default_action can only be an instance of type DragAndDropAction")
         if not isinstance(allowed_actions, list):
@@ -14701,8 +14717,9 @@ class IGuest(Interface):
         if not isinstance(formats, list):
             raise TypeError("formats can only be an instance of type list")
         for a in formats[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
         (format_p, result_action) = self._call("dragHGDrop",
                      in_p=[screen_id, x, y, default_action, allowed_actions, formats])
         result_action = DragAndDropAction(result_action)
@@ -14729,15 +14746,16 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        if not isinstance(screen_id, int):
-            raise TypeError("screen_id can only be an instance of type int")
-        if type(format_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
+        if not isinstance(format_p, basestring):
+            raise TypeError("format_p can only be an instance of type basestring")
         if not isinstance(data, list):
             raise TypeError("data can only be an instance of type list")
         for a in data[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
         progress = self._call("dragHGPutData",
                      in_p=[screen_id, format_p, data])
         progress = IProgress(progress)
@@ -14766,8 +14784,8 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        if not isinstance(screen_id, int):
-            raise TypeError("screen_id can only be an instance of type int")
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
         (formats, allowed_actions, default_action) = self._call("dragGHPending",
                      in_p=[screen_id])
         allowed_actions = [DragAndDropAction(a) for a in allowed_actions]
@@ -14792,8 +14810,8 @@ class IGuest(Interface):
             VMM device is not available.
         
         """
-        if type(format_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(format_p, basestring):
+            raise TypeError("format_p can only be an instance of type basestring")
         if not isinstance(action, DragAndDropAction):
             raise TypeError("action can only be an instance of type DragAndDropAction")
         progress = self._call("dragGHDropped",
@@ -14872,14 +14890,14 @@ class IGuest(Interface):
             The newly created session object.
 
         """
-        if type(user) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(password) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(domain) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(session_name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(user, basestring):
+            raise TypeError("user can only be an instance of type basestring")
+        if not isinstance(password, basestring):
+            raise TypeError("password can only be an instance of type basestring")
+        if not isinstance(domain, basestring):
+            raise TypeError("domain can only be an instance of type basestring")
+        if not isinstance(session_name, basestring):
+            raise TypeError("session_name can only be an instance of type basestring")
         guest_session = self._call("createSession",
                      in_p=[user, password, domain, session_name])
         guest_session = IGuestSession(guest_session)
@@ -14896,8 +14914,8 @@ class IGuest(Interface):
             Array with all guest sessions found matching the name specified.
 
         """
-        if type(session_name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(session_name, basestring):
+            raise TypeError("session_name can only be an instance of type basestring")
         sessions = self._call("findSession",
                      in_p=[session_name])
         sessions = [IGuestSession(a) for a in sessions]
@@ -14940,13 +14958,14 @@ already installed Guest Additions are not ready yet.
             Error while updating.
         
         """
-        if type(source) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(source, basestring):
+            raise TypeError("source can only be an instance of type basestring")
         if not isinstance(arguments, list):
             raise TypeError("arguments can only be an instance of type list")
         for a in arguments[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
@@ -15157,8 +15176,8 @@ class IProgress(Interface):
         in percent of type int
 
         """
-        if not isinstance(percent, int):
-            raise TypeError("percent can only be an instance of type int")
+        if not isinstance(percent, baseinteger):
+            raise TypeError("percent can only be an instance of type baseinteger")
         self._call("setCurrentOperationProgress",
                      in_p=[percent])
 
@@ -15170,10 +15189,10 @@ class IProgress(Interface):
         in next_operations_weight of type int
 
         """
-        if type(next_operation_description) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(next_operations_weight, int):
-            raise TypeError("next_operations_weight can only be an instance of type int")
+        if not isinstance(next_operation_description, basestring):
+            raise TypeError("next_operation_description can only be an instance of type basestring")
+        if not isinstance(next_operations_weight, baseinteger):
+            raise TypeError("next_operations_weight can only be an instance of type baseinteger")
         self._call("setNextOperation",
                      in_p=[next_operation_description, next_operations_weight])
 
@@ -15196,8 +15215,8 @@ class IProgress(Interface):
             Failed to wait for task completion.
         
         """
-        if not isinstance(timeout, int):
-            raise TypeError("timeout can only be an instance of type int")
+        if not isinstance(timeout, baseinteger):
+            raise TypeError("timeout can only be an instance of type baseinteger")
         self._call("waitForCompletion",
                      in_p=[timeout])
 
@@ -15218,10 +15237,10 @@ class IProgress(Interface):
             Failed to wait for operation completion.
         
         """
-        if not isinstance(operation, int):
-            raise TypeError("operation can only be an instance of type int")
-        if not isinstance(timeout, int):
-            raise TypeError("timeout can only be an instance of type int")
+        if not isinstance(operation, baseinteger):
+            raise TypeError("operation can only be an instance of type baseinteger")
+        if not isinstance(timeout, baseinteger):
+            raise TypeError("timeout can only be an instance of type baseinteger")
         self._call("waitForOperationCompletion",
                      in_p=[operation, timeout])
 
@@ -16271,12 +16290,12 @@ class IMedium(Interface):
         """
         if not isinstance(set_image_id, bool):
             raise TypeError("set_image_id can only be an instance of type bool")
-        if type(image_id) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(image_id, basestring):
+            raise TypeError("image_id can only be an instance of type basestring")
         if not isinstance(set_parent_id, bool):
             raise TypeError("set_parent_id can only be an instance of type bool")
-        if type(parent_id) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(parent_id, basestring):
+            raise TypeError("parent_id can only be an instance of type basestring")
         self._call("setIds",
                      in_p=[set_image_id, image_id, set_parent_id, parent_id])
 
@@ -16339,8 +16358,8 @@ class IMedium(Interface):
             Array of snapshot UUIDs of the given machine using this medium.
 
         """
-        if type(machine_id) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(machine_id, basestring):
+            raise TypeError("machine_id can only be an instance of type basestring")
         snapshot_ids = self._call("getSnapshotIds",
                      in_p=[machine_id])
         return snapshot_ids
@@ -16511,8 +16530,8 @@ inaccessible).
             @a name is @c null or empty.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         value = self._call("getProperty",
                      in_p=[name])
         return value
@@ -16541,10 +16560,10 @@ inaccessible).
             @a name is @c null or empty.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(value, basestring):
+            raise TypeError("value can only be an instance of type basestring")
         self._call("setProperty",
                      in_p=[name, value])
 
@@ -16579,8 +16598,8 @@ inaccessible).
             Values of returned properties.
 
         """
-        if type(names) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(names, basestring):
+            raise TypeError("names can only be an instance of type basestring")
         (return_names, return_values) = self._call("getProperties",
                      in_p=[names])
         return (return_names, return_values)
@@ -16618,13 +16637,15 @@ inaccessible).
         if not isinstance(names, list):
             raise TypeError("names can only be an instance of type list")
         for a in names[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
         if not isinstance(values, list):
             raise TypeError("values can only be an instance of type list")
         for a in values[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
         self._call("setProperties",
                      in_p=[names, values])
 
@@ -16657,8 +16678,8 @@ inaccessible).
             The variant of storage creation operation is not supported. See
         
         """
-        if not isinstance(logical_size, int):
-            raise TypeError("logical_size can only be an instance of type int")
+        if not isinstance(logical_size, baseinteger):
+            raise TypeError("logical_size can only be an instance of type baseinteger")
         if not isinstance(variant, list):
             raise TypeError("variant can only be an instance of type list")
         for a in variant[:10]:
@@ -16994,8 +17015,8 @@ operations are supported. See
             Medium format does not support changing the location.
         
         """
-        if type(location) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(location, basestring):
+            raise TypeError("location can only be an instance of type basestring")
         progress = self._call("setLocation",
                      in_p=[location])
         progress = IProgress(progress)
@@ -17056,8 +17077,8 @@ needs it).
             Medium format does not support resizing.
         
         """
-        if not isinstance(logical_size, int):
-            raise TypeError("logical_size can only be an instance of type int")
+        if not isinstance(logical_size, baseinteger):
+            raise TypeError("logical_size can only be an instance of type baseinteger")
         progress = self._call("resize",
                      in_p=[logical_size])
         progress = IProgress(progress)
@@ -17263,8 +17284,8 @@ class IKeyboard(Interface):
             Could not send scan code to virtual keyboard.
         
         """
-        if not isinstance(scancode, int):
-            raise TypeError("scancode can only be an instance of type int")
+        if not isinstance(scancode, baseinteger):
+            raise TypeError("scancode can only be an instance of type baseinteger")
         self._call("putScancode",
                      in_p=[scancode])
 
@@ -17282,9 +17303,9 @@ class IKeyboard(Interface):
         if not isinstance(scancodes, list):
             raise TypeError("scancodes can only be an instance of type list")
         for a in scancodes[:10]:
-            if not isinstance(a, int):
+            if not isinstance(a, baseinteger):
                 raise TypeError(\
-                        "array can only contain objects of type int")
+                        "array can only contain objects of type baseinteger")
         codes_stored = self._call("putScancodes",
                      in_p=[scancodes])
         return codes_stored
@@ -17430,16 +17451,16 @@ class IMouse(Interface):
             Could not send mouse event to virtual mouse.
         
         """
-        if not isinstance(dx, int):
-            raise TypeError("dx can only be an instance of type int")
-        if not isinstance(dy, int):
-            raise TypeError("dy can only be an instance of type int")
-        if not isinstance(dz, int):
-            raise TypeError("dz can only be an instance of type int")
-        if not isinstance(dw, int):
-            raise TypeError("dw can only be an instance of type int")
-        if not isinstance(button_state, int):
-            raise TypeError("button_state can only be an instance of type int")
+        if not isinstance(dx, baseinteger):
+            raise TypeError("dx can only be an instance of type baseinteger")
+        if not isinstance(dy, baseinteger):
+            raise TypeError("dy can only be an instance of type baseinteger")
+        if not isinstance(dz, baseinteger):
+            raise TypeError("dz can only be an instance of type baseinteger")
+        if not isinstance(dw, baseinteger):
+            raise TypeError("dw can only be an instance of type baseinteger")
+        if not isinstance(button_state, baseinteger):
+            raise TypeError("button_state can only be an instance of type baseinteger")
         self._call("putMouseEvent",
                      in_p=[dx, dy, dz, dw, button_state])
 
@@ -17492,16 +17513,16 @@ class IMouse(Interface):
             Could not send mouse event to virtual mouse.
         
         """
-        if not isinstance(x, int):
-            raise TypeError("x can only be an instance of type int")
-        if not isinstance(y, int):
-            raise TypeError("y can only be an instance of type int")
-        if not isinstance(dz, int):
-            raise TypeError("dz can only be an instance of type int")
-        if not isinstance(dw, int):
-            raise TypeError("dw can only be an instance of type int")
-        if not isinstance(button_state, int):
-            raise TypeError("button_state can only be an instance of type int")
+        if not isinstance(x, baseinteger):
+            raise TypeError("x can only be an instance of type baseinteger")
+        if not isinstance(y, baseinteger):
+            raise TypeError("y can only be an instance of type baseinteger")
+        if not isinstance(dz, baseinteger):
+            raise TypeError("dz can only be an instance of type baseinteger")
+        if not isinstance(dw, baseinteger):
+            raise TypeError("dw can only be an instance of type baseinteger")
+        if not isinstance(button_state, baseinteger):
+            raise TypeError("button_state can only be an instance of type baseinteger")
         self._call("putMouseEventAbsolute",
                      in_p=[x, y, dz, dw, button_state])
 
@@ -17540,16 +17561,16 @@ class IMouse(Interface):
             Could not send event to virtual device.
         
         """
-        if not isinstance(count, int):
-            raise TypeError("count can only be an instance of type int")
+        if not isinstance(count, baseinteger):
+            raise TypeError("count can only be an instance of type baseinteger")
         if not isinstance(contacts, list):
             raise TypeError("contacts can only be an instance of type list")
         for a in contacts[:10]:
-            if not isinstance(a, int):
+            if not isinstance(a, baseinteger):
                 raise TypeError(\
-                        "array can only contain objects of type int")
-        if not isinstance(scan_time, int):
-            raise TypeError("scan_time can only be an instance of type int")
+                        "array can only contain objects of type baseinteger")
+        if not isinstance(scan_time, baseinteger):
+            raise TypeError("scan_time can only be an instance of type baseinteger")
         self._call("putEventMultiTouch",
                      in_p=[count, contacts, scan_time])
 
@@ -17568,12 +17589,12 @@ class IMouse(Interface):
             <link to="#putEventMultiTouch"/>
 
         """
-        if not isinstance(count, int):
-            raise TypeError("count can only be an instance of type int")
-        if type(contacts) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(scan_time, int):
-            raise TypeError("scan_time can only be an instance of type int")
+        if not isinstance(count, baseinteger):
+            raise TypeError("count can only be an instance of type baseinteger")
+        if not isinstance(contacts, basestring):
+            raise TypeError("contacts can only be an instance of type basestring")
+        if not isinstance(scan_time, baseinteger):
+            raise TypeError("scan_time can only be an instance of type baseinteger")
         self._call("putEventMultiTouchString",
                      in_p=[count, contacts, scan_time])
 
@@ -17723,14 +17744,14 @@ class IFramebuffer(Interface):
         in height of type int
 
         """
-        if not isinstance(x, int):
-            raise TypeError("x can only be an instance of type int")
-        if not isinstance(y, int):
-            raise TypeError("y can only be an instance of type int")
-        if not isinstance(width, int):
-            raise TypeError("width can only be an instance of type int")
-        if not isinstance(height, int):
-            raise TypeError("height can only be an instance of type int")
+        if not isinstance(x, baseinteger):
+            raise TypeError("x can only be an instance of type baseinteger")
+        if not isinstance(y, baseinteger):
+            raise TypeError("y can only be an instance of type baseinteger")
+        if not isinstance(width, baseinteger):
+            raise TypeError("width can only be an instance of type baseinteger")
+        if not isinstance(height, baseinteger):
+            raise TypeError("height can only be an instance of type baseinteger")
         self._call("notifyUpdate",
                      in_p=[x, y, width, height])
 
@@ -17840,20 +17861,20 @@ class IFramebuffer(Interface):
             <link to="IDisplay::resizeCompleted"/>.
 
         """
-        if not isinstance(screen_id, int):
-            raise TypeError("screen_id can only be an instance of type int")
-        if not isinstance(pixel_format, int):
-            raise TypeError("pixel_format can only be an instance of type int")
-        if type(vram) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(bits_per_pixel, int):
-            raise TypeError("bits_per_pixel can only be an instance of type int")
-        if not isinstance(bytes_per_line, int):
-            raise TypeError("bytes_per_line can only be an instance of type int")
-        if not isinstance(width, int):
-            raise TypeError("width can only be an instance of type int")
-        if not isinstance(height, int):
-            raise TypeError("height can only be an instance of type int")
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
+        if not isinstance(pixel_format, baseinteger):
+            raise TypeError("pixel_format can only be an instance of type baseinteger")
+        if not isinstance(vram, basestring):
+            raise TypeError("vram can only be an instance of type basestring")
+        if not isinstance(bits_per_pixel, baseinteger):
+            raise TypeError("bits_per_pixel can only be an instance of type baseinteger")
+        if not isinstance(bytes_per_line, baseinteger):
+            raise TypeError("bytes_per_line can only be an instance of type baseinteger")
+        if not isinstance(width, baseinteger):
+            raise TypeError("width can only be an instance of type baseinteger")
+        if not isinstance(height, baseinteger):
+            raise TypeError("height can only be an instance of type baseinteger")
         finished = self._call("requestResize",
                      in_p=[screen_id, pixel_format, vram, bits_per_pixel, bytes_per_line, width, height])
         return finished
@@ -17876,12 +17897,12 @@ class IFramebuffer(Interface):
         return supported of type bool
 
         """
-        if not isinstance(width, int):
-            raise TypeError("width can only be an instance of type int")
-        if not isinstance(height, int):
-            raise TypeError("height can only be an instance of type int")
-        if not isinstance(bpp, int):
-            raise TypeError("bpp can only be an instance of type int")
+        if not isinstance(width, baseinteger):
+            raise TypeError("width can only be an instance of type baseinteger")
+        if not isinstance(height, baseinteger):
+            raise TypeError("height can only be an instance of type baseinteger")
+        if not isinstance(bpp, baseinteger):
+            raise TypeError("bpp can only be an instance of type baseinteger")
         supported = self._call("videoModeSupported",
                      in_p=[width, height, bpp])
         return supported
@@ -17916,10 +17937,10 @@ class IFramebuffer(Interface):
             Number of elements copied to the @a rectangles array.
 
         """
-        if type(rectangles) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(count, int):
-            raise TypeError("count can only be an instance of type int")
+        if not isinstance(rectangles, basestring):
+            raise TypeError("rectangles can only be an instance of type basestring")
+        if not isinstance(count, baseinteger):
+            raise TypeError("count can only be an instance of type baseinteger")
         count_copied = self._call("getVisibleRegion",
                      in_p=[rectangles, count])
         return count_copied
@@ -17950,10 +17971,10 @@ class IFramebuffer(Interface):
             Number of @c RTRECT elements in the @a rectangles array.
 
         """
-        if type(rectangles) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(count, int):
-            raise TypeError("count can only be an instance of type int")
+        if not isinstance(rectangles, basestring):
+            raise TypeError("rectangles can only be an instance of type basestring")
+        if not isinstance(count, baseinteger):
+            raise TypeError("count can only be an instance of type baseinteger")
         self._call("setVisibleRegion",
                      in_p=[rectangles, count])
 
@@ -17970,8 +17991,8 @@ class IFramebuffer(Interface):
             Pointer to VBOXVHWACMD containing the command to execute.
 
         """
-        if type(command) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(command, basestring):
+            raise TypeError("command can only be an instance of type basestring")
         self._call("processVHWACommand",
                      in_p=[command])
 
@@ -17985,10 +18006,10 @@ class IFramebuffer(Interface):
             event-specific data, depends on the supplied event type
 
         """
-        if not isinstance(type_p, int):
-            raise TypeError("type_p can only be an instance of type int")
-        if type(data) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(type_p, baseinteger):
+            raise TypeError("type_p can only be an instance of type baseinteger")
+        if not isinstance(data, basestring):
+            raise TypeError("data can only be an instance of type basestring")
         self._call("notify3DEvent",
                      in_p=[type_p, data])
 
@@ -18060,10 +18081,10 @@ class IFramebufferOverlay(IFramebuffer):
         in y of type int
 
         """
-        if not isinstance(x, int):
-            raise TypeError("x can only be an instance of type int")
-        if not isinstance(y, int):
-            raise TypeError("y can only be an instance of type int")
+        if not isinstance(x, baseinteger):
+            raise TypeError("x can only be an instance of type baseinteger")
+        if not isinstance(y, baseinteger):
+            raise TypeError("y can only be an instance of type baseinteger")
         self._call("move",
                      in_p=[x, y])
 
@@ -18099,8 +18120,8 @@ class IDisplay(Interface):
         out y_origin of type int
 
         """
-        if not isinstance(screen_id, int):
-            raise TypeError("screen_id can only be an instance of type int")
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
         (width, height, bits_per_pixel, x_origin, y_origin) = self._call("getScreenResolution",
                      in_p=[screen_id])
         return (width, height, bits_per_pixel, x_origin, y_origin)
@@ -18113,8 +18134,8 @@ class IDisplay(Interface):
         in framebuffer of type IFramebuffer
 
         """
-        if not isinstance(screen_id, int):
-            raise TypeError("screen_id can only be an instance of type int")
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
         if not isinstance(framebuffer, IFramebuffer):
             raise TypeError("framebuffer can only be an instance of type IFramebuffer")
         self._call("setFramebuffer",
@@ -18132,8 +18153,8 @@ class IDisplay(Interface):
         out y_origin of type int
 
         """
-        if not isinstance(screen_id, int):
-            raise TypeError("screen_id can only be an instance of type int")
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
         (framebuffer, x_origin, y_origin) = self._call("getFramebuffer",
                      in_p=[screen_id])
         framebuffer = IFramebuffer(framebuffer)
@@ -18184,22 +18205,22 @@ class IDisplay(Interface):
             The @a display is not associated with any monitor.
         
         """
-        if not isinstance(display, int):
-            raise TypeError("display can only be an instance of type int")
+        if not isinstance(display, baseinteger):
+            raise TypeError("display can only be an instance of type baseinteger")
         if not isinstance(enabled, bool):
             raise TypeError("enabled can only be an instance of type bool")
         if not isinstance(change_origin, bool):
             raise TypeError("change_origin can only be an instance of type bool")
-        if not isinstance(origin_x, int):
-            raise TypeError("origin_x can only be an instance of type int")
-        if not isinstance(origin_y, int):
-            raise TypeError("origin_y can only be an instance of type int")
-        if not isinstance(width, int):
-            raise TypeError("width can only be an instance of type int")
-        if not isinstance(height, int):
-            raise TypeError("height can only be an instance of type int")
-        if not isinstance(bits_per_pixel, int):
-            raise TypeError("bits_per_pixel can only be an instance of type int")
+        if not isinstance(origin_x, baseinteger):
+            raise TypeError("origin_x can only be an instance of type baseinteger")
+        if not isinstance(origin_y, baseinteger):
+            raise TypeError("origin_y can only be an instance of type baseinteger")
+        if not isinstance(width, baseinteger):
+            raise TypeError("width can only be an instance of type baseinteger")
+        if not isinstance(height, baseinteger):
+            raise TypeError("height can only be an instance of type baseinteger")
+        if not isinstance(bits_per_pixel, baseinteger):
+            raise TypeError("bits_per_pixel can only be an instance of type baseinteger")
         self._call("setVideoModeHint",
                      in_p=[display, enabled, change_origin, origin_x, origin_y, width, height, bits_per_pixel])
 
@@ -18244,14 +18265,14 @@ class IDisplay(Interface):
             Could not take a screenshot.
         
         """
-        if not isinstance(screen_id, int):
-            raise TypeError("screen_id can only be an instance of type int")
-        if type(address) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(width, int):
-            raise TypeError("width can only be an instance of type int")
-        if not isinstance(height, int):
-            raise TypeError("height can only be an instance of type int")
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
+        if not isinstance(address, basestring):
+            raise TypeError("address can only be an instance of type basestring")
+        if not isinstance(width, baseinteger):
+            raise TypeError("width can only be an instance of type baseinteger")
+        if not isinstance(height, baseinteger):
+            raise TypeError("height can only be an instance of type baseinteger")
         self._call("takeScreenShot",
                      in_p=[screen_id, address, width, height])
 
@@ -18283,12 +18304,12 @@ class IDisplay(Interface):
             Could not take a screenshot.
         
         """
-        if not isinstance(screen_id, int):
-            raise TypeError("screen_id can only be an instance of type int")
-        if not isinstance(width, int):
-            raise TypeError("width can only be an instance of type int")
-        if not isinstance(height, int):
-            raise TypeError("height can only be an instance of type int")
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
+        if not isinstance(width, baseinteger):
+            raise TypeError("width can only be an instance of type baseinteger")
+        if not isinstance(height, baseinteger):
+            raise TypeError("height can only be an instance of type baseinteger")
         screen_data = self._call("takeScreenShotToArray",
                      in_p=[screen_id, width, height])
         return screen_data
@@ -18316,12 +18337,12 @@ class IDisplay(Interface):
             Could not take a screenshot.
         
         """
-        if not isinstance(screen_id, int):
-            raise TypeError("screen_id can only be an instance of type int")
-        if not isinstance(width, int):
-            raise TypeError("width can only be an instance of type int")
-        if not isinstance(height, int):
-            raise TypeError("height can only be an instance of type int")
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
+        if not isinstance(width, baseinteger):
+            raise TypeError("width can only be an instance of type baseinteger")
+        if not isinstance(height, baseinteger):
+            raise TypeError("height can only be an instance of type baseinteger")
         screen_data = self._call("takeScreenShotPNGToArray",
                      in_p=[screen_id, width, height])
         return screen_data
@@ -18355,18 +18376,18 @@ class IDisplay(Interface):
             Could not draw to screen.
         
         """
-        if not isinstance(screen_id, int):
-            raise TypeError("screen_id can only be an instance of type int")
-        if type(address) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(x, int):
-            raise TypeError("x can only be an instance of type int")
-        if not isinstance(y, int):
-            raise TypeError("y can only be an instance of type int")
-        if not isinstance(width, int):
-            raise TypeError("width can only be an instance of type int")
-        if not isinstance(height, int):
-            raise TypeError("height can only be an instance of type int")
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
+        if not isinstance(address, basestring):
+            raise TypeError("address can only be an instance of type basestring")
+        if not isinstance(x, baseinteger):
+            raise TypeError("x can only be an instance of type baseinteger")
+        if not isinstance(y, baseinteger):
+            raise TypeError("y can only be an instance of type baseinteger")
+        if not isinstance(width, baseinteger):
+            raise TypeError("width can only be an instance of type baseinteger")
+        if not isinstance(height, baseinteger):
+            raise TypeError("height can only be an instance of type baseinteger")
         self._call("drawToScreen",
                      in_p=[screen_id, address, x, y, width, height])
 
@@ -18389,8 +18410,8 @@ class IDisplay(Interface):
             Operation only valid for external frame buffers.
         
         """
-        if not isinstance(screen_id, int):
-            raise TypeError("screen_id can only be an instance of type int")
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
         self._call("resizeCompleted",
                      in_p=[screen_id])
 
@@ -18401,8 +18422,8 @@ class IDisplay(Interface):
             Pointer to VBOXVHWACMD containing the completed command.
 
         """
-        if type(command) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(command, basestring):
+            raise TypeError("command can only be an instance of type basestring")
         self._call("completeVHWACommand",
                      in_p=[command])
 
@@ -18428,16 +18449,16 @@ class IDisplay(Interface):
             The specified viewport data is invalid.
         
         """
-        if not isinstance(screen_id, int):
-            raise TypeError("screen_id can only be an instance of type int")
-        if not isinstance(x, int):
-            raise TypeError("x can only be an instance of type int")
-        if not isinstance(y, int):
-            raise TypeError("y can only be an instance of type int")
-        if not isinstance(width, int):
-            raise TypeError("width can only be an instance of type int")
-        if not isinstance(height, int):
-            raise TypeError("height can only be an instance of type int")
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
+        if not isinstance(x, baseinteger):
+            raise TypeError("x can only be an instance of type baseinteger")
+        if not isinstance(y, baseinteger):
+            raise TypeError("y can only be an instance of type baseinteger")
+        if not isinstance(width, baseinteger):
+            raise TypeError("width can only be an instance of type baseinteger")
+        if not isinstance(height, baseinteger):
+            raise TypeError("height can only be an instance of type baseinteger")
         self._call("viewportChanged",
                      in_p=[screen_id, x, y, width, height])
 
@@ -18728,8 +18749,8 @@ class INetworkAdapter(Interface):
             @a name is @c null or empty.
         
         """
-        if type(key) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(key, basestring):
+            raise TypeError("key can only be an instance of type basestring")
         value = self._call("getProperty",
                      in_p=[key])
         return value
@@ -18750,10 +18771,10 @@ class INetworkAdapter(Interface):
             @a name is @c null or empty.
         
         """
-        if type(key) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(key, basestring):
+            raise TypeError("key can only be an instance of type basestring")
+        if not isinstance(value, basestring):
+            raise TypeError("value can only be an instance of type basestring")
         self._call("setProperty",
                      in_p=[key, value])
 
@@ -18782,8 +18803,8 @@ class INetworkAdapter(Interface):
             Values of returned properties.
 
         """
-        if type(names) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(names, basestring):
+            raise TypeError("names can only be an instance of type basestring")
         (return_names, return_values) = self._call("getProperties",
                      in_p=[names])
         return (return_names, return_values)
@@ -19030,10 +19051,10 @@ class IMachineDebugger(Interface):
             Reserved for future compression method indicator.
 
         """
-        if type(filename) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(compression) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(filename, basestring):
+            raise TypeError("filename can only be an instance of type basestring")
+        if not isinstance(compression, basestring):
+            raise TypeError("compression can only be an instance of type basestring")
         self._call("dumpGuestCore",
                      in_p=[filename, compression])
 
@@ -19050,10 +19071,10 @@ class IMachineDebugger(Interface):
             Reserved for future compression method indicator.
 
         """
-        if type(filename) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(compression) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(filename, basestring):
+            raise TypeError("filename can only be an instance of type basestring")
+        if not isinstance(compression, basestring):
+            raise TypeError("compression can only be an instance of type basestring")
         self._call("dumpHostProcessCore",
                      in_p=[filename, compression])
 
@@ -19073,10 +19094,10 @@ class IMachineDebugger(Interface):
             The into string.
 
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(args) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(args, basestring):
+            raise TypeError("args can only be an instance of type basestring")
         info = self._call("info",
                      in_p=[name, args])
         return info
@@ -19095,8 +19116,8 @@ class IMachineDebugger(Interface):
             release logger, prefix the string with "release:".
 
         """
-        if type(settings) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(settings, basestring):
+            raise TypeError("settings can only be an instance of type basestring")
         self._call("modifyLogGroups",
                      in_p=[settings])
 
@@ -19108,8 +19129,8 @@ class IMachineDebugger(Interface):
             release logger, prefix the string with "release:".
 
         """
-        if type(settings) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(settings, basestring):
+            raise TypeError("settings can only be an instance of type basestring")
         self._call("modifyLogFlags",
                      in_p=[settings])
 
@@ -19121,8 +19142,8 @@ class IMachineDebugger(Interface):
             release logger, prefix the string with "release:".
 
         """
-        if type(settings) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(settings, basestring):
+            raise TypeError("settings can only be an instance of type basestring")
         self._call("modifyLogDestinations",
                      in_p=[settings])
 
@@ -19142,10 +19163,10 @@ class IMachineDebugger(Interface):
             The bytes read.
 
         """
-        if not isinstance(address, int):
-            raise TypeError("address can only be an instance of type int")
-        if not isinstance(size, int):
-            raise TypeError("size can only be an instance of type int")
+        if not isinstance(address, baseinteger):
+            raise TypeError("address can only be an instance of type baseinteger")
+        if not isinstance(size, baseinteger):
+            raise TypeError("size can only be an instance of type baseinteger")
         bytes_p = self._call("readPhysicalMemory",
                      in_p=[address, size])
         return bytes_p
@@ -19166,15 +19187,16 @@ class IMachineDebugger(Interface):
             The bytes to write.
 
         """
-        if not isinstance(address, int):
-            raise TypeError("address can only be an instance of type int")
-        if not isinstance(size, int):
-            raise TypeError("size can only be an instance of type int")
+        if not isinstance(address, baseinteger):
+            raise TypeError("address can only be an instance of type baseinteger")
+        if not isinstance(size, baseinteger):
+            raise TypeError("size can only be an instance of type baseinteger")
         if not isinstance(bytes_p, list):
             raise TypeError("bytes_p can only be an instance of type list")
         for a in bytes_p[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
         self._call("writePhysicalMemory",
                      in_p=[address, size, bytes_p])
 
@@ -19197,12 +19219,12 @@ class IMachineDebugger(Interface):
             The bytes read.
 
         """
-        if not isinstance(cpu_id, int):
-            raise TypeError("cpu_id can only be an instance of type int")
-        if not isinstance(address, int):
-            raise TypeError("address can only be an instance of type int")
-        if not isinstance(size, int):
-            raise TypeError("size can only be an instance of type int")
+        if not isinstance(cpu_id, baseinteger):
+            raise TypeError("cpu_id can only be an instance of type baseinteger")
+        if not isinstance(address, baseinteger):
+            raise TypeError("address can only be an instance of type baseinteger")
+        if not isinstance(size, baseinteger):
+            raise TypeError("size can only be an instance of type baseinteger")
         bytes_p = self._call("readVirtualMemory",
                      in_p=[cpu_id, address, size])
         return bytes_p
@@ -19226,17 +19248,18 @@ class IMachineDebugger(Interface):
             The bytes to write.
 
         """
-        if not isinstance(cpu_id, int):
-            raise TypeError("cpu_id can only be an instance of type int")
-        if not isinstance(address, int):
-            raise TypeError("address can only be an instance of type int")
-        if not isinstance(size, int):
-            raise TypeError("size can only be an instance of type int")
+        if not isinstance(cpu_id, baseinteger):
+            raise TypeError("cpu_id can only be an instance of type baseinteger")
+        if not isinstance(address, baseinteger):
+            raise TypeError("address can only be an instance of type baseinteger")
+        if not isinstance(size, baseinteger):
+            raise TypeError("size can only be an instance of type baseinteger")
         if not isinstance(bytes_p, list):
             raise TypeError("bytes_p can only be an instance of type list")
         for a in bytes_p[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
         self._call("writeVirtualMemory",
                      in_p=[cpu_id, address, size, bytes_p])
 
@@ -19270,10 +19293,10 @@ class IMachineDebugger(Interface):
             but other format may be used for floating point registers (TBD).
 
         """
-        if not isinstance(cpu_id, int):
-            raise TypeError("cpu_id can only be an instance of type int")
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(cpu_id, baseinteger):
+            raise TypeError("cpu_id can only be an instance of type baseinteger")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         value = self._call("getRegister",
                      in_p=[cpu_id, name])
         return value
@@ -19295,8 +19318,8 @@ class IMachineDebugger(Interface):
             register was returned by <link to="IMachineDebugger::getRegister"/>.
 
         """
-        if not isinstance(cpu_id, int):
-            raise TypeError("cpu_id can only be an instance of type int")
+        if not isinstance(cpu_id, baseinteger):
+            raise TypeError("cpu_id can only be an instance of type baseinteger")
         (names, values) = self._call("getRegisters",
                      in_p=[cpu_id])
         return (names, values)
@@ -19319,12 +19342,12 @@ class IMachineDebugger(Interface):
             the getters.
 
         """
-        if not isinstance(cpu_id, int):
-            raise TypeError("cpu_id can only be an instance of type int")
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(cpu_id, baseinteger):
+            raise TypeError("cpu_id can only be an instance of type baseinteger")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(value, basestring):
+            raise TypeError("value can only be an instance of type basestring")
         self._call("setRegister",
                      in_p=[cpu_id, name, value])
 
@@ -19346,18 +19369,20 @@ class IMachineDebugger(Interface):
             guidelines.
 
         """
-        if not isinstance(cpu_id, int):
-            raise TypeError("cpu_id can only be an instance of type int")
+        if not isinstance(cpu_id, baseinteger):
+            raise TypeError("cpu_id can only be an instance of type baseinteger")
         if not isinstance(names, list):
             raise TypeError("names can only be an instance of type list")
         for a in names[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
         if not isinstance(values, list):
             raise TypeError("values can only be an instance of type list")
         for a in values[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
         self._call("setRegisters",
                      in_p=[cpu_id, names, values])
 
@@ -19374,8 +19399,8 @@ class IMachineDebugger(Interface):
             String containing the formatted stack dump.
 
         """
-        if not isinstance(cpu_id, int):
-            raise TypeError("cpu_id can only be an instance of type int")
+        if not isinstance(cpu_id, baseinteger):
+            raise TypeError("cpu_id can only be an instance of type baseinteger")
         stack = self._call("dumpGuestStack",
                      in_p=[cpu_id])
         return stack
@@ -19387,8 +19412,8 @@ class IMachineDebugger(Interface):
             The selection pattern. A bit similar to filename globbing.
 
         """
-        if type(pattern) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(pattern, basestring):
+            raise TypeError("pattern can only be an instance of type basestring")
         self._call("resetStats",
                      in_p=[pattern])
 
@@ -19399,8 +19424,8 @@ class IMachineDebugger(Interface):
             The selection pattern. A bit similar to filename globbing.
 
         """
-        if type(pattern) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(pattern, basestring):
+            raise TypeError("pattern can only be an instance of type basestring")
         self._call("dumpStats",
                      in_p=[pattern])
 
@@ -19417,8 +19442,8 @@ class IMachineDebugger(Interface):
             The XML document containing the statistics.
 
         """
-        if type(pattern) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(pattern, basestring):
+            raise TypeError("pattern can only be an instance of type basestring")
         if not isinstance(with_descriptions, bool):
             raise TypeError("with_descriptions can only be an instance of type bool")
         stats = self._call("getStats",
@@ -19742,8 +19767,8 @@ class IUSBDeviceFilters(Interface):
             The virtual machine is not mutable.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         filter_p = self._call("createDeviceFilter",
                      in_p=[name])
         filter_p = IUSBDeviceFilter(filter_p)
@@ -19783,8 +19808,8 @@ class IUSBDeviceFilters(Interface):
             USB device filter already in list.
         
         """
-        if not isinstance(position, int):
-            raise TypeError("position can only be an instance of type int")
+        if not isinstance(position, baseinteger):
+            raise TypeError("position can only be an instance of type baseinteger")
         if not isinstance(filter_p, IUSBDeviceFilter):
             raise TypeError("filter_p can only be an instance of type IUSBDeviceFilter")
         self._call("insertDeviceFilter",
@@ -19813,8 +19838,8 @@ class IUSBDeviceFilters(Interface):
             USB device filter list empty or invalid @a position.
         
         """
-        if not isinstance(position, int):
-            raise TypeError("position can only be an instance of type int")
+        if not isinstance(position, baseinteger):
+            raise TypeError("position can only be an instance of type baseinteger")
         filter_p = self._call("removeDeviceFilter",
                      in_p=[position])
         filter_p = IUSBDeviceFilter(filter_p)
@@ -20469,10 +20494,10 @@ class IVRDEServer(Interface):
             Value to assign to the key.
 
         """
-        if type(key) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(key, basestring):
+            raise TypeError("key can only be an instance of type basestring")
+        if not isinstance(value, basestring):
+            raise TypeError("value can only be an instance of type basestring")
         self._call("setVRDEProperty",
                      in_p=[key, value])
 
@@ -20489,8 +20514,8 @@ class IVRDEServer(Interface):
             Value of the requested key.
 
         """
-        if type(key) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(key, basestring):
+            raise TypeError("key can only be an instance of type basestring")
         value = self._call("getVRDEProperty",
                      in_p=[key])
         return value
@@ -20876,8 +20901,8 @@ class IInternalSessionControl(Interface):
             Flag whether the CPU was added or removed
 
         """
-        if not isinstance(cpu, int):
-            raise TypeError("cpu can only be an instance of type int")
+        if not isinstance(cpu, baseinteger):
+            raise TypeError("cpu can only be an instance of type baseinteger")
         if not isinstance(add, bool):
             raise TypeError("add can only be an instance of type bool")
         self._call("onCPUChange",
@@ -20890,8 +20915,8 @@ class IInternalSessionControl(Interface):
             The new CPU execution cap value. (1-100)
 
         """
-        if not isinstance(execution_cap, int):
-            raise TypeError("execution_cap can only be an instance of type int")
+        if not isinstance(execution_cap, baseinteger):
+            raise TypeError("execution_cap can only be an instance of type baseinteger")
         self._call("onCPUExecutionCapChange",
                      in_p=[execution_cap])
 
@@ -20980,8 +21005,8 @@ class IInternalSessionControl(Interface):
             raise TypeError("device can only be an instance of type IUSBDevice")
         if not isinstance(error, IVirtualBoxErrorInfo):
             raise TypeError("error can only be an instance of type IVirtualBoxErrorInfo")
-        if not isinstance(masked_interfaces, int):
-            raise TypeError("masked_interfaces can only be an instance of type int")
+        if not isinstance(masked_interfaces, baseinteger):
+            raise TypeError("masked_interfaces can only be an instance of type baseinteger")
         self._call("onUSBDeviceAttach",
                      in_p=[device, error, masked_interfaces])
 
@@ -21003,8 +21028,8 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        if type(id_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(id_p, basestring):
+            raise TypeError("id_p can only be an instance of type basestring")
         if not isinstance(error, IVirtualBoxErrorInfo):
             raise TypeError("error can only be an instance of type IVirtualBoxErrorInfo")
         self._call("onUSBDeviceDetach",
@@ -21071,12 +21096,12 @@ class IInternalSessionControl(Interface):
             Session type is not direct.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(value) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(flags) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(value, basestring):
+            raise TypeError("value can only be an instance of type basestring")
+        if not isinstance(flags, basestring):
+            raise TypeError("flags can only be an instance of type basestring")
         if not isinstance(is_setter, bool):
             raise TypeError("is_setter can only be an instance of type bool")
         (ret_value, ret_timestamp, ret_flags) = self._call("accessGuestProperty",
@@ -21114,8 +21139,8 @@ class IInternalSessionControl(Interface):
             Session type is not direct.
         
         """
-        if type(patterns) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(patterns, basestring):
+            raise TypeError("patterns can only be an instance of type basestring")
         (keys, values, timestamps, flags) = self._call("enumerateGuestProperties",
                      in_p=[patterns])
         return (keys, values, timestamps, flags)
@@ -21147,10 +21172,10 @@ class IInternalSessionControl(Interface):
         """
         if not isinstance(medium_attachment, IMediumAttachment):
             raise TypeError("medium_attachment can only be an instance of type IMediumAttachment")
-        if not isinstance(source_idx, int):
-            raise TypeError("source_idx can only be an instance of type int")
-        if not isinstance(target_idx, int):
-            raise TypeError("target_idx can only be an instance of type int")
+        if not isinstance(source_idx, baseinteger):
+            raise TypeError("source_idx can only be an instance of type baseinteger")
+        if not isinstance(target_idx, baseinteger):
+            raise TypeError("target_idx can only be an instance of type baseinteger")
         if not isinstance(progress, IProgress):
             raise TypeError("progress can only be an instance of type IProgress")
         self._call("onlineMergeMedium",
@@ -21732,8 +21757,9 @@ class IPerformanceCollector(Interface):
         if not isinstance(metric_names, list):
             raise TypeError("metric_names can only be an instance of type list")
         for a in metric_names[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
         if not isinstance(objects, list):
             raise TypeError("objects can only be an instance of type list")
         for a in objects[:10]:
@@ -21778,18 +21804,19 @@ class IPerformanceCollector(Interface):
         if not isinstance(metric_names, list):
             raise TypeError("metric_names can only be an instance of type list")
         for a in metric_names[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
         if not isinstance(objects, list):
             raise TypeError("objects can only be an instance of type list")
         for a in objects[:10]:
             if not isinstance(a, Interface):
                 raise TypeError(\
                         "array can only contain objects of type Interface")
-        if not isinstance(period, int):
-            raise TypeError("period can only be an instance of type int")
-        if not isinstance(count, int):
-            raise TypeError("count can only be an instance of type int")
+        if not isinstance(period, baseinteger):
+            raise TypeError("period can only be an instance of type baseinteger")
+        if not isinstance(count, baseinteger):
+            raise TypeError("count can only be an instance of type baseinteger")
         affected_metrics = self._call("setupMetrics",
                      in_p=[metric_names, objects, period, count])
         affected_metrics = [IPerformanceMetric(a) for a in affected_metrics]
@@ -21820,8 +21847,9 @@ class IPerformanceCollector(Interface):
         if not isinstance(metric_names, list):
             raise TypeError("metric_names can only be an instance of type list")
         for a in metric_names[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
         if not isinstance(objects, list):
             raise TypeError("objects can only be an instance of type list")
         for a in objects[:10]:
@@ -21858,8 +21886,9 @@ class IPerformanceCollector(Interface):
         if not isinstance(metric_names, list):
             raise TypeError("metric_names can only be an instance of type list")
         for a in metric_names[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
         if not isinstance(objects, list):
             raise TypeError("objects can only be an instance of type list")
         for a in objects[:10]:
@@ -21949,8 +21978,9 @@ class IPerformanceCollector(Interface):
         if not isinstance(metric_names, list):
             raise TypeError("metric_names can only be an instance of type list")
         for a in metric_names[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
         if not isinstance(objects, list):
             raise TypeError("objects can only be an instance of type list")
         for a in objects[:10]:
@@ -22136,16 +22166,16 @@ class INATEngine(Interface):
             establishing a new TCP connection.
 
         """
-        if not isinstance(mtu, int):
-            raise TypeError("mtu can only be an instance of type int")
-        if not isinstance(sock_snd, int):
-            raise TypeError("sock_snd can only be an instance of type int")
-        if not isinstance(sock_rcv, int):
-            raise TypeError("sock_rcv can only be an instance of type int")
-        if not isinstance(tcp_wnd_snd, int):
-            raise TypeError("tcp_wnd_snd can only be an instance of type int")
-        if not isinstance(tcp_wnd_rcv, int):
-            raise TypeError("tcp_wnd_rcv can only be an instance of type int")
+        if not isinstance(mtu, baseinteger):
+            raise TypeError("mtu can only be an instance of type baseinteger")
+        if not isinstance(sock_snd, baseinteger):
+            raise TypeError("sock_snd can only be an instance of type baseinteger")
+        if not isinstance(sock_rcv, baseinteger):
+            raise TypeError("sock_rcv can only be an instance of type baseinteger")
+        if not isinstance(tcp_wnd_snd, baseinteger):
+            raise TypeError("tcp_wnd_snd can only be an instance of type baseinteger")
+        if not isinstance(tcp_wnd_rcv, baseinteger):
+            raise TypeError("tcp_wnd_rcv can only be an instance of type baseinteger")
         self._call("setNetworkSettings",
                      in_p=[mtu, sock_snd, sock_rcv, tcp_wnd_snd, tcp_wnd_rcv])
 
@@ -22193,18 +22223,18 @@ class INATEngine(Interface):
             The port number to forward.
 
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         if not isinstance(proto, NATProtocol):
             raise TypeError("proto can only be an instance of type NATProtocol")
-        if type(host_ip) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(host_port, int):
-            raise TypeError("host_port can only be an instance of type int")
-        if type(guest_ip) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if not isinstance(guest_port, int):
-            raise TypeError("guest_port can only be an instance of type int")
+        if not isinstance(host_ip, basestring):
+            raise TypeError("host_ip can only be an instance of type basestring")
+        if not isinstance(host_port, baseinteger):
+            raise TypeError("host_port can only be an instance of type baseinteger")
+        if not isinstance(guest_ip, basestring):
+            raise TypeError("guest_ip can only be an instance of type basestring")
+        if not isinstance(guest_port, baseinteger):
+            raise TypeError("guest_port can only be an instance of type baseinteger")
         self._call("addRedirect",
                      in_p=[name, proto, host_ip, host_port, guest_ip, guest_port])
 
@@ -22215,8 +22245,8 @@ class INATEngine(Interface):
             The name of the rule to delete.
 
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         self._call("removeRedirect",
                      in_p=[name])
 
@@ -22396,12 +22426,12 @@ class IExtPackBase(Interface):
             The license text.
 
         """
-        if type(preferred_locale) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(preferred_language) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
-        if type(format_p) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(preferred_locale, basestring):
+            raise TypeError("preferred_locale can only be an instance of type basestring")
+        if not isinstance(preferred_language, basestring):
+            raise TypeError("preferred_language can only be an instance of type basestring")
+        if not isinstance(format_p, basestring):
+            raise TypeError("format_p can only be an instance of type basestring")
         license_text = self._call("queryLicense",
                      in_p=[preferred_locale, preferred_language, format_p])
         return license_text
@@ -22427,8 +22457,8 @@ class IExtPack(IExtPackBase):
             The queried interface.
 
         """
-        if type(obj_uuid) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(obj_uuid, basestring):
+            raise TypeError("obj_uuid can only be an instance of type basestring")
         return_interface = self._call("queryObject",
                      in_p=[obj_uuid])
         return_interface = Interface(return_interface)
@@ -22468,8 +22498,8 @@ class IExtPackFile(IExtPackBase):
         """
         if not isinstance(replace, bool):
             raise TypeError("replace can only be an instance of type bool")
-        if type(display_info) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(display_info, basestring):
+            raise TypeError("display_info can only be an instance of type basestring")
         progess = self._call("install",
                      in_p=[replace, display_info])
         progess = IProgress(progess)
@@ -22507,8 +22537,8 @@ class IExtPackManager(Interface):
             No extension pack matching @a name was found.
         
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         return_data = self._call("find",
                      in_p=[name])
         return_data = IExtPack(return_data)
@@ -22526,8 +22556,8 @@ class IExtPackManager(Interface):
             The interface of the extension pack file object.
 
         """
-        if type(path) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(path, basestring):
+            raise TypeError("path can only be an instance of type basestring")
         file_p = self._call("openExtPackFile",
                      in_p=[path])
         file_p = IExtPackFile(file_p)
@@ -22550,12 +22580,12 @@ class IExtPackManager(Interface):
             Progress object for the operation.
 
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         if not isinstance(forced_removal, bool):
             raise TypeError("forced_removal can only be an instance of type bool")
-        if type(display_info) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(display_info, basestring):
+            raise TypeError("display_info can only be an instance of type basestring")
         progess = self._call("uninstall",
                      in_p=[name, forced_removal, display_info])
         progess = IProgress(progess)
@@ -22580,8 +22610,8 @@ class IExtPackManager(Interface):
             Array containing the plug-in modules (full paths).
 
         """
-        if type(frontend_name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(frontend_name, basestring):
+            raise TypeError("frontend_name can only be an instance of type basestring")
         plug_in_modules = self._call("queryAllPlugInsForFrontend",
                      in_p=[frontend_name])
         return plug_in_modules
@@ -22596,8 +22626,8 @@ class IExtPackManager(Interface):
             Is the given extension pack loaded and usable.
 
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         usable = self._call("isExtPackUsable",
                      in_p=[name])
         return usable
@@ -22680,12 +22710,12 @@ class IBandwidthControl(Interface):
             entities attached to this group during one second.
 
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         if not isinstance(type_p, BandwidthGroupType):
             raise TypeError("type_p can only be an instance of type BandwidthGroupType")
-        if not isinstance(max_bytes_per_sec, int):
-            raise TypeError("max_bytes_per_sec can only be an instance of type int")
+        if not isinstance(max_bytes_per_sec, baseinteger):
+            raise TypeError("max_bytes_per_sec can only be an instance of type baseinteger")
         self._call("createBandwidthGroup",
                      in_p=[name, type_p, max_bytes_per_sec])
 
@@ -22696,8 +22726,8 @@ class IBandwidthControl(Interface):
             Name of the bandwidth group to delete.
 
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         self._call("deleteBandwidthGroup",
                      in_p=[name])
 
@@ -22711,8 +22741,8 @@ class IBandwidthControl(Interface):
             Where to store the bandwidth group on success.
 
         """
-        if type(name) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         bandwidth_group = self._call("getBandwidthGroup",
                      in_p=[name])
         bandwidth_group = IBandwidthGroup(bandwidth_group)
@@ -22898,8 +22928,8 @@ class IEventSource(Interface):
         """
         if not isinstance(event, IEvent):
             raise TypeError("event can only be an instance of type IEvent")
-        if not isinstance(timeout, int):
-            raise TypeError("timeout can only be an instance of type int")
+        if not isinstance(timeout, baseinteger):
+            raise TypeError("timeout can only be an instance of type baseinteger")
         result = self._call("fireEvent",
                      in_p=[event, timeout])
         return result
@@ -22925,8 +22955,8 @@ class IEventSource(Interface):
         """
         if not isinstance(listener, IEventListener):
             raise TypeError("listener can only be an instance of type IEventListener")
-        if not isinstance(timeout, int):
-            raise TypeError("timeout can only be an instance of type int")
+        if not isinstance(timeout, baseinteger):
+            raise TypeError("timeout can only be an instance of type baseinteger")
         event = self._call("getEvent",
                      in_p=[listener, timeout])
         event = IEvent(event)
@@ -23104,8 +23134,8 @@ class IEvent(Interface):
             If this event was processed before timeout.
 
         """
-        if not isinstance(timeout, int):
-            raise TypeError("timeout can only be an instance of type int")
+        if not isinstance(timeout, baseinteger):
+            raise TypeError("timeout can only be an instance of type baseinteger")
         result = self._call("waitProcessed",
                      in_p=[timeout])
         return result
@@ -24389,8 +24419,8 @@ class IVetoEvent(IEvent):
             Reason for veto, could be null or empty string.
 
         """
-        if type(reason) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")
+        if not isinstance(reason, basestring):
+            raise TypeError("reason can only be an instance of type basestring")
         self._call("addVeto",
                      in_p=[reason])
 

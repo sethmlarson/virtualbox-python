@@ -365,14 +365,6 @@ ATTR_SET_ASSERT_INST = '''\
         if not isinstance(value, %(ntype)s):
             raise TypeError("value is not an instance of %(ntype)s")'''
 
-ATTR_SET_ASSERT_STR  = '''\
-        if not isinstance(value, basestring):
-            raise TypeError("value is not an instance of basestring")'''
-
-ATTR_SET_ASSERT_INT  = '''\
-        if not isinstance(value, baseinteger):
-            raise TypeError("value is not an instance of baseinteger")'''
-
 known_types = {'wstring':'str',
                'boolean':'bool', 
                'long long':'int',
@@ -432,9 +424,9 @@ def process_interface_attribute(node):
             doc = "\n        %s\n        " % (rdoc)
             
         if ntype == 'str':
-            assert_type = ATTR_SET_ASSERT_STR
+            assert_type = ATTR_SET_ASSERT_INST % (dict(ntype="basestring"))
         elif ntype == 'int':
-            assert_type = ATTR_SET_ASSERT_INT
+            assert_type = ATTR_SET_ASSERT_INST % (dict(ntype="baseinteger"))
         else:
             assert_type = ATTR_SET_ASSERT_INST % (dict(ntype=ntype))
         code.append(ATTR_SET % dict(name=name, pname=pname,
@@ -460,10 +452,6 @@ METHOD_ASSERT_IN_INST = '''\
         if not isinstance(%(invar)s, %(invartype)s):
             raise TypeError("%(invar)s can only be an instance of type %(invartype)s")'''
 
-METHOD_ASSERT_IN_STR  = '''\
-        if type(%(invar)s) not in [str, unicode]:
-            raise TypeError("value is not a str or unicode")'''
-
 METHOD_ASSERT_ARRAY_IN = '''\
         for a in %(invar)s[:10]:
             if not isinstance(a, %(invartype)s):
@@ -474,11 +462,6 @@ METHOD_ASSERT_ARRAY_IN_INST = '''\
             if not isinstance(a, %(invartype)s):
                 raise TypeError(\\
                         "array can only contain objects of type %(invartype)s")'''
-
-METHOD_ASSERT_ARRAY_IN_STR = '''\
-        for a in %(invar)s[:10]:
-            if type(a) not in [str, unicode]:
-                raise TypeError("array can only contain str or unicode")'''
 
 METHOD_CALL = '''\
         %(outvars)sself._call("%(name)s"%(in_p)s)'''
@@ -573,13 +556,21 @@ def process_interface_method(node):
                 invartype = atype
 
             if invartype == 'str':
-                func.append(METHOD_ASSERT_IN_STR % dict(invar=name))
+                func.append(METHOD_ASSERT_IN_INST % dict(invar=name,
+                                                invartype="basestring"))
+            elif invartype == 'int':
+                func.append(METHOD_ASSERT_IN_INST % dict(invar=name,
+                                                invartype="baseinteger"))
             else:
                 func.append(METHOD_ASSERT_IN_INST % dict(invar=name,
                                                 invartype=invartype))
             if array:
                 if atype == 'str':
-                    func.append(METHOD_ASSERT_ARRAY_IN_STR % dict(invar=name))
+                    func.append(METHOD_ASSERT_ARRAY_IN_INST % dict(invar=name,
+                                                      invartype="basestring"))
+                elif atype == 'int':
+                    func.append(METHOD_ASSERT_ARRAY_IN_INST % dict(invar=name,
+                                                      invartype="baseinteger"))
                 else:
                     func.append(METHOD_ASSERT_ARRAY_IN_INST % dict(invar=name,
                                                       invartype=atype))
