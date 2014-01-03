@@ -37,10 +37,20 @@ LIB_IMPORTS = """\
 #
 import re
 import inspect
+
+# Py2 and Py3 compatibility  
 try:
     import __builtin__ as builtin 
 except:
     import builtin
+try:
+    basestring = basestring
+except:
+    basestring = (str, bytes) 
+try:
+    baseinteger = (int, long)
+except:
+    baseinteger = (int, )
 
 """
 
@@ -359,6 +369,9 @@ ATTR_SET_ASSERT_STR  = '''\
         if not isinstance(value, basestring):
             raise TypeError("value is not an instance of basestring")'''
 
+ATTR_SET_ASSERT_INT  = '''\
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")'''
 
 known_types = {'wstring':'str',
                'boolean':'bool', 
@@ -420,6 +433,8 @@ def process_interface_attribute(node):
             
         if ntype == 'str':
             assert_type = ATTR_SET_ASSERT_STR
+        elif ntype == 'int':
+            assert_type = ATTR_SET_ASSERT_INT
         else:
             assert_type = ATTR_SET_ASSERT_INST % (dict(ntype=ntype))
         code.append(ATTR_SET % dict(name=name, pname=pname,

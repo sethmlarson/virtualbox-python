@@ -8,10 +8,20 @@
 #
 import re
 import inspect
+
+# Py2 and Py3 compatibility  
 try:
     import __builtin__ as builtin 
 except:
     import builtin
+try:
+    basestring = basestring
+except:
+    basestring = (str, bytes) 
+try:
+    baseinteger = (int, long)
+except:
+    baseinteger = (int, )
 
 
 __doc__ = """\
@@ -2895,8 +2905,8 @@ class INATNetwork(Interface):
 
     @loopback_ip6.setter
     def loopback_ip6(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("loopbackIp6", value)
 
     @property
@@ -5576,8 +5586,8 @@ class IBIOSSettings(Interface):
 
     @logo_display_time.setter
     def logo_display_time(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("logoDisplayTime", value)
 
     @property
@@ -5652,8 +5662,8 @@ class IBIOSSettings(Interface):
 
     @time_offset.setter
     def time_offset(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("timeOffset", value)
 
     @property
@@ -5700,8 +5710,8 @@ class IPCIAddress(Interface):
 
     @bus.setter
     def bus(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("bus", value)
 
     @property
@@ -5714,8 +5724,8 @@ class IPCIAddress(Interface):
 
     @device.setter
     def device(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("device", value)
 
     @property
@@ -5728,8 +5738,8 @@ class IPCIAddress(Interface):
 
     @dev_function.setter
     def dev_function(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("devFunction", value)
 
     def as_long(self):
@@ -6070,8 +6080,8 @@ class IMachine(Interface):
 
     @cpu_count.setter
     def cpu_count(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("CPUCount", value)
 
     @property
@@ -6101,8 +6111,8 @@ class IMachine(Interface):
 
     @cpu_execution_cap.setter
     def cpu_execution_cap(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("CPUExecutionCap", value)
 
     @property
@@ -6115,8 +6125,8 @@ class IMachine(Interface):
 
     @memory_size.setter
     def memory_size(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("memorySize", value)
 
     @property
@@ -6129,8 +6139,8 @@ class IMachine(Interface):
 
     @memory_balloon_size.setter
     def memory_balloon_size(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("memoryBalloonSize", value)
 
     @property
@@ -6172,8 +6182,8 @@ class IMachine(Interface):
 
     @vram_size.setter
     def vram_size(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("VRAMSize", value)
 
     @property
@@ -6219,8 +6229,8 @@ class IMachine(Interface):
 
     @monitor_count.setter
     def monitor_count(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("monitorCount", value)
 
     @property
@@ -6285,8 +6295,8 @@ class IMachine(Interface):
 
     @video_capture_width.setter
     def video_capture_width(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("videoCaptureWidth", value)
 
     @property
@@ -6301,8 +6311,8 @@ class IMachine(Interface):
 
     @video_capture_height.setter
     def video_capture_height(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("videoCaptureHeight", value)
 
     @property
@@ -6318,8 +6328,8 @@ class IMachine(Interface):
 
     @video_capture_rate.setter
     def video_capture_rate(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("videoCaptureRate", value)
 
     @property
@@ -6336,8 +6346,8 @@ class IMachine(Interface):
 
     @video_capture_fps.setter
     def video_capture_fps(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("videoCaptureFPS", value)
 
     @property
@@ -6792,8 +6802,8 @@ class IMachine(Interface):
 
     @teleporter_port.setter
     def teleporter_port(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("teleporterPort", value)
 
     @property
@@ -6857,8 +6867,8 @@ class IMachine(Interface):
 
     @fault_tolerance_port.setter
     def fault_tolerance_port(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("faultTolerancePort", value)
 
     @property
@@ -6901,8 +6911,8 @@ class IMachine(Interface):
 
     @fault_tolerance_sync_interval.setter
     def fault_tolerance_sync_interval(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("faultToleranceSyncInterval", value)
 
     @property
@@ -6946,8 +6956,8 @@ class IMachine(Interface):
 
     @io_cache_size.setter
     def io_cache_size(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("IOCacheSize", value)
 
     @property
@@ -7056,8 +7066,8 @@ class IMachine(Interface):
 
     @autostart_delay.setter
     def autostart_delay(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("autostartDelay", value)
 
     @property
@@ -11692,8 +11702,8 @@ class ISystemProperties(Interface):
 
     @free_disk_space_warning.setter
     def free_disk_space_warning(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("freeDiskSpaceWarning", value)
 
     @property
@@ -11707,8 +11717,8 @@ class ISystemProperties(Interface):
 
     @free_disk_space_percent_warning.setter
     def free_disk_space_percent_warning(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("freeDiskSpacePercentWarning", value)
 
     @property
@@ -11723,8 +11733,8 @@ class ISystemProperties(Interface):
 
     @free_disk_space_error.setter
     def free_disk_space_error(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("freeDiskSpaceError", value)
 
     @property
@@ -11738,8 +11748,8 @@ class ISystemProperties(Interface):
 
     @free_disk_space_percent_error.setter
     def free_disk_space_percent_error(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("freeDiskSpacePercentError", value)
 
     @property
@@ -11839,8 +11849,8 @@ class ISystemProperties(Interface):
 
     @log_history_count.setter
     def log_history_count(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("logHistoryCount", value)
 
     @property
@@ -12423,8 +12433,8 @@ class IGuestSession(Interface):
 
     @timeout.setter
     def timeout(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("timeout", value)
 
     @property
@@ -14349,8 +14359,8 @@ class IGuest(Interface):
 
     @memory_balloon_size.setter
     def memory_balloon_size(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("memoryBalloonSize", value)
 
     @property
@@ -14363,8 +14373,8 @@ class IGuest(Interface):
 
     @statistics_update_interval.setter
     def statistics_update_interval(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("statisticsUpdateInterval", value)
 
     def internal_get_statistics(self):
@@ -15105,8 +15115,8 @@ class IProgress(Interface):
 
     @timeout.setter
     def timeout(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("timeout", value)
 
     def set_current_operation_progress(self, percent):
@@ -17995,8 +18005,8 @@ class IFramebufferOverlay(IFramebuffer):
 
     @alpha.setter
     def alpha(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("alpha", value)
 
     def move(self, x, y):
@@ -18571,8 +18581,8 @@ class INetworkAdapter(Interface):
 
     @line_speed.setter
     def line_speed(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("lineSpeed", value)
 
     @property
@@ -18641,8 +18651,8 @@ class INetworkAdapter(Interface):
 
     @boot_priority.setter
     def boot_priority(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("bootPriority", value)
 
     @property
@@ -18798,8 +18808,8 @@ class ISerialPort(Interface):
 
     @io_base.setter
     def io_base(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("IOBase", value)
 
     @property
@@ -18812,8 +18822,8 @@ class ISerialPort(Interface):
 
     @irq.setter
     def irq(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("IRQ", value)
 
     @property
@@ -18921,8 +18931,8 @@ class IParallelPort(Interface):
 
     @io_base.setter
     def io_base(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("IOBase", value)
 
     @property
@@ -18935,8 +18945,8 @@ class IParallelPort(Interface):
 
     @irq.setter
     def irq(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("IRQ", value)
 
     @property
@@ -19598,8 +19608,8 @@ class IMachineDebugger(Interface):
 
     @virtual_time_rate.setter
     def virtual_time_rate(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("virtualTimeRate", value)
 
     @property
@@ -20164,8 +20174,8 @@ class IUSBDeviceFilter(Interface):
 
     @masked_interfaces.setter
     def masked_interfaces(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("maskedInterfaces", value)
 
 
@@ -20330,8 +20340,8 @@ class IVRDEServer(Interface):
 
     @auth_timeout.setter
     def auth_timeout(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("authTimeout", value)
 
     @property
@@ -21382,8 +21392,8 @@ class IStorageController(Interface):
 
     @instance.setter
     def instance(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("instance", value)
 
     @property
@@ -21399,8 +21409,8 @@ class IStorageController(Interface):
 
     @port_count.setter
     def port_count(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("portCount", value)
 
     @property
@@ -22005,8 +22015,8 @@ class INATEngine(Interface):
 
     @alias_mode.setter
     def alias_mode(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("aliasMode", value)
 
     @property
@@ -22592,8 +22602,8 @@ class IBandwidthGroup(Interface):
 
     @max_bytes_per_sec.setter
     def max_bytes_per_sec(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("maxBytesPerSec", value)
 
 
@@ -24457,8 +24467,8 @@ class IShowWindowEvent(IEvent):
 
     @win_id.setter
     def win_id(self, value):
-        if not isinstance(value, int):
-            raise TypeError("value is not an instance of int")
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("winId", value)
 
 
