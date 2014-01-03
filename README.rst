@@ -223,6 +223,12 @@ which have a running vboxapi.
 Change log
 ==========
 
+version 0.1   (05/01/2014)
+
+* As per roadmap v0.1
+* type checking baseinteger 
+* update to latests Xidl 
+
 version 0.0.7 (09/10/2013)
 
 * machine pool
