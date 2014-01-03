@@ -85,7 +85,7 @@ about how to call a method or attribute from a specific programming language.
 lib_version = 1.3
 lib_app_uuid = '819B4D85-9CEE-493C-B6FC-64FFE759B3C9'
 lib_uuid = 'd7569351-1750-46f0-936e-bd127d5bc264'
-xidl_hash = '12a27e233fec0d0c30ecbff39e687a1d'
+xidl_hash = 'c2ba94a054c58881be353f46814f21bd'
 
 
 def pythonic_name(name):
@@ -358,8 +358,10 @@ class SettingsVersion(Enum):
          '''Settings version "1.13", written by VirtualBox 4.2.x.'''),
         ('v1_14', 16, 
          '''Settings version "1.14", written by VirtualBox 4.3.x.'''),
+        ('v1_15', 17, 
+         '''Settings version "1.15", written by VirtualBox 4.4.x.'''),
         ('Future', 99999, 
-         '''Settings version greater than "1.13", written by a future VirtualBox version.'''),
+         '''Settings version greater than "1.15", written by a future VirtualBox version.'''),
         ] 
 
 
@@ -631,7 +633,7 @@ class CPUPropertyType(Enum):
     """Virtual CPU property type. This enumeration represents possible values of the
     IMachine get- and setCPUProperty methods.
     """
-    __uuid__ = '24d356a6-2f45-4abd-b977-1cbe9c4701f5'
+    __uuid__ = '52bc41f4-a279-45da-88ab-3a1d86fb73eb'
     _enums = [\
         ('Null', 0, 
          '''Null value (never used by the API).'''),
@@ -645,6 +647,9 @@ class CPUPropertyType(Enum):
         ('LongMode', 3, 
          '''This setting determines whether VirtualBox will advertise long mode
             (i.e. 64-bit guest support) and let the guest enter it.'''),
+        ('TripleFaultReset', 4, 
+         '''This setting determines whether a triple fault within a guest will trigger an internal
+            error condition and stop the VM (default) or reset the virtual CPU and continue execution.'''),
         ] 
 
 
@@ -1092,6 +1097,20 @@ class ImportOptions(Enum):
         ] 
 
 
+class ExportOptions(Enum):
+    """Export options, used with <link to="IAppliance::write"/>.
+    """
+    __uuid__ = '8f45eb08-fd34-41ee-af95-a880bdee5554'
+    _enums = [\
+        ('CreateManifest', 1, 
+         '''Write the optional manifest file (.mf) which is used for integrity
+            checks prior import.'''),
+        ('ExportDVDImages', 2, 
+         '''Export DVD images. Default is not to export them as it is rarely
+            needed for typical VMs.'''),
+        ] 
+
+
 class VirtualSystemDescriptionType(Enum):
     """Used with <link to="IVirtualSystemDescription"/> to describe the type of
     a configuration value.
@@ -1175,6 +1194,8 @@ class GraphicsControllerType(Enum):
          '''Reserved value, invalid.'''),
         ('VBoxVGA', 1, 
          '''Default VirtualBox VGA device.'''),
+        ('VMSVGA', 2, 
+         '''VMware SVGA II device.'''),
         ] 
 
 
@@ -1650,11 +1671,14 @@ class CopyFileFlag(Enum):
         ('None', 0, 
          '''No flag set.'''),
         ('Recursive', 1, 
-         '''Copy directories recursively.'''),
+         '''Copy directories recursively.
+            This flag is not implemented yet.'''),
         ('Update', 2, 
-         '''Only copy when the source file is newer than the destination file or when the destination file is missing.'''),
+         '''Only copy when the source file is newer than the destination file
+            or when the destination file is missing. This flag is not implemented
+            yet.'''),
         ('FollowLinks', 4, 
-         '''Follow symbolic links.'''),
+         '''Follow symbolic links. This flag is not implemented yet.'''),
         ] 
 
 
@@ -2340,7 +2364,7 @@ class StorageBus(Enum):
     """The bus type of the storage controller (IDE, SATA, SCSI, SAS or Floppy);
     see <link to="IStorageController::bus"/>.
     """
-    __uuid__ = 'eee67ab3-668d-4ef5-91e0-7025fe4a0d7a'
+    __uuid__ = '2dab9df1-9683-48fd-8c11-caada236fcb0'
     _enums = [\
         ('Null', 0, 
          '''@c null value. Never used by the API.'''),
@@ -2354,6 +2378,8 @@ class StorageBus(Enum):
          ''''''),
         ('SAS', 5, 
          ''''''),
+        ('USB', 6, 
+         ''''''),
         ] 
 
 
@@ -2361,7 +2387,7 @@ class StorageControllerType(Enum):
     """The exact variant of storage controller hardware presented
     to the guest; see <link to="IStorageController::controllerType"/>.
     """
-    __uuid__ = '8a412b8a-f43e-4456-bd37-b474f0879a58'
+    __uuid__ = '02e190af-b546-4109-b036-6deaa4ef6e69'
     _enums = [\
         ('Null', 0, 
          '''@c null value. Never used by the API.'''),
@@ -2381,6 +2407,8 @@ class StorageControllerType(Enum):
          '''A floppy disk controller; this is the only variant for floppy drives.'''),
         ('LsiLogicSas', 8, 
          '''A variant of the LsiLogic controller using SAS.'''),
+        ('USB', 9, 
+         '''Special USB based storage controller.'''),
         ] 
 
 
@@ -4626,7 +4654,7 @@ class IAppliance(Interface):
         explorer = IVFSExplorer(explorer)
         return explorer
 
-    def write(self, format_p, manifest, path):
+    def write(self, format_p, options, path):
         """Writes the contents of the appliance exports into a new OVF file.
         
         Calling this method is the final step of exporting an appliance from VirtualBox;
@@ -4640,9 +4668,8 @@ class IAppliance(Interface):
             Output format, as a string. Currently supported formats are "ovf-0.9", "ovf-1.0"
             and "ovf-2.0"; future versions of VirtualBox may support additional formats.
 
-        in manifest of type bool
-            Indicate if the optional manifest file (.mf) should be written. The manifest file
-            is used for integrity checks prior import.
+        in options of type ExportOptions
+            Options for the exporting operation.
 
         in path of type str
             Name of appliance file to open (either with an .ovf or .ova extension, depending
@@ -4654,12 +4681,16 @@ class IAppliance(Interface):
         """
         if type(format_p) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
-        if not isinstance(manifest, bool):
-            raise TypeError("manifest can only be an instance of type bool")
+        if not isinstance(options, list):
+            raise TypeError("options can only be an instance of type list")
+        for a in options[:10]:
+            if not isinstance(a, ExportOptions):
+                raise TypeError(\
+                        "array can only contain objects of type ExportOptions")
         if type(path) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
         progress = self._call("write",
-                     in_p=[format_p, manifest, path])
+                     in_p=[format_p, options, path])
         progress = IProgress(progress)
         return progress
 
@@ -12092,7 +12123,7 @@ class ISystemProperties(Interface):
 
 class IGuestOSType(Interface):
     """"""
-    __uuid__ = '6d968f9a-858b-4c50-bf17-241f069e94c2'
+    __uuid__ = 'ced74f7e-4c08-4d19-883a-017496ada2e1'
     __wsmap__ = 'struct'
     
     @property
@@ -12309,6 +12340,14 @@ class IGuestOSType(Interface):
         Returns @c true a USB controller is recommended for this OS type.
         """
         ret = self._get_attr("recommendedUSB")
+        return ret
+
+    @property
+    def recommended_tf_reset(self):
+        """Get bool value for 'recommendedTFReset'
+        Returns @c true if using VCPU reset on triple fault is recommended for this OS type.
+        """
+        ret = self._get_attr("recommendedTFReset")
         return ret
 
 
@@ -12745,9 +12784,6 @@ option was requested.
         in path of type str
             Full path of directory to remove.
 
-        raises E_NOTIMPL
-            The method is not implemented yet.
-        
         """
         if type(path) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
@@ -12764,11 +12800,9 @@ option was requested.
             Remove flags; see <link to="DirectoryRemoveRecFlag"/> for more information.
 
         return progress of type IProgress
-            Progress object to track the operation completion.
+            Progress object to track the operation completion. This is not implemented
+            yet and therefore this method call will block until deletion is completed.
 
-        raises E_NOTIMPL
-            The method is not implemented yet.
-        
         """
         if type(path) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
@@ -12795,9 +12829,6 @@ option was requested.
         in flags of type PathRenameFlag
             Rename flags; see <link to="PathRenameFlag"/> for more information.
 
-        raises E_NOTIMPL
-            The method is not implemented yet.
-        
         """
         if type(source) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
@@ -13167,9 +13198,6 @@ option was requested.
         in flags of type PathRenameFlag
             Rename flags; see <link to="PathRenameFlag"/> for more information.
 
-        raises E_NOTIMPL
-            The method is not implemented yet.
-        
         """
         if type(source) not in [str, unicode]:
             raise TypeError("value is not a str or unicode")
@@ -13475,7 +13503,7 @@ option was requested.
                      in_p=[file_p])
 
     def wait_for(self, wait_for, timeout_ms):
-        """Waits for one more events to happen.
+        """Waits for one or more events to happen.
 
         in wait_for of type int
             Specifies what to wait for;
@@ -13500,7 +13528,7 @@ option was requested.
         return reason
 
     def wait_for_array(self, wait_for, timeout_ms):
-        """Waits for one more events to happen.
+        """Waits for one or more events to happen.
         Scriptable version of <link to="#waitFor"/>.
 
         in wait_for of type GuestSessionWaitForFlag
@@ -13604,7 +13632,7 @@ class IProcess(Interface):
         return ProcessStatus(ret)
 
     def wait_for(self, wait_for, timeout_ms):
-        """Waits for one more events to happen.
+        """Waits for one or more events to happen.
 
         in wait_for of type int
             Specifies what to wait for;
@@ -13629,7 +13657,7 @@ class IProcess(Interface):
         return reason
 
     def wait_for_array(self, wait_for, timeout_ms):
-        """Waits for one more events to happen.
+        """Waits for one or more events to happen.
         Scriptable version of <link to="#waitFor"/>.
 
         in wait_for of type ProcessWaitForFlag
@@ -14789,7 +14817,11 @@ class IGuest(Interface):
         return data
 
     def create_session(self, user, password, domain, session_name):
-        """Creates a new guest session for controlling the guest.
+        """Creates a new guest session for controlling the guest. The new session
+        will be started asynchronously, meaning on return of this function it is
+        not guaranteed that the guest session is in a started and/or usable state.
+        To wait for successful startup, use the <link to="IGuestSession::waitFor"/>
+        call.
         
         A guest session represents one impersonated user account on the guest, so
         every operation will use the same credentials specified when creating
@@ -17219,7 +17251,7 @@ class IKeyboard(Interface):
     Use this interface to send keystrokes or the Ctrl-Alt-Del sequence
     to the virtual machine.
     """
-    __uuid__ = 'f6916ec5-a881-4237-898f-7de58cf88672'
+    __uuid__ = '71aa2898-28bd-43fe-8c98-e53321451db7'
     __wsmap__ = 'managed'
     
     def put_scancode(self, scancode):
@@ -17267,6 +17299,17 @@ class IKeyboard(Interface):
         
         """
         self._call("putCAD")
+
+    def release_keys(self):
+        """Causes the virtual keyboard to release any keys which are
+        currently pressed. Useful when host and guest keyboard may be out
+        of sync.
+
+        raises VBOX_E_IPRT_ERROR
+            Could not release some or all keys.
+        
+        """
+        self._call("releaseKeys")
 
     @property
     def event_source(self):
