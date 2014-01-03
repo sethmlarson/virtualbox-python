@@ -16643,7 +16643,7 @@ inaccessible).
         successfully completed, the medium state will be set to <link to="MediumState_Created"/>, the medium will be remembered by this
         VirtualBox installation and may be attached to virtual machines.
 
-        in logical_size of type int
+        in logical_size of type int or long
             Maximum logical size of the medium in bytes.
 
         in variant of type MediumVariant
@@ -16657,8 +16657,8 @@ inaccessible).
             The variant of storage creation operation is not supported. See
         
         """
-        if not isinstance(logical_size, int):
-            raise TypeError("logical_size can only be an instance of type int")
+        if not isinstance(logical_size, (int, long)):
+            raise TypeError("logical_size can only be an instance of type int or long")
         if not isinstance(variant, list):
             raise TypeError("variant can only be an instance of type list")
         for a in variant[:10]:
