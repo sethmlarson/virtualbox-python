@@ -122,7 +122,7 @@ class IKeyboard(library.IKeyboard):
         'PAUSE':  [[0xE1, 0x1D, 0x45, 0xE1, 0x9D, 0xC5], []],
     }
 
-    def put_keys(self, press_keys=[], hold_keys=[], press_delay=0):
+    def put_keys(self, press_keys=[], hold_keys=[], press_delay=50):
         """Put scancodes that represent keys defined in the sequences provided.
         
         Arguments: 
