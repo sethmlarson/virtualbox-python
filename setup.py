@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-from distribute_setup import use_setuptools
-use_setuptools()
 from setuptools import setup
 
 import re
@@ -10,6 +8,7 @@ import sys
 
 
 install_requires = []
+
 tests_require = ['begins', 'funconf']
 
 def load_version(filename='./virtualbox/version.py'):
@@ -34,6 +33,7 @@ setup(
     description="A complete VirtualBox Main API implementation",
     long_description=open('README.rst').read(),
     license="Apache Software Licence",
+    zip_safe=False,
     install_requires = install_requires,
     platforms=['cygwin', 'win', 'linux'],
     classifiers=[
