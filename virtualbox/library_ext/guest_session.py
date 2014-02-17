@@ -84,16 +84,16 @@ class IGuestSession(library.IGuestSession):
     directory_remove_recursive.__doc__ = \
             library.IGuestSession.directory_remove_recursive.__doc__
 
-    def copy_to(self, host_path, guest_path):
-        "Copy a single file to the vm. Wraps copy_to_vm."
+    def copy_to_vm(self, host_path, guest_path):
+        "Copy a single file to the vm. Wraps copy_to."
         if not os.path.exists(host_path):
             raise OSError("Failed to find %s on host" % host_path)
         p = self.copy_to_vm(host_path, guest_path, [])
         p.wait_for_completion()
         return p
 
-    def copy_from(self, guest_path, host_path):
-        "Copy a single file from the vm. Wraps copy_from_vm."
+    def copy_from_vm(self, guest_path, host_path):
+        "Copy a single file from the vm. Wraps copy_from."
         # Dodgy exists check...
         for x in range(10):
             try:
