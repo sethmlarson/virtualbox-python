@@ -85,7 +85,7 @@ about how to call a method or attribute from a specific programming language.
 lib_version = 1.3
 lib_app_uuid = '819B4D85-9CEE-493C-B6FC-64FFE759B3C9'
 lib_uuid = 'd7569351-1750-46f0-936e-bd127d5bc264'
-xidl_hash = 'c2ba94a054c58881be353f46814f21bd'
+xidl_hash = '5d549e54f7c2977f100aa2f52af6c660'
 
 
 def pythonic_name(name):
@@ -1108,6 +1108,16 @@ class ExportOptions(Enum):
         ('ExportDVDImages', 2, 
          '''Export DVD images. Default is not to export them as it is rarely
             needed for typical VMs.'''),
+        ('StripAllMACs', 3, 
+         '''Do not export any MAC address information. Default is to keep them
+            to avoid losing information which can cause trouble after import, at the
+            price of risking duplicate MAC addresses, if the import options are used
+            to keep them.'''),
+        ('StripAllNonNATMACs', 4, 
+         '''Do not export any MAC address information, except for adapters
+            using NAT. Default is to keep them to avoid losing information which can
+            cause trouble after import, at the price of risking duplicate MAC
+            addresses, if the import options are used to keep them.'''),
         ] 
 
 
@@ -11499,7 +11509,7 @@ class ISystemProperties(Interface):
     and parameters. Most of the properties are read-only, but some can be
     changed by a user.
     """
-    __uuid__ = '1254a96a-ae57-4484-946a-22d86c1f98af'
+    __uuid__ = '29c295a2-346e-42cf-92c0-8db515d75397'
     __wsmap__ = 'managed'
     
     @property
@@ -12101,6 +12111,23 @@ class ISystemProperties(Interface):
         enabled = self._call("getDefaultIoCacheSettingForStorageController",
                      in_p=[controller_type])
         return enabled
+
+    def get_storage_controller_hotplug_capable(self, controller_type):
+        """Returns whether the given storage controller supports
+        hot-plugging devices.
+
+        in controller_type of type StorageControllerType
+            The storage controller to check for.
+
+        return hotplug_capable of type bool
+            Returned flag indicating whether the controller is hotplug capable
+
+        """
+        if not isinstance(controller_type, StorageControllerType):
+            raise TypeError("controller_type can only be an instance of type StorageControllerType")
+        hotplug_capable = self._call("getStorageControllerHotplugCapable",
+                     in_p=[controller_type])
+        return hotplug_capable
 
     def get_max_instances_of_usb_controller_type(self, chipset, type_p):
         """Returns the maximum number of USB controller instances which
