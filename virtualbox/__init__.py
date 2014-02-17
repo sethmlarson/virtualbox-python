@@ -1,11 +1,62 @@
-from library_ext import library
+import os
+import sys
+import platform
+import copy
 from multiprocessing import current_process
 from threading import current_thread
+from library_ext import library
 
 __doc__ = library.__doc__
 
 VirtualBox = library.IVirtualBox
 Session = library.ISession
+
+
+def import_vboxapi():
+    """This import is designed to help support when loading vboxapi inside of
+    alternative Python environments (virtualenvs etc).
+
+    return vboxapi module
+    """
+    try:
+        import vboxapi
+    except ImportError:
+        system = platform.system()
+        py_mm_ver = sys.version_info[:2]
+        packages = ['vboxapi']
+        if system == 'Windows':
+            packages.append('win32com')
+            search = [
+                        'C:\\Python%s%s\\Lib\\site-packages' % py_mm_ver,
+                        'C:\\Program Files\\Oracle\\VirtualBox\\sdk\\install',
+                     ]
+        elif system == 'Linux':
+            search = [
+                        '/usr/lib/python%s.%s/dist-packages' % py_mm_ver,
+                        '/usr/share/pyshared',
+                     ]
+        elif system == 'Darwin':
+            search = [
+                        '/Library/Python/%s.%s/site-packages' % py_mm_ver,
+                     ]
+        else:
+            # No idea where to look...
+            raise
+        original_path = copy.copy(sys.path)
+        for path in search:
+            listing = os.listdir(path)
+            for package in packages:
+                if package in listing:
+                    packages.remove(package)
+                    sys.path.append(path)
+            if not packages:
+                break
+        else:
+            raise
+        import vboxapi
+        sys.path = original_path
+    return vboxapi
+
 
 _manager = {} 
 class Manager(object):
@@ -22,7 +73,7 @@ class Manager(object):
         global _manager
         pid = current_process().ident
         if pid not in _manager:
-            import vboxapi
+            vboxapi = import_vboxapi()
             _manager[pid] = vboxapi.VirtualBoxManager(None, None)
         return _manager[pid]
 
@@ -65,7 +116,7 @@ class WebServiceManager(Manager):
             vbox = VirtualBox(manager=manager)
             ...
         """
-        import vboxapi
+        vboxapi = import_vboxapi()
         params = (url, user, password)
         self.manager = vboxapi.VirtualBoxManager("WEBSERVICE", params)
 
