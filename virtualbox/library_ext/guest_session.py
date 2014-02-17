@@ -1,4 +1,5 @@
 import time
+import os
 
 from virtualbox import library
 
@@ -84,16 +85,18 @@ class IGuestSession(library.IGuestSession):
     directory_remove_recursive.__doc__ = \
             library.IGuestSession.directory_remove_recursive.__doc__
 
-    def copy_to_vm(self, host_path, guest_path):
-        "Copy a single file to the vm. Wraps copy_to."
+    # Simplify copy to.  Expand host path to abspath.
+    def copy_to(self, host_path, guest_path, flags=[]):
         if not os.path.exists(host_path):
             raise OSError("Failed to find %s on host" % host_path)
-        p = self.copy_to_vm(host_path, guest_path, [])
+        copy_to = super(IGuestSession, self).copy_to
+        p = copy_to(os.path.abspath(host_path), guest_path, flags)
         p.wait_for_completion()
         return p
+    copy_to.__doc__ = library.IGuestSession.copy_to.__doc__
 
-    def copy_from_vm(self, guest_path, host_path):
-        "Copy a single file from the vm. Wraps copy_from."
+    # Simplify copy from.  Expand host path to abspath. 
+    def copy_from(self, guest_path, host_path, flags=[]):
         # Dodgy exists check...
         for x in range(10):
             try:
@@ -103,10 +106,11 @@ class IGuestSession(library.IGuestSession):
                 time.sleep(0.1)
         else:
             raise OSError("Failed to find %s on guest" % guest_path)    
-        p = self.copy_from(guest_path, host_path, [])
+        copy_from = super(IGuestSession, self).copy_from
+        p = copy_from(guest_path, os.path.abspath(host_path), flags)
         p.wait_for_completion()
         return p
-
+    copy_from.__doc__ = library.IGuestSession.copy_from.__doc__
 
 
     
