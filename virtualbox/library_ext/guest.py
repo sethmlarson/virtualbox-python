@@ -16,6 +16,12 @@ class IGuest(library.IGuest):
                         timeout_ms=0):
         session = super(IGuest, self).create_session(user, password, domain,
                                                     session_name)
+        for i in range(50):
+            if session.status == library.GuestSessionStatus.started:
+                break
+            time.sleep(0.1)
+        else:
+            raise SystemError("GuestSession failed to start")
         if timeout_ms != 0:
             # There is probably a better way to to this?
             if 'win' in self.os_type_id.lower():
