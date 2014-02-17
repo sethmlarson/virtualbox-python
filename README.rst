@@ -223,6 +223,12 @@ which have a running vboxapi.
 Change log
 ==========
 
+version 0.1.1 (17/02/2014)
+
+* Minor improvements
+* Additional extensions
+* virtualenv support
+
 version 0.1   (05/01/2014)
 
 * As per roadmap v0.1
