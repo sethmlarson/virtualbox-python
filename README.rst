@@ -203,6 +203,8 @@ On an already running VM, register to receive on guest keyboard events::
     [152]
 
 
+See `gist`_ for more pyvbox examples.
+
 
 Issues
 ======
@@ -273,7 +275,7 @@ version 0.0.0 (20/05/2013)
 
 
 
-
+.. _gist: https://gist.github.com/mjdorma
 .. _readthedocs.org: https://pyvbox.readthedocs.org/en/latest/
 .. _github.com: https://github.com/mjdorma/pyvbox
 .. _PyPi: http://pypi.python.org/pypi/pyvbox
