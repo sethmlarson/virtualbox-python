@@ -19,10 +19,11 @@ various sugar to functions in an interface (such as defining defaults for
 function parameters). 
 
 
-.. note:: 
+Code reference
+--------------
 
-    The documentation captured in this page reflects the extensions or fixes
-    applied to the default library.py.   
+The documentation captured in this reference reflects the extensions or fixes
+applied to the default library.py.   
 
 
 .. py:class:: IVirtualBox([interface, manager])

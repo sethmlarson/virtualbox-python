@@ -15,6 +15,9 @@ type.
 All callbacks registered by this module will be cleared *atexit*.  
 
 
+Code reference
+--------------
+
 .. method:: register_callback(callback, event_source, event_type)
 
     Register a callback function against an event_source for a given

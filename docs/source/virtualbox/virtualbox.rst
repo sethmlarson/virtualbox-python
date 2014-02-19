@@ -1,5 +1,5 @@
-:mod:`virtualbox` -- pyvbox package
-===================================
+:mod:`virtualbox` -- main module
+================================
 
 .. module:: virtualbox
     :synopsis: pyvbox
@@ -14,6 +14,11 @@ a moment to delve into the API's documentation which will assist in
 understanding how VirtualBox's client server module functions.
 
 
+Code reference
+--------------
+
+.. autofunction:: virtualbox.import_vboxapi
+
 .. py:class:: VirtualBox([interface, manager])
 
     The VirthalBox class is the primary interface used to interact with a
@@ -25,42 +30,11 @@ understanding how VirtualBox's client server module functions.
     IVirtualBox interface or by passing in a Manager object which implements a
     :py:class:`virtualbox.Manager` get_virthalbox method. 
 
+.. autoclass:: virtualbox.Manager
+    :members:
+    :special-members:
 
-.. py:class:: Manager()
+.. autoclass:: virtualbox.WebServiceManager
 
-    This class is responsible for the construction of
-    :py:class:`virtualbox.library_ext.ISession` and
-    :py:class:`virtualbox.library_ext.IVirtualBox`. 
-
-    .. attribute:: manager
-
-        *manager* is the singleton which is the result of a call to
-        vboxapi.VirtualBoxManager(None, None). 
-
-    .. attribute:: bin_path
-
-        The path to the virtualbox install directory.
-
-    .. method:: get_virtualbox()
-        
-        Returns a :py:class:`virtualbox.library.IVirtualBox` object constructed
-        through the vboxapi's getVirtualBox() function. 
-    
-    .. method:: get_session()
-
-        Returns a :py:class:`virtualbox.library.ISession` object constructed
-        through the vboxapi's getSessionObject() function.
-
-    .. method:: cast_object(interface_object, interface_class)
-        
-        Casts the :py:class:`virtualbox.library.Interface` *interface_object*
-        into the *interface_class* type by calling the vboxapi's manager
-        queryInterface function.  
-
-
-.. py:class:: Session()
-
-    The Session class simply references :py:class:`virtualbox.library.ISession`
-    which "represents a client process and allows for locking virtual machines".
 
 

@@ -1,10 +1,13 @@
+# No doc - assume the doc from library
+from __future__ import absolute_import
 import os
 import sys
 import platform
 import copy
 from multiprocessing import current_process
 from threading import current_thread
-from library_ext import library
+
+from virtualbox.library_ext import library
 
 __doc__ = library.__doc__
 
@@ -13,10 +16,10 @@ Session = library.ISession
 
 
 def import_vboxapi():
-    """This import is designed to help support when loading vboxapi inside of
+    """This import is designed to help when loading vboxapi inside of
     alternative Python environments (virtualenvs etc).
 
-    return vboxapi module
+    :rtype: vboxapi module
     """
     try:
         import vboxapi
@@ -60,6 +63,12 @@ def import_vboxapi():
 
 _manager = {} 
 class Manager(object):
+    """The Manager maintains a single point of entry into vboxapi.
+    
+    This object is responsible for the construction of
+    :py:class:`virtualbox.library_ext.ISession` and
+    :py:class:`virtualbox.library_ext.IVirtualBox`.  
+    """
     @property
     def manager(self):
         """Create a default Manager object
@@ -78,11 +87,17 @@ class Manager(object):
         return _manager[pid]
 
     def get_virtualbox(self):
-        """Return a VirtualBox interface"""
+        """Return a VirtualBox interface
+        
+        :rtype: library.IVirtualBox
+        """
         return VirtualBox(interface=self.manager.getVirtualBox())
 
     def get_session(self):
-        """Return a Session interface"""
+        """Return a Session interface
+        
+        :rtype: library.ISession
+        """
         # The inconsistent vboxapi implementation makes this annoying...
         if hasattr(self.manager, 'mgr'):
             manager = getattr(self.manager, 'mgr')
@@ -91,18 +106,27 @@ class Manager(object):
         return Session(interface=manager.getSessionObject(None))
 
     def cast_object(self, interface_object, interface_class):
-        """Cast the obj to the interface class"""
+        """Cast the obj to the interface class
+        
+        :rtype: interface_class(interface_object)
+        """
         name = interface_class.__name__
         i = self.manager.queryInterface(interface_object._i, name)
         return interface_class(interface=i)
 
     @property
     def bin_path(self):
-        """return the virtualbox install directory"""
+        """return the virtualbox install directory
+        
+        :rtype: str
+        """
         return self.manager.getBinDir()
 
 
 class WebServiceManager(Manager):
+    """The WebServiceManager extends the base Manager to include the ability
+    to build a WEBSERVICE type vboxapi interface.
+    """
     def __init__(url='http://localhost/', user='', password=''):
         """Create a VirtualBoxManager WEBSERVICE manager for IVirtualBox
         
@@ -120,3 +144,6 @@ class WebServiceManager(Manager):
         params = (url, user, password)
         self.manager = vboxapi.VirtualBoxManager("WEBSERVICE", params)
 
+
+# Lazy include...
+from virtualbox import pool

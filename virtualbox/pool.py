@@ -1,6 +1,57 @@
-"""
+"""Virtual Machine pool
+=======================
+
+The :py:class:`MachinePool` manages a pool of linked clones against a defined
+"root machine".  This module works with multiple processes running on the 
+host machine at a time.  It manages a resource lock over the root virtual
+machine to ensure consistency. 
+
+In this example the machine *win7* has a current version of guest editions
+installed and is in a powered off state. 
+
+
+Create multiple clones::
+
+    pool = MachinePool('win7')
+    sessions = []
+    for i in range(3):
+        sessions.append(pool.acquire("Mick", "password"))
+    
+    # You now have three running machines.
+    for session in sessions:
+        with session.guest.create_session("Mick", "password") as gs:
+            _, out, _ = gs.execute("ipconfig")
+            print(out)
+
+    for session in sessions:
+        pool.release(session)
+
+
+A reliable version of the above code would look like this::
+
+    pool = MachinePool('win7')
+    sessions = []
+    try:
+        for i in range(3):
+            sessions.append(pool.acquire("Mick", "password"))
+        
+        # You now have three running machines.
+        for session in sessions:
+            with session.guest.create_session("Mick", "password") as gs:
+                _, out, _ = gs.execute("ipconfig")
+                print(out)
+
+    finally:
+        for session in sessions:
+            try:
+                pool.release(session)
+            except Exception as err:
+                print("Error raised on release: %s" % err)
+
+
 
 """
+from __future__ import absolute_import
 from contextlib import contextmanager
 import time
 
@@ -13,9 +64,15 @@ from virtualbox.library import DeviceType
 from virtualbox.library import DeviceActivity 
 
 class MachinePool(object):
-    """
+    """MachinePool manages a pool of resources and enable cross process 
+    coordination of a linked machine clone. 
     """
     def __init__(self, machine_name):
+        """Create a MachinePool instance.
+
+        :param machine_name: Name of the root virtual machine.
+        :type machine_name: str
+        """
         self.machine_name = machine_name
         with self._lock() as session:
             if not session.machine.current_snapshot:
@@ -74,7 +131,7 @@ class MachinePool(object):
                 session.unlock_machine()
 
     def acquire(self, username, password):
-        "Acquire a Machine resource"
+        "Acquire a Machine resource."
         with self._lock() as root_session:
             for clone in self._clones:
                 # Search for a free clone 
@@ -122,7 +179,7 @@ class MachinePool(object):
             return session
     
     def release(self, session):
-        "Release a machine session resource"
+        "Release a machine session resource."
         if session.state != SessionState.locked:
             return 
         with self._lock():
