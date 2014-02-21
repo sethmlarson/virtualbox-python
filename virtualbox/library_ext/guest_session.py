@@ -44,9 +44,11 @@ class IGuestSession(library.IGuestSession):
         """
         def read_out(process, flags, stdout, stderr):
             if library.ProcessCreateFlag.wait_for_std_err in flags:
+                process.wait_for(int(library.ProcessWaitResult.std_err))
                 e = str(process.read(2, 65000, 0))
                 stderr.append(e)
             if library.ProcessCreateFlag.wait_for_std_out in flags:
+                process.wait_for(int(library.ProcessWaitResult.std_out))
                 o = str(process.read(1, 65000, 0))
                 stdout.append(o)
 
@@ -56,11 +58,18 @@ class IGuestSession(library.IGuestSession):
 
         # write stdin to the process 
         if stdin:
+            process.wait_for(int(library.ProcessWaitResult.std_in), 0)
             index = 0
+            flag_none = [library.ProcessInputFlag.none]
+            flag_eof = [library.ProcessInputFlag.end_of_file]
             while index < len(stdin):
-                index += process.write(0, [library.ProcessInputFlag.none], 
-                                        stdin[index:], 0)
-            process.write(0, [library.ProcessInputFlag.end_of_file], 0)
+                array = map(lambda a: str(ord(a)), stdin[index:])
+                wrote = process.write_array(0, flag_none, array, 0)
+                if wrote == 0:
+                    msg = "Failed to write ANY bytes to %s" % process
+                    raise Exception(msg) 
+                index += wrote
+            process.write_array(0, flag_eof, [], 0)
 
         # read the process output and wait for 
         stdout = []

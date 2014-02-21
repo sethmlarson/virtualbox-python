@@ -22,6 +22,8 @@ from virtualbox.library_ext.progress import IProgress
 from virtualbox.library_ext.console import IConsole
 from virtualbox.library_ext.event_source import IEventSource
 from virtualbox.library_ext.mouse import IMouse
+from virtualbox.library_ext.process import IProcess
+from virtualbox.library_ext.guest_process import IGuestProcess
 
 
 # Replace original with extension
