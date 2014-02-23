@@ -6,6 +6,7 @@ import platform
 import copy
 from multiprocessing import current_process
 from threading import current_thread
+import errno
 
 from virtualbox.library_ext import library
 
@@ -36,6 +37,7 @@ def import_vboxapi():
         elif system == 'Linux':
             search = [
                         '/usr/lib/python%s.%s/dist-packages' % py_mm_ver,
+                        '/usr/lib/python%s.%s/site-packages' % py_mm_ver,
                         '/usr/share/pyshared',
                      ]
         elif system == 'Darwin':
@@ -47,7 +49,13 @@ def import_vboxapi():
             raise
         original_path = copy.copy(sys.path)
         for path in search:
-            listing = os.listdir(path)
+            try:
+                listing = os.listdir(path)
+            except OSError as e:
+                if e.errno == errno.ENOENT:
+                    continue  # ENOENT is ignorable
+                else:
+                    raise  # raise anything else again
             for package in packages:
                 if package in listing:
                     packages.remove(package)
