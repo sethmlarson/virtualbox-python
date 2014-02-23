@@ -1,5 +1,6 @@
 # No doc - assume the doc from library
 from __future__ import absolute_import
+from contextlib import contextmanager
 import os
 import sys
 import platform
@@ -47,7 +48,6 @@ def import_vboxapi():
         else:
             # No idea where to look...
             raise
-        original_path = copy.copy(sys.path)
         for path in search:
             try:
                 listing = os.listdir(path)
@@ -65,8 +65,16 @@ def import_vboxapi():
         else:
             raise
         import vboxapi
-        sys.path = original_path
     return vboxapi
+
+
+@contextmanager
+def _sys_path_scope():
+    original_path = copy.copy(sys.path)
+    try:
+        yield
+    finally:
+        sys.path = original_path
 
 
 _manager = {} 
@@ -90,8 +98,9 @@ class Manager(object):
         global _manager
         pid = current_process().ident
         if pid not in _manager:
-            vboxapi = import_vboxapi()
-            _manager[pid] = vboxapi.VirtualBoxManager(None, None)
+            with _sys_path_scope():
+                vboxapi = import_vboxapi()
+                _manager[pid] = vboxapi.VirtualBoxManager(None, None)
         return _manager[pid]
 
     def get_virtualbox(self):
@@ -135,7 +144,7 @@ class WebServiceManager(Manager):
     """The WebServiceManager extends the base Manager to include the ability
     to build a WEBSERVICE type vboxapi interface.
     """
-    def __init__(url='http://localhost/', user='', password=''):
+    def __init__(self, url='http://localhost/', user='', password=''):
         """Create a VirtualBoxManager WEBSERVICE manager for IVirtualBox
         
         Options:
@@ -148,9 +157,10 @@ class WebServiceManager(Manager):
             vbox = VirtualBox(manager=manager)
             ...
         """
-        vboxapi = import_vboxapi()
-        params = (url, user, password)
-        self.manager = vboxapi.VirtualBoxManager("WEBSERVICE", params)
+        with _sys_path_scope():
+            vboxapi = import_vboxapi()
+            params = (url, user, password)
+            self.manager = vboxapi.VirtualBoxManager("WEBSERVICE", params)
 
 
 # Lazy include...
