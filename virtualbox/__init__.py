@@ -7,7 +7,6 @@ import platform
 import copy
 from multiprocessing import current_process
 from threading import current_thread
-import errno
 
 from virtualbox.library_ext import library
 
@@ -49,13 +48,9 @@ def import_vboxapi():
             # No idea where to look...
             raise
         for path in search:
-            try:
-                listing = os.listdir(path)
-            except OSError as e:
-                if e.errno == errno.ENOENT:
-                    continue  # ENOENT is ignorable
-                else:
-                    raise  # raise anything else again
+            if not os.path.isdir(path):
+                continue
+            listing = os.listdir(path)
             for package in packages:
                 if package in listing:
                     packages.remove(package)
@@ -63,6 +58,8 @@ def import_vboxapi():
             if not packages:
                 break
         else:
+            # After search each path we still failed to find 
+            # the required set of packages.
             raise
         import vboxapi
     return vboxapi
