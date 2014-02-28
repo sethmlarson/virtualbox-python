@@ -228,7 +228,7 @@ Change log
 version 0.1.2 (28/02/2014)
 
 * Bug fix for virtualenv support
-* Keyboard scancode decoder (Note: coded in the delivery suite on the day of
+* `Keyboard scancode decoder`_ (Note: coded in the delivery suite on the day of
   the birth of my baby girl Sophia.)
 * Refactored documentation
 
@@ -246,11 +246,11 @@ version 0.1   (05/01/2014)
 
 version 0.0.7 (09/10/2013)
 
-* machine pool
+* `machine pool`_
 
 version 0.0.6 (25/07/2013)
 
-* now with event support
+* now with `event support`_
 
 version 0.0.5 (23/07/2013)
 
@@ -260,7 +260,7 @@ version 0.0.5 (23/07/2013)
 
 version 0.0.4 (27/06/2013)
 
-* added execute, context and keyboard
+* added execute, context, and keyboard
 
 version 0.0.3 (30/05/2012)
 
@@ -268,7 +268,7 @@ version 0.0.3 (30/05/2012)
 
 version 0.0.2 (28/05/2013)
 
-* library ext module
+* `library ext module`_
 
 version 0.0.1 (27/05/2013)
 
@@ -280,8 +280,10 @@ version 0.0.0 (20/05/2013)
 * library primitives 
 
 
-
-
+.. _event support: http://pythonhosted.org//pyvbox/virtualbox/events.html
+.. _library ext module: http://pythonhosted.org/pyvbox/virtualbox/library_ext.html
+.. _machine pool: http://pythonhosted.org/pyvbox/virtualbox/pool.html
+.. _Keyboard scancode decoder: https://gist.github.com/mjdorma/9132605
 .. _gist: https://gist.github.com/mjdorma
 .. _pythonhosted.org: http://pythonhosted.org/pyvbox/
 .. _github.com: https://github.com/mjdorma/pyvbox
