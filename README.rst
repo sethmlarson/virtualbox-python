@@ -225,6 +225,13 @@ which have a running vboxapi.
 Change log
 ==========
 
+version 0.1.2 (28/02/2014)
+
+* Bug fix for virtualenv support
+* Keyboard scancode decoder (Note: coded in the delivery suite on the day of
+  the birth of my baby girl Sophia.)
+* Refactored documentation
+
 version 0.1.1 (17/02/2014)
 
 * Minor improvements
