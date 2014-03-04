@@ -15,7 +15,7 @@ import hashlib
 try:
     import __builtin__ as builtin 
 except:
-    import builtin
+    import builtins as builtin
 
 
 def pythonic_name(name):
@@ -42,7 +42,7 @@ import inspect
 try:
     import __builtin__ as builtin 
 except:
-    import builtin
+    import builtins as builtin
 try:
     basestring = basestring
 except:
