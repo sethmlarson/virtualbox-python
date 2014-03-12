@@ -87,7 +87,7 @@ about how to call a method or attribute from a specific programming language.
 lib_version = 1.3
 lib_app_uuid = '819B4D85-9CEE-493C-B6FC-64FFE759B3C9'
 lib_uuid = 'd7569351-1750-46f0-936e-bd127d5bc264'
-xidl_hash = '5d549e54f7c2977f100aa2f52af6c660'
+xidl_hash = '3bd2921834d0c969f2d57b0c7f300fb0'
 
 
 #container lookup for the different error types
@@ -2087,7 +2087,9 @@ class USBControllerType(Enum):
          ''''''),
         ('EHCI', 2, 
          ''''''),
-        ('Last', 3, 
+        ('XHCI', 3, 
+         ''''''),
+        ('Last', 4, 
          '''Last element (invalid). Used for parameter checks.'''),
         ] 
 
