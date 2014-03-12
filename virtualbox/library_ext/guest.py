@@ -25,7 +25,7 @@ class IGuest(library.IGuest):
         if timeout_ms != 0:
             # There is probably a better way to to this?
             if 'win' in self.os_type_id.lower():
-                test_file = 'C:\\autoexec.bat'
+                test_file = 'C:\\Windows\\System32\\calc.exe'
             else:
                 test_file = '/bin/sh'
             while True:
