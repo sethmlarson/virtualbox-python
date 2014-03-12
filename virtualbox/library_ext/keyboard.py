@@ -125,7 +125,7 @@ OFF = 0
 ON = 1
 
 _is_shift_key = lambda c: len(c[0]) == 2 and c[0][0] == 0x2A
-for key, codes in SCANCODES.iteritems():
+for key, codes in SCANCODES.items():
     if _is_shift_key(codes):
         continue
     down, up = codes
@@ -154,7 +154,7 @@ LOOKUP[0x9D]['leaf'][1] = 'CTRL'
 
 # Build the shift state key lookup.
 KEY_TO_CAPS = {}
-for caps_key, codes in SCANCODES.iteritems():
+for caps_key, codes in SCANCODES.items():
     if not _is_shift_key(codes):
         continue
     key = LOOKUP[codes[0][1]]['leaf'][1]

@@ -27,7 +27,7 @@ from virtualbox.library_ext.guest_process import IGuestProcess
 
 
 # Replace original with extension
-for k, v in locals().items():
+for k, v in [a for a in locals().items()]:
     if not inspect.isclass(v):
         continue
     if issubclass(v, library.Interface):
