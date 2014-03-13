@@ -7,6 +7,7 @@
 
 import re
 import inspect
+import sys
 
 # Py2 and Py3 compatibility  
 try:
@@ -38,8 +39,26 @@ class EnumType(type):
             raise KeyError("%s has no key %s" % cls.__name__, k)
         return getattr(cls, k)
 
-   
-class EnumBase(object):
+
+# Code from six - support for py2 and py3 compatibility
+def add_metaclass(metaclass):
+    """Class decorator for creating a class with a metaclass."""
+    def wrapper(cls):
+        orig_vars = cls.__dict__.copy()
+        orig_vars.pop('__dict__', None)
+        orig_vars.pop('__weakref__', None)
+        slots = orig_vars.get('__slots__')
+        if slots is not None:
+            if isinstance(slots, str):
+                slots = [slots]
+            for slots_var in slots:
+                orig_vars.pop(slots_var)
+        return metaclass(cls.__name__, cls.__bases__, orig_vars)
+    return wrapper
+
+
+@add_metaclass(EnumType)   
+class Enum(object):
     """Enum objects provide a container for VirtualBox enumerations"""
     _enums = {}
     def __init__(self, value=None):
@@ -68,15 +87,6 @@ class EnumBase(object):
     def __getitem__(self, k):
         return self.__class__[k]
 
-
-# For compatibility between py3 and py2
-try: 
-    class Enum(EnumBase, metaclass=EnumType):
-        pass
-except:
-    class Enum(EnumBase):
-        __metaclass__ = EnumType
- 
 
 class Interface(object):
     """Interface objects provide a wrapper for the VirtualBox COM objects"""
