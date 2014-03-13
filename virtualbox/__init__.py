@@ -72,6 +72,11 @@ class Manager(object):
     This object is responsible for the construction of
     :py:class:`virtualbox.library_ext.ISession` and
     :py:class:`virtualbox.library_ext.IVirtualBox`.  
+
+    :param mtype: Type of manager i.e. WEBSERVICE.
+    :type mtype: str (Default None)
+    :param mparams: The params that the mtype manager object accepts.
+    :type mparams: tuple|list (Default None)
     """
     def __init__(self, mtype=None, mparams=None):
         pid = current_process().ident
