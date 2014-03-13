@@ -65,15 +65,6 @@ def import_vboxapi():
     return vboxapi
 
 
-@contextmanager
-def _sys_path_scope():
-    original_path = copy.copy(sys.path)
-    try:
-        yield
-    finally:
-        sys.path = original_path
-
-
 _manager = {} 
 class Manager(object):
     """The Manager maintains a single point of entry into vboxapi.
@@ -82,6 +73,16 @@ class Manager(object):
     :py:class:`virtualbox.library_ext.ISession` and
     :py:class:`virtualbox.library_ext.IVirtualBox`.  
     """
+    def __init__(self, mtype=None, mparams=None):
+        pid = current_process().ident
+        if pid not in _manager:
+            try:
+                original_path = copy.copy(sys.path)
+                vboxapi = import_vboxapi()
+                self.manager = vboxapi.VirtualBoxManager(mtype, mparams)
+            finally:
+                sys.path = original_path
+
     @property
     def manager(self):
         """Create a default Manager object
@@ -92,13 +93,16 @@ class Manager(object):
         Session or VirtualBox object as both of these classes will default
         to this object's global singleton during construction. 
         """
-        global _manager
+        return _manager[current_process().ident]
+
+    @manager.setter
+    def manager(self, value):
+        "Set the manager object in the global _manager dict."
         pid = current_process().ident
         if pid not in _manager:
-            with _sys_path_scope():
-                vboxapi = import_vboxapi()
-                _manager[pid] = vboxapi.VirtualBoxManager(None, None)
-        return _manager[pid]
+            _manager[pid] = value 
+        else:
+            raise Exception("Manager already set for pid %s" % pid)
 
     def get_virtualbox(self):
         """Return a VirtualBox interface
@@ -154,10 +158,8 @@ class WebServiceManager(Manager):
             vbox = VirtualBox(manager=manager)
             ...
         """
-        with _sys_path_scope():
-            vboxapi = import_vboxapi()
-            params = (url, user, password)
-            self.manager = vboxapi.VirtualBoxManager("WEBSERVICE", params)
+        params = (url, user, password)
+        super(WebServiceManager, self).__init__("WEBSERVICE", params)
 
 
 # Lazy include...
