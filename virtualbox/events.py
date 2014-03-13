@@ -1,3 +1,8 @@
+"""Manage VBoxEvent, registration, listening and processing
+
+By Michael Dorman
+[mjdorma+pyvbox@gmail.com]
+"""
 from __future__ import print_function
 import sys
 import atexit 
@@ -8,9 +13,6 @@ import threading
 import virtualbox
 from virtualbox import library
 
-"""
-Manage VBoxEvent, registration, listening and processing
-"""
 
 _lookup = {} 
 def type_to_interface(event_type):

@@ -1,4 +1,8 @@
-# No doc - assume the doc from library
+"""Virtualbox API wrapper and Reference
+
+By Michael Dorman
+[mjdorma+pyvbox@gmail.com]
+"""
 from __future__ import absolute_import
 from contextlib import contextmanager
 import os
@@ -10,7 +14,10 @@ from threading import current_thread
 
 from virtualbox.library_ext import library
 
+
+# Adopt on the library API root documentation
 __doc__ = library.__doc__
+
 
 VirtualBox = library.IVirtualBox
 Session = library.ISession
@@ -169,3 +176,5 @@ class WebServiceManager(Manager):
 
 # Lazy include...
 from virtualbox import pool
+from virtualbox import events
+from virtualbox import version
