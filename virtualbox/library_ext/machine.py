@@ -126,20 +126,6 @@ class IMachine(library.IMachine):
             vbox.register_machine(vm_clone)
         return vm_clone
 
-    # BUG: xidl describes this function as deleteConfig.  The interface seems
-    #      to export plain "delete" instead... 
-    def delete_config(self, media):
-        if not isinstance(media, list):
-            raise TypeError("media can only be an instance of type list")
-        for a in media[:10]:
-            if not isinstance(a, library.IMedium):
-                raise TypeError(\
-                        "array can only contain objects of type IMedium")
-        progress = self._call("delete", in_p=[media])
-        progress = library.IProgress(progress)
-        return progress
-    delete_config.__doc__ = library.IMachine.delete_config.__doc__
-
     # Add a helper to make locking and building a session simple
     def create_session(self, lock_type=library.LockType.shared,
                    session=None):
