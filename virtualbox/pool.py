@@ -130,7 +130,7 @@ class MachinePool(object):
             if session.state == SessionState.locked:
                 session.unlock_machine()
 
-    def acquire(self, username, password):
+    def acquire(self, username, password, frontend='headless'):
         "Acquire a Machine resource."
         with self._lock() as root_session:
             for clone in self._clones:
@@ -141,13 +141,18 @@ class MachinePool(object):
                 except:
                     continue
                 else:
+                    try:
+                        p = session.console.restore_snapshot()
+                        p.wait_for_completion(60*1000)
+                    except:
+                        pass
                     session.unlock_machine()
                     break
             else:
                 # Build a new clone
                 machine = root_session.machine
                 clone = machine.clone(name="%s Pool" % self.machine_name)
-                p = clone.launch_vm_process(type_p='headless')
+                p = clone.launch_vm_process(type_p=frontend)
                 p.wait_for_completion(60*1000)
                 session = clone.create_session()
                 console = session.console
@@ -173,7 +178,7 @@ class MachinePool(object):
                         session.unlock_machine()
 
             # Launch our clone
-            p = clone.launch_vm_process(type_p='headless')
+            p = clone.launch_vm_process(type_p=frontend)
             p.wait_for_completion(60*1000)
             session = clone.create_session()
             return session
