@@ -31,7 +31,6 @@ def import_vboxapi():
     """
     try:
         import vboxapi
-        raise ImportError("meh")
     except ImportError:
         system = platform.system()
         py_mm_ver = sys.version_info[:2]
