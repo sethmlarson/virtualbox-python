@@ -22,7 +22,7 @@ __doc__ = library.__doc__
 VirtualBox = library.IVirtualBox
 Session = library.ISession
 
-
+@contextmanager
 def import_vboxapi():
     """This import is designed to help when loading vboxapi inside of
     alternative Python environments (virtualenvs etc).
@@ -31,15 +31,19 @@ def import_vboxapi():
     """
     try:
         import vboxapi
+        raise ImportError("meh")
     except ImportError:
         system = platform.system()
         py_mm_ver = sys.version_info[:2]
         packages = ['vboxapi']
         if system == 'Windows':
-            packages.append('win32com')
+            packages.extend(['win32com', 'win32', 'win32api', 'pywintypes', 'win32comext'])
             search = [
                         'C:\\Python%s%s\\Lib\\site-packages' % py_mm_ver,
+                        'C:\\Python%s%s\\Lib\\site-packages\\win32' % py_mm_ver,
+                        'C:\\Python%s%s\\Lib\\site-packages\\win32\\lib' % py_mm_ver,
                         'C:\\Program Files\\Oracle\\VirtualBox\\sdk\\install',
+                        'C:\\Program Files (x86)\\Oracle\\VirtualBox\\sdk\\install',
                      ]
         elif system == 'Linux':
             search = [
@@ -54,14 +58,15 @@ def import_vboxapi():
         else:
             # No idea where to look...
             raise
+        packages = set(packages)
+        original_path = copy.copy(sys.path)
         for path in search:
             if not os.path.isdir(path):
                 continue
-            listing = os.listdir(path)
-            for package in packages:
-                if package in listing:
-                    packages.remove(package)
-                    sys.path.append(path)
+            listing = set([os.path.splitext(f)[0] for f in os.listdir(path)])
+            if packages.intersection(listing):
+                sys.path.append(path)
+            packages -= listing
             if not packages:
                 break
         else:
@@ -69,7 +74,12 @@ def import_vboxapi():
             # the required set of packages.
             raise
         import vboxapi
-    return vboxapi
+        try:
+            yield vboxapi
+        finally:
+            sys.path = original_path
+    else:
+        yield vboxapi
 
 
 _manager = {} 
@@ -88,12 +98,8 @@ class Manager(object):
     def __init__(self, mtype=None, mparams=None):
         pid = current_process().ident
         if pid not in _manager:
-            try:
-                original_path = copy.copy(sys.path)
-                vboxapi = import_vboxapi()
+            with import_vboxapi() as vboxapi:
                 self.manager = vboxapi.VirtualBoxManager(mtype, mparams)
-            finally:
-                sys.path = original_path
 
     @property
     def manager(self):
