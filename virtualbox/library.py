@@ -27,8 +27,8 @@ except:
 
 
 __doc__ = """\
-  Welcome to the VirtualBox Main API documentation. This documentation
-describes the so-called VirtualBox Main API which comprises all public
+  Welcome to the **VirtualBox Main API documentation**. This documentation
+describes the so-called *VirtualBox Main API* which comprises all public
 COM interfaces and components provided by the VirtualBox server and by the
 VirtualBox client library.
 
@@ -51,25 +51,25 @@ in this Main API documentation. This ensures that, with any given release
 version of VirtualBox, all capabilities of the product that could be useful
 to an external client program are always exposed by way of this API.
 
-The VirtualBox Main API (also called the VirtualBox COM library)
+The VirtualBox Main API (also called the *VirtualBox COM library*)
 contains two public component classes:
-%VirtualBox.VirtualBox and %VirtualBox.Session, which
+:py:class:`IVirtualBox` and :py:class:`ISession`, which
 implement IVirtualBox and ISession interfaces respectively. These two classes
 are of supreme importance and will be needed in order for any front-end
 program to do anything useful. It is recommended to read the documentation of
 the mentioned interfaces first.
 
-The %VirtualBox.VirtualBox class is a singleton. This means that
+The :py:class:`IVirtualBox` class is a singleton. This means that
 there can be only one object of this class on the local machine at any given
 time. This object is a parent of many other objects in the VirtualBox COM
 library and lives in the VBoxSVC process. In fact, when you create an instance
-of the VirtualBox.VirtualBox, the COM subsystem checks if the VBoxSVC
+of the :py:class:`IVirtualBox`, the COM subsystem checks if the VBoxSVC
 process is already running, starts it if not, and returns you a reference to
 the VirtualBox object created in this process. When the last reference
 to this object is released, the VBoxSVC process ends (with a 5 second delay to
 protect from too frequent restarts).
 
-The %VirtualBox.Session class is a regular component. You can create
+The :py:class:`ISession` class is a regular component. You can create
 as many Session objects as you need but all of them will live in a
 process which issues the object instantiation call. Session objects
 represent virtual machine sessions which are used to configure virtual
@@ -182,6 +182,84 @@ class SettingsVersion(Enum):
     """Settings version of VirtualBox settings files. This is written to
     the "version" attribute of the root "VirtualBox" element in the settings
     file XML and indicates which VirtualBox version wrote the file.
+
+
+    .. describe:: null(0)
+
+            Null value, indicates invalid version.
+
+    .. describe:: v1_0(1)
+
+            Legacy settings version, not currently supported.
+
+    .. describe:: v1_1(2)
+
+            Legacy settings version, not currently supported.
+
+    .. describe:: v1_2(3)
+
+            Legacy settings version, not currently supported.
+
+    .. describe:: v1_3pre(4)
+
+            Legacy settings version, not currently supported.
+
+    .. describe:: v1_3(5)
+
+            Settings version "1.3", written by VirtualBox 2.0.12.
+
+    .. describe:: v1_4(6)
+
+            Intermediate settings version, understood by VirtualBox 2.1.x.
+
+    .. describe:: v1_5(7)
+
+            Intermediate settings version, understood by VirtualBox 2.1.x.
+
+    .. describe:: v1_6(8)
+
+            Settings version "1.6", written by VirtualBox 2.1.4 (at least).
+
+    .. describe:: v1_7(9)
+
+            Settings version "1.7", written by VirtualBox 2.2.x and 3.0.x.
+
+    .. describe:: v1_8(10)
+
+            Intermediate settings version "1.8", understood by VirtualBox 3.1.x.
+
+    .. describe:: v1_9(11)
+
+            Settings version "1.9", written by VirtualBox 3.1.x.
+
+    .. describe:: v1_10(12)
+
+            Settings version "1.10", written by VirtualBox 3.2.x.
+
+    .. describe:: v1_11(13)
+
+            Settings version "1.11", written by VirtualBox 4.0.x.
+
+    .. describe:: v1_12(14)
+
+            Settings version "1.12", written by VirtualBox 4.1.x.
+
+    .. describe:: v1_13(15)
+
+            Settings version "1.13", written by VirtualBox 4.2.x.
+
+    .. describe:: v1_14(16)
+
+            Settings version "1.14", written by VirtualBox 4.3.x.
+
+    .. describe:: v1_15(17)
+
+            Settings version "1.15", written by VirtualBox 4.4.x.
+
+    .. describe:: future(99999)
+
+            Settings version greater than "1.15", written by a future VirtualBox version.
+
     """
     __uuid__ = 'd5b15ca7-3de7-46b2-a63a-ddcce42bfa3f'
     _enums = [\
@@ -228,6 +306,16 @@ class SettingsVersion(Enum):
 
 class AccessMode(Enum):
     """Access mode for opening files.
+
+
+    .. describe:: read_only(1)
+
+            
+
+    .. describe:: read_write(2)
+
+            
+
     """
     __uuid__ = '1da0007c-ddf7-4be8-bcac-d84a1558785f'
     _enums = [\
@@ -241,7 +329,7 @@ class AccessMode(Enum):
 class MachineState(Enum):
     """Virtual machine execution state.
     
-    This enumeration represents possible values of the <link to="IMachine::state"/> attribute.
+    This enumeration represents possible values of the :py:func:`IMachine.state`  attribute.
     
     Below is the basic virtual machine state diagram. It shows how the state
     changes during virtual machine execution. The text in square braces shows
@@ -249,25 +337,27 @@ class MachineState(Enum):
     transition.
     
     
-    +---------[powerDown()] <- Stuck <--[failure]-+
-    V                                             |
-    +-> PoweredOff --+-->[powerUp()]--> Starting --+      | +-----[resume()]-----+
-    |                |                             |      | V                    |
-    |   Aborted -----+                             +--> Running --[pause()]--> Paused
-    |                                              |      ^ |                   ^ |
-    |   Saved -----------[powerUp()]--> Restoring -+      | |                   | |
-    |     ^                                               | |                   | |
-    |     |     +-----------------------------------------+-|-------------------+ +
-    |     |     |                                           |                     |
-    |     |     +-- Saving <--------[takeSnapshot()]<-------+---------------------+
-    |     |                                                 |                     |
-    |     +-------- Saving <--------[saveState()]<----------+---------------------+
-    |                                                       |                     |
-    +-------------- Stopping -------[powerDown()]<----------+---------------------+
-    
+    ::
+
+         +---------[powerDown()] <- Stuck <--[failure]-+
+         V                                             |
+         +-> PoweredOff --+-->[powerUp()]--> Starting --+      | +-----[resume()]-----+
+         |                |                             |      | V                    |
+         |   Aborted -----+                             +--> Running --[pause()]--> Paused
+         |                                              |      ^ |                   ^ |
+         |   Saved -----------[powerUp()]--> Restoring -+      | |                   | |
+         |     ^                                               | |                   | |
+         |     |     +-----------------------------------------+-|-------------------+ +
+         |     |     |                                           |                     |
+         |     |     +-- Saving <--------[takeSnapshot()]<-------+---------------------+
+         |     |                                                 |                     |
+         |     +-------- Saving <--------[saveState()]<----------+---------------------+
+         |                                                       |                     |
+         +-------------- Stopping -------[powerDown()]<----------+---------------------+
+
     
     Note that states to the right from PoweredOff, Aborted and Saved in the
-    above diagram are called online VM states. These states
+    above diagram are called *online VM states*. These states
     represent the virtual machine which is being executed in a dedicated
     process (usually with a GUI window attached to it where you can see the
     activity of the virtual machine and interact with it). There are two
@@ -276,12 +366,14 @@ class MachineState(Enum):
     not:
     
     
-    if (machine.GetState() >= MachineState_FirstOnline &amp;&amp;
-    machine.GetState() <= MachineState_LastOnline)
-    {
-    ...the machine is being executed...
-    }
-    
+    ::
+
+         if (machine.GetState() >= MachineState_FirstOnline &&
+         machine.GetState() <= MachineState_LastOnline)
+         {
+         ...the machine is being executed...
+         }
+
     
     When the virtual machine is in one of the online VM states (that is, being
     executed), only a few machine settings can be modified. Methods working
@@ -297,7 +389,7 @@ class MachineState(Enum):
     has reached the "Guru Meditation" condition. This condition indicates an
     internal VMM (virtual machine manager) failure which may happen as a
     result of either an unhandled low-level virtual hardware exception or one
-    of the recompiler exceptions (such as the too-many-traps
+    of the recompiler exceptions (such as the *too-many-traps*
     condition).
     
     Note also that any online VM state may transit to the Aborted state. This
@@ -307,41 +399,45 @@ class MachineState(Enum):
     
     There are also a few additional state diagrams that do not deal with
     virtual machine execution and therefore are shown separately. The states
-    shown on these diagrams are called offline VM states (this includes
+    shown on these diagrams are called *offline VM states* (this includes
     PoweredOff, Aborted and Saved too).
     
     The first diagram shows what happens when a lengthy setup operation is
-    being executed (such as <link to="IMachine::attachDevice"/>).
+    being executed (such as :py:func:`IMachine.attach_device` ).
     
     
-    +----------------------------------(same state as before the call)------+
-    |                                                                       |
-    +-> PoweredOff --+                                                      |
-    |                |                                                      |
-    |-> Aborted -----+-->[lengthy VM configuration call] --> SettingUp -----+
-    |                |
-    +-> Saved -------+
-    
+    ::
+
+         +----------------------------------(same state as before the call)------+
+         |                                                                       |
+         +-> PoweredOff --+                                                      |
+         |                |                                                      |
+         |-> Aborted -----+-->[lengthy VM configuration call] --> SettingUp -----+
+         |                |
+         +-> Saved -------+
+
     
     The next two diagrams demonstrate the process of taking a snapshot of a
     powered off virtual machine, restoring the state to that as of a snapshot
     or deleting a snapshot, respectively.
     
     
-    +----------------------------------(same state as before the call)------+
-    |                                                                       |
-    +-> PoweredOff --+                                                      |
-    |                +-->[takeSnapshot()] -------------------> Saving ------+
-    +-> Aborted -----+
-    
-    +-> PoweredOff --+
-    |                |
-    |   Aborted -----+-->[restoreSnapshot()    ]-------> RestoringSnapshot -+
-    |                |   [deleteSnapshot()     ]-------> DeletingSnapshot --+
-    +-> Saved -------+                                                      |
-    |                                                                       |
-    +---(Saved if restored from an online snapshot, PoweredOff otherwise)---+
-    
+    ::
+
+         +----------------------------------(same state as before the call)------+
+         |                                                                       |
+         +-> PoweredOff --+                                                      |
+         |                +-->[takeSnapshot()] -------------------> Saving ------+
+         +-> Aborted -----+
+         
+         +-> PoweredOff --+
+         |                |
+         |   Aborted -----+-->[restoreSnapshot()    ]-------> RestoringSnapshot -+
+         |                |   [deleteSnapshot()     ]-------> DeletingSnapshot --+
+         +-> Saved -------+                                                      |
+         |                                                                       |
+         +---(Saved if restored from an online snapshot, PoweredOff otherwise)---+
+
     
     Note that the Saving state is present in both the offline state group and
     online state group. Currently, the only way to determine what group is
@@ -350,7 +446,7 @@ class MachineState(Enum):
     an offline state. This inconsistency may be removed in one of the future
     versions of VirtualBox by adding a new state.
     
-    <note internal="yes">
+    
     For whoever decides to touch this enum: In order to keep the
     comparisons involving FirstOnline and LastOnline pseudo-states valid,
     the numeric values of these states must be correspondingly updated if
@@ -359,6 +455,151 @@ class MachineState(Enum):
     @c true. The same relates to transient states for which
     the condition FirstOnline <= state <= LastOnline must be
     @c true.
+
+
+    .. describe:: null(0)
+
+            Null value (never used by the API).
+
+    .. describe:: powered_off(1)
+
+            The machine is not running and has no saved execution state; it has
+            either never been started or been shut down successfully.
+
+    .. describe:: saved(2)
+
+            The machine is not currently running, but the execution state of the machine
+            has been saved to an external file when it was running, from where
+            it can be resumed.
+
+    .. describe:: teleported(3)
+
+            The machine was teleported to a different host (or process) and then
+            powered off. Take care when powering it on again may corrupt resources
+            it shares with the teleportation target (e.g. disk and network).
+
+    .. describe:: aborted(4)
+
+            The process running the machine has terminated abnormally. This may
+            indicate a crash of the VM process in host execution context, or
+            the VM process has been terminated externally.
+
+    .. describe:: running(5)
+
+            The machine is currently being executed.
+            
+            For whoever decides to touch this enum: In order to keep the
+            comparisons in the old source code valid, this state must immediately
+            precede the Paused state.
+            TODO: Lift this spectacularly wonderful restriction.
+
+    .. describe:: paused(6)
+
+            Execution of the machine has been paused.
+            
+            For whoever decides to touch this enum: In order to keep the
+            comparisons in the old source code valid, this state must immediately
+            follow the Running state.
+            TODO: Lift this spectacularly wonderful restriction.
+
+    .. describe:: stuck(7)
+
+            Execution of the machine has reached the "Guru Meditation"
+            condition. This indicates a severe error in the hypervisor itself.
+            
+            bird: Why this uncool name? Could we rename it to "GuruMeditation" or
+            "Guru", perhaps? Or are there some other VMM states that are
+            intended to be lumped in here as well?
+
+    .. describe:: teleporting(8)
+
+            The machine is about to be teleported to a different host or process.
+            It is possible to pause a machine in this state, but it will go to the
+            @c TeleportingPausedVM state and it will not be
+            possible to resume it again unless the teleportation fails.
+
+    .. describe:: live_snapshotting(9)
+
+            A live snapshot is being taken. The machine is running normally, but
+            some of the runtime configuration options are inaccessible. Also, if
+            paused while in this state it will transition to
+            @c Saving and it will not be resume the
+            execution until the snapshot operation has completed.
+
+    .. describe:: starting(10)
+
+            Machine is being started after powering it on from a
+            zero execution state.
+
+    .. describe:: stopping(11)
+
+            Machine is being normally stopped powering it off, or after the guest OS
+            has initiated a shutdown sequence.
+
+    .. describe:: saving(12)
+
+            Machine is saving its execution state to a file, or an online
+            snapshot of the machine is being taken.
+
+    .. describe:: restoring(13)
+
+            Execution state of the machine is being restored from a file
+            after powering it on from the saved execution state.
+
+    .. describe:: teleporting_paused_vm(14)
+
+            The machine is being teleported to another host or process, but it is
+            not running. This is the paused variant of the
+            @c state.
+
+    .. describe:: teleporting_in(15)
+
+            Teleporting the machine state in from another host or process.
+
+    .. describe:: fault_tolerant_syncing(16)
+
+            The machine is being synced with a fault tolerant VM running elsewhere.
+
+    .. describe:: deleting_snapshot_online(17)
+
+            Like @c DeletingSnapshot, but the merging of media is ongoing in
+            the background while the machine is running.
+
+    .. describe:: deleting_snapshot_paused(18)
+
+            Like @c DeletingSnapshotOnline, but the machine was paused when the
+            merging of differencing media was started.
+
+    .. describe:: restoring_snapshot(19)
+
+            A machine snapshot is being restored; this typically does not take long.
+
+    .. describe:: deleting_snapshot(20)
+
+            A machine snapshot is being deleted; this can take a long time since this
+            may require merging differencing media. This value indicates that the
+            machine is not running while the snapshot is being deleted.
+
+    .. describe:: setting_up(21)
+
+            Lengthy setup operation is in progress.
+
+    .. describe:: first_online(5)
+
+            Pseudo-state: first online state (for use in relational expressions).
+
+    .. describe:: last_online(18)
+
+            Pseudo-state: last online state (for use in relational expressions).
+
+    .. describe:: first_transient(8)
+
+            Pseudo-state: first transient state (for use in relational expressions).
+
+    .. describe:: last_transient(21)
+
+            Pseudo-state: last transient state (for use in relational expressions).
+
     """
     __uuid__ = 'ec6c6a9e-113d-4ff4-b44f-0b69f21c97fe'
     _enums = [\
@@ -381,14 +622,14 @@ class MachineState(Enum):
             the VM process has been terminated externally.'''),
         ('Running', 5, 
          '''The machine is currently being executed.
-            <note internal="yes">
+            
             For whoever decides to touch this enum: In order to keep the
             comparisons in the old source code valid, this state must immediately
             precede the Paused state.
             TODO: Lift this spectacularly wonderful restriction.'''),
         ('Paused', 6, 
          '''Execution of the machine has been paused.
-            <note internal="yes">
+            
             For whoever decides to touch this enum: In order to keep the
             comparisons in the old source code valid, this state must immediately
             follow the Running state.
@@ -396,7 +637,7 @@ class MachineState(Enum):
         ('Stuck', 7, 
          '''Execution of the machine has reached the "Guru Meditation"
             condition. This indicates a severe error in the hypervisor itself.
-            <note internal="yes">
+            
             bird: Why this uncool name? Could we rename it to "GuruMeditation" or
             "Guru", perhaps? Or are there some other VMM states that are
             intended to be lumped in here as well?'''),
@@ -458,32 +699,68 @@ class MachineState(Enum):
 
 class SessionState(Enum):
     """Session state. This enumeration represents possible values of
-    <link to="IMachine::sessionState"/> and <link to="ISession::state"/>
+    :py:func:`IMachine.session_state`  and :py:func:`ISession.state` 
     attributes.
+
+
+    .. describe:: null(0)
+
+            Null value (never used by the API).
+
+    .. describe:: unlocked(1)
+
+            In :py:func:`IMachine.session_state` , this means that the machine
+            is not locked for any sessions.
+            
+            In :py:func:`ISession.state` , this means that no machine is
+            currently locked for this session.
+
+    .. describe:: locked(2)
+
+            In :py:func:`IMachine.session_state` , this means that the machine
+            is currently locked for a session, whose process identifier can
+            then be found in the :py:func:`IMachine.session_pid`  attribute.
+            
+            In :py:func:`ISession.state` , this means that a machine is
+            currently locked for this session, and the mutable machine object
+            can be found in the :py:func:`ISession.machine`  attribute
+            (see :py:func:`IMachine.lock_machine`  for details).
+
+    .. describe:: spawning(3)
+
+            A new process is being spawned for the machine as a result of
+            :py:func:`IMachine.launch_vm_process`  call. This state also occurs
+            as a short transient state during an :py:func:`IMachine.lock_machine` 
+            call.
+
+    .. describe:: unlocking(4)
+
+            The session is being unlocked.
+
     """
     __uuid__ = 'cf2700c0-ea4b-47ae-9725-7810114b94d8'
     _enums = [\
         ('Null', 0, 
          '''Null value (never used by the API).'''),
         ('Unlocked', 1, 
-         '''In <link to="IMachine::sessionState"/>, this means that the machine
+         '''In :py:func:`IMachine.session_state` , this means that the machine
             is not locked for any sessions.
             
-            In <link to="ISession::state"/>, this means that no machine is
+            In :py:func:`ISession.state` , this means that no machine is
             currently locked for this session.'''),
         ('Locked', 2, 
-         '''In <link to="IMachine::sessionState"/>, this means that the machine
+         '''In :py:func:`IMachine.session_state` , this means that the machine
             is currently locked for a session, whose process identifier can
-            then be found in the <link to="IMachine::sessionPID"/> attribute.
+            then be found in the :py:func:`IMachine.session_pid`  attribute.
             
-            In <link to="ISession::state"/>, this means that a machine is
+            In :py:func:`ISession.state` , this means that a machine is
             currently locked for this session, and the mutable machine object
-            can be found in the <link to="ISession::machine"/> attribute
-            (see <link to="IMachine::lockMachine"/> for details).'''),
+            can be found in the :py:func:`ISession.machine`  attribute
+            (see :py:func:`IMachine.lock_machine`  for details).'''),
         ('Spawning', 3, 
          '''A new process is being spawned for the machine as a result of
-            <link to="IMachine::launchVMProcess"/> call. This state also occurs
-            as a short transient state during an <link to="IMachine::lockMachine"/>
+            :py:func:`IMachine.launch_vm_process`  call. This state also occurs
+            as a short transient state during an :py:func:`IMachine.lock_machine` 
             call.'''),
         ('Unlocking', 4, 
          '''The session is being unlocked.'''),
@@ -493,6 +770,33 @@ class SessionState(Enum):
 class CPUPropertyType(Enum):
     """Virtual CPU property type. This enumeration represents possible values of the
     IMachine get- and setCPUProperty methods.
+
+
+    .. describe:: null(0)
+
+            Null value (never used by the API).
+
+    .. describe:: pae(1)
+
+            This setting determines whether VirtualBox will expose the Physical Address
+            Extension (PAE) feature of the host CPU to the guest. Note that in case PAE
+            is not available, it will not be reported.
+
+    .. describe:: synthetic(2)
+
+            This setting determines whether VirtualBox will expose a synthetic CPU to the guest to allow
+            teleporting between host systems that differ significantly.
+
+    .. describe:: long_mode(3)
+
+            This setting determines whether VirtualBox will advertise long mode
+            (i.e. 64-bit guest support) and let the guest enter it.
+
+    .. describe:: triple_fault_reset(4)
+
+            This setting determines whether a triple fault within a guest will trigger an internal
+            error condition and stop the VM (default) or reset the virtual CPU and continue execution.
+
     """
     __uuid__ = '52bc41f4-a279-45da-88ab-3a1d86fb73eb'
     _enums = [\
@@ -516,8 +820,40 @@ class CPUPropertyType(Enum):
 
 class HWVirtExPropertyType(Enum):
     """Hardware virtualization property type. This enumeration represents possible values
-    for the <link to="IMachine::getHWVirtExProperty"/> and
-    <link to="IMachine::setHWVirtExProperty"/> methods.
+    for the :py:func:`IMachine.get_hw_virt_ex_property`  and
+    :py:func:`IMachine.set_hw_virt_ex_property`  methods.
+
+
+    .. describe:: null(0)
+
+            Null value (never used by the API).
+
+    .. describe:: enabled(1)
+
+            Whether hardware virtualization (VT-x/AMD-V) is enabled at all. If
+            such extensions are not available, they will not be used.
+
+    .. describe:: vpid(2)
+
+            Whether VT-x VPID is enabled. If this extension is not available, it will not be used.
+
+    .. describe:: nested_paging(3)
+
+            Whether Nested Paging is enabled. If this extension is not available, it will not be used.
+
+    .. describe:: unrestricted_execution(4)
+
+            Whether VT-x unrestricted execution is enabled. If this feature is not available, it will not be used.
+
+    .. describe:: large_pages(5)
+
+            Whether large page allocation is enabled; requires nested paging and a 64-bit host.
+
+    .. describe:: force(6)
+
+            Whether the VM should fail to start if hardware virtualization (VT-x/AMD-V) cannot be used. If
+            not set, there will be an automatic fallback to software virtualization.
+
     """
     __uuid__ = '411ad0ea-aeeb-44cb-9d03-1624d0d025ac'
     _enums = [\
@@ -541,7 +877,21 @@ class HWVirtExPropertyType(Enum):
 
 
 class FaultToleranceState(Enum):
-    """Used with <link to="IMachine::faultToleranceState"/>.
+    """Used with :py:func:`IMachine.fault_tolerance_state` .
+
+
+    .. describe:: inactive(1)
+
+            No fault tolerance enabled.
+
+    .. describe:: master(2)
+
+            Fault tolerant master VM.
+
+    .. describe:: standby(3)
+
+            Fault tolerant standby VM.
+
     """
     __uuid__ = '5124f7ec-6b67-493c-9dee-ee45a44114e1'
     _enums = [\
@@ -555,7 +905,28 @@ class FaultToleranceState(Enum):
 
 
 class LockType(Enum):
-    """Used with <link to="IMachine::lockMachine"/>.
+    """Used with :py:func:`IMachine.lock_machine` .
+
+
+    .. describe:: write(2)
+
+            Lock the machine for writing. This requests an exclusive lock, i.e.
+            there cannot be any other API client holding any type of lock for this
+            VM concurrently. Remember that a VM process counts as an API client
+            which implicitly holds the equivalent of a shared lock during the
+            entire VM runtime.
+
+    .. describe:: shared(1)
+
+            Request only a shared lock for remote-controlling the machine.
+            Such a lock allows changing certain VM settings which can be safely
+            modified for a running VM.
+
+    .. describe:: vm(3)
+
+            Lock the machine for writing, and create objects necessary for
+            running a VM in this process.
+
     """
     __uuid__ = '168a6a8e-12fd-4878-a1f9-38a750a56089'
     _enums = [\
@@ -577,7 +948,28 @@ class LockType(Enum):
 
 class SessionType(Enum):
     """Session type. This enumeration represents possible values of the
-    <link to="ISession::type"/> attribute.
+    :py:func:`ISession.type_p`  attribute.
+
+
+    .. describe:: null(0)
+
+            Null value (never used by the API).
+
+    .. describe:: write_lock(1)
+
+            Session has acquired an exclusive write lock on a machine
+            using :py:func:`IMachine.lock_machine` .
+
+    .. describe:: remote(2)
+
+            Session has launched a VM process using
+            :py:func:`IMachine.launch_vm_process` 
+
+    .. describe:: shared(3)
+
+            Session has obtained a link to another session using
+            :py:func:`IMachine.lock_machine` 
+
     """
     __uuid__ = 'A13C02CB-0C2C-421E-8317-AC0E8AAA153A'
     _enums = [\
@@ -585,24 +977,55 @@ class SessionType(Enum):
          '''Null value (never used by the API).'''),
         ('WriteLock', 1, 
          '''Session has acquired an exclusive write lock on a machine
-            using <link to="IMachine::lockMachine"/>.'''),
+            using :py:func:`IMachine.lock_machine` .'''),
         ('Remote', 2, 
          '''Session has launched a VM process using
-            <link to="IMachine::launchVMProcess"/>'''),
+            :py:func:`IMachine.launch_vm_process` '''),
         ('Shared', 3, 
          '''Session has obtained a link to another session using
-            <link to="IMachine::lockMachine"/>'''),
+            :py:func:`IMachine.lock_machine` '''),
         ] 
 
 
 class DeviceType(Enum):
     """Device type.
+
+
+    .. describe:: null(0)
+
+            Null value, may also mean "no device" (not allowed for
+            :py:func:`IConsole.get_device_activity` ).
+
+    .. describe:: floppy(1)
+
+            Floppy device.
+
+    .. describe:: dvd(2)
+
+            CD/DVD-ROM device.
+
+    .. describe:: hard_disk(3)
+
+            Hard disk device.
+
+    .. describe:: network(4)
+
+            Network device.
+
+    .. describe:: usb(5)
+
+            USB device.
+
+    .. describe:: shared_folder(6)
+
+            Shared folder device.
+
     """
     __uuid__ = '6d9420f7-0b56-4636-99f9-7346f1b01e57'
     _enums = [\
         ('Null', 0, 
          '''Null value, may also mean "no device" (not allowed for
-            <link to="IConsole::getDeviceActivity"/>).'''),
+            :py:func:`IConsole.get_device_activity` ).'''),
         ('Floppy', 1, 
          '''Floppy device.'''),
         ('DVD', 2, 
@@ -619,7 +1042,25 @@ class DeviceType(Enum):
 
 
 class DeviceActivity(Enum):
-    """Device activity for <link to="IConsole::getDeviceActivity"/>.
+    """Device activity for :py:func:`IConsole.get_device_activity` .
+
+
+    .. describe:: null(0)
+
+            
+
+    .. describe:: idle(1)
+
+            
+
+    .. describe:: reading(2)
+
+            
+
+    .. describe:: writing(3)
+
+            
+
     """
     __uuid__ = '6FC8AEAA-130A-4eb5-8954-3F921422D707'
     _enums = [\
@@ -636,6 +1077,24 @@ class DeviceActivity(Enum):
 
 class ClipboardMode(Enum):
     """Host-Guest clipboard interchange mode.
+
+
+    .. describe:: disabled(0)
+
+            
+
+    .. describe:: host_to_guest(1)
+
+            
+
+    .. describe:: guest_to_host(2)
+
+            
+
+    .. describe:: bidirectional(3)
+
+            
+
     """
     __uuid__ = '33364716-4008-4701-8f14-be0fa3d62950'
     _enums = [\
@@ -652,6 +1111,24 @@ class ClipboardMode(Enum):
 
 class DragAndDropMode(Enum):
     """Drag'n'Drop interchange mode.
+
+
+    .. describe:: disabled(0)
+
+            
+
+    .. describe:: host_to_guest(1)
+
+            
+
+    .. describe:: guest_to_host(2)
+
+            
+
+    .. describe:: bidirectional(3)
+
+            
+
     """
     __uuid__ = 'b618ea0e-b6fb-4f8d-97f7-5e237e49b547'
     _enums = [\
@@ -671,6 +1148,20 @@ class Scope(Enum):
     
     A generic enumeration used in various methods to define the action or
     argument scope.
+
+
+    .. describe:: global_p(0)
+
+            
+
+    .. describe:: machine(1)
+
+            
+
+    .. describe:: session(2)
+
+            
+
     """
     __uuid__ = '7c91096e-499e-4eca-9f9b-9001438d7855'
     _enums = [\
@@ -685,6 +1176,20 @@ class Scope(Enum):
 
 class BIOSBootMenuMode(Enum):
     """BIOS boot menu mode.
+
+
+    .. describe:: disabled(0)
+
+            
+
+    .. describe:: menu_only(1)
+
+            
+
+    .. describe:: message_and_menu(2)
+
+            
+
     """
     __uuid__ = 'ae4fb9f7-29d2-45b4-b2c7-d579603135d5'
     _enums = [\
@@ -699,6 +1204,24 @@ class BIOSBootMenuMode(Enum):
 
 class ProcessorFeature(Enum):
     """CPU features.
+
+
+    .. describe:: hw_virt_ex(0)
+
+            
+
+    .. describe:: pae(1)
+
+            
+
+    .. describe:: long_mode(2)
+
+            
+
+    .. describe:: nested_paging(3)
+
+            
+
     """
     __uuid__ = '64c38e6b-8bcf-45ad-ac03-9b406287c5bf'
     _enums = [\
@@ -715,6 +1238,28 @@ class ProcessorFeature(Enum):
 
 class FirmwareType(Enum):
     """Firmware type.
+
+
+    .. describe:: bios(1)
+
+            BIOS Firmware.
+
+    .. describe:: efi(2)
+
+            EFI Firmware, bitness detected basing on OS type.
+
+    .. describe:: efi32(3)
+
+            EFI firmware, 32-bit.
+
+    .. describe:: efi64(4)
+
+            EFI firmware, 64-bit.
+
+    .. describe:: efidual(5)
+
+            EFI firmware, combined 32 and 64-bit.
+
     """
     __uuid__ = 'b903f264-c230-483e-ac74-2b37ce60d371'
     _enums = [\
@@ -733,6 +1278,34 @@ class FirmwareType(Enum):
 
 class PointingHIDType(Enum):
     """Type of pointing device used in a virtual machine.
+
+
+    .. describe:: none(1)
+
+            No mouse.
+
+    .. describe:: ps2_mouse(2)
+
+            PS/2 auxiliary device, a.k.a. mouse.
+
+    .. describe:: usb_mouse(3)
+
+            USB mouse (relative pointer).
+
+    .. describe:: usb_tablet(4)
+
+            USB tablet (absolute pointer).  Also enables a relative USB mouse in
+            addition.
+
+    .. describe:: combo_mouse(5)
+
+            Combined device, working as PS/2 or USB mouse, depending on guest
+            behavior.  Using this device can have negative performance implications.
+
+    .. describe:: usb_multi_touch(6)
+
+            USB multi-touch device.  Also enables the USB tablet and mouse devices.
+
     """
     __uuid__ = '19964e93-0050-45c4-9382-a7bccc53e666'
     _enums = [\
@@ -755,6 +1328,25 @@ class PointingHIDType(Enum):
 
 class KeyboardHIDType(Enum):
     """Type of keyboard device used in a virtual machine.
+
+
+    .. describe:: none(1)
+
+            No keyboard.
+
+    .. describe:: ps2_keyboard(2)
+
+            PS/2 keyboard.
+
+    .. describe:: usb_keyboard(3)
+
+            USB keyboard.
+
+    .. describe:: combo_keyboard(4)
+
+            Combined device, working as PS/2 or USB keyboard, depending on guest behavior.
+            Using of such device can have negative performance implications.
+
     """
     __uuid__ = '383e43d7-5c7c-4ec8-9cb8-eda1bccd6699'
     _enums = [\
@@ -772,6 +1364,260 @@ class KeyboardHIDType(Enum):
 
 class DhcpOpt(Enum):
     """
+
+
+    .. describe:: subnet_mask(1)
+
+            
+
+    .. describe:: time_offset(2)
+
+            
+
+    .. describe:: router(3)
+
+            
+
+    .. describe:: time_server(4)
+
+            
+
+    .. describe:: name_server(5)
+
+            
+
+    .. describe:: domain_name_server(6)
+
+            
+
+    .. describe:: log_server(7)
+
+            
+
+    .. describe:: cookie(8)
+
+            
+
+    .. describe:: lpr_server(9)
+
+            
+
+    .. describe:: impress_server(10)
+
+            
+
+    .. describe:: resourse_location_server(11)
+
+            
+
+    .. describe:: host_name(12)
+
+            
+
+    .. describe:: boot_file_size(13)
+
+            
+
+    .. describe:: merit_dump_file(14)
+
+            
+
+    .. describe:: domain_name(15)
+
+            
+
+    .. describe:: swap_server(16)
+
+            
+
+    .. describe:: root_path(17)
+
+            
+
+    .. describe:: extension_path(18)
+
+            
+
+    .. describe:: ip_forwarding_enable_disable(19)
+
+            
+
+    .. describe:: non_local_source_routing_enable_disable(20)
+
+            
+
+    .. describe:: policy_filter(21)
+
+            
+
+    .. describe:: maximum_datagram_reassembly_size(22)
+
+            
+
+    .. describe:: default_ip_time2_live(23)
+
+            
+
+    .. describe:: path_mtu_aging_timeout(24)
+
+            
+
+    .. describe:: ip_layer_parameters_per_interface(25)
+
+            
+
+    .. describe:: interface_mtu(26)
+
+            
+
+    .. describe:: all_subnets_are_local(27)
+
+            
+
+    .. describe:: broadcast_address(28)
+
+            
+
+    .. describe:: perform_mask_discovery(29)
+
+            
+
+    .. describe:: mask_supplier(30)
+
+            
+
+    .. describe:: perform_route_discovery(31)
+
+            
+
+    .. describe:: router_solicitation_address(32)
+
+            
+
+    .. describe:: static_route(33)
+
+            
+
+    .. describe:: trailer_encapsulation(34)
+
+            
+
+    .. describe:: arp_cache_timeout(35)
+
+            
+
+    .. describe:: ethernet_encapsulation(36)
+
+            
+
+    .. describe:: tcp_default_ttl(37)
+
+            
+
+    .. describe:: tcp_keep_alive_interval(38)
+
+            
+
+    .. describe:: tcp_keep_alive_garbage(39)
+
+            
+
+    .. describe:: network_information_service_domain(40)
+
+            
+
+    .. describe:: network_information_service_servers(41)
+
+            
+
+    .. describe:: network_time_protocol_servers(42)
+
+            
+
+    .. describe:: vendor_specific_information(43)
+
+            
+
+    .. describe:: option_44(44)
+
+            
+
+    .. describe:: option_45(45)
+
+            
+
+    .. describe:: option_46(46)
+
+            
+
+    .. describe:: option_47(47)
+
+            
+
+    .. describe:: option_48(48)
+
+            
+
+    .. describe:: option_49(49)
+
+            
+
+    .. describe:: ip_address_lease_time(51)
+
+            
+
+    .. describe:: option_64(64)
+
+            
+
+    .. describe:: option_65(65)
+
+            
+
+    .. describe:: tftp_server_name(66)
+
+            
+
+    .. describe:: bootfile_name(67)
+
+            
+
+    .. describe:: option_68(68)
+
+            
+
+    .. describe:: option_69(69)
+
+            
+
+    .. describe:: option_70(70)
+
+            
+
+    .. describe:: option_71(71)
+
+            
+
+    .. describe:: option_72(72)
+
+            
+
+    .. describe:: option_73(73)
+
+            
+
+    .. describe:: option_74(74)
+
+            
+
+    .. describe:: option_75(75)
+
+            
+
+    .. describe:: option_119(119)
+
+            
+
     """
     __uuid__ = '40d99bd3-3ece-44d2-a07e-1085fe9c4f0b'
     _enums = [\
@@ -906,6 +1752,24 @@ class DhcpOpt(Enum):
 
 class VFSType(Enum):
     """Virtual file systems supported by VFSExplorer.
+
+
+    .. describe:: file_p(1)
+
+            
+
+    .. describe:: cloud(2)
+
+            
+
+    .. describe:: s3(3)
+
+            
+
+    .. describe:: web_dav(4)
+
+            
+
     """
     __uuid__ = '813999ba-b949-48a8-9230-aadc6285e2f2'
     _enums = [\
@@ -922,6 +1786,44 @@ class VFSType(Enum):
 
 class VFSFileType(Enum):
     """File types known by VFSExplorer.
+
+
+    .. describe:: unknown(1)
+
+            
+
+    .. describe:: fifo(2)
+
+            
+
+    .. describe:: dev_char(3)
+
+            
+
+    .. describe:: directory(4)
+
+            
+
+    .. describe:: dev_block(5)
+
+            
+
+    .. describe:: file_p(6)
+
+            
+
+    .. describe:: sym_link(7)
+
+            
+
+    .. describe:: socket(8)
+
+            
+
+    .. describe:: white_out(9)
+
+            
+
     """
     __uuid__ = '714333cd-44e2-415f-a245-d378fa9b1242'
     _enums = [\
@@ -947,7 +1849,17 @@ class VFSFileType(Enum):
 
 
 class ImportOptions(Enum):
-    """Import options, used with <link to="IAppliance::importMachines"/>.
+    """Import options, used with :py:func:`IAppliance.import_machines` .
+
+
+    .. describe:: keep_all_ma_cs(1)
+
+            Don't generate new MAC addresses of the attached network adapters.
+
+    .. describe:: keep_natma_cs(2)
+
+            Don't generate new MAC addresses of the attached network adapters when they are using NAT.
+
     """
     __uuid__ = '0a981523-3b20-4004-8ee3-dfd322202ace'
     _enums = [\
@@ -959,7 +1871,33 @@ class ImportOptions(Enum):
 
 
 class ExportOptions(Enum):
-    """Export options, used with <link to="IAppliance::write"/>.
+    """Export options, used with :py:func:`IAppliance.write` .
+
+
+    .. describe:: create_manifest(1)
+
+            Write the optional manifest file (.mf) which is used for integrity
+            checks prior import.
+
+    .. describe:: export_dvd_images(2)
+
+            Export DVD images. Default is not to export them as it is rarely
+            needed for typical VMs.
+
+    .. describe:: strip_all_ma_cs(3)
+
+            Do not export any MAC address information. Default is to keep them
+            to avoid losing information which can cause trouble after import, at the
+            price of risking duplicate MAC addresses, if the import options are used
+            to keep them.
+
+    .. describe:: strip_all_non_natma_cs(4)
+
+            Do not export any MAC address information, except for adapters
+            using NAT. Default is to keep them to avoid losing information which can
+            cause trouble after import, at the price of risking duplicate MAC
+            addresses, if the import options are used to keep them.
+
     """
     __uuid__ = '8f45eb08-fd34-41ee-af95-a880bdee5554'
     _enums = [\
@@ -983,8 +1921,106 @@ class ExportOptions(Enum):
 
 
 class VirtualSystemDescriptionType(Enum):
-    """Used with <link to="IVirtualSystemDescription"/> to describe the type of
+    """Used with :py:class:`IVirtualSystemDescription`  to describe the type of
     a configuration value.
+
+
+    .. describe:: ignore(1)
+
+            
+
+    .. describe:: os(2)
+
+            
+
+    .. describe:: name(3)
+
+            
+
+    .. describe:: product(4)
+
+            
+
+    .. describe:: vendor(5)
+
+            
+
+    .. describe:: version(6)
+
+            
+
+    .. describe:: product_url(7)
+
+            
+
+    .. describe:: vendor_url(8)
+
+            
+
+    .. describe:: description(9)
+
+            
+
+    .. describe:: license_p(10)
+
+            
+
+    .. describe:: miscellaneous(11)
+
+            
+
+    .. describe:: cpu(12)
+
+            
+
+    .. describe:: memory(13)
+
+            
+
+    .. describe:: hard_disk_controller_ide(14)
+
+            
+
+    .. describe:: hard_disk_controller_sata(15)
+
+            
+
+    .. describe:: hard_disk_controller_scsi(16)
+
+            
+
+    .. describe:: hard_disk_controller_sas(17)
+
+            
+
+    .. describe:: hard_disk_image(18)
+
+            
+
+    .. describe:: floppy(19)
+
+            
+
+    .. describe:: cdrom(20)
+
+            
+
+    .. describe:: network_adapter(21)
+
+            
+
+    .. describe:: usb_controller(22)
+
+            
+
+    .. describe:: sound_card(23)
+
+            
+
+    .. describe:: settings_file(24)
+
+            Not used/implemented right now, will be added later in 4.1.x.
+
     """
     __uuid__ = '303c0900-a746-4612-8c67-79003e91f459'
     _enums = [\
@@ -1040,8 +2076,26 @@ class VirtualSystemDescriptionType(Enum):
 
 
 class VirtualSystemDescriptionValueType(Enum):
-    """Used with <link to="IVirtualSystemDescription::getValuesByType"/> to describe the value
+    """Used with :py:func:`IVirtualSystemDescription.get_values_by_type`  to describe the value
     type to fetch.
+
+
+    .. describe:: reference(1)
+
+            
+
+    .. describe:: original(2)
+
+            
+
+    .. describe:: auto(3)
+
+            
+
+    .. describe:: extra_config(4)
+
+            
+
     """
     __uuid__ = '56d9403f-3425-4118-9919-36f2a9b8c77c'
     _enums = [\
@@ -1057,7 +2111,21 @@ class VirtualSystemDescriptionValueType(Enum):
 
 
 class GraphicsControllerType(Enum):
-    """Graphics controller type, used with <link to="IMachine::unregister"/>.
+    """Graphics controller type, used with :py:func:`IMachine.unregister` .
+
+
+    .. describe:: null(0)
+
+            Reserved value, invalid.
+
+    .. describe:: v_box_vga(1)
+
+            Default VirtualBox VGA device.
+
+    .. describe:: vmsvga(2)
+
+            VMware SVGA II device.
+
     """
     __uuid__ = '79c96ca0-9f39-4900-948e-68c41cbe127a'
     _enums = [\
@@ -1071,7 +2139,25 @@ class GraphicsControllerType(Enum):
 
 
 class CleanupMode(Enum):
-    """Cleanup mode, used with <link to="IMachine::unregister"/>.
+    """Cleanup mode, used with :py:func:`IMachine.unregister` .
+
+
+    .. describe:: unregister_only(1)
+
+            Unregister only the machine, but neither delete snapshots nor detach media.
+
+    .. describe:: detach_all_return_none(2)
+
+            Delete all snapshots and detach all media but return none; this will keep all media registered.
+
+    .. describe:: detach_all_return_hard_disks_only(3)
+
+            Delete all snapshots, detach all media and return hard disks for closing, but not removable media.
+
+    .. describe:: full(4)
+
+            Delete all snapshots, detach all media and return all media for closing.
+
     """
     __uuid__ = '67897c50-7cca-47a9-83f6-ce8fd8eb5441'
     _enums = [\
@@ -1087,7 +2173,21 @@ class CleanupMode(Enum):
 
 
 class CloneMode(Enum):
-    """Clone mode, used with <link to="IMachine::cloneTo"/>.
+    """Clone mode, used with :py:func:`IMachine.clone_to` .
+
+
+    .. describe:: machine_state(1)
+
+            Clone the state of the selected machine.
+
+    .. describe:: machine_and_child_states(2)
+
+            Clone the state of the selected machine and its child snapshots if present.
+
+    .. describe:: all_states(3)
+
+            Clone all states (including all snapshots) of the machine, regardless of the machine object used.
+
     """
     __uuid__ = 'A7A159FE-5096-4B8D-8C3C-D033CB0B35A8'
     _enums = [\
@@ -1101,7 +2201,25 @@ class CloneMode(Enum):
 
 
 class CloneOptions(Enum):
-    """Clone options, used with <link to="IMachine::cloneTo"/>.
+    """Clone options, used with :py:func:`IMachine.clone_to` .
+
+
+    .. describe:: link(1)
+
+            Create a clone VM where all virtual disks are linked to the original VM.
+
+    .. describe:: keep_all_ma_cs(2)
+
+            Don't generate new MAC addresses of the attached network adapters.
+
+    .. describe:: keep_natma_cs(3)
+
+            Don't generate new MAC addresses of the attached network adapters when they are using NAT.
+
+    .. describe:: keep_disk_names(4)
+
+            Don't change the disk names.
+
     """
     __uuid__ = '22243f8e-96ab-497c-8cf0-f40a566c630b'
     _enums = [\
@@ -1117,7 +2235,25 @@ class CloneOptions(Enum):
 
 
 class AutostopType(Enum):
-    """Autostop types, used with <link to="IMachine::autostopType"/>.
+    """Autostop types, used with :py:func:`IMachine.autostop_type` .
+
+
+    .. describe:: disabled(1)
+
+            Stopping the VM during system shutdown is disabled.
+
+    .. describe:: save_state(2)
+
+            The state of the VM will be saved when the system shuts down.
+
+    .. describe:: power_off(3)
+
+            The VM is powered off when the system shuts down.
+
+    .. describe:: acpi_shutdown(4)
+
+            An ACPI shutdown event is generated.
+
     """
     __uuid__ = '6bb96740-cf34-470d-aab2-2cd48ea2e10e'
     _enums = [\
@@ -1135,7 +2271,25 @@ class AutostopType(Enum):
 class HostNetworkInterfaceMediumType(Enum):
     """Type of encapsulation. Ethernet encapsulation includes both wired and
     wireless Ethernet connections.
-    <link to="IHostNetworkInterface"/>
+    :py:class:`IHostNetworkInterface` 
+
+
+    .. describe:: unknown(0)
+
+            The type of interface cannot be determined.
+
+    .. describe:: ethernet(1)
+
+            Ethernet frame encapsulation.
+
+    .. describe:: ppp(2)
+
+            Point-to-point protocol encapsulation.
+
+    .. describe:: slip(3)
+
+            Serial line IP encapsulation.
+
     """
     __uuid__ = '1aa54aaf-2497-45a2-bfb1-8eb225e93d5b'
     _enums = [\
@@ -1152,7 +2306,21 @@ class HostNetworkInterfaceMediumType(Enum):
 
 class HostNetworkInterfaceStatus(Enum):
     """Current status of the interface.
-    <link to="IHostNetworkInterface"/>
+    :py:class:`IHostNetworkInterface` 
+
+
+    .. describe:: unknown(0)
+
+            The state of interface cannot be determined.
+
+    .. describe:: up(1)
+
+            The interface is fully operational.
+
+    .. describe:: down(2)
+
+            The interface is not functioning.
+
     """
     __uuid__ = 'CC474A69-2710-434B-8D99-C38E5D5A6F41'
     _enums = [\
@@ -1167,6 +2335,16 @@ class HostNetworkInterfaceStatus(Enum):
 
 class HostNetworkInterfaceType(Enum):
     """Network interface type.
+
+
+    .. describe:: bridged(1)
+
+            
+
+    .. describe:: host_only(2)
+
+            
+
     """
     __uuid__ = '67431b00-9946-48a2-bc02-b25c5919f4f3'
     _enums = [\
@@ -1179,6 +2357,42 @@ class HostNetworkInterfaceType(Enum):
 
 class AdditionsFacilityType(Enum):
     """Guest Additions facility IDs.
+
+
+    .. describe:: none(0)
+
+            No/invalid facility.
+
+    .. describe:: v_box_guest_driver(20)
+
+            VirtualBox base driver (VBoxGuest).
+
+    .. describe:: auto_logon(90)
+
+            Auto-logon modules (VBoxGINA, VBoxCredProv, pam_vbox).
+
+    .. describe:: v_box_service(100)
+
+            VirtualBox system service (VBoxService).
+
+    .. describe:: v_box_tray_client(101)
+
+            VirtualBox desktop integration (VBoxTray on Windows, VBoxClient on non-Windows).
+
+    .. describe:: seamless(1000)
+
+            Seamless guest desktop integration.
+
+    .. describe:: graphics(1100)
+
+            Guest graphics mode. If not enabled, seamless rendering will not work, resize hints
+            are not immediately acted on and guest display resizes are probably not initiated by
+            the guest additions.
+
+    .. describe:: all_p(2147483646)
+
+            All facilities selected.
+
     """
     __uuid__ = '98f7f957-89fb-49b6-a3b1-31e3285eb1d8'
     _enums = [\
@@ -1205,6 +2419,36 @@ class AdditionsFacilityType(Enum):
 
 class AdditionsFacilityClass(Enum):
     """Guest Additions facility classes.
+
+
+    .. describe:: none(0)
+
+            No/invalid class.
+
+    .. describe:: driver(10)
+
+            Driver.
+
+    .. describe:: service(30)
+
+            System service.
+
+    .. describe:: program(50)
+
+            Program.
+
+    .. describe:: feature(100)
+
+            Feature.
+
+    .. describe:: third_party(999)
+
+            Third party.
+
+    .. describe:: all_p(2147483646)
+
+            All facility classes selected.
+
     """
     __uuid__ = '446451b2-c88d-4e5d-84c9-91bc7f533f5f'
     _enums = [\
@@ -1227,6 +2471,44 @@ class AdditionsFacilityClass(Enum):
 
 class AdditionsFacilityStatus(Enum):
     """Guest Additions facility states.
+
+
+    .. describe:: inactive(0)
+
+            Facility is not active.
+
+    .. describe:: paused(1)
+
+            Facility has been paused.
+
+    .. describe:: pre_init(20)
+
+            Facility is preparing to initialize.
+
+    .. describe:: init(30)
+
+            Facility is initializing.
+
+    .. describe:: active(50)
+
+            Facility is up and running.
+
+    .. describe:: terminating(100)
+
+            Facility is shutting down.
+
+    .. describe:: terminated(101)
+
+            Facility successfully shut down.
+
+    .. describe:: failed(800)
+
+            Facility failed to start.
+
+    .. describe:: unknown(999)
+
+            Facility status is unknown.
+
     """
     __uuid__ = 'ce06f9e1-394e-4fe9-9368-5a88c567dbde'
     _enums = [\
@@ -1253,6 +2535,24 @@ class AdditionsFacilityStatus(Enum):
 
 class AdditionsRunLevelType(Enum):
     """Guest Additions run level type.
+
+
+    .. describe:: none(0)
+
+            Guest Additions are not loaded.
+
+    .. describe:: system(1)
+
+            Guest drivers are loaded.
+
+    .. describe:: userland(2)
+
+            Common components (such as application services) are loaded.
+
+    .. describe:: desktop(3)
+
+            Per-user desktop components are loaded.
+
     """
     __uuid__ = 'a25417ee-a9dd-4f5b-b0dc-377860087754'
     _enums = [\
@@ -1269,6 +2569,19 @@ class AdditionsRunLevelType(Enum):
 
 class AdditionsUpdateFlag(Enum):
     """Guest Additions update flags.
+
+
+    .. describe:: none(0)
+
+            No flag set.
+
+    .. describe:: wait_for_update_start_only(1)
+
+            Starts the regular updating process and waits until the
+            actual Guest Additions update inside the guest was started.
+            This can be necessary due to needed interaction with the guest
+            OS during the installation phase.
+
     """
     __uuid__ = '726a818d-18d6-4389-94e8-3e9e6826171a'
     _enums = [\
@@ -1284,7 +2597,45 @@ class AdditionsUpdateFlag(Enum):
 
 class GuestSessionStatus(Enum):
     """Guest session status. This enumeration represents possible values of
-    the <link to="IGuestSession::status"/> attribute.
+    the :py:func:`IGuestSession.status`  attribute.
+
+
+    .. describe:: undefined(0)
+
+            Guest session is in an undefined state.
+
+    .. describe:: starting(10)
+
+            Guest session is being started.
+
+    .. describe:: started(100)
+
+            Guest session has been started.
+
+    .. describe:: terminating(480)
+
+            Guest session is being terminated.
+
+    .. describe:: terminated(500)
+
+            Guest session terminated normally.
+
+    .. describe:: timed_out_killed(512)
+
+            Guest session timed out and was killed.
+
+    .. describe:: timed_out_abnormally(513)
+
+            Guest session timed out and was not killed successfully.
+
+    .. describe:: down(600)
+
+            Service/OS is stopping, guest session was killed.
+
+    .. describe:: error(800)
+
+            Something went wrong.
+
     """
     __uuid__ = 'ac2669da-4624-44f2-85b5-0b0bfb8d8673'
     _enums = [\
@@ -1311,6 +2662,24 @@ class GuestSessionStatus(Enum):
 
 class GuestSessionWaitForFlag(Enum):
     """Guest session waiting flags. Multiple flags can be combined.
+
+
+    .. describe:: none(0)
+
+            No waiting flags specified. Do not use this.
+
+    .. describe:: start(1)
+
+            Wait for the guest session being started.
+
+    .. describe:: terminate(2)
+
+            Wait for the guest session being terminated.
+
+    .. describe:: status(4)
+
+            Wait for the next guest session status change.
+
     """
     __uuid__ = 'bb7a372a-f635-4e11-a81a-e707f3a52ef5'
     _enums = [\
@@ -1327,12 +2696,46 @@ class GuestSessionWaitForFlag(Enum):
 
 class GuestSessionWaitResult(Enum):
     """Guest session waiting results. Depending on the session waiting flags (for
-    more information see <link to="GuestSessionWaitForFlag"/>) the waiting result
+    more information see :py:class:`GuestSessionWaitForFlag` ) the waiting result
     can vary based on the session's current status.
     
     To wait for a guest session to terminate after it has been
-    created by <link to="IGuest::createSession"/> one would specify
+    created by :py:func:`IGuest.create_session`  one would specify
     GuestSessionWaitResult_Terminate.
+
+
+    .. describe:: none(0)
+
+            No result was returned. Not being used.
+
+    .. describe:: start(1)
+
+            The guest session has been started.
+
+    .. describe:: terminate(2)
+
+            The guest session has been terminated.
+
+    .. describe:: status(3)
+
+            The guest session has changed its status. The status then can
+            be retrieved via :py:func:`IGuestSession.status` .
+
+    .. describe:: error(4)
+
+            Error while executing the process.
+
+    .. describe:: timeout(5)
+
+            The waiting operation timed out. This also will happen
+            when no event has been occurred matching the
+            current waiting flags in a :py:func:`IGuestSession.wait_for`  call.
+
+    .. describe:: wait_flag_not_supported(6)
+
+            A waiting flag specified in the :py:func:`IGuestSession.wait_for`  call
+            is not supported by the guest.
+
     """
     __uuid__ = 'c0f6a8a5-fdb6-42bf-a582-56c6f82bcd2d'
     _enums = [\
@@ -1344,21 +2747,123 @@ class GuestSessionWaitResult(Enum):
          '''The guest session has been terminated.'''),
         ('Status', 3, 
          '''The guest session has changed its status. The status then can
-            be retrieved via <link to="IGuestSession::status"/>.'''),
+            be retrieved via :py:func:`IGuestSession.status` .'''),
         ('Error', 4, 
          '''Error while executing the process.'''),
         ('Timeout', 5, 
          '''The waiting operation timed out. This also will happen
             when no event has been occurred matching the
-            current waiting flags in a <link to="IGuestSession::waitFor"/> call.'''),
+            current waiting flags in a :py:func:`IGuestSession.wait_for`  call.'''),
         ('WaitFlagNotSupported', 6, 
-         '''A waiting flag specified in the <link to="IGuestSession::waitFor"/> call
+         '''A waiting flag specified in the :py:func:`IGuestSession.wait_for`  call
             is not supported by the guest.'''),
         ] 
 
 
 class GuestUserState(Enum):
     """State a guest user has been changed to.
+
+
+    .. describe:: unknown(0)
+
+            Unknown state. Not being used.
+
+    .. describe:: logged_in(1)
+
+            A guest user has been successfully logged into
+            the guest OS.
+            This property is not implemented yet!
+
+    .. describe:: logged_out(2)
+
+            A guest user has been successfully logged out
+            of the guest OS.
+            This property is not implemented yet!
+
+    .. describe:: locked(3)
+
+            A guest user has locked its account. This might
+            include running a password-protected screensaver
+            on the guest.
+            This property is not implemented yet!
+
+    .. describe:: unlocked(4)
+
+            A guest user has unlocked its account.
+            This property is not implemented yet!
+
+    .. describe:: disabled(5)
+
+            A guest user has been disabled by the guest OS.
+            This property is not implemented yet!
+
+    .. describe:: idle(6)
+
+            A guest user currently is not using the guest OS.
+            Currently only available for Windows guests since
+            Windows 2000 SP2.
+            On Windows guests this function currently only supports
+            reporting contiguous idle times up to 49.7 days per user.
+            The event will be triggered if a guest user is not active for
+            at least 5 seconds. This threshold can be adjusted by either altering
+            VBoxService's command line on the guest to
+            --vminfo-user-idle-threshold 
+            , or by setting the per-VM guest property
+            /VirtualBox/GuestAdd/VBoxService/--vminfo-user-idle-threshold 
+            with the RDONLYGUEST flag on the host. In both cases VBoxService needs
+            to be restarted in order to get the changes applied.
+
+    .. describe:: in_use(7)
+
+            A guest user continued using the guest OS after
+            being idle.
+
+    .. describe:: created(8)
+
+            A guest user has been successfully created.
+            This property is not implemented yet!
+
+    .. describe:: deleted(9)
+
+            A guest user has been successfully deleted.
+            This property is not implemented yet!
+
+    .. describe:: session_changed(10)
+
+            To guest OS has changed the session of a user.
+            This property is not implemented yet!
+
+    .. describe:: credentials_changed(11)
+
+            To guest OS has changed the authentication
+            credentials of a user. This might include changed passwords
+            and authentication types.
+            This property is not implemented yet!
+
+    .. describe:: role_changed(12)
+
+            To guest OS has changed the role of a user permanently,
+            e.g. granting / denying administrative rights.
+            This property is not implemented yet!
+
+    .. describe:: group_added(13)
+
+            To guest OS has added a user to a specific
+            user group.
+            This property is not implemented yet!
+
+    .. describe:: group_removed(14)
+
+            To guest OS has removed a user from a specific
+            user group.
+            This property is not implemented yet!
+
+    .. describe:: elevated(15)
+
+            To guest OS temporarily has elevated a user
+            to perform a certain task.
+            This property is not implemented yet!
+
     """
     __uuid__ = 'b2a82b02-fd3d-4fc2-ba84-6ba5ac8be198'
     _enums = [\
@@ -1392,9 +2897,9 @@ class GuestUserState(Enum):
             The event will be triggered if a guest user is not active for
             at least 5 seconds. This threshold can be adjusted by either altering
             VBoxService's command line on the guest to
-            --vminfo-user-idle-threshold <ms>
+            --vminfo-user-idle-threshold 
             , or by setting the per-VM guest property
-            /VirtualBox/GuestAdd/VBoxService/--vminfo-user-idle-threshold <ms>
+            /VirtualBox/GuestAdd/VBoxService/--vminfo-user-idle-threshold 
             with the RDONLYGUEST flag on the host. In both cases VBoxService needs
             to be restarted in order to get the changes applied.'''),
         ('InUse', 7, 
@@ -1435,6 +2940,16 @@ class GuestUserState(Enum):
 
 class FileSeekType(Enum):
     """File seeking types.
+
+
+    .. describe:: set_p(0)
+
+            Seek from the start of the file.
+
+    .. describe:: current(1)
+
+            Seek from the current file position.
+
     """
     __uuid__ = '1b73f4f3-3515-4073-a506-76878d9e2541'
     _enums = [\
@@ -1447,6 +2962,16 @@ class FileSeekType(Enum):
 
 class ProcessInputFlag(Enum):
     """Guest process input flags.
+
+
+    .. describe:: none(0)
+
+            No flag set.
+
+    .. describe:: end_of_file(1)
+
+            End of file (input) reached.
+
     """
     __uuid__ = '5d38c1dd-2604-4ddf-92e5-0c0cdd3bdbd5'
     _enums = [\
@@ -1460,6 +2985,16 @@ class ProcessInputFlag(Enum):
 class ProcessOutputFlag(Enum):
     """Guest process output flags for specifying which
     type of output to retrieve.
+
+
+    .. describe:: none(0)
+
+            No flags set. Get output from stdout.
+
+    .. describe:: std_err(1)
+
+            Get output from stderr.
+
     """
     __uuid__ = '9979e85a-52bb-40b7-870c-57115e27e0f1'
     _enums = [\
@@ -1472,6 +3007,32 @@ class ProcessOutputFlag(Enum):
 
 class ProcessWaitForFlag(Enum):
     """Process waiting flags. Multiple flags can be combined.
+
+
+    .. describe:: none(0)
+
+            No waiting flags specified. Do not use this.
+
+    .. describe:: start(1)
+
+            Wait for the process being started.
+
+    .. describe:: terminate(2)
+
+            Wait for the process being terminated.
+
+    .. describe:: std_in(4)
+
+            Wait for stdin becoming available.
+
+    .. describe:: std_out(8)
+
+            Wait for data becoming available on stdout.
+
+    .. describe:: std_err(16)
+
+            Wait for data becoming available on stderr.
+
     """
     __uuid__ = '23b550c7-78e1-437e-98f0-65fd9757bcd2'
     _enums = [\
@@ -1492,17 +3053,64 @@ class ProcessWaitForFlag(Enum):
 
 class ProcessWaitResult(Enum):
     """Process waiting results. Depending on the process waiting flags (for
-    more information see <link to="ProcessWaitForFlag"/>) the waiting result
+    more information see :py:class:`ProcessWaitForFlag` ) the waiting result
     can vary based on the processes' current status.
     
     To wait for a guest process to terminate after it has been
-    created by <link to="IGuestSession::processCreate"/> or <link to="IGuestSession::processCreateEx"/>
+    created by :py:func:`IGuestSession.process_create`  or :py:func:`IGuestSession.process_create_ex` 
     one would specify ProcessWaitResult_Terminate.
     
     If a guest process has been started with ProcessCreateFlag_WaitForStdOut
     a client can wait with ProcessWaitResult_StdOut for new data to arrive on
     stdout; same applies for ProcessCreateFlag_WaitForStdErr and
     ProcessWaitResult_StdErr.
+
+
+    .. describe:: none(0)
+
+            No result was returned. Not being used.
+
+    .. describe:: start(1)
+
+            The process has been started.
+
+    .. describe:: terminate(2)
+
+            The process has been terminated.
+
+    .. describe:: status(3)
+
+            The process has changed its status. The status then can
+            be retrieved via :py:func:`IProcess.status` .
+
+    .. describe:: error(4)
+
+            Error while executing the process.
+
+    .. describe:: timeout(5)
+
+            The waiting operation timed out. This also will happen
+            when no event has been occurred matching the
+            current waiting flags in a :py:func:`IProcess.wait_for`  call.
+
+    .. describe:: std_in(6)
+
+            The process signalled that stdin became available for writing
+            and that the process awaits input now.
+
+    .. describe:: std_out(7)
+
+            Data on stdout became available for reading.
+
+    .. describe:: std_err(8)
+
+            Data on stderr became available for reading.
+
+    .. describe:: wait_flag_not_supported(9)
+
+            A waiting flag specified in the :py:func:`IProcess.wait_for`  call
+            is not supported by the guest.
+
     """
     __uuid__ = '40719cbe-f192-4fe9-a231-6697b3c8e2b4'
     _enums = [\
@@ -1514,13 +3122,13 @@ class ProcessWaitResult(Enum):
          '''The process has been terminated.'''),
         ('Status', 3, 
          '''The process has changed its status. The status then can
-            be retrieved via <link to="IProcess::status"/>.'''),
+            be retrieved via :py:func:`IProcess.status` .'''),
         ('Error', 4, 
          '''Error while executing the process.'''),
         ('Timeout', 5, 
          '''The waiting operation timed out. This also will happen
             when no event has been occurred matching the
-            current waiting flags in a <link to="IProcess::waitFor"/> call.'''),
+            current waiting flags in a :py:func:`IProcess.wait_for`  call.'''),
         ('StdIn', 6, 
          '''The process signalled that stdin became available for writing
             and that the process awaits input now.'''),
@@ -1529,13 +3137,34 @@ class ProcessWaitResult(Enum):
         ('StdErr', 8, 
          '''Data on stderr became available for reading.'''),
         ('WaitFlagNotSupported', 9, 
-         '''A waiting flag specified in the <link to="IProcess::waitFor"/> call
+         '''A waiting flag specified in the :py:func:`IProcess.wait_for`  call
             is not supported by the guest.'''),
         ] 
 
 
 class CopyFileFlag(Enum):
     """File copying flags.
+
+
+    .. describe:: none(0)
+
+            No flag set.
+
+    .. describe:: recursive(1)
+
+            Copy directories recursively.
+            This flag is not implemented yet.
+
+    .. describe:: update(2)
+
+            Only copy when the source file is newer than the destination file
+            or when the destination file is missing. This flag is not implemented
+            yet.
+
+    .. describe:: follow_links(4)
+
+            Follow symbolic links. This flag is not implemented yet.
+
     """
     __uuid__ = '23f79fdf-738a-493d-b80b-42d607c9b916'
     _enums = [\
@@ -1555,6 +3184,16 @@ class CopyFileFlag(Enum):
 
 class DirectoryCreateFlag(Enum):
     """Directory creation flags.
+
+
+    .. describe:: none(0)
+
+            No flag set.
+
+    .. describe:: parents(1)
+
+            No error if existing, make parent directories as needed.
+
     """
     __uuid__ = 'bd721b0e-ced5-4f79-b368-249897c32a36'
     _enums = [\
@@ -1567,6 +3206,20 @@ class DirectoryCreateFlag(Enum):
 
 class DirectoryRemoveRecFlag(Enum):
     """Directory recursive removement flags.
+
+
+    .. describe:: none(0)
+
+            No flag set.
+
+    .. describe:: content_and_dir(1)
+
+            Delete the content of the directory and the directory itself.
+
+    .. describe:: content_only(2)
+
+            Only delete the content of the directory, omit the directory it self.
+
     """
     __uuid__ = '455aabf0-7692-48f6-9061-f21579b65769'
     _enums = [\
@@ -1581,6 +3234,24 @@ class DirectoryRemoveRecFlag(Enum):
 
 class PathRenameFlag(Enum):
     """Path renaming flags.
+
+
+    .. describe:: none(0)
+
+            No flag set.
+
+    .. describe:: no_replace(1)
+
+            Do not replace anything.
+
+    .. describe:: replace(2)
+
+            This will replace attempt any target which isn't a directory.
+
+    .. describe:: no_symlinks(4)
+
+            Don't allow symbolic links as part of the path.
+
     """
     __uuid__ = 'f3baa09f-c758-453d-b91c-c7787d76351d'
     _enums = [\
@@ -1597,6 +3268,41 @@ class PathRenameFlag(Enum):
 
 class ProcessCreateFlag(Enum):
     """Guest process execution flags.
+
+
+    .. describe:: none(0)
+
+            No flag set.
+
+    .. describe:: wait_for_process_start_only(1)
+
+            Only use the specified timeout value to wait for starting the guest process - the guest
+            process itself then uses an infinite timeout.
+
+    .. describe:: ignore_orphaned_processes(2)
+
+            Do not report an error when executed processes are still alive when VBoxService or the guest OS is shutting down.
+
+    .. describe:: hidden(4)
+
+            Do not show the started process according to the guest OS guidelines.
+
+    .. describe:: no_profile(8)
+
+            Do not use the user's profile data when exeuting a process. Only available for Windows guests.
+
+    .. describe:: wait_for_std_out(16)
+
+            The guest process waits until all data from stdout is read out.
+
+    .. describe:: wait_for_std_err(32)
+
+            The guest process waits until all data from stderr is read out.
+
+    .. describe:: expand_arguments(64)
+
+            Expands environment variables in process arguments.
+
     """
     __uuid__ = '35192799-bfde-405d-9bea-c735ab9998e4'
     _enums = [\
@@ -1622,6 +3328,16 @@ class ProcessCreateFlag(Enum):
 
 class ProcessPriority(Enum):
     """Process priorities.
+
+
+    .. describe:: invalid(0)
+
+            Invalid priority, do not use.
+
+    .. describe:: default(1)
+
+            Default process priority determined by the OS.
+
     """
     __uuid__ = 'ee8cac50-e232-49fe-806b-d1214d9c2e49'
     _enums = [\
@@ -1634,6 +3350,20 @@ class ProcessPriority(Enum):
 
 class SymlinkType(Enum):
     """Symbolic link types.
+
+
+    .. describe:: unknown(0)
+
+            It is not known what is being targeted.
+
+    .. describe:: directory(1)
+
+            The link targets a directory.
+
+    .. describe:: file_p(2)
+
+            The link targets a file (or whatever else).
+
     """
     __uuid__ = '37794668-f8f1-4714-98a5-6f8fa2ed0118'
     _enums = [\
@@ -1648,6 +3378,16 @@ class SymlinkType(Enum):
 
 class SymlinkReadFlag(Enum):
     """Symbolic link reading flags.
+
+
+    .. describe:: none(0)
+
+            No flags set.
+
+    .. describe:: no_symlinks(1)
+
+            Don't allow symbolic links as part of the path.
+
     """
     __uuid__ = 'b7fe2b9d-790e-4b25-8adf-1ca33026931f'
     _enums = [\
@@ -1660,6 +3400,56 @@ class SymlinkReadFlag(Enum):
 
 class ProcessStatus(Enum):
     """Process execution statuses.
+
+
+    .. describe:: undefined(0)
+
+            Process is in an undefined state.
+
+    .. describe:: starting(10)
+
+            Process is being started.
+
+    .. describe:: started(100)
+
+            Process has been started.
+
+    .. describe:: paused(110)
+
+            Process has been paused.
+
+    .. describe:: terminating(480)
+
+            Process is being terminated.
+
+    .. describe:: terminated_normally(500)
+
+            Process terminated normally.
+
+    .. describe:: terminated_signal(510)
+
+            Process terminated via signal.
+
+    .. describe:: terminated_abnormally(511)
+
+            Process terminated abnormally.
+
+    .. describe:: timed_out_killed(512)
+
+            Process timed out and was killed.
+
+    .. describe:: timed_out_abnormally(513)
+
+            Process timed out and was not killed successfully.
+
+    .. describe:: down(600)
+
+            Service/OS is stopping, process was killed.
+
+    .. describe:: error(800)
+
+            Something went wrong.
+
     """
     __uuid__ = '4d52368f-5b48-4bfe-b486-acf89139b52f'
     _enums = [\
@@ -1692,6 +3482,28 @@ class ProcessStatus(Enum):
 
 class ProcessInputStatus(Enum):
     """Process input statuses.
+
+
+    .. describe:: undefined(0)
+
+            Undefined state.
+
+    .. describe:: broken(1)
+
+            Input pipe is broken.
+
+    .. describe:: available(10)
+
+            Input pipe became available for writing.
+
+    .. describe:: written(50)
+
+            Data has been successfully written.
+
+    .. describe:: overflow(100)
+
+            Too much input data supplied, data overflow.
+
     """
     __uuid__ = 'a4a0ef9c-29cc-4805-9803-c8215ae9da6c'
     _enums = [\
@@ -1710,6 +3522,36 @@ class ProcessInputStatus(Enum):
 
 class FileStatus(Enum):
     """File statuses.
+
+
+    .. describe:: undefined(0)
+
+            File is in an undefined state.
+
+    .. describe:: opening(10)
+
+            Guest file is opening.
+
+    .. describe:: open_p(100)
+
+            Guest file has been successfully opened.
+
+    .. describe:: closing(150)
+
+            Guest file closing.
+
+    .. describe:: closed(200)
+
+            Guest file has been closed.
+
+    .. describe:: down(600)
+
+            Service/OS is stopping, guest file was closed.
+
+    .. describe:: error(800)
+
+            Something went wrong.
+
     """
     __uuid__ = '8c86468b-b97b-4080-8914-e29f5b0abd2c'
     _enums = [\
@@ -1732,6 +3574,44 @@ class FileStatus(Enum):
 
 class FsObjType(Enum):
     """File system object type.
+
+
+    .. describe:: undefined(0)
+
+            Type is undefined / unknown.
+
+    .. describe:: fifo(1)
+
+            Named pipe.
+
+    .. describe:: dev_char(10)
+
+            Character device.
+
+    .. describe:: dev_block(11)
+
+            Block device.
+
+    .. describe:: directory(50)
+
+            Directory.
+
+    .. describe:: file_p(80)
+
+            File.
+
+    .. describe:: symlink(100)
+
+            Symlink.
+
+    .. describe:: socket(200)
+
+            Socket.
+
+    .. describe:: whiteout(400)
+
+            Whiteout.
+
     """
     __uuid__ = 'a1ed437c-b3c3-4ca2-b19c-4239d658d5e8'
     _enums = [\
@@ -1758,6 +3638,24 @@ class FsObjType(Enum):
 
 class DragAndDropAction(Enum):
     """Possible actions within an Drag and Drop operation.
+
+
+    .. describe:: ignore(0)
+
+            Do nothing.
+
+    .. describe:: copy(1)
+
+            Copy the item to the target.
+
+    .. describe:: move(2)
+
+            Move the item to the target.
+
+    .. describe:: link(3)
+
+            Link the item from within the target.
+
     """
     __uuid__ = '47f3b162-c107-4fcd-bfa7-54b8135c441e'
     _enums = [\
@@ -1774,6 +3672,16 @@ class DragAndDropAction(Enum):
 
 class DirectoryOpenFlag(Enum):
     """Directory open flags.
+
+
+    .. describe:: none(0)
+
+            No flag set.
+
+    .. describe:: no_symlinks(1)
+
+            Don't allow symbolic links as part of the path.
+
     """
     __uuid__ = '5138837a-8fd2-4194-a1b0-08f7bc3949d0'
     _enums = [\
@@ -1786,7 +3694,45 @@ class DirectoryOpenFlag(Enum):
 
 class MediumState(Enum):
     """Virtual medium state.
-    <link to="IMedium"/>
+    :py:class:`IMedium` 
+
+
+    .. describe:: not_created(0)
+
+            Associated medium storage does not exist (either was not created yet or
+            was deleted).
+
+    .. describe:: created(1)
+
+            Associated storage exists and accessible; this gets set if the
+            accessibility check performed by :py:func:`IMedium.refresh_state` 
+            was successful.
+
+    .. describe:: locked_read(2)
+
+            Medium is locked for reading (see :py:func:`IMedium.lock_read` ),
+            no data modification is possible.
+
+    .. describe:: locked_write(3)
+
+            Medium is locked for writing (see :py:func:`IMedium.lock_write` ),
+            no concurrent data reading or modification is possible.
+
+    .. describe:: inaccessible(4)
+
+            Medium accessibility check (see :py:func:`IMedium.refresh_state` ) has
+            not yet been performed, or else, associated medium storage is not
+            accessible. In the first case, :py:func:`IMedium.last_access_error` 
+            is empty, in the second case, it describes the error that occurred.
+
+    .. describe:: creating(5)
+
+            Associated medium storage is being created.
+
+    .. describe:: deleting(6)
+
+            Associated medium storage is being deleted.
+
     """
     __uuid__ = 'ef41e980-e012-43cd-9dea-479d4ef14d13'
     _enums = [\
@@ -1795,18 +3741,18 @@ class MediumState(Enum):
             was deleted).'''),
         ('Created', 1, 
          '''Associated storage exists and accessible; this gets set if the
-            accessibility check performed by <link to="IMedium::refreshState"/>
+            accessibility check performed by :py:func:`IMedium.refresh_state` 
             was successful.'''),
         ('LockedRead', 2, 
-         '''Medium is locked for reading (see <link to="IMedium::lockRead"/>),
+         '''Medium is locked for reading (see :py:func:`IMedium.lock_read` ),
             no data modification is possible.'''),
         ('LockedWrite', 3, 
-         '''Medium is locked for writing (see <link to="IMedium::lockWrite"/>),
+         '''Medium is locked for writing (see :py:func:`IMedium.lock_write` ),
             no concurrent data reading or modification is possible.'''),
         ('Inaccessible', 4, 
-         '''Medium accessibility check (see <link to="IMedium::refreshState"/>) has
+         '''Medium accessibility check (see :py:func:`IMedium.refresh_state` ) has
             not yet been performed, or else, associated medium storage is not
-            accessible. In the first case, <link to="IMedium::lastAccessError"/>
+            accessible. In the first case, :py:func:`IMedium.last_access_error` 
             is empty, in the second case, it describes the error that occurred.'''),
         ('Creating', 5, 
          '''Associated medium storage is being created.'''),
@@ -1816,10 +3762,45 @@ class MediumState(Enum):
 
 
 class MediumType(Enum):
-    """Virtual medium type. For each <link to="IMedium"/>, this defines how the medium is
-    attached to a virtual machine (see <link to="IMediumAttachment"/>) and what happens
-    when a snapshot (see <link to="ISnapshot"/>) is taken of a virtual machine which has
+    """Virtual medium type. For each :py:class:`IMedium` , this defines how the medium is
+    attached to a virtual machine (see :py:class:`IMediumAttachment` ) and what happens
+    when a snapshot (see :py:class:`ISnapshot` ) is taken of a virtual machine which has
     the medium attached. At the moment DVD and floppy media are always of type "writethrough".
+
+
+    .. describe:: normal(0)
+
+            Normal medium (attached directly or indirectly, preserved
+            when taking snapshots).
+
+    .. describe:: immutable(1)
+
+            Immutable medium (attached indirectly, changes are wiped out
+            the next time the virtual machine is started).
+
+    .. describe:: writethrough(2)
+
+            Write through medium (attached directly, ignored when
+            taking snapshots).
+
+    .. describe:: shareable(3)
+
+            Allow using this medium concurrently by several machines.
+            Present since VirtualBox 3.2.0, and accepted since 3.2.8.
+
+    .. describe:: readonly(4)
+
+            A readonly medium, which can of course be used by several machines.
+            Present and accepted since VirtualBox 4.0.
+
+    .. describe:: multi_attach(5)
+
+            A medium which is indirectly attached, so that one base medium can
+            be used for several VMs which have their own differencing medium to
+            store their modifications. In some sense a variant of Immutable
+            with unset AutoReset flag in each differencing medium.
+            Present and accepted since VirtualBox 4.0.
+
     """
     __uuid__ = 'fe663fb5-c244-4e1b-9d81-c628b417dd04'
     _enums = [\
@@ -1849,7 +3830,43 @@ class MediumType(Enum):
 
 class MediumVariant(Enum):
     """Virtual medium image variant. More than one flag may be set.
-    <link to="IMedium"/>
+    :py:class:`IMedium` 
+
+
+    .. describe:: standard(0)
+
+            No particular variant requested, results in using the backend default.
+
+    .. describe:: vmdk_split2_g(1)
+
+            VMDK image split in chunks of less than 2GByte.
+
+    .. describe:: vmdk_raw_disk(2)
+
+            VMDK image representing a raw disk.
+
+    .. describe:: vmdk_stream_optimized(4)
+
+            VMDK streamOptimized image. Special import/export format which is
+            read-only/append-only.
+
+    .. describe:: vmdk_esx(8)
+
+            VMDK format variant used on ESX products.
+
+    .. describe:: fixed(65536)
+
+            Fixed image. Only allowed for base images.
+
+    .. describe:: diff(131072)
+
+            Differencing image. Only allowed for child images.
+
+    .. describe:: no_create_dir(1073741824)
+
+            Special flag which suppresses automatic creation of the subdirectory.
+            Only used when passing the medium variant as an input parameter.
+
     """
     __uuid__ = '80685b6b-e42f-497d-8271-e77bf3c61ada'
     _enums = [\
@@ -1876,6 +3893,20 @@ class MediumVariant(Enum):
 
 class DataType(Enum):
     """
+
+
+    .. describe:: int32(0)
+
+            
+
+    .. describe:: int8(1)
+
+            
+
+    .. describe:: string(2)
+
+            
+
     """
     __uuid__ = 'd90ea51e-a3f1-4a01-beb1-c1723c0d3ba7'
     _enums = [\
@@ -1890,6 +3921,28 @@ class DataType(Enum):
 
 class DataFlags(Enum):
     """
+
+
+    .. describe:: none(0)
+
+            
+
+    .. describe:: mandatory(1)
+
+            
+
+    .. describe:: expert(2)
+
+            
+
+    .. describe:: array(4)
+
+            
+
+    .. describe:: flag_mask(7)
+
+            
+
     """
     __uuid__ = '86884dcf-1d6b-4f1b-b4bf-f5aa44959d60'
     _enums = [\
@@ -1908,6 +3961,58 @@ class DataFlags(Enum):
 
 class MediumFormatCapabilities(Enum):
     """Medium format capability flags.
+
+
+    .. describe:: uuid(1)
+
+            Supports UUIDs as expected by VirtualBox code.
+
+    .. describe:: create_fixed(2)
+
+            Supports creating fixed size images, allocating all space instantly.
+
+    .. describe:: create_dynamic(4)
+
+            Supports creating dynamically growing images, allocating space on
+            demand.
+
+    .. describe:: create_split2_g(8)
+
+            Supports creating images split in chunks of a bit less than 2 GBytes.
+
+    .. describe:: differencing(16)
+
+            Supports being used as a format for differencing media (see :py:func:`IMedium.create_diff_storage` ).
+
+    .. describe:: asynchronous(32)
+
+            Supports asynchronous I/O operations for at least some configurations.
+
+    .. describe:: file_p(64)
+
+            The format backend operates on files (the :py:func:`IMedium.location` 
+            attribute of the medium specifies a file used to store medium
+            data; for a list of supported file extensions see
+            :py:func:`IMediumFormat.describe_file_extensions` ).
+
+    .. describe:: properties(128)
+
+            The format backend uses the property interface to configure the storage
+            location and properties (the :py:func:`IMediumFormat.describe_properties` 
+            method is used to get access to properties supported by the given medium format).
+
+    .. describe:: tcp_networking(256)
+
+            The format backend uses the TCP networking interface for network access.
+
+    .. describe:: vfs(512)
+
+            The format backend supports virtual filesystem functionality.
+
+    .. describe:: capability_mask(1023)
+
+            
+
     """
     __uuid__ = '7342ba79-7ce0-4d94-8f86-5ed5a185d9bd'
     _enums = [\
@@ -1921,17 +4026,17 @@ class MediumFormatCapabilities(Enum):
         ('CreateSplit2G', 8, 
          '''Supports creating images split in chunks of a bit less than 2 GBytes.'''),
         ('Differencing', 16, 
-         '''Supports being used as a format for differencing media (see <link to="IMedium::createDiffStorage"/>).'''),
+         '''Supports being used as a format for differencing media (see :py:func:`IMedium.create_diff_storage` ).'''),
         ('Asynchronous', 32, 
          '''Supports asynchronous I/O operations for at least some configurations.'''),
         ('File', 64, 
-         '''The format backend operates on files (the <link to="IMedium::location"/>
+         '''The format backend operates on files (the :py:func:`IMedium.location` 
             attribute of the medium specifies a file used to store medium
             data; for a list of supported file extensions see
-            <link to="IMediumFormat::describeFileExtensions"/>).'''),
+            :py:func:`IMediumFormat.describe_file_extensions` ).'''),
         ('Properties', 128, 
          '''The format backend uses the property interface to configure the storage
-            location and properties (the <link to="IMediumFormat::describeProperties"/>
+            location and properties (the :py:func:`IMediumFormat.describe_properties` 
             method is used to get access to properties supported by the given medium format).'''),
         ('TcpNetworking', 256, 
          '''The format backend uses the TCP networking interface for network access.'''),
@@ -1944,6 +4049,40 @@ class MediumFormatCapabilities(Enum):
 
 class MouseButtonState(Enum):
     """Mouse button state.
+
+
+    .. describe:: left_button(1)
+
+            
+
+    .. describe:: right_button(2)
+
+            
+
+    .. describe:: middle_button(4)
+
+            
+
+    .. describe:: wheel_up(8)
+
+            
+
+    .. describe:: wheel_down(16)
+
+            
+
+    .. describe:: x_button1(32)
+
+            
+
+    .. describe:: x_button2(64)
+
+            
+
+    .. describe:: mouse_state_mask(127)
+
+            
+
     """
     __uuid__ = '9ee094b8-b28a-4d56-a166-973cb588d7f8'
     _enums = [\
@@ -1968,6 +4107,24 @@ class MouseButtonState(Enum):
 
 class TouchContactState(Enum):
     """Touch event contact state.
+
+
+    .. describe:: none(0)
+
+            The touch has finished.
+
+    .. describe:: in_contact(1)
+
+            Whether the touch is really touching the device.
+
+    .. describe:: in_range(2)
+
+            Whether the touch is close enough to the device to be detected.
+
+    .. describe:: contact_state_mask(3)
+
+            
+
     """
     __uuid__ = '3f942686-2506-421c-927c-90d4b45f4a38'
     _enums = [\
@@ -1984,9 +4141,21 @@ class TouchContactState(Enum):
 
 class FramebufferPixelFormat(Enum):
     """Format of the video memory buffer. Constants represented by this enum can
-    be used to test for particular values of <link to="IFramebuffer::pixelFormat"/>.
+    be used to test for particular values of :py:func:`IFramebuffer.pixel_format` .
     
     See also www.fourcc.org for more information about FOURCC pixel formats.
+
+
+    .. describe:: opaque(0)
+
+            Unknown buffer format (the user may not assume any particular format of
+            the buffer).
+
+    .. describe:: fourcc_rgb(843204434)
+
+            Basic RGB format (:py:func:`IFramebuffer.bits_per_pixel`  determines the
+            bit layout).
+
     """
     __uuid__ = '7acfd5ed-29e3-45e3-8136-73c9224f3d2d'
     _enums = [\
@@ -1994,13 +4163,43 @@ class FramebufferPixelFormat(Enum):
          '''Unknown buffer format (the user may not assume any particular format of
             the buffer).'''),
         ('FOURCC_RGB', 843204434, 
-         '''Basic RGB format (<link to="IFramebuffer::bitsPerPixel"/> determines the
+         '''Basic RGB format (:py:func:`IFramebuffer.bits_per_pixel`  determines the
             bit layout).'''),
         ] 
 
 
 class NetworkAttachmentType(Enum):
     """Network attachment type.
+
+
+    .. describe:: null(0)
+
+            Null value, also means "not attached".
+
+    .. describe:: nat(1)
+
+            
+
+    .. describe:: bridged(2)
+
+            
+
+    .. describe:: internal(3)
+
+            
+
+    .. describe:: host_only(4)
+
+            
+
+    .. describe:: generic(5)
+
+            
+
+    .. describe:: nat_network(6)
+
+            
+
     """
     __uuid__ = '524a8f9d-4b86-4b51-877d-1aa27c4ebeac'
     _enums = [\
@@ -2023,6 +4222,36 @@ class NetworkAttachmentType(Enum):
 
 class NetworkAdapterType(Enum):
     """Network adapter type.
+
+
+    .. describe:: null(0)
+
+            Null value (never used by the API).
+
+    .. describe:: am79_c970_a(1)
+
+            AMD PCNet-PCI II network card (Am79C970A).
+
+    .. describe:: am79_c973(2)
+
+            AMD PCNet-FAST III network card (Am79C973).
+
+    .. describe:: i82540_em(3)
+
+            Intel PRO/1000 MT Desktop network card (82540EM).
+
+    .. describe:: i82543_gc(4)
+
+            Intel PRO/1000 T Server network card (82543GC).
+
+    .. describe:: i82545_em(5)
+
+            Intel PRO/1000 MT Server network card (82545EM).
+
+    .. describe:: virtio(6)
+
+            Virtio network device.
+
     """
     __uuid__ = '3c2281e4-d952-4e87-8c7d-24379cb6a81c'
     _enums = [\
@@ -2045,6 +4274,22 @@ class NetworkAdapterType(Enum):
 
 class NetworkAdapterPromiscModePolicy(Enum):
     """The promiscuous mode policy of an interface.
+
+
+    .. describe:: deny(1)
+
+            Deny promiscuous mode requests.
+
+    .. describe:: allow_network(2)
+
+            Allow promiscuous mode, but restrict the scope it to the internal
+            network so that it only applies to other VMs.
+
+    .. describe:: allow_all(3)
+
+            Allow promiscuous mode, include unrelated traffic going over the wire
+            and internally on the host.
+
     """
     __uuid__ = 'c963768a-376f-4c85-8d84-d8ced4b7269e'
     _enums = [\
@@ -2062,6 +4307,24 @@ class NetworkAdapterPromiscModePolicy(Enum):
 class PortMode(Enum):
     """The PortMode enumeration represents possible communication modes for
     the virtual serial port device.
+
+
+    .. describe:: disconnected(0)
+
+            Virtual device is not attached to any real host device.
+
+    .. describe:: host_pipe(1)
+
+            Virtual device is attached to a host pipe.
+
+    .. describe:: host_device(2)
+
+            Virtual device is attached to a host device.
+
+    .. describe:: raw_file(3)
+
+            Virtual device is attached to a raw file.
+
     """
     __uuid__ = '533b5fe3-0185-4197-86a7-17e37dd39d76'
     _enums = [\
@@ -2077,7 +4340,29 @@ class PortMode(Enum):
 
 
 class USBControllerType(Enum):
-    """The USB controller type. <link to="IUSBController::type"/>.
+    """The USB controller type. :py:func:`IUSBController.type_p` .
+
+
+    .. describe:: null(0)
+
+            @c null value. Never used by the API.
+
+    .. describe:: ohci(1)
+
+            
+
+    .. describe:: ehci(2)
+
+            
+
+    .. describe:: xhci(3)
+
+            
+
+    .. describe:: last(4)
+
+            Last element (invalid). Used for parameter checks.
+
     """
     __uuid__ = '8fdd1c6a-5412-41da-ab07-7baed7d6e18e'
     _enums = [\
@@ -2101,10 +4386,10 @@ class USBDeviceState(Enum):
     (all currently running virtual machines).
     
     Once a supported USB device is attached to the host, global USB
-    filters (<link to="IHost::USBDeviceFilters"/>) are activated. They can
+    filters (:py:func:`IHost.usb_device_filters` ) are activated. They can
     either ignore the device, or put it to USBDeviceState_Held state, or do
     nothing. Unless the device is ignored by global filters, filters of all
-    currently running guests (<link to="IUSBDeviceFilters::deviceFilters"/>) are
+    currently running guests (:py:func:`IUSBDeviceFilters.device_filters` ) are
     activated that can put it to USBDeviceState_Captured state.
     
     If the device was ignored by global filters, or didn't match
@@ -2114,18 +4399,48 @@ class USBDeviceState(Enum):
     or USBDeviceState_Available, depending on the current device usage.
     
     Besides auto-capturing based on filters, the device can be manually
-    captured by guests (<link to="IConsole::attachUSBDevice"/>) if its
+    captured by guests (:py:func:`IConsole.attach_usb_device` ) if its
     state is USBDeviceState_Busy, USBDeviceState_Available or
     USBDeviceState_Held.
     
     
     Due to differences in USB stack implementations in Linux and Win32,
     states USBDeviceState_Busy and USBDeviceState_Unavailable are applicable
-    only to the Linux version of the product. This also means that (<link to="IConsole::attachUSBDevice"/>) can only succeed on Win32 if the
+    only to the Linux version of the product. This also means that (:py:func:`IConsole.attach_usb_device` ) can only succeed on Win32 if the
     device state is USBDeviceState_Held.
     
     
-    <link to="IHostUSBDevice"/>, <link to="IHostUSBDeviceFilter"/>
+    :py:class:`IHostUSBDevice` , :py:class:`IHostUSBDeviceFilter` 
+
+
+    .. describe:: not_supported(0)
+
+            Not supported by the VirtualBox server, not available to guests.
+
+    .. describe:: unavailable(1)
+
+            Being used by the host computer exclusively,
+            not available to guests.
+
+    .. describe:: busy(2)
+
+            Being used by the host computer, potentially available to guests.
+
+    .. describe:: available(3)
+
+            Not used by the host computer, available to guests (the host computer
+            can also start using the device at any time).
+
+    .. describe:: held(4)
+
+            Held by the VirtualBox server (ignored by the host computer),
+            available to guests.
+
+    .. describe:: captured(5)
+
+            Captured by one of the guest computers, not available
+            to anybody else.
+
     """
     __uuid__ = 'b99a2e65-67fb-4882-82fd-f3e5e8193ab4'
     _enums = [\
@@ -2150,7 +4465,21 @@ class USBDeviceState(Enum):
 
 class USBDeviceFilterAction(Enum):
     """Actions for host USB device filters.
-    <link to="IHostUSBDeviceFilter"/>, <link to="USBDeviceState"/>
+    :py:class:`IHostUSBDeviceFilter` , :py:class:`USBDeviceState` 
+
+
+    .. describe:: null(0)
+
+            Null value (never used by the API).
+
+    .. describe:: ignore(1)
+
+            Ignore the matched USB device.
+
+    .. describe:: hold(2)
+
+            Hold the matched USB device.
+
     """
     __uuid__ = 'cbc30a49-2f4e-43b5-9da6-121320475933'
     _enums = [\
@@ -2165,6 +4494,44 @@ class USBDeviceFilterAction(Enum):
 
 class AudioDriverType(Enum):
     """Host audio driver type.
+
+
+    .. describe:: null(0)
+
+            Null value, also means "dummy audio driver".
+
+    .. describe:: win_mm(1)
+
+            Windows multimedia (Windows hosts only).
+
+    .. describe:: oss(2)
+
+            Open Sound System (Linux hosts only).
+
+    .. describe:: alsa(3)
+
+            Advanced Linux Sound Architecture (Linux hosts only).
+
+    .. describe:: direct_sound(4)
+
+            DirectSound (Windows hosts only).
+
+    .. describe:: core_audio(5)
+
+            CoreAudio (Mac hosts only).
+
+    .. describe:: mmpm(6)
+
+            Reserved for historical reasons.
+
+    .. describe:: pulse(7)
+
+            PulseAudio (Linux hosts only).
+
+    .. describe:: sol_audio(8)
+
+            Solaris audio (Solaris hosts only).
+
     """
     __uuid__ = '4bcc3d73-c2fe-40db-b72f-0c2ca9d68496'
     _enums = [\
@@ -2191,6 +4558,20 @@ class AudioDriverType(Enum):
 
 class AudioControllerType(Enum):
     """Virtual audio controller type.
+
+
+    .. describe:: ac97(0)
+
+            
+
+    .. describe:: sb16(1)
+
+            
+
+    .. describe:: hda(2)
+
+            
+
     """
     __uuid__ = '7afd395c-42c3-444e-8788-3ce80292f36c'
     _enums = [\
@@ -2205,6 +4586,20 @@ class AudioControllerType(Enum):
 
 class AuthType(Enum):
     """VirtualBox authentication type.
+
+
+    .. describe:: null(0)
+
+            Null value, also means "no authentication".
+
+    .. describe:: external(1)
+
+            
+
+    .. describe:: guest(2)
+
+            
+
     """
     __uuid__ = '7eef6ef6-98c2-4dc2-ab35-10d2b292028d'
     _enums = [\
@@ -2219,6 +4614,24 @@ class AuthType(Enum):
 
 class Reason(Enum):
     """Internal event reason type.
+
+
+    .. describe:: unspecified(0)
+
+            Null value, means "no known reason".
+
+    .. describe:: host_suspend(1)
+
+            Host is being suspended (power management event).
+
+    .. describe:: host_resume(2)
+
+            Host is being resumed (power management event).
+
+    .. describe:: host_battery_low(3)
+
+            Host is running low on battery (power management event).
+
     """
     __uuid__ = 'e7e8e097-299d-4e98-8bbc-c31c2d47d0cc'
     _enums = [\
@@ -2235,7 +4648,37 @@ class Reason(Enum):
 
 class StorageBus(Enum):
     """The bus type of the storage controller (IDE, SATA, SCSI, SAS or Floppy);
-    see <link to="IStorageController::bus"/>.
+    see :py:func:`IStorageController.bus` .
+
+
+    .. describe:: null(0)
+
+            @c null value. Never used by the API.
+
+    .. describe:: ide(1)
+
+            
+
+    .. describe:: sata(2)
+
+            
+
+    .. describe:: scsi(3)
+
+            
+
+    .. describe:: floppy(4)
+
+            
+
+    .. describe:: sas(5)
+
+            
+
+    .. describe:: usb(6)
+
+            
+
     """
     __uuid__ = '2dab9df1-9683-48fd-8c11-caada236fcb0'
     _enums = [\
@@ -2258,7 +4701,49 @@ class StorageBus(Enum):
 
 class StorageControllerType(Enum):
     """The exact variant of storage controller hardware presented
-    to the guest; see <link to="IStorageController::controllerType"/>.
+    to the guest; see :py:func:`IStorageController.controller_type` .
+
+
+    .. describe:: null(0)
+
+            @c null value. Never used by the API.
+
+    .. describe:: lsi_logic(1)
+
+            A SCSI controller of the LsiLogic variant.
+
+    .. describe:: bus_logic(2)
+
+            A SCSI controller of the BusLogic variant.
+
+    .. describe:: intel_ahci(3)
+
+            An Intel AHCI SATA controller; this is the only variant for SATA.
+
+    .. describe:: piix3(4)
+
+            An IDE controller of the PIIX3 variant.
+
+    .. describe:: piix4(5)
+
+            An IDE controller of the PIIX4 variant.
+
+    .. describe:: ich6(6)
+
+            An IDE controller of the ICH6 variant.
+
+    .. describe:: i82078(7)
+
+            A floppy disk controller; this is the only variant for floppy drives.
+
+    .. describe:: lsi_logic_sas(8)
+
+            A variant of the LsiLogic controller using SAS.
+
+    .. describe:: usb(9)
+
+            Special USB based storage controller.
+
     """
     __uuid__ = '02e190af-b546-4109-b036-6deaa4ef6e69'
     _enums = [\
@@ -2287,6 +4772,20 @@ class StorageControllerType(Enum):
 
 class ChipsetType(Enum):
     """Type of emulated chipset (mostly southbridge).
+
+
+    .. describe:: null(0)
+
+            @c null value. Never used by the API.
+
+    .. describe:: piix3(1)
+
+            A PIIX3 (PCI IDE ISA Xcelerator) chipset.
+
+    .. describe:: ich9(2)
+
+            A ICH9 (I/O Controller Hub) chipset.
+
     """
     __uuid__ = '8b4096a8-a7c3-4d3b-bbb1-05a0a51ec394'
     _enums = [\
@@ -2300,21 +4799,45 @@ class ChipsetType(Enum):
 
 
 class NATAliasMode(Enum):
-    """<desc/>
+    """
+
+
+    .. describe:: alias_log(1)
+
+            
+
+    .. describe:: alias_proxy_only(2)
+
+            
+
+    .. describe:: alias_use_same_ports(4)
+
+            
+
     """
     __uuid__ = '67772168-50d9-11df-9669-7fb714ee4fa1'
     _enums = [\
         ('AliasLog', 1, 
-         '''<desc/>'''),
+         ''''''),
         ('AliasProxyOnly', 2, 
-         '''<desc/>'''),
+         ''''''),
         ('AliasUseSamePorts', 4, 
-         '''<desc/>'''),
+         ''''''),
         ] 
 
 
 class NATProtocol(Enum):
     """Protocol definitions used with NAT port-forwarding rules.
+
+
+    .. describe:: udp(0)
+
+            Port-forwarding uses UDP protocol.
+
+    .. describe:: tcp(1)
+
+            Port-forwarding uses TCP protocol.
+
     """
     __uuid__ = 'e90164be-eb03-11de-94af-fff9b1c1b19f'
     _enums = [\
@@ -2327,6 +4850,20 @@ class NATProtocol(Enum):
 
 class BandwidthGroupType(Enum):
     """Type of a bandwidth control group.
+
+
+    .. describe:: null(0)
+
+            Null type, must be first.
+
+    .. describe:: disk(1)
+
+            The bandwidth group controls disk I/O.
+
+    .. describe:: network(2)
+
+            The bandwidth group controls network I/O.
+
     """
     __uuid__ = '1d92b67d-dc69-4be9-ad4c-93a01e1e0c8e'
     _enums = [\
@@ -2341,7 +4878,306 @@ class BandwidthGroupType(Enum):
 
 class VBoxEventType(Enum):
     """Type of an event.
-    See <link to="IEvent"/> for an introduction to VirtualBox event handling.
+    See :py:class:`IEvent`  for an introduction to VirtualBox event handling.
+
+
+    .. describe:: invalid(0)
+
+            Invalid event, must be first.
+
+    .. describe:: any_p(1)
+
+            Wildcard for all events.
+            Events of this type are never delivered, and only used in
+            :py:func:`IEventSource.register_listener`  call to simplify registration.
+
+    .. describe:: vetoable(2)
+
+            Wildcard for all vetoable events. Events of this type are never delivered, and only
+            used in :py:func:`IEventSource.register_listener`  call to simplify registration.
+
+    .. describe:: machine_event(3)
+
+            Wildcard for all machine events. Events of this type are never delivered, and only used in
+            :py:func:`IEventSource.register_listener`  call to simplify registration.
+
+    .. describe:: snapshot_event(4)
+
+            Wildcard for all snapshot events. Events of this type are never delivered, and only used in
+            :py:func:`IEventSource.register_listener`  call to simplify registration.
+
+    .. describe:: input_event(5)
+
+            Wildcard for all input device (keyboard, mouse) events.
+            Events of this type are never delivered, and only used in
+            :py:func:`IEventSource.register_listener`  call to simplify registration.
+
+    .. describe:: last_wildcard(31)
+
+            Last wildcard.
+
+    .. describe:: on_machine_state_changed(32)
+
+            See :py:class:`IMachineStateChangedEvent` IMachineStateChangedEvent.
+
+    .. describe:: on_machine_data_changed(33)
+
+            See :py:class:`IMachineDataChangedEvent` IMachineDataChangedEvent.
+
+    .. describe:: on_extra_data_changed(34)
+
+            See :py:class:`IExtraDataChangedEvent` IExtraDataChangedEvent.
+
+    .. describe:: on_extra_data_can_change(35)
+
+            See :py:class:`IExtraDataCanChangeEvent` IExtraDataCanChangeEvent.
+
+    .. describe:: on_medium_registered(36)
+
+            See :py:class:`IMediumRegisteredEvent` IMediumRegisteredEvent.
+
+    .. describe:: on_machine_registered(37)
+
+            See :py:class:`IMachineRegisteredEvent` IMachineRegisteredEvent.
+
+    .. describe:: on_session_state_changed(38)
+
+            See :py:class:`ISessionStateChangedEvent` ISessionStateChangedEvent.
+
+    .. describe:: on_snapshot_taken(39)
+
+            See :py:class:`ISnapshotTakenEvent` ISnapshotTakenEvent.
+
+    .. describe:: on_snapshot_deleted(40)
+
+            See :py:class:`ISnapshotDeletedEvent` ISnapshotDeletedEvent.
+
+    .. describe:: on_snapshot_changed(41)
+
+            See :py:class:`ISnapshotChangedEvent` ISnapshotChangedEvent.
+
+    .. describe:: on_guest_property_changed(42)
+
+            See :py:class:`IGuestPropertyChangedEvent` IGuestPropertyChangedEvent.
+
+    .. describe:: on_mouse_pointer_shape_changed(43)
+
+            See :py:class:`IMousePointerShapeChangedEvent` IMousePointerShapeChangedEvent.
+
+    .. describe:: on_mouse_capability_changed(44)
+
+            See :py:class:`IMouseCapabilityChangedEvent` IMouseCapabilityChangedEvent.
+
+    .. describe:: on_keyboard_leds_changed(45)
+
+            See :py:class:`IKeyboardLedsChangedEvent` IKeyboardLedsChangedEvent.
+
+    .. describe:: on_state_changed(46)
+
+            See :py:class:`IStateChangedEvent` IStateChangedEvent.
+
+    .. describe:: on_additions_state_changed(47)
+
+            See :py:class:`IAdditionsStateChangedEvent` IAdditionsStateChangedEvent.
+
+    .. describe:: on_network_adapter_changed(48)
+
+            See :py:class:`INetworkAdapterChangedEvent` INetworkAdapterChangedEvent.
+
+    .. describe:: on_serial_port_changed(49)
+
+            See :py:class:`ISerialPortChangedEvent` ISerialPortChangedEvent.
+
+    .. describe:: on_parallel_port_changed(50)
+
+            See :py:class:`IParallelPortChangedEvent` IParallelPortChangedEvent.
+
+    .. describe:: on_storage_controller_changed(51)
+
+            See :py:class:`IStorageControllerChangedEvent` IStorageControllerChangedEvent.
+
+    .. describe:: on_medium_changed(52)
+
+            See :py:class:`IMediumChangedEvent` IMediumChangedEvent.
+
+    .. describe:: on_vrde_server_changed(53)
+
+            See :py:class:`IVRDEServerChangedEvent` IVRDEServerChangedEvent.
+
+    .. describe:: on_usb_controller_changed(54)
+
+            See :py:class:`IUSBControllerChangedEvent` IUSBControllerChangedEvent.
+
+    .. describe:: on_usb_device_state_changed(55)
+
+            See :py:class:`IUSBDeviceStateChangedEvent` IUSBDeviceStateChangedEvent.
+
+    .. describe:: on_shared_folder_changed(56)
+
+            See :py:class:`ISharedFolderChangedEvent` ISharedFolderChangedEvent.
+
+    .. describe:: on_runtime_error(57)
+
+            See :py:class:`IRuntimeErrorEvent` IRuntimeErrorEvent.
+
+    .. describe:: on_can_show_window(58)
+
+            See :py:class:`ICanShowWindowEvent` ICanShowWindowEvent.
+
+    .. describe:: on_show_window(59)
+
+            See :py:class:`IShowWindowEvent` IShowWindowEvent.
+
+    .. describe:: on_cpu_changed(60)
+
+            See :py:class:`ICPUChangedEvent` ICPUChangedEvent.
+
+    .. describe:: on_vrde_server_info_changed(61)
+
+            See :py:class:`IVRDEServerInfoChangedEvent` IVRDEServerInfoChangedEvent.
+
+    .. describe:: on_event_source_changed(62)
+
+            See :py:class:`IEventSourceChangedEvent` IEventSourceChangedEvent.
+
+    .. describe:: on_cpu_execution_cap_changed(63)
+
+            See :py:class:`ICPUExecutionCapChangedEvent` ICPUExecutionCapChangedEvent.
+
+    .. describe:: on_guest_keyboard(64)
+
+            See :py:class:`IGuestKeyboardEvent` IGuestKeyboardEvent.
+
+    .. describe:: on_guest_mouse(65)
+
+            See :py:class:`IGuestMouseEvent` IGuestMouseEvent.
+
+    .. describe:: on_nat_redirect(66)
+
+            See :py:class:`INATRedirectEvent` INATRedirectEvent.
+
+    .. describe:: on_host_pci_device_plug(67)
+
+            See :py:class:`IHostPCIDevicePlugEvent` IHostPCIDevicePlugEvent.
+
+    .. describe:: on_v_box_svc_availability_changed(68)
+
+            See :py:class:`IVBoxSVCAvailabilityChangedEvent` IVBoxSVCAvailablityChangedEvent.
+
+    .. describe:: on_bandwidth_group_changed(69)
+
+            See :py:class:`IBandwidthGroupChangedEvent` IBandwidthGroupChangedEvent.
+
+    .. describe:: on_guest_monitor_changed(70)
+
+            See :py:class:`IGuestMonitorChangedEvent` IGuestMonitorChangedEvent.
+
+    .. describe:: on_storage_device_changed(71)
+
+            See :py:class:`IStorageDeviceChangedEvent` IStorageDeviceChangedEvent.
+
+    .. describe:: on_clipboard_mode_changed(72)
+
+            See :py:class:`IClipboardModeChangedEvent` IClipboardModeChangedEvent.
+
+    .. describe:: on_drag_and_drop_mode_changed(73)
+
+            See :py:class:`IDragAndDropModeChangedEvent` IDragAndDropModeChangedEvent.
+
+    .. describe:: on_nat_network_changed(74)
+
+            See :py:class:`INATNetworkChangedEvent` INATNetworkChangedEvent.
+
+    .. describe:: on_nat_network_start_stop(75)
+
+            See :py:class:`INATNetworkStartStopEvent` INATNetworkStartStopEvent.
+
+    .. describe:: on_nat_network_alter(76)
+
+            See :py:class:`INATNetworkAlterEvent` INATNetworkAlterEvent.
+
+    .. describe:: on_nat_network_creation_deletion(77)
+
+            See :py:class:`INATNetworkCreationDeletionEvent` INATNetworkCreationDeletionEvent.
+
+    .. describe:: on_nat_network_setting(78)
+
+            See :py:class:`INATNetworkSettingEvent` INATNetworkSettingEvent.
+
+    .. describe:: on_nat_network_port_forward(79)
+
+            See :py:class:`INATNetworkPortForwardEvent` INATNetworkPortForwardEvent.
+
+    .. describe:: on_guest_session_state_changed(80)
+
+            See :py:class:`IGuestSessionStateChangedEvent` IGuestSessionStateChangedEvent.
+
+    .. describe:: on_guest_session_registered(81)
+
+            See :py:class:`IGuestSessionRegisteredEvent` IGuestSessionRegisteredEvent.
+
+    .. describe:: on_guest_process_registered(82)
+
+            See :py:class:`IGuestProcessRegisteredEvent` IGuestProcessRegisteredEvent.
+
+    .. describe:: on_guest_process_state_changed(83)
+
+            See :py:class:`IGuestProcessStateChangedEvent` IGuestProcessStateChangedEvent.
+
+    .. describe:: on_guest_process_input_notify(84)
+
+            See :py:class:`IGuestProcessInputNotifyEvent` IGuestProcessInputNotifyEvent.
+
+    .. describe:: on_guest_process_output(85)
+
+            See :py:class:`IGuestProcessOutputEvent` IGuestProcessOutputEvent.
+
+    .. describe:: on_guest_file_registered(86)
+
+            See :py:class:`IGuestFileRegisteredEvent` IGuestFileRegisteredEvent.
+
+    .. describe:: on_guest_file_state_changed(87)
+
+            See :py:class:`IGuestFileStateChangedEvent` IGuestFileStateChangedEvent.
+
+    .. describe:: on_guest_file_offset_changed(88)
+
+            See :py:class:`IGuestFileOffsetChangedEvent` IGuestFileOffsetChangedEvent.
+
+    .. describe:: on_guest_file_read(89)
+
+            See :py:class:`IGuestFileReadEvent` IGuestFileReadEvent.
+            
+            For performance reasons this is a separate event to
+            not unnecessarily overflow the event queue.
+
+    .. describe:: on_guest_file_write(90)
+
+            See :py:class:`IGuestFileWriteEvent` IGuestFileWriteEvent.
+            
+            For performance reasons this is a separate event to
+            not unnecessarily overflow the event queue.
+
+    .. describe:: on_video_capture_changed(91)
+
+            See :py:class:`IVideoCaptureChangedEvent` IVideoCapturedChangeEvent.
+
+    .. describe:: on_guest_user_state_changed(92)
+
+            See :py:class:`IGuestUserStateChangedEvent` IGuestUserStateChangedEvent.
+
+    .. describe:: on_guest_multi_touch(93)
+
+            See :py:class:`IGuestMouseEvent` IGuestMouseEvent.
+
+    .. describe:: on_host_name_resolution_configuration_change(94)
+
+            See :py:class:`IHostNameResolutionConfigurationChangeEvent` IHostNameResolutionConfigurationChangeEvent.
+
+    .. describe:: last(95)
+
+            Must be last event, used for iterations and structures relying on numerical event values.
+
     """
     __uuid__ = '5248e377-e578-47d7-b07b-84b1db6db8a8'
     _enums = [\
@@ -2350,154 +5186,154 @@ class VBoxEventType(Enum):
         ('Any', 1, 
          '''Wildcard for all events.
             Events of this type are never delivered, and only used in
-            <link to="IEventSource::registerListener"/> call to simplify registration.'''),
+            :py:func:`IEventSource.register_listener`  call to simplify registration.'''),
         ('Vetoable', 2, 
          '''Wildcard for all vetoable events. Events of this type are never delivered, and only
-            used in <link to="IEventSource::registerListener"/> call to simplify registration.'''),
+            used in :py:func:`IEventSource.register_listener`  call to simplify registration.'''),
         ('MachineEvent', 3, 
          '''Wildcard for all machine events. Events of this type are never delivered, and only used in
-            <link to="IEventSource::registerListener"/> call to simplify registration.'''),
+            :py:func:`IEventSource.register_listener`  call to simplify registration.'''),
         ('SnapshotEvent', 4, 
          '''Wildcard for all snapshot events. Events of this type are never delivered, and only used in
-            <link to="IEventSource::registerListener"/> call to simplify registration.'''),
+            :py:func:`IEventSource.register_listener`  call to simplify registration.'''),
         ('InputEvent', 5, 
          '''Wildcard for all input device (keyboard, mouse) events.
             Events of this type are never delivered, and only used in
-            <link to="IEventSource::registerListener"/> call to simplify registration.'''),
+            :py:func:`IEventSource.register_listener`  call to simplify registration.'''),
         ('LastWildcard', 31, 
          '''Last wildcard.'''),
         ('OnMachineStateChanged', 32, 
-         '''See <link to="IMachineStateChangedEvent">IMachineStateChangedEvent</link>.'''),
+         '''See :py:class:`IMachineStateChangedEvent` IMachineStateChangedEvent.'''),
         ('OnMachineDataChanged', 33, 
-         '''See <link to="IMachineDataChangedEvent">IMachineDataChangedEvent</link>.'''),
+         '''See :py:class:`IMachineDataChangedEvent` IMachineDataChangedEvent.'''),
         ('OnExtraDataChanged', 34, 
-         '''See <link to="IExtraDataChangedEvent">IExtraDataChangedEvent</link>.'''),
+         '''See :py:class:`IExtraDataChangedEvent` IExtraDataChangedEvent.'''),
         ('OnExtraDataCanChange', 35, 
-         '''See <link to="IExtraDataCanChangeEvent">IExtraDataCanChangeEvent</link>.'''),
+         '''See :py:class:`IExtraDataCanChangeEvent` IExtraDataCanChangeEvent.'''),
         ('OnMediumRegistered', 36, 
-         '''See <link to="IMediumRegisteredEvent">IMediumRegisteredEvent</link>.'''),
+         '''See :py:class:`IMediumRegisteredEvent` IMediumRegisteredEvent.'''),
         ('OnMachineRegistered', 37, 
-         '''See <link to="IMachineRegisteredEvent">IMachineRegisteredEvent</link>.'''),
+         '''See :py:class:`IMachineRegisteredEvent` IMachineRegisteredEvent.'''),
         ('OnSessionStateChanged', 38, 
-         '''See <link to="ISessionStateChangedEvent">ISessionStateChangedEvent</link>.'''),
+         '''See :py:class:`ISessionStateChangedEvent` ISessionStateChangedEvent.'''),
         ('OnSnapshotTaken', 39, 
-         '''See <link to="ISnapshotTakenEvent">ISnapshotTakenEvent</link>.'''),
+         '''See :py:class:`ISnapshotTakenEvent` ISnapshotTakenEvent.'''),
         ('OnSnapshotDeleted', 40, 
-         '''See <link to="ISnapshotDeletedEvent">ISnapshotDeletedEvent</link>.'''),
+         '''See :py:class:`ISnapshotDeletedEvent` ISnapshotDeletedEvent.'''),
         ('OnSnapshotChanged', 41, 
-         '''See <link to="ISnapshotChangedEvent">ISnapshotChangedEvent</link>.'''),
+         '''See :py:class:`ISnapshotChangedEvent` ISnapshotChangedEvent.'''),
         ('OnGuestPropertyChanged', 42, 
-         '''See <link to="IGuestPropertyChangedEvent">IGuestPropertyChangedEvent</link>.'''),
+         '''See :py:class:`IGuestPropertyChangedEvent` IGuestPropertyChangedEvent.'''),
         ('OnMousePointerShapeChanged', 43, 
-         '''See <link to="IMousePointerShapeChangedEvent">IMousePointerShapeChangedEvent</link>.'''),
+         '''See :py:class:`IMousePointerShapeChangedEvent` IMousePointerShapeChangedEvent.'''),
         ('OnMouseCapabilityChanged', 44, 
-         '''See <link to="IMouseCapabilityChangedEvent">IMouseCapabilityChangedEvent</link>.'''),
+         '''See :py:class:`IMouseCapabilityChangedEvent` IMouseCapabilityChangedEvent.'''),
         ('OnKeyboardLedsChanged', 45, 
-         '''See <link to="IKeyboardLedsChangedEvent">IKeyboardLedsChangedEvent</link>.'''),
+         '''See :py:class:`IKeyboardLedsChangedEvent` IKeyboardLedsChangedEvent.'''),
         ('OnStateChanged', 46, 
-         '''See <link to="IStateChangedEvent">IStateChangedEvent</link>.'''),
+         '''See :py:class:`IStateChangedEvent` IStateChangedEvent.'''),
         ('OnAdditionsStateChanged', 47, 
-         '''See <link to="IAdditionsStateChangedEvent">IAdditionsStateChangedEvent</link>.'''),
+         '''See :py:class:`IAdditionsStateChangedEvent` IAdditionsStateChangedEvent.'''),
         ('OnNetworkAdapterChanged', 48, 
-         '''See <link to="INetworkAdapterChangedEvent">INetworkAdapterChangedEvent</link>.'''),
+         '''See :py:class:`INetworkAdapterChangedEvent` INetworkAdapterChangedEvent.'''),
         ('OnSerialPortChanged', 49, 
-         '''See <link to="ISerialPortChangedEvent">ISerialPortChangedEvent</link>.'''),
+         '''See :py:class:`ISerialPortChangedEvent` ISerialPortChangedEvent.'''),
         ('OnParallelPortChanged', 50, 
-         '''See <link to="IParallelPortChangedEvent">IParallelPortChangedEvent</link>.'''),
+         '''See :py:class:`IParallelPortChangedEvent` IParallelPortChangedEvent.'''),
         ('OnStorageControllerChanged', 51, 
-         '''See <link to="IStorageControllerChangedEvent">IStorageControllerChangedEvent</link>.'''),
+         '''See :py:class:`IStorageControllerChangedEvent` IStorageControllerChangedEvent.'''),
         ('OnMediumChanged', 52, 
-         '''See <link to="IMediumChangedEvent">IMediumChangedEvent</link>.'''),
+         '''See :py:class:`IMediumChangedEvent` IMediumChangedEvent.'''),
         ('OnVRDEServerChanged', 53, 
-         '''See <link to="IVRDEServerChangedEvent">IVRDEServerChangedEvent</link>.'''),
+         '''See :py:class:`IVRDEServerChangedEvent` IVRDEServerChangedEvent.'''),
         ('OnUSBControllerChanged', 54, 
-         '''See <link to="IUSBControllerChangedEvent">IUSBControllerChangedEvent</link>.'''),
+         '''See :py:class:`IUSBControllerChangedEvent` IUSBControllerChangedEvent.'''),
         ('OnUSBDeviceStateChanged', 55, 
-         '''See <link to="IUSBDeviceStateChangedEvent">IUSBDeviceStateChangedEvent</link>.'''),
+         '''See :py:class:`IUSBDeviceStateChangedEvent` IUSBDeviceStateChangedEvent.'''),
         ('OnSharedFolderChanged', 56, 
-         '''See <link to="ISharedFolderChangedEvent">ISharedFolderChangedEvent</link>.'''),
+         '''See :py:class:`ISharedFolderChangedEvent` ISharedFolderChangedEvent.'''),
         ('OnRuntimeError', 57, 
-         '''See <link to="IRuntimeErrorEvent">IRuntimeErrorEvent</link>.'''),
+         '''See :py:class:`IRuntimeErrorEvent` IRuntimeErrorEvent.'''),
         ('OnCanShowWindow', 58, 
-         '''See <link to="ICanShowWindowEvent">ICanShowWindowEvent</link>.'''),
+         '''See :py:class:`ICanShowWindowEvent` ICanShowWindowEvent.'''),
         ('OnShowWindow', 59, 
-         '''See <link to="IShowWindowEvent">IShowWindowEvent</link>.'''),
+         '''See :py:class:`IShowWindowEvent` IShowWindowEvent.'''),
         ('OnCPUChanged', 60, 
-         '''See <link to="ICPUChangedEvent">ICPUChangedEvent</link>.'''),
+         '''See :py:class:`ICPUChangedEvent` ICPUChangedEvent.'''),
         ('OnVRDEServerInfoChanged', 61, 
-         '''See <link to="IVRDEServerInfoChangedEvent">IVRDEServerInfoChangedEvent</link>.'''),
+         '''See :py:class:`IVRDEServerInfoChangedEvent` IVRDEServerInfoChangedEvent.'''),
         ('OnEventSourceChanged', 62, 
-         '''See <link to="IEventSourceChangedEvent">IEventSourceChangedEvent</link>.'''),
+         '''See :py:class:`IEventSourceChangedEvent` IEventSourceChangedEvent.'''),
         ('OnCPUExecutionCapChanged', 63, 
-         '''See <link to="ICPUExecutionCapChangedEvent">ICPUExecutionCapChangedEvent</link>.'''),
+         '''See :py:class:`ICPUExecutionCapChangedEvent` ICPUExecutionCapChangedEvent.'''),
         ('OnGuestKeyboard', 64, 
-         '''See <link to="IGuestKeyboardEvent">IGuestKeyboardEvent</link>.'''),
+         '''See :py:class:`IGuestKeyboardEvent` IGuestKeyboardEvent.'''),
         ('OnGuestMouse', 65, 
-         '''See <link to="IGuestMouseEvent">IGuestMouseEvent</link>.'''),
+         '''See :py:class:`IGuestMouseEvent` IGuestMouseEvent.'''),
         ('OnNATRedirect', 66, 
-         '''See <link to="INATRedirectEvent">INATRedirectEvent</link>.'''),
+         '''See :py:class:`INATRedirectEvent` INATRedirectEvent.'''),
         ('OnHostPCIDevicePlug', 67, 
-         '''See <link to="IHostPCIDevicePlugEvent">IHostPCIDevicePlugEvent</link>.'''),
+         '''See :py:class:`IHostPCIDevicePlugEvent` IHostPCIDevicePlugEvent.'''),
         ('OnVBoxSVCAvailabilityChanged', 68, 
-         '''See <link to="IVBoxSVCAvailabilityChangedEvent">IVBoxSVCAvailablityChangedEvent</link>.'''),
+         '''See :py:class:`IVBoxSVCAvailabilityChangedEvent` IVBoxSVCAvailablityChangedEvent.'''),
         ('OnBandwidthGroupChanged', 69, 
-         '''See <link to="IBandwidthGroupChangedEvent">IBandwidthGroupChangedEvent</link>.'''),
+         '''See :py:class:`IBandwidthGroupChangedEvent` IBandwidthGroupChangedEvent.'''),
         ('OnGuestMonitorChanged', 70, 
-         '''See <link to="IGuestMonitorChangedEvent">IGuestMonitorChangedEvent</link>.'''),
+         '''See :py:class:`IGuestMonitorChangedEvent` IGuestMonitorChangedEvent.'''),
         ('OnStorageDeviceChanged', 71, 
-         '''See <link to="IStorageDeviceChangedEvent">IStorageDeviceChangedEvent</link>.'''),
+         '''See :py:class:`IStorageDeviceChangedEvent` IStorageDeviceChangedEvent.'''),
         ('OnClipboardModeChanged', 72, 
-         '''See <link to="IClipboardModeChangedEvent">IClipboardModeChangedEvent</link>.'''),
+         '''See :py:class:`IClipboardModeChangedEvent` IClipboardModeChangedEvent.'''),
         ('OnDragAndDropModeChanged', 73, 
-         '''See <link to="IDragAndDropModeChangedEvent">IDragAndDropModeChangedEvent</link>.'''),
+         '''See :py:class:`IDragAndDropModeChangedEvent` IDragAndDropModeChangedEvent.'''),
         ('OnNATNetworkChanged', 74, 
-         '''See <link to="INATNetworkChangedEvent">INATNetworkChangedEvent</link>.'''),
+         '''See :py:class:`INATNetworkChangedEvent` INATNetworkChangedEvent.'''),
         ('OnNATNetworkStartStop', 75, 
-         '''See <link to="INATNetworkStartStopEvent">INATNetworkStartStopEvent</link>.'''),
+         '''See :py:class:`INATNetworkStartStopEvent` INATNetworkStartStopEvent.'''),
         ('OnNATNetworkAlter', 76, 
-         '''See <link to="INATNetworkAlterEvent">INATNetworkAlterEvent</link>.'''),
+         '''See :py:class:`INATNetworkAlterEvent` INATNetworkAlterEvent.'''),
         ('OnNATNetworkCreationDeletion', 77, 
-         '''See <link to="INATNetworkCreationDeletionEvent">INATNetworkCreationDeletionEvent</link>.'''),
+         '''See :py:class:`INATNetworkCreationDeletionEvent` INATNetworkCreationDeletionEvent.'''),
         ('OnNATNetworkSetting', 78, 
-         '''See <link to="INATNetworkSettingEvent">INATNetworkSettingEvent</link>.'''),
+         '''See :py:class:`INATNetworkSettingEvent` INATNetworkSettingEvent.'''),
         ('OnNATNetworkPortForward', 79, 
-         '''See <link to="INATNetworkPortForwardEvent">INATNetworkPortForwardEvent</link>.'''),
+         '''See :py:class:`INATNetworkPortForwardEvent` INATNetworkPortForwardEvent.'''),
         ('OnGuestSessionStateChanged', 80, 
-         '''See <link to="IGuestSessionStateChangedEvent">IGuestSessionStateChangedEvent</link>.'''),
+         '''See :py:class:`IGuestSessionStateChangedEvent` IGuestSessionStateChangedEvent.'''),
         ('OnGuestSessionRegistered', 81, 
-         '''See <link to="IGuestSessionRegisteredEvent">IGuestSessionRegisteredEvent</link>.'''),
+         '''See :py:class:`IGuestSessionRegisteredEvent` IGuestSessionRegisteredEvent.'''),
         ('OnGuestProcessRegistered', 82, 
-         '''See <link to="IGuestProcessRegisteredEvent">IGuestProcessRegisteredEvent</link>.'''),
+         '''See :py:class:`IGuestProcessRegisteredEvent` IGuestProcessRegisteredEvent.'''),
         ('OnGuestProcessStateChanged', 83, 
-         '''See <link to="IGuestProcessStateChangedEvent">IGuestProcessStateChangedEvent</link>.'''),
+         '''See :py:class:`IGuestProcessStateChangedEvent` IGuestProcessStateChangedEvent.'''),
         ('OnGuestProcessInputNotify', 84, 
-         '''See <link to="IGuestProcessInputNotifyEvent">IGuestProcessInputNotifyEvent</link>.'''),
+         '''See :py:class:`IGuestProcessInputNotifyEvent` IGuestProcessInputNotifyEvent.'''),
         ('OnGuestProcessOutput', 85, 
-         '''See <link to="IGuestProcessOutputEvent">IGuestProcessOutputEvent</link>.'''),
+         '''See :py:class:`IGuestProcessOutputEvent` IGuestProcessOutputEvent.'''),
         ('OnGuestFileRegistered', 86, 
-         '''See <link to="IGuestFileRegisteredEvent">IGuestFileRegisteredEvent</link>.'''),
+         '''See :py:class:`IGuestFileRegisteredEvent` IGuestFileRegisteredEvent.'''),
         ('OnGuestFileStateChanged', 87, 
-         '''See <link to="IGuestFileStateChangedEvent">IGuestFileStateChangedEvent</link>.'''),
+         '''See :py:class:`IGuestFileStateChangedEvent` IGuestFileStateChangedEvent.'''),
         ('OnGuestFileOffsetChanged', 88, 
-         '''See <link to="IGuestFileOffsetChangedEvent">IGuestFileOffsetChangedEvent</link>.'''),
+         '''See :py:class:`IGuestFileOffsetChangedEvent` IGuestFileOffsetChangedEvent.'''),
         ('OnGuestFileRead', 89, 
-         '''See <link to="IGuestFileReadEvent">IGuestFileReadEvent</link>.
+         '''See :py:class:`IGuestFileReadEvent` IGuestFileReadEvent.
             
-            <note internal="yes">For performance reasons this is a separate event to
+            For performance reasons this is a separate event to
             not unnecessarily overflow the event queue.'''),
         ('OnGuestFileWrite', 90, 
-         '''See <link to="IGuestFileWriteEvent">IGuestFileWriteEvent</link>.
+         '''See :py:class:`IGuestFileWriteEvent` IGuestFileWriteEvent.
             
-            <note internal="yes">For performance reasons this is a separate event to
+            For performance reasons this is a separate event to
             not unnecessarily overflow the event queue.'''),
         ('OnVideoCaptureChanged', 91, 
-         '''See <link to="IVideoCaptureChangedEvent">IVideoCapturedChangeEvent</link>.'''),
+         '''See :py:class:`IVideoCaptureChangedEvent` IVideoCapturedChangeEvent.'''),
         ('OnGuestUserStateChanged', 92, 
-         '''See <link to="IGuestUserStateChangedEvent">IGuestUserStateChangedEvent</link>.'''),
+         '''See :py:class:`IGuestUserStateChangedEvent` IGuestUserStateChangedEvent.'''),
         ('OnGuestMultiTouch', 93, 
-         '''See <link to="IGuestMouseEvent">IGuestMouseEvent</link>.'''),
+         '''See :py:class:`IGuestMouseEvent` IGuestMouseEvent.'''),
         ('OnHostNameResolutionConfigurationChange', 94, 
-         '''See <link to="IHostNameResolutionConfigurationChangeEvent">IHostNameResolutionConfigurationChangeEvent</link>.'''),
+         '''See :py:class:`IHostNameResolutionConfigurationChangeEvent` IHostNameResolutionConfigurationChangeEvent.'''),
         ('Last', 95, 
          '''Must be last event, used for iterations and structures relying on numerical event values.'''),
         ] 
@@ -2509,6 +5345,16 @@ class GuestMouseEventMode(Enum):
     multiple input devices active for different types of reporting, so we
     should really have different event types for relative (including wheel),
     absolute (not including wheel) and multi-touch events.
+
+
+    .. describe:: relative(0)
+
+            Relative event.
+
+    .. describe:: absolute(1)
+
+            Absolute event.
+
     """
     __uuid__ = '4b500146-ebba-4b7c-bc29-69c2d57a5caf'
     _enums = [\
@@ -2521,6 +5367,20 @@ class GuestMouseEventMode(Enum):
 
 class GuestMonitorChangedEventType(Enum):
     """How the guest monitor has been changed.
+
+
+    .. describe:: enabled(0)
+
+            The guest monitor has been enabled by the guest.
+
+    .. describe:: disabled(1)
+
+            The guest monitor has been disabled by the guest.
+
+    .. describe:: new_origin(2)
+
+            The guest monitor origin has changed in the guest.
+
     """
     __uuid__ = 'ef172985-7e36-4297-95be-e46396968d66'
     _enums = [\
@@ -2552,7 +5412,7 @@ class IVirtualBoxErrorInfo(Interface):
     failure), or a series of non-fatal errors may precede a fatal error that
     causes method failure. In cases like that, it may be desirable to preserve
     information about all errors happened during method invocation and deliver
-    it to the caller. The <link to="#next"/> attribute is intended
+    it to the caller. The :py:func:`next_p`  attribute is intended
     specifically for this purpose and allows to represent a chain of errors
     through a single IVirtualBoxErrorInfo object set after method invocation.
     
@@ -2901,7 +5761,7 @@ class IDHCPServer(Interface):
     The IDHCPServer interface represents the VirtualBox DHCP server configuration.
     
     To enumerate all the DHCP servers on the host, use the
-    <link to="IVirtualBox::DHCPServers"/> attribute.
+    :py:func:`IVirtualBox.dhcp_servers`  attribute.
     """
     __uuid__ = 'ff0774c5-1f62-4bc3-919c-7fc942bf1d25'
     __wsmap__ = 'managed'
@@ -3141,7 +6001,7 @@ class IVirtualBox(Interface):
     host, regardless of which frontend started them.
     
     To enumerate all the virtual machines on the host, use the
-    <link to="IVirtualBox::machines"/> attribute.
+    :py:func:`IVirtualBox.machines`  attribute.
     """
     __uuid__ = 'fafa4e17-1ee2-4905-a10e-fe7c18bf5554'
     __wsmap__ = 'managed'
@@ -3166,7 +6026,7 @@ class IVirtualBox(Interface):
         """Get str value for 'versionNormalized'
         A string representing the version number of the product,
         without the publisher information (but still with other tags).
-        See <link to="#version"/>.
+        See :py:func:`version` .
         """
         ret = self._get_attr("versionNormalized")
         return ret
@@ -3228,7 +6088,7 @@ class IVirtualBox(Interface):
         """Get str value for 'settingsFilePath'
         Full name of the global settings file.
         The value of this property corresponds to the value of
-        <link to="#homeFolder"/> plus /VirtualBox.xml.
+        :py:func:`home_folder`  plus /VirtualBox.xml.
         """
         ret = self._get_attr("settingsFilePath")
         return ret
@@ -3276,7 +6136,7 @@ class IVirtualBox(Interface):
         
         This array contains only base media. All differencing
         media of the given base medium can be enumerated using
-        <link to="IMedium::children"/>.
+        :py:func:`IMedium.children` .
         """
         ret = self._get_attr("hardDisks")
         return [IMedium(a) for a in ret]
@@ -3316,8 +6176,8 @@ class IVirtualBox(Interface):
         available to all virtual machines.
         
         New shared folders are added to the collection using
-        <link to="#createSharedFolder"/>. Existing shared folders can be
-        removed using <link to="#removeSharedFolder"/>.
+        :py:func:`create_shared_folder` . Existing shared folders can be
+        removed using :py:func:`remove_shared_folder` .
         
         
         In the current version of the product, global shared folders are not
@@ -3387,7 +6247,7 @@ class IVirtualBox(Interface):
         This API serves two purposes:
         
         
-        It gets called by <link to="#createMachine"/> if @c null or
+        It gets called by :py:func:`create_machine`  if @c null or
         empty string (which is recommended) is specified for the
         @a settingsFile argument there, which means that API should use
         a recommended default file name.
@@ -3400,7 +6260,7 @@ class IVirtualBox(Interface):
         machine directory.
         
         
-        See <link to="IMachine::name"/> and <link to="#createMachine"/> for more
+        See :py:func:`IMachine.name`  and :py:func:`create_machine`  for more
         details about the machine name.
         
         @a groupName defines which additional subdirectory levels should be
@@ -3410,7 +6270,7 @@ class IVirtualBox(Interface):
         
         If @a baseFolder is a @c null or empty string (which is recommended), the
         default machine settings folder
-        (see <link to="ISystemProperties::defaultMachineFolder"/>) will be used as
+        (see :py:func:`ISystemProperties.default_machine_folder` ) will be used as
         a base folder for the created machine, resulting in a file name like
         "/home/user/VirtualBox VMs/name/name.vbox". Otherwise the given base folder
         will be used.
@@ -3426,7 +6286,7 @@ class IVirtualBox(Interface):
             used to determine the right subdirectory.
 
         in create_flags of type str
-            Machine creation flags, see <link to="#createMachine"/> (optional).
+            Machine creation flags, see :py:func:`create_machine`  (optional).
 
         in base_folder of type str
             Base machine folder (optional).
@@ -3457,9 +6317,9 @@ class IVirtualBox(Interface):
         
         However, it is recommended that machines are created in the default
         machine folder (e.g. "/home/user/VirtualBox VMs/name/name.vbox"; see
-        <link to="ISystemProperties::defaultMachineFolder"/>). If you specify
+        :py:func:`ISystemProperties.default_machine_folder` ). If you specify
         @c null or empty string (which is recommended) for the @a settingsFile
-        argument, <link to="#composeMachineFilename"/> is called automatically
+        argument, :py:func:`compose_machine_filename`  is called automatically
         to have such a recommended name composed based on the machine name
         given in the @a name argument and the primary group.
         
@@ -3481,24 +6341,24 @@ class IVirtualBox(Interface):
         
         
         
-        Call <link to="IMachine::saveSettings"/> to write the settings
+        Call :py:func:`IMachine.save_settings`  to write the settings
         to the machine's XML settings file. The configuration of the newly
         created machine will not be saved to disk until this method is
         called.
         
         
         
-        Call <link to="#registerMachine"/> to add the machine to the list
+        Call :py:func:`register_machine`  to add the machine to the list
         of machines known to VirtualBox.
         
         
         
         The specified guest OS type identifier must match an ID of one of known
-        guest OS types listed in the <link to="IVirtualBox::guestOSTypes"/>
+        guest OS types listed in the :py:func:`IVirtualBox.guest_os_types` 
         array.
         
         
-        <link to="IMachine::settingsModified"/> will return
+        :py:func:`IMachine.settings_modified`  will return
         @c false for the created machine, until any of machine settings
         are changed.
         
@@ -3511,7 +6371,7 @@ class IVirtualBox(Interface):
             Fully qualified path where the settings file should be created,
             empty string or @c null for a default folder and file based on the
             @a name argument and the primary group.
-            (see <link to="#composeMachineFilename"/>).
+            (see :py:func:`compose_machine_filename` ).
 
         in name of type str
             Machine name.
@@ -3568,14 +6428,14 @@ exists or could not be created due to an I/O error.
     def open_machine(self, settings_file):
         """Opens a virtual machine from the existing settings file.
         The opened machine remains unregistered until you call
-        <link to="#registerMachine"/>.
+        :py:func:`register_machine` .
         
         The specified settings file name must be fully qualified.
         The file must exist and be a valid machine XML settings file
         whose contents will be used to construct the machine object.
         
         
-        <link to="IMachine::settingsModified"/> will return
+        :py:func:`IMachine.settings_modified`  will return
         @c false for the opened machine, until any of machine settings
         are changed.
 
@@ -3598,13 +6458,13 @@ exists or could not be created due to an I/O error.
 
     def register_machine(self, machine):
         """Registers the machine previously created using
-        <link to="#createMachine"/> or opened using
-        <link to="#openMachine"/> within this VirtualBox installation. After
+        :py:func:`create_machine`  or opened using
+        :py:func:`open_machine`  within this VirtualBox installation. After
         successful method invocation, the
-        <link to="IMachineRegisteredEvent"/> event is fired.
+        :py:class:`IMachineRegisteredEvent`  event is fired.
         
         
-        This method implicitly calls <link to="IMachine::saveSettings"/>
+        This method implicitly calls :py:func:`IMachine.save_settings` 
         to save all current machine settings before registering it.
 
         in machine of type IMachine
@@ -3691,7 +6551,7 @@ exists or could not be created due to an I/O error.
     def create_appliance(self):
         """Creates a new appliance object, which represents an appliance in the Open Virtual Machine
         Format (OVF). This can then be used to import an OVF appliance into VirtualBox or to export
-        machines as an OVF appliance; see the documentation for <link to="IAppliance"/> for details.
+        machines as an OVF appliance; see the documentation for :py:class:`IAppliance`  for details.
 
         return appliance of type IAppliance
             New appliance.
@@ -3710,27 +6570,27 @@ exists or could not be created due to an I/O error.
         virtual machines, you must call one of the following methods to
         allocate a format-specific storage unit at the specified location:
         
-        <link to="IMedium::createBaseStorage"/>
-        <link to="IMedium::createDiffStorage"/>
+        :py:func:`IMedium.create_base_storage` 
+        :py:func:`IMedium.create_diff_storage` 
         
         
-        Some medium attributes, such as <link to="IMedium::id"/>, may
+        Some medium attributes, such as :py:func:`IMedium.id_p` , may
         remain uninitialized until the medium storage unit is successfully
         created by one of the above methods.
         
         After the storage unit is successfully created, it will be
-        accessible through the <link to="#openMedium"/> method and can
-        be found in the <link to="#hardDisks"/> array.
+        accessible through the :py:func:`open_medium`  method and can
+        be found in the :py:func:`hard_disks`  array.
         
         The list of all storage formats supported by this VirtualBox
         installation can be obtained using
-        <link to="ISystemProperties::mediumFormats"/>. If the @a format
+        :py:func:`ISystemProperties.medium_formats` . If the @a format
         attribute is empty or @c null then the default storage format
-        specified by <link to="ISystemProperties::defaultHardDiskFormat"/> will
+        specified by :py:func:`ISystemProperties.default_hard_disk_format`  will
         be used for creating a storage unit of the medium.
         
         Note that the format of the location string is storage format specific.
-        See <link to="IMedium::location"/> and IMedium for more details.
+        See :py:func:`IMedium.location`  and IMedium for more details.
 
         in format_p of type str
             Identifier of the storage format to use for the new medium.
@@ -3761,7 +6621,7 @@ exists or could not be created due to an I/O error.
         """Finds existing media or opens a medium from an existing storage location.
         
         Once a medium has been opened, it can be passed to other VirtualBox
-        methods, in particular to <link to="IMachine::attachDevice"/>.
+        methods, in particular to :py:func:`IMachine.attach_device` .
         
         Depending on the given device type, the file at the storage location
         must be in one of the media formats understood by VirtualBox:
@@ -3769,26 +6629,26 @@ exists or could not be created due to an I/O error.
         
         With a "HardDisk" device type, the file must be a hard disk image
         in one of the formats supported by VirtualBox (see
-        <link to="ISystemProperties::mediumFormats"/>).
+        :py:func:`ISystemProperties.medium_formats` ).
         After this method succeeds, if the medium is a base medium, it
-        will be added to the <link to="#hardDisks"/> array attribute.
+        will be added to the :py:func:`hard_disks`  array attribute.
         With a "DVD" device type, the file must be an ISO 9960 CD/DVD image.
         After this method succeeds, the medium will be added to the
-        <link to="#DVDImages"/> array attribute.
+        :py:func:`dvd_images`  array attribute.
         With a "Floppy" device type, the file must be an RAW floppy image.
         After this method succeeds, the medium will be added to the
-        <link to="#floppyImages"/> array attribute.
+        :py:func:`floppy_images`  array attribute.
         
         
         After having been opened, the medium can be re-found by this method
-        and can be attached to virtual machines. See <link to="IMedium"/> for
+        and can be attached to virtual machines. See :py:class:`IMedium`  for
         more details.
         
         The UUID of the newly opened medium will either be retrieved from the
         storage location, if the format supports it (e.g. for hard disk images),
         or a new UUID will be randomly generated (e.g. for ISO and RAW files).
         If for some reason you need to change the medium's UUID, use
-        <link to="IMedium::setIds"/>.
+        :py:func:`IMedium.set_ids` .
         
         If a differencing hard disk medium is to be opened by this method, the
         operation will succeed only if its parent medium and all ancestors,
@@ -3806,11 +6666,11 @@ exists or could not be created due to an I/O error.
         Note that write access is required for all typical hard disk usage in VirtualBox,
         since VirtualBox may need to write metadata such as a UUID into the image.
         The only exception is opening a source image temporarily for copying and
-        cloning (see <link to="IMedium::cloneTo"/> when the image will be closed
+        cloning (see :py:func:`IMedium.clone_to`  when the image will be closed
         again soon.
         
         The format of the location string is storage format specific. See
-        <link to="IMedium::location"/> and IMedium for more details.
+        :py:func:`IMedium.location`  and IMedium for more details.
 
         in location of type str
             Location of the storage unit that contains medium data in one of
@@ -3866,11 +6726,11 @@ at the specified location.
         mnemonic identifier of the guest operating system, such as
         "win31" or "ubuntu". The guest OS type ID of a
         particular virtual machine can be read or set using the
-        <link to="IMachine::OSTypeId"/> attribute.
+        :py:func:`IMachine.os_type_id`  attribute.
         
-        The <link to="IVirtualBox::guestOSTypes"/> collection contains all
+        The :py:func:`IVirtualBox.guest_os_types`  collection contains all
         available guest OS type objects. Each object has an
-        <link to="IGuestOSType::id"/> attribute which contains an identifier of
+        :py:func:`IGuestOSType.id_p`  attribute which contains an identifier of
         the guest OS this object describes.
 
         in id_p of type str
@@ -3894,7 +6754,7 @@ at the specified location.
         """Creates a new global shared folder by associating the given logical
         name with the given host path, adds it to the collection of shared
         folders and starts sharing it. Refer to the description of
-        <link to="ISharedFolder"/> to read more about logical names.
+        :py:class:`ISharedFolder`  to read more about logical names.
         
         In the current implementation, this operation is not
         implemented.
@@ -3926,7 +6786,7 @@ at the specified location.
 
     def remove_shared_folder(self, name):
         """Removes the global shared folder with the given name previously
-        created by <link to="#createSharedFolder"/> from the collection of
+        created by :py:func:`create_shared_folder`  from the collection of
         shared folders and stops sharing it.
         
         In the current implementation, this operation is not
@@ -3986,13 +6846,13 @@ at the specified location.
         
         Before performing the actual data change, this method will ask all
         registered event listener using the
-        <link to="IExtraDataCanChangeEvent"/>
+        :py:class:`IExtraDataCanChangeEvent` 
         notification for a permission. If one of the listeners refuses the
         new value, the change will not be performed.
         
         
         On success, the
-        <link to="IExtraDataChangedEvent"/> notification
+        :py:class:`IExtraDataChangedEvent`  notification
         is called to inform all registered listeners about a successful data
         change.
 
@@ -4166,8 +7026,8 @@ class IVFSExplorer(Interface):
     """
     The VFSExplorer interface unifies access to different file system
     types. This includes local file systems as well remote file systems like
-    S3. For a list of supported types see <link to="VFSType"/>.
-    An instance of this is returned by <link to="IAppliance::createVFSExplorer"/>.
+    S3. For a list of supported types see :py:class:`VFSType` .
+    An instance of this is returned by :py:func:`IAppliance.create_vfs_explorer` .
     """
     __uuid__ = 'fb220201-2fd3-47e2-a5dc-2c2431d833cc'
     __wsmap__ = 'managed'
@@ -4190,7 +7050,7 @@ class IVFSExplorer(Interface):
 
     def update(self):
         """Updates the internal list of files/directories from the
-        current directory level. Use <link to="#entryList"/> to get the full list
+        current directory level. Use :py:func:`entry_list`  to get the full list
         after a call to this method.
 
         return progress of type IProgress
@@ -4230,7 +7090,7 @@ class IVFSExplorer(Interface):
         return progress
 
     def entry_list(self):
-        """Returns a list of files/directories after a call to <link to="#update"/>. The user is responsible for keeping this internal
+        """Returns a list of files/directories after a call to :py:func:`update` . The user is responsible for keeping this internal
         list up do date.
 
         out names of type str
@@ -4295,7 +7155,7 @@ class IVFSExplorer(Interface):
 class IAppliance(Interface):
     """
     Represents a platform-independent appliance in OVF format. An instance of this is returned
-    by <link to="IVirtualBox::createAppliance"/>, which can then be used to import and export
+    by :py:func:`IVirtualBox.create_appliance` , which can then be used to import and export
     virtual machines within an appliance with VirtualBox.
     
     The OVF standard suggests two different physical file formats:
@@ -4314,56 +7174,56 @@ class IAppliance(Interface):
     be added with a later version.
     
     
-    Importing an OVF appliance into VirtualBox as instances of
-    <link to="IMachine"/> involves the following sequence of API calls:
+    **Importing** an OVF appliance into VirtualBox as instances of
+    :py:class:`IMachine`  involves the following sequence of API calls:
     
     
-    Call <link to="IVirtualBox::createAppliance"/>. This will create an empty IAppliance object.
+    Call :py:func:`IVirtualBox.create_appliance` . This will create an empty IAppliance object.
     
     
-    On the new object, call <link to="#read"/> with the full path of the OVF file you
+    On the new object, call :py:func:`read`  with the full path of the OVF file you
     would like to import. So long as this file is syntactically valid, this will succeed
     and fill the appliance object with the parsed data from the OVF file.
     
     
-    Next, call <link to="#interpret"/>, which analyzes the OVF data and sets up the
+    Next, call :py:func:`interpret` , which analyzes the OVF data and sets up the
     contents of the IAppliance attributes accordingly. These can be inspected by a
     VirtualBox front-end such as the GUI, and the suggestions can be displayed to the
-    user. In particular, the <link to="#virtualSystemDescriptions"/> array contains
-    instances of <link to="IVirtualSystemDescription"/> which represent the virtual
+    user. In particular, the :py:func:`virtual_system_descriptions`  array contains
+    instances of :py:class:`IVirtualSystemDescription`  which represent the virtual
     systems (machines) in the OVF, which in turn describe the virtual hardware prescribed
     by the OVF (network and hardware adapters, virtual disk images, memory size and so on).
     The GUI can then give the user the option to confirm and/or change these suggestions.
     
     
-    If desired, call <link to="IVirtualSystemDescription::setFinalValues"/> for each
-    virtual system (machine) to override the suggestions made by the <link to="#interpret"/> routine.
+    If desired, call :py:func:`IVirtualSystemDescription.set_final_values`  for each
+    virtual system (machine) to override the suggestions made by the :py:func:`interpret`  routine.
     
     
-    Finally, call <link to="#importMachines"/> to create virtual machines in
-    VirtualBox as instances of <link to="IMachine"/> that match the information in the
+    Finally, call :py:func:`import_machines`  to create virtual machines in
+    VirtualBox as instances of :py:class:`IMachine`  that match the information in the
     virtual system descriptions. After this call succeeded, the UUIDs of the machines created
-    can be found in the <link to="#machines"/> array attribute.
+    can be found in the :py:func:`machines`  array attribute.
     
     
     
-    Exporting VirtualBox machines into an OVF appliance involves the following steps:
+    **Exporting** VirtualBox machines into an OVF appliance involves the following steps:
     
     
-    As with importing, first call <link to="IVirtualBox::createAppliance"/> to create
+    As with importing, first call :py:func:`IVirtualBox.create_appliance`  to create
     an empty IAppliance object.
     
     
-    For each machine you would like to export, call <link to="IMachine::exportTo"/>
+    For each machine you would like to export, call :py:func:`IMachine.export_to` 
     with the IAppliance object you just created. Each such call creates one instance of
-    <link to="IVirtualSystemDescription"/> inside the appliance.
+    :py:class:`IVirtualSystemDescription`  inside the appliance.
     
     
-    If desired, call <link to="IVirtualSystemDescription::setFinalValues"/> for each
-    virtual system (machine) to override the suggestions made by the <link to="IMachine::exportTo"/> routine.
+    If desired, call :py:func:`IVirtualSystemDescription.set_final_values`  for each
+    virtual system (machine) to override the suggestions made by the :py:func:`IMachine.export_to`  routine.
     
     
-    Finally, call <link to="#write"/> with a path specification to have the OVF
+    Finally, call :py:func:`write`  with a path specification to have the OVF
     file written.
     """
     __uuid__ = '3059cf9e-25c7-4f0b-9fa5-3c42e441670b'
@@ -4373,8 +7233,8 @@ class IAppliance(Interface):
     def path(self):
         """Get str value for 'path'
         Path to the main file of the OVF appliance, which is either the .ovf or
-        the .ova file passed to <link to="#read"/> (for import) or
-        <link to="#write"/> (for export).
+        the .ova file passed to :py:func:`read`  (for import) or
+        :py:func:`write`  (for export).
         This attribute is empty until one of these methods has been called.
         """
         ret = self._get_attr("path")
@@ -4425,7 +7285,7 @@ class IAppliance(Interface):
         """Get IVirtualSystemDescription value for 'virtualSystemDescriptions'
         Array of virtual system descriptions. One such description is created
         for each virtual system (machine) found in the OVF.
-        This array is empty until either <link to="#interpret"/> (for import) or <link to="IMachine::exportTo"/>
+        This array is empty until either :py:func:`interpret`  (for import) or :py:func:`IMachine.export_to` 
         (for export) has been called.
         """
         ret = self._get_attr("virtualSystemDescriptions")
@@ -4435,7 +7295,7 @@ class IAppliance(Interface):
     def machines(self):
         """Get str value for 'machines'
         Contains the UUIDs of the machines created from the information in this appliances. This is only
-        relevant for the import case, and will only contain data after a call to <link to="#importMachines"/>
+        relevant for the import case, and will only contain data after a call to :py:func:`import_machines` 
         succeeded.
         """
         ret = self._get_attr("machines")
@@ -4446,7 +7306,7 @@ class IAppliance(Interface):
         
         This method succeeds if the OVF is syntactically valid and, by itself, without errors. The
         mere fact that this method returns successfully does not mean that VirtualBox supports all
-        features requested by the appliance; this can only be examined after a call to <link to="#interpret"/>.
+        features requested by the appliance; this can only be examined after a call to :py:func:`interpret` .
 
         in file_p of type str
             Name of appliance file to open (either with an .ovf or .ova extension, depending
@@ -4466,14 +7326,14 @@ class IAppliance(Interface):
     def interpret(self):
         """Interprets the OVF data that was read when the appliance was constructed. After
         calling this method, one can inspect the
-        <link to="#virtualSystemDescriptions"/> array attribute, which will then contain
-        one <link to="IVirtualSystemDescription"/> for each virtual machine found in
+        :py:func:`virtual_system_descriptions`  array attribute, which will then contain
+        one :py:class:`IVirtualSystemDescription`  for each virtual machine found in
         the appliance.
         
         Calling this method is the second step of importing an appliance into VirtualBox;
-        see <link to="IAppliance"/> for an overview.
+        see :py:class:`IAppliance`  for an overview.
         
-        After calling this method, one should call <link to="#getWarnings"/> to find out
+        After calling this method, one should call :py:func:`get_warnings`  to find out
         if problems were encountered during the processing which might later lead to
         errors.
 
@@ -4481,20 +7341,20 @@ class IAppliance(Interface):
         self._call("interpret")
 
     def import_machines(self, options):
-        """Imports the appliance into VirtualBox by creating instances of <link to="IMachine"/>
+        """Imports the appliance into VirtualBox by creating instances of :py:class:`IMachine` 
         and other interfaces that match the information contained in the appliance as
         closely as possible, as represented by the import instructions in the
-        <link to="#virtualSystemDescriptions"/> array.
+        :py:func:`virtual_system_descriptions`  array.
         
         Calling this method is the final step of importing an appliance into VirtualBox;
-        see <link to="IAppliance"/> for an overview.
+        see :py:class:`IAppliance`  for an overview.
         
         Since importing the appliance will most probably involve copying and converting
         disk images, which can take a long time, this method operates asynchronously and
         returns an IProgress object to allow the caller to monitor the progress.
         
         After the import succeeded, the UUIDs of the IMachine instances created can be
-        retrieved from the <link to="#machines"/> array attribute.
+        retrieved from the :py:func:`machines`  array attribute.
 
         in options of type ImportOptions
             Options for the importing operation.
@@ -4515,13 +7375,12 @@ class IAppliance(Interface):
         return progress
 
     def create_vfs_explorer(self, uri):
-        """Returns a <link to="IVFSExplorer"/> object for the given URI.
+        """Returns a :py:class:`IVFSExplorer`  object for the given URI.
 
         in uri of type str
             The URI describing the file system to use.
 
         return explorer of type IVFSExplorer
-            <desc/>
 
         """
         if not isinstance(uri, basestring):
@@ -4535,7 +7394,7 @@ class IAppliance(Interface):
         """Writes the contents of the appliance exports into a new OVF file.
         
         Calling this method is the final step of exporting an appliance from VirtualBox;
-        see <link to="IAppliance"/> for an overview.
+        see :py:class:`IAppliance`  for an overview.
         
         Since exporting the appliance will most probably involve copying and converting
         disk images, which can take a long time, this method operates asynchronously and
@@ -4572,10 +7431,9 @@ class IAppliance(Interface):
         return progress
 
     def get_warnings(self):
-        """Returns textual warnings which occurred during execution of <link to="#interpret"/>.
+        """Returns textual warnings which occurred during execution of :py:func:`interpret` .
 
         return warnings of type str
-            <desc/>
 
         """
         warnings = self._call("getWarnings")
@@ -4585,10 +7443,10 @@ class IAppliance(Interface):
 class IVirtualSystemDescription(Interface):
     """
     Represents one virtual system (machine) in an appliance. This interface is used in
-    the <link to="IAppliance::virtualSystemDescriptions"/> array. After
-    <link to="IAppliance::interpret"/> has been called, that array contains information
+    the :py:func:`IAppliance.virtual_system_descriptions`  array. After
+    :py:func:`IAppliance.interpret`  has been called, that array contains information
     about how the virtual systems described in the OVF should best be imported into
-    VirtualBox virtual machines. See <link to="IAppliance"/> for the steps required to
+    VirtualBox virtual machines. See :py:class:`IAppliance`  for the steps required to
     import an OVF into VirtualBox.
     """
     __uuid__ = 'd7525e6c-531a-4c51-8e04-41235083a3d8'
@@ -4607,7 +7465,7 @@ class IVirtualSystemDescription(Interface):
         items with the same indices correspond and jointly represent an import instruction for VirtualBox.
         
         The list below identifies the value sets that are possible depending on the
-        <link to="VirtualSystemDescriptionType"/> enum value in the array item in @a aTypes[]. In each case,
+        :py:class:`VirtualSystemDescriptionType`  enum value in the array item in @a aTypes[]. In each case,
         the array item with the same index in @a OVFValues[] will contain the original value as contained
         in the OVF file (just for informational purposes), and the corresponding item in @a aVBoxValues[]
         will contain a suggested value to be used for VirtualBox. Depending on the description type,
@@ -4617,7 +7475,7 @@ class IVirtualSystemDescription(Interface):
         
         "OS": the guest operating system type. There must be exactly one such array item on import. The
         corresponding item in @a aVBoxValues[] contains the suggested guest operating system for VirtualBox.
-        This will be one of the values listed in <link to="IVirtualBox::guestOSTypes"/>. The corresponding
+        This will be one of the values listed in :py:func:`IVirtualBox.guest_os_types` . The corresponding
         item in @a OVFValues[] will contain a numerical value that described the operating system in the OVF.
         
         
@@ -4625,7 +7483,7 @@ class IVirtualSystemDescription(Interface):
         if none is present on import, then an automatic name will be created from the operating system
         type. The corresponding item im @a OVFValues[] will contain the suggested virtual machine name
         from the OVF file, and @a aVBoxValues[] will contain a suggestion for a unique VirtualBox
-        <link to="IMachine"/> name that does not exist yet.
+        :py:class:`IMachine`  name that does not exist yet.
         
         
         "Description": an arbitrary description.
@@ -4667,7 +7525,7 @@ class IVirtualSystemDescription(Interface):
         The items in @a OVFValues[] and @a aVBoxValues[] will either be "LsiLogic", "BusLogic" or
         "LsiLogicSas". (Note that in OVF, the LsiLogicSas controller is treated as a SCSI controller
         whereas VirtualBox considers it a class of storage controllers of its own; see
-        <link to="StorageControllerType"/>).
+        :py:class:`StorageControllerType` ).
         The matching item in the @a aRefs[] array will be used as with IDE controllers (see above).
         
         
@@ -4714,19 +7572,14 @@ class IVirtualSystemDescription(Interface):
         may be different from the virtual soundcard expected by the appliance.
 
         out types of type VirtualSystemDescriptionType
-            <desc/>
 
         out refs of type str
-            <desc/>
 
         out ovf_values of type str
-            <desc/>
 
         out v_box_values of type str
-            <desc/>
 
         out extra_config_values of type str
-            <desc/>
 
         """
         (types, refs, ovf_values, v_box_values, extra_config_values) = self._call("getDescription")
@@ -4734,26 +7587,20 @@ class IVirtualSystemDescription(Interface):
         return (types, refs, ovf_values, v_box_values, extra_config_values)
 
     def get_description_by_type(self, type_p):
-        """This is the same as <link to="#getDescription"/> except that you can specify which types
+        """This is the same as :py:func:`get_description`  except that you can specify which types
         should be returned.
 
         in type_p of type VirtualSystemDescriptionType
-            <desc/>
 
         out types of type VirtualSystemDescriptionType
-            <desc/>
 
         out refs of type str
-            <desc/>
 
         out ovf_values of type str
-            <desc/>
 
         out v_box_values of type str
-            <desc/>
 
         out extra_config_values of type str
-            <desc/>
 
         """
         if not isinstance(type_p, VirtualSystemDescriptionType):
@@ -4764,18 +7611,15 @@ class IVirtualSystemDescription(Interface):
         return (types, refs, ovf_values, v_box_values, extra_config_values)
 
     def get_values_by_type(self, type_p, which):
-        """This is the same as <link to="#getDescriptionByType"/> except that you can specify which
-        value types should be returned. See <link to="VirtualSystemDescriptionValueType"/> for possible
+        """This is the same as :py:func:`get_description_by_type`  except that you can specify which
+        value types should be returned. See :py:class:`VirtualSystemDescriptionValueType`  for possible
         values.
 
         in type_p of type VirtualSystemDescriptionType
-            <desc/>
 
         in which of type VirtualSystemDescriptionValueType
-            <desc/>
 
         return values of type str
-            <desc/>
 
         """
         if not isinstance(type_p, VirtualSystemDescriptionType):
@@ -4788,7 +7632,7 @@ class IVirtualSystemDescription(Interface):
 
     def set_final_values(self, enabled, v_box_values, extra_config_values):
         """This method allows the appliance's user to change the configuration for the virtual
-        system descriptions. For each array item returned from <link to="#getDescription"/>,
+        system descriptions. For each array item returned from :py:func:`get_description` ,
         you must pass in one boolean value and one configuration value.
         
         Each item in the boolean array determines whether the particular configuration item
@@ -4798,19 +7642,16 @@ class IVirtualSystemDescription(Interface):
         and SoundCard.
         
         For the "vbox" and "extra configuration" values, if you pass in the same arrays
-        as returned in the aVBoxValues and aExtraConfigValues arrays from <link to="#getDescription"/>,
-        the configuration remains unchanged. Please see the documentation for <link to="#getDescription"/>
+        as returned in the aVBoxValues and aExtraConfigValues arrays from :py:func:`get_description` ,
+        the configuration remains unchanged. Please see the documentation for :py:func:`get_description` 
         for valid configuration values for the individual array item types. If the
         corresponding item in the aEnabled array is @c false, the configuration value is ignored.
 
         in enabled of type bool
-            <desc/>
 
         in v_box_values of type str
-            <desc/>
 
         in extra_config_values of type str
-            <desc/>
 
         """
         if not isinstance(enabled, list):
@@ -4838,16 +7679,13 @@ class IVirtualSystemDescription(Interface):
         """This method adds an additional description entry to the stack of already
         available descriptions for this virtual system. This is handy for writing
         values which aren't directly supported by VirtualBox. One example would
-        be the License type of <link to="VirtualSystemDescriptionType"/>.
+        be the License type of :py:class:`VirtualSystemDescriptionType` .
 
         in type_p of type VirtualSystemDescriptionType
-            <desc/>
 
         in v_box_value of type str
-            <desc/>
 
         in extra_config_value of type str
-            <desc/>
 
         """
         if not isinstance(type_p, VirtualSystemDescriptionType):
@@ -4896,12 +7734,12 @@ class IInternalMachineControl(Interface):
                      in_p=[state])
 
     def begin_power_up(self, progress):
-        """Tells VBoxSVC that <link to="IConsole::powerUp"/> is under ways and
+        """Tells VBoxSVC that :py:func:`IConsole.power_up`  is under ways and
         gives it the progress object that should be part of any pending
-        <link to="IMachine::launchVMProcess"/> operations. The progress
+        :py:func:`IMachine.launch_vm_process`  operations. The progress
         object may be called back to reflect an early cancelation, so some care
         have to be taken with respect to any cancelation callbacks. The console
-        object will call <link to="IInternalMachineControl::endPowerUp"/>
+        object will call :py:func:`IInternalMachineControl.end_power_up` 
         to signal the completion of the progress object.
 
         in progress of type IProgress
@@ -4913,10 +7751,10 @@ class IInternalMachineControl(Interface):
                      in_p=[progress])
 
     def end_power_up(self, result):
-        """Tells VBoxSVC that <link to="IConsole::powerUp"/> has completed.
+        """Tells VBoxSVC that :py:func:`IConsole.power_up`  has completed.
         This method may query status information from the progress object it
-        received in <link to="IInternalMachineControl::beginPowerUp"/> and copy
-        it over to any in-progress <link to="IMachine::launchVMProcess"/>
+        received in :py:func:`IInternalMachineControl.begin_power_up`  and copy
+        it over to any in-progress :py:func:`IMachine.launch_vm_process` 
         call in order to complete that progress object.
 
         in result of type int
@@ -4990,7 +7828,7 @@ class IInternalMachineControl(Interface):
     def capture_usb_device(self, id_p):
         """Requests a capture of the given host USB device.
         When the request is completed, the VM process will
-        get a <link to="IInternalSessionControl::onUSBDeviceAttach"/>
+        get a :py:func:`IInternalSessionControl.on_usb_device_attach` 
         notification.
 
         in id_p of type str
@@ -5005,7 +7843,7 @@ class IInternalMachineControl(Interface):
         """Notification that a VM is going to detach (@a done = @c false) or has
         already detached (@a done = @c true) the given USB device.
         When the @a done = @c true request is completed, the VM process will
-        get a <link to="IInternalSessionControl::onUSBDeviceDetach"/>
+        get a :py:func:`IInternalSessionControl.on_usb_device_detach` 
         notification.
         
         In the @a done = @c true case, the server must run its own filters
@@ -5027,7 +7865,7 @@ class IInternalMachineControl(Interface):
     def auto_capture_usb_devices(self):
         """Requests a capture all matching USB devices attached to the host.
         When the request is completed, the VM process will
-        get a <link to="IInternalSessionControl::onUSBDeviceAttach"/>
+        get a :py:func:`IInternalSessionControl.on_usb_device_attach` 
         notification per every captured device.
 
         """
@@ -5114,7 +7952,7 @@ class IInternalMachineControl(Interface):
                      in_p=[result, err_msg])
 
     def adopt_saved_state(self, saved_state_file):
-        """Gets called by <link to="IConsole::adoptSavedState"/>.
+        """Gets called by :py:func:`IConsole.adopt_saved_state` .
 
         in saved_state_file of type str
             Path to the saved state file to adopt.
@@ -5194,9 +8032,9 @@ class IInternalMachineControl(Interface):
                      in_p=[success])
 
     def delete_snapshot(self, initiator, start_id, end_id, delete_all_children):
-        """Gets called by <link to="IConsole::deleteSnapshot"/>,
-        <link to="IConsole::deleteSnapshotAndAllChildren"/> and
-        <link to="IConsole::deleteSnapshotRange"/>.
+        """Gets called by :py:func:`IConsole.delete_snapshot` ,
+        :py:func:`IConsole.delete_snapshot_and_all_children`  and
+        :py:func:`IConsole.delete_snapshot_range` .
 
         in initiator of type IConsole
             The console object that initiated this call.
@@ -5237,14 +8075,14 @@ not meet the linearity condition.
         return (machine_state, progress)
 
     def finish_online_merge_medium(self):
-        """Gets called by <link to="IInternalSessionControl::onlineMergeMedium"/>.
+        """Gets called by :py:func:`IInternalSessionControl.online_merge_medium` .
         All necessary state information is available at the called object.
 
         """
         self._call("finishOnlineMergeMedium")
 
     def restore_snapshot(self, initiator, snapshot):
-        """Gets called by <link to="IConsole::restoreSnapshot"/>.
+        """Gets called by :py:func:`IConsole.restore_snapshot` .
 
         in initiator of type IConsole
             The console object that initiated this call.
@@ -5334,7 +8172,7 @@ not meet the linearity condition.
 
     def unlock_media(self):
         """Unlocks all media previously locked using
-        <link to="IInternalMachineControl::lockMedia"/>.
+        :py:func:`IInternalMachineControl.lock_media` .
         
         This method is intended to be used with teleportation so that it is
         possible to teleport between processes on the same machine.
@@ -5453,7 +8291,7 @@ not meet the linearity condition.
 class IBIOSSettings(Interface):
     """
     The IBIOSSettings interface represents BIOS settings of the virtual
-    machine. This is used only in the <link to="IMachine::BIOSSettings"/> attribute.
+    machine. This is used only in the :py:func:`IMachine.bios_settings`  attribute.
     """
     __uuid__ = '38b54279-dc35-4f5e-a431-835b867c6b5e'
     __wsmap__ = 'managed'
@@ -5720,34 +8558,34 @@ class IMachine(Interface):
     
     This interface is used in two contexts. First of all, a collection of
     objects implementing this interface is stored in the
-    <link to="IVirtualBox::machines"/> attribute which lists all the virtual
+    :py:func:`IVirtualBox.machines`  attribute which lists all the virtual
     machines that are currently registered with this VirtualBox
     installation. Also, once a session has been opened for the given virtual
     machine (e.g. the virtual machine is running), the machine object
     associated with the open session can be queried from the session object;
-    see <link to="ISession"/> for details.
+    see :py:class:`ISession`  for details.
     
     The main role of this interface is to expose the settings of the virtual
     machine and provide methods to change various aspects of the virtual
     machine's configuration. For machine objects stored in the
-    <link to="IVirtualBox::machines"/> collection, all attributes are
+    :py:func:`IVirtualBox.machines`  collection, all attributes are
     read-only unless explicitly stated otherwise in individual attribute
     and method descriptions.
     
     In order to change a machine setting, a session for this machine must be
-    opened using one of the <link to="IMachine::lockMachine"/> or
-    <link to="IMachine::launchVMProcess"/> methods. After the
+    opened using one of the :py:func:`IMachine.lock_machine`  or
+    :py:func:`IMachine.launch_vm_process`  methods. After the
     machine has been successfully locked for a session, a mutable machine object
     needs to be queried from the session object and then the desired settings
     changes can be applied to the returned object using IMachine attributes and
-    methods. See the <link to="ISession"/> interface description for more
+    methods. See the :py:class:`ISession`  interface description for more
     information about sessions.
     
     Note that IMachine does not provide methods to control virtual machine
     execution (such as start the machine, or power it down) -- these methods
-    are grouped in a separate interface called <link to="IConsole"/>.
+    are grouped in a separate interface called :py:class:`IConsole` .
     
-    <link to="ISession"/>, <link to="IConsole"/>
+    :py:class:`ISession` , :py:class:`IConsole` 
     """
     __uuid__ = '480cf695-2d8d-4256-9c7c-cce4184fa048'
     __wsmap__ = 'managed'
@@ -5779,24 +8617,24 @@ class IMachine(Interface):
         """Get bool value for 'accessible'
         Whether this virtual machine is currently accessible or not.
         
-        A machine is always deemed accessible unless it is registered and
+        A machine is always deemed accessible unless it is registered *and*
         its settings file cannot be read or parsed (either because the file itself
         is unavailable or has invalid XML contents).
         
         Every time this property is read, the accessibility state of
         this machine is re-evaluated. If the returned value is @c false,
-        the <link to="#accessError"/> property may be used to get the
+        the :py:func:`access_error`  property may be used to get the
         detailed error information describing the reason of
         inaccessibility, including XML error messages.
         
         When the machine is inaccessible, only the following properties
         can be used on it:
         
-        <link to="#parent"/>
-        <link to="#id"/>
-        <link to="#settingsFilePath"/>
-        <link to="#accessible"/>
-        <link to="#accessError"/>
+        :py:func:`parent` 
+        :py:func:`id_p` 
+        :py:func:`settings_file_path` 
+        :py:func:`accessible` 
+        :py:func:`access_error` 
         
         
         An attempt to access any other property or method will return
@@ -5804,7 +8642,7 @@ class IMachine(Interface):
         
         The only possible action you can perform on an inaccessible
         machine is to unregister it using the
-        <link to="IMachine::unregister"/> call (or, to check
+        :py:func:`IMachine.unregister`  call (or, to check
         for the accessibility state once more by querying this
         property).
         
@@ -5826,7 +8664,7 @@ class IMachine(Interface):
         inaccessibility.
         
         Reading this property is only valid after the last call to
-        <link to="#accessible"/> returned @c false (i.e. the
+        :py:func:`accessible`  returned @c false (i.e. the
         machine is currently inaccessible). Otherwise, a @c null
         IVirtualBoxErrorInfo object will be returned.
         """
@@ -5843,7 +8681,7 @@ class IMachine(Interface):
         as a name of the machine's settings file and as a name of the
         subdirectory this settings file resides in. Thus, every time you
         change the value of this property, the settings file will be
-        renamed once you call <link to="#saveSettings"/> to confirm the
+        renamed once you call :py:func:`save_settings`  to confirm the
         change. The containing subdirectory will be also renamed, but
         only if it has exactly the same name as the settings file
         itself prior to changing this property (for backward compatibility
@@ -5861,10 +8699,10 @@ class IMachine(Interface):
         or if any file in the directory containing the settings file
         is being used by another running machine or by any other
         process in the host operating system at a time when
-        <link to="#saveSettings"/> is called.
+        :py:func:`save_settings`  is called.
         
         
-        If any of the above limitations are hit, <link to="#saveSettings"/>
+        If any of the above limitations are hit, :py:func:`save_settings` 
         will return an appropriate error message explaining the exact
         reason and the changes you made to this machine will not be saved.
         
@@ -5931,12 +8769,12 @@ class IMachine(Interface):
     def os_type_id(self):
         """Get or set str value for 'OSTypeId'
         User-defined identifier of the Guest OS type.
-        You may use <link to="IVirtualBox::getGuestOSType"/> to obtain
+        You may use :py:func:`IVirtualBox.get_guest_os_type`  to obtain
         an IGuestOSType object representing details about the given
         Guest OS type.
         
         This value may differ from the value returned by
-        <link to="IGuest::OSTypeId"/> if Guest Additions are
+        :py:func:`IGuest.os_type_id`  if Guest Additions are
         installed to the guest OS.
         """
         ret = self._get_attr("OSTypeId")
@@ -6353,9 +9191,8 @@ class IMachine(Interface):
         (differencing media and saved state files) of this machine.
         
         The initial value of this property is
-        <<link to="#settingsFilePath">
-        path_to_settings_file</link>>/<
-        <link to="#id">machine_uuid</link>
+        <:py:func:`settings_file_path` path_to_settings_file>/<
+        :py:func:`id_p` machine_uuid
         >.
         
         Currently, it is an error to try to change this property on
@@ -6370,7 +9207,7 @@ class IMachine(Interface):
         
         When setting this property, the specified path can be
         absolute (full path) or relative to the directory where the
-        <link to="#settingsFilePath">machine settings file</link>
+        :py:func:`settings_file_path` machine settings file
         is located. When reading this property, a full path is
         always returned.
         
@@ -6470,16 +9307,16 @@ class IMachine(Interface):
         (but neither yet saved nor discarded).
         
         Reading this property is only valid on instances returned
-        by <link to="ISession::machine"/> and on new machines
-        created by <link to="IVirtualBox::createMachine"/> or opened
-        by <link to="IVirtualBox::openMachine"/> but not
+        by :py:func:`ISession.machine`  and on new machines
+        created by :py:func:`IVirtualBox.create_machine`  or opened
+        by :py:func:`IVirtualBox.open_machine`  but not
         yet registered, or on unregistered machines after calling
-        <link to="IMachine::unregister"/>. For all other
+        :py:func:`IMachine.unregister` . For all other
         cases, the settings can never be modified.
         
         
         For newly created unregistered machines, the value of this
-        property is always @c true until <link to="#saveSettings"/>
+        property is always @c true until :py:func:`save_settings` 
         is called (no matter if any machine settings have been
         changed after the creation or not). For opened machines
         the value is set to @c false (and then follows to normal rules).
@@ -6498,13 +9335,13 @@ class IMachine(Interface):
     @property
     def session_type(self):
         """Get str value for 'sessionType'
-        Type of the session. If <link to="#sessionState"/> is
+        Type of the session. If :py:func:`session_state`  is
         Spawning or Locked, this attribute contains the
         same value as passed to the
-        <link to="IMachine::launchVMProcess"/> method in the
+        :py:func:`IMachine.launch_vm_process`  method in the
         @a type parameter. If the session was used with
-        <link to="IMachine::lockMachine"/>, or if
-        <link to="#sessionState"/> is SessionClosed, the value of this
+        :py:func:`IMachine.lock_machine` , or if
+        :py:func:`session_state`  is SessionClosed, the value of this
         attribute is an empty string.
         """
         ret = self._get_attr("sessionType")
@@ -6515,8 +9352,8 @@ class IMachine(Interface):
         """Get int value for 'sessionPID'
         Identifier of the session process. This attribute contains the
         platform-dependent identifier of the process whose session was
-        used with <link to="IMachine::lockMachine"/> call. The returned
-        value is only valid if <link to="#sessionState"/> is Locked or
+        used with :py:func:`IMachine.lock_machine`  call. The returned
+        value is only valid if :py:func:`session_state`  is Locked or
         Unlocking by the time this property is read.
         """
         ret = self._get_attr("sessionPID")
@@ -6543,7 +9380,7 @@ class IMachine(Interface):
     def state_file_path(self):
         """Get str value for 'stateFilePath'
         Full path to the file that stores the execution state of
-        the machine when it is in the <link to="MachineState_Saved"/> state.
+        the machine when it is in the :py:attr:`MachineState.saved`  state.
         
         When the machine is not in the Saved state, this attribute is
         an empty string.
@@ -6568,10 +9405,10 @@ class IMachine(Interface):
         """Get ISnapshot value for 'currentSnapshot'
         Current snapshot of this machine. This is @c null if the machine
         currently has no snapshots. If it is not @c null, then it was
-        set by one of <link to="IConsole::takeSnapshot"/>,
-        <link to="IConsole::deleteSnapshot"/>
-        or <link to="IConsole::restoreSnapshot"/>, depending on which
-        was called last. See <link to="ISnapshot"/> for details.
+        set by one of :py:func:`IConsole.take_snapshot` ,
+        :py:func:`IConsole.delete_snapshot` 
+        or :py:func:`IConsole.restore_snapshot` , depending on which
+        was called last. See :py:class:`ISnapshot`  for details.
         """
         ret = self._get_attr("currentSnapshot")
         return ISnapshot(ret)
@@ -6595,11 +9432,11 @@ class IMachine(Interface):
         directly after one of the following calls are made:
         
         
-        <link to="IConsole::restoreSnapshot"/>
+        :py:func:`IConsole.restore_snapshot` 
         
-        <link to="IConsole::takeSnapshot"/> (issued on a
+        :py:func:`IConsole.take_snapshot`  (issued on a
         "powered off" or "saved" machine, for which
-        <link to="#settingsModified"/> returns @c false)
+        :py:func:`settings_modified`  returns @c false)
         
         
         
@@ -6627,8 +9464,8 @@ class IMachine(Interface):
         and available only to the guest OS installed within this machine.
         
         New shared folders are added to the collection using
-        <link to="#createSharedFolder"/>. Existing shared folders can be
-        removed using <link to="#removeSharedFolder"/>.
+        :py:func:`create_shared_folder` . Existing shared folders can be
+        removed using :py:func:`remove_shared_folder` .
         """
         ret = self._get_attr("sharedFolders")
         return [ISharedFolder(a) for a in ret]
@@ -6667,7 +9504,7 @@ class IMachine(Interface):
         """Get or set str value for 'guestPropertyNotificationPatterns'
         A comma-separated list of simple glob patterns. Changes to guest
         properties whose name matches one of the patterns will generate an
-        <link to="IGuestPropertyChangedEvent"/> signal.
+        :py:class:`IGuestPropertyChangedEvent`  signal.
         """
         ret = self._get_attr("guestPropertyNotificationPatterns")
         return ret
@@ -6875,7 +9712,7 @@ class IMachine(Interface):
         """Get IPCIDeviceAttachment value for 'PCIDeviceAssignments'
         Array of PCI devices assigned to this machine, to get list of all
         PCI devices attached to the machine use
-        <link to="IConsole::attachedPCIDevices"/> attribute, as this attribute
+        :py:func:`IConsole.attached_pci_devices`  attribute, as this attribute
         is intended to list only devices additional to what described in
         virtual hardware config. Usually, this list keeps host's physical
         devices assigned to the particular machine.
@@ -6912,7 +9749,7 @@ class IMachine(Interface):
     def tracing_config(self):
         """Get or set str value for 'tracingConfig'
         Tracepoint configuration to apply at startup when
-        <link to="IMachine::tracingEnabled"/> is true. The string specifies
+        :py:func:`IMachine.tracing_enabled`  is true. The string specifies
         a space separated of tracepoint group names to enable. The special
         group 'all' enables all tracepoints. Check DBGFR3TracingConfig for
         more details on available tracepoint groups and such.
@@ -6998,16 +9835,16 @@ class IMachine(Interface):
     def default_frontend(self):
         """Get or set str value for 'defaultFrontend'
         Selects which VM frontend should be used by default when launching
-        this VM through the <link to="IMachine::launchVMProcess"/> method.
+        this VM through the :py:func:`IMachine.launch_vm_process`  method.
         Empty or @c null strings do not define a particular default, it is up
-        to <link to="IMachine::launchVMProcess"/> to select one. See the
-        description of <link to="IMachine::launchVMProcess"/> for the valid
+        to :py:func:`IMachine.launch_vm_process`  to select one. See the
+        description of :py:func:`IMachine.launch_vm_process`  for the valid
         frontend types.
         
         This per-VM setting overrides the default defined by
-        <link to="ISystemProperties::defaultFrontend"/> attribute, and is
+        :py:func:`ISystemProperties.default_frontend`  attribute, and is
         overridden by a frontend type passed to
-        <link to="IMachine::launchVMProcess"/>.
+        :py:func:`IMachine.launch_vm_process` .
         """
         ret = self._get_attr("defaultFrontend")
         return ret
@@ -7055,7 +9892,7 @@ class IMachine(Interface):
         object upon which you can call methods that change the
         machine state. After having called this method, you can
         obtain this second, mutable machine object using the
-        <link to="ISession::machine"/> attribute.
+        :py:func:`ISession.machine`  attribute.
         
         If you only want to check the machine state or control
         machine execution without actually changing machine
@@ -7070,16 +9907,16 @@ class IMachine(Interface):
         to control that existing session.
         
         To find out which type of lock was obtained, you can
-        inspect <link to="ISession::type"/>, which will have been
+        inspect :py:func:`ISession.type_p` , which will have been
         set to either @c WriteLock or @c Shared.
         
         
         
-        In either case, you can get access to the <link to="IConsole"/>
+        In either case, you can get access to the :py:class:`IConsole` 
         object which controls VM execution.
         
         Also in all of the above cases, one must always call
-        <link to="ISession::unlockMachine"/> to release the lock on the machine, or
+        :py:func:`ISession.unlock_machine`  to release the lock on the machine, or
         the machine's state will eventually be set to "Aborted".
         
         To change settings on a machine, the following sequence is typically
@@ -7088,13 +9925,13 @@ class IMachine(Interface):
         
         Call this method to obtain an exclusive write lock for the current session.
         
-        Obtain a mutable IMachine object from <link to="ISession::machine"/>.
+        Obtain a mutable IMachine object from :py:func:`ISession.machine` .
         
         Change the settings of the machine by invoking IMachine methods.
         
-        Call <link to="IMachine::saveSettings"/>.
+        Call :py:func:`IMachine.save_settings` .
         
-        Release the write lock by calling <link to="ISession::unlockMachine"/>.
+        Release the write lock by calling :py:func:`ISession.unlock_machine` .
 
         in session of type ISession
             Session object for which the machine will be locked.
@@ -7136,44 +9973,46 @@ class IMachine(Interface):
         machine is running.
         
         The caller's session object remains separate from the session opened by the new
-        VM process. It receives its own <link to="IConsole"/> object which can be used
+        VM process. It receives its own :py:class:`IConsole`  object which can be used
         to control machine execution, but it cannot be used to change all VM settings
-        which would be available after a <link to="#lockMachine"/> call.
+        which would be available after a :py:func:`lock_machine`  call.
         
         The caller must eventually release the session's shared lock by calling
-        <link to="ISession::unlockMachine"/> on the local session object once this call
-        has returned. However, the session's state (see <link to="ISession::state"/>)
+        :py:func:`ISession.unlock_machine`  on the local session object once this call
+        has returned. However, the session's state (see :py:func:`ISession.state` )
         will not return to "Unlocked" until the remote session has also unlocked
         the machine (i.e. the machine has stopped running).
         
         Launching a VM process can take some time (a new VM is started in a new process,
         for which memory and other resources need to be set up). Because of this,
-        an <link to="IProgress"/> object is returned to allow the caller to wait
+        an :py:class:`IProgress`  object is returned to allow the caller to wait
         for this asynchronous operation to be completed. Until then, the caller's
-        session object remains in the "Unlocked" state, and its <link to="ISession::machine"/>
-        and <link to="ISession::console"/> attributes cannot be accessed.
-        It is recommended to use <link to="IProgress::waitForCompletion"/> or
+        session object remains in the "Unlocked" state, and its :py:func:`ISession.machine` 
+        and :py:func:`ISession.console`  attributes cannot be accessed.
+        It is recommended to use :py:func:`IProgress.wait_for_completion`  or
         similar calls to wait for completion. Completion is signalled when the VM
         is powered on. If launching the VM fails, error messages can be queried
         via the progress object, if available.
         
         The progress object will have at least 2 sub-operations. The first
         operation covers the period up to the new VM process calls powerUp.
-        The subsequent operations mirror the <link to="IConsole::powerUp"/>
-        progress object. Because <link to="IConsole::powerUp"/> may require
-        some extra sub-operations, the <link to="IProgress::operationCount"/>
+        The subsequent operations mirror the :py:func:`IConsole.power_up` 
+        progress object. Because :py:func:`IConsole.power_up`  may require
+        some extra sub-operations, the :py:func:`IProgress.operation_count` 
         may change at the completion of operation.
         
         For details on the teleportation progress operation, see
-        <link to="IConsole::powerUp"/>.
+        :py:func:`IConsole.power_up` .
         
         The @a environment argument is a string containing definitions of
         environment variables in the following format:
         
-        NAME[=VALUE]\n
-        NAME[=VALUE]\n
-        ...
-        
+        ::
+
+             NAME[=VALUE]\n
+             NAME[=VALUE]\n
+             ...
+
         where \\n is the new line character. These environment
         variables will be appended to the environment of the VirtualBox server
         process. If an environment variable exists both in the server process
@@ -7202,8 +10041,8 @@ class IMachine(Interface):
             the global default defined in the system properties. If neither
             are set, the API will launch a "gui" session, which may
             fail if there is no windowing environment available. See
-            <link to="IMachine::defaultFrontend"/> and
-            <link to="ISystemProperties::defaultFrontend"/>.
+            :py:func:`IMachine.default_frontend`  and
+            :py:func:`ISystemProperties.default_frontend` .
 
         in environment of type str
             Environment to pass to the VM process.
@@ -7246,14 +10085,14 @@ class IMachine(Interface):
         the boot order.
         
         To indicate that no device is associated with the given position,
-        <link to="DeviceType_Null"/> should be used.
+        :py:attr:`DeviceType.null`  should be used.
         
         @todo setHardDiskBootOrder(), setNetworkBootOrder()
 
         in position of type int
             Position in the boot order (@c 1 to the total number of
             devices the machine can boot from, as returned by
-            <link to="ISystemProperties::maxBootPosition"/>).
+            :py:func:`ISystemProperties.max_boot_position` ).
 
         in device of type DeviceType
             The type of the device used to boot at the given position.
@@ -7282,14 +10121,14 @@ class IMachine(Interface):
         retrieve the individual device that occupies the given position.
         
         If here are no devices at the given position, then
-        <link to="DeviceType_Null"/> is returned.
+        :py:attr:`DeviceType.null`  is returned.
         
         @todo getHardDiskBootOrder(), getNetworkBootOrder()
 
         in position of type int
             Position in the boot order (@c 1 to the total number of
             devices the machine can boot from, as returned by
-            <link to="ISystemProperties::maxBootPosition"/>).
+            :py:func:`ISystemProperties.max_boot_position` ).
 
         return device of type DeviceType
             Device at the given position.
@@ -7307,7 +10146,7 @@ class IMachine(Interface):
 
     def attach_device(self, name, controller_port, device, type_p, medium):
         """Attaches a device and optionally mounts a medium to the given storage
-        controller (<link to="IStorageController"/>, identified by @a name),
+        controller (:py:class:`IStorageController` , identified by @a name),
         at the indicated port and device.
         
         This method is intended for managing storage devices in general while a
@@ -7317,15 +10156,15 @@ class IMachine(Interface):
         
         
         For fixed and removable media, you can pass in a medium that was
-        previously opened using <link to="IVirtualBox::openMedium"/>.
+        previously opened using :py:func:`IVirtualBox.open_medium` .
         
         
         Only for storage devices supporting removable media (such as
         DVDs and floppies), you can also specify a null pointer to
         indicate an empty drive or one of the medium objects listed
-        in the <link to="IHost::DVDDrives"/> and <link to="IHost::floppyDrives"/>
+        in the :py:func:`IHost.dvd_drives`  and :py:func:`IHost.floppy_drives` 
         arrays to indicate a host drive.
-        For removable devices, you can also use <link to="IMachine::mountMedium"/>
+        For removable devices, you can also use :py:func:`IMachine.mount_medium` 
         to change the media while the machine is running.
         
         
@@ -7334,10 +10173,10 @@ class IMachine(Interface):
         master of the IDE controller is used for a CD/DVD drive.
         
         After calling this returns successfully, a new instance of
-        <link to="IMediumAttachment"/> will appear in the machine's list of medium
-        attachments (see <link to="IMachine::mediumAttachments"/>).
+        :py:class:`IMediumAttachment`  will appear in the machine's list of medium
+        attachments (see :py:func:`IMachine.medium_attachments` ).
         
-        See <link to="IMedium"/> and <link to="IMediumAttachment"/> for more
+        See :py:class:`IMedium`  and :py:class:`IMediumAttachment`  for more
         information about attaching media.
         
         The specified device slot must not have a device attached to it,
@@ -7346,13 +10185,13 @@ class IMachine(Interface):
         
         You cannot attach a device to a newly created machine until
         this machine's settings are saved to disk using
-        <link to="#saveSettings"/>.
+        :py:func:`save_settings` .
         
         
         If the medium is being attached indirectly, a new differencing medium
         will implicitly be created for it and attached instead. If the
         changes made to the machine settings (including this indirect
-        attachment) are later cancelled using <link to="#discardSettings"/>,
+        attachment) are later cancelled using :py:func:`discard_settings` ,
         this implicitly created differencing medium will implicitly
         be deleted.
 
@@ -7373,7 +10212,7 @@ class IMachine(Interface):
 
         in type_p of type DeviceType
             Device type of the attached device. For media opened by
-            <link to="IVirtualBox::openMedium"/>, this must match the device type
+            :py:func:`IVirtualBox.open_medium` , this must match the device type
             specified there.
 
         in medium of type IMedium
@@ -7408,7 +10247,7 @@ file or UUID not found.
 
     def attach_device_without_medium(self, name, controller_port, device, type_p):
         """Attaches a device and optionally mounts a medium to the given storage
-        controller (<link to="IStorageController"/>, identified by @a name),
+        controller (:py:class:`IStorageController` , identified by @a name),
         at the indicated port and device.
         
         This method is intended for managing storage devices in general while a
@@ -7418,24 +10257,24 @@ file or UUID not found.
         
         
         For fixed and removable media, you can pass in a medium that was
-        previously opened using <link to="IVirtualBox::openMedium"/>.
+        previously opened using :py:func:`IVirtualBox.open_medium` .
         
         
         Only for storage devices supporting removable media (such as
         DVDs and floppies) with an empty drive or one of the medium objects listed
-        in the <link to="IHost::DVDDrives"/> and <link to="IHost::floppyDrives"/>
+        in the :py:func:`IHost.dvd_drives`  and :py:func:`IHost.floppy_drives` 
         arrays to indicate a host drive.
-        For removable devices, you can also use <link to="IMachine::mountMedium"/>
+        For removable devices, you can also use :py:func:`IMachine.mount_medium` 
         to change the media while the machine is running.
         
         
         
         In a VM's default configuration of virtual machines, the secondary
         master of the IDE controller is used for a CD/DVD drive.
-        <link to="IMediumAttachment"/> will appear in the machine's list of medium
-        attachments (see <link to="IMachine::mediumAttachments"/>).
+        :py:class:`IMediumAttachment`  will appear in the machine's list of medium
+        attachments (see :py:func:`IMachine.medium_attachments` ).
         
-        See <link to="IMedium"/> and <link to="IMediumAttachment"/> for more
+        See :py:class:`IMedium`  and :py:class:`IMediumAttachment`  for more
         information about attaching media.
         
         The specified device slot must not have a device attached to it,
@@ -7443,13 +10282,13 @@ file or UUID not found.
         
         You cannot attach a device to a newly created machine until
         this machine's settings are saved to disk using
-        <link to="#saveSettings"/>.
+        :py:func:`save_settings` .
         
         
         If the medium is being attached indirectly, a new differencing medium
         will implicitly be created for it and attached instead. If the
         changes made to the machine settings (including this indirect
-        attachment) are later cancelled using <link to="#discardSettings"/>,
+        attachment) are later cancelled using :py:func:`discard_settings` ,
         this implicitly created differencing medium will implicitly
         be deleted.
 
@@ -7470,7 +10309,7 @@ file or UUID not found.
 
         in type_p of type DeviceType
             Device type of the attached device. For media opened by
-            <link to="IVirtualBox::openMedium"/>, this must match the device type
+            :py:func:`IVirtualBox.open_medium` , this must match the device type
             specified there.
 
         raises E_INVALIDARG
@@ -7504,19 +10343,19 @@ file or UUID not found.
         Detaching the device from the virtual machine is deferred. This means
         that the medium remains associated with the machine when this method
         returns and gets actually de-associated only after a successful
-        <link to="#saveSettings"/> call. See <link to="IMedium"/>
+        :py:func:`save_settings`  call. See :py:class:`IMedium` 
         for more detailed information about attaching media.
         
         
         You cannot detach a device from a running machine.
         
         
-        Detaching differencing media implicitly created by <link to="#attachDevice"/> for the indirect attachment using this
-        method will not implicitly delete them. The
-        <link to="IMedium::deleteStorage"/> operation should be
+        Detaching differencing media implicitly created by :py:func:`attach_device`  for the indirect attachment using this
+        method will **not** implicitly delete them. The
+        :py:func:`IMedium.delete_storage`  operation should be
         explicitly performed by the caller after the medium is successfully
         detached and the settings are saved with
-        <link to="#saveSettings"/>, if it is the desired action.
+        :py:func:`save_settings` , if it is the desired action.
 
         in name of type str
             Name of the storage controller to detach the medium from.
@@ -7552,10 +10391,10 @@ created differencing media, should not happen).
         setting while the VM is running is forbidden. The setting is only used
         if at VM start the device is configured as a host DVD drive, in all
         other cases it is ignored. The device must already exist; see
-        <link to="IMachine::attachDevice"/> for how to attach a new device.
+        :py:func:`IMachine.attach_device`  for how to attach a new device.
         
         The @a controllerPort and @a device parameters specify the device slot and
-        have have the same meaning as with <link to="IMachine::attachDevice"/>.
+        have have the same meaning as with :py:func:`IMachine.attach_device` .
 
         in name of type str
             Name of the storage controller.
@@ -7594,11 +10433,11 @@ created differencing media, should not happen).
         """Sets the behavior for guest-triggered medium eject. In some situations
         it is desirable that such ejects update the VM configuration, and in
         others the eject should keep the VM configuration. The device must
-        already exist; see <link to="IMachine::attachDevice"/> for how to
+        already exist; see :py:func:`IMachine.attach_device`  for how to
         attach a new device.
         
         The @a controllerPort and @a device parameters specify the device slot and
-        have have the same meaning as with <link to="IMachine::attachDevice"/>.
+        have have the same meaning as with :py:func:`IMachine.attach_device` .
 
         in name of type str
             Name of the storage controller.
@@ -7641,10 +10480,10 @@ created differencing media, should not happen).
         latter case. At the moment only hard disks (which is a misnomer in this
         context) accept this setting. Changing the setting while the VM is
         running is forbidden. The device must already exist; see
-        <link to="IMachine::attachDevice"/> for how to attach a new device.
+        :py:func:`IMachine.attach_device`  for how to attach a new device.
         
         The @a controllerPort and @a device parameters specify the device slot and
-        have have the same meaning as with <link to="IMachine::attachDevice"/>.
+        have have the same meaning as with :py:func:`IMachine.attach_device` .
 
         in name of type str
             Name of the storage controller.
@@ -7686,11 +10525,11 @@ created differencing media, should not happen).
         and is silently ignored in the latter case. At the moment only hard disks
         (which is a misnomer in this context) accept this setting. Changing the
         setting while the VM is running is forbidden. The device must already
-        exist; see <link to="IMachine::attachDevice"/> for how to attach a new
+        exist; see :py:func:`IMachine.attach_device`  for how to attach a new
         device.
         
         The @a controllerPort and @a device parameters specify the device slot and
-        have have the same meaning as with <link to="IMachine::attachDevice"/>.
+        have have the same meaning as with :py:func:`IMachine.attach_device` .
 
         in name of type str
             Name of the storage controller.
@@ -7730,11 +10569,11 @@ created differencing media, should not happen).
         device is hot pluggable or not. This may or may not be supported by a
         particular controller and/or drive, and is silently ignored in the
         latter case. Changing the setting while the VM is running is forbidden.
-        The device must already exist; see <link to="IMachine::attachDevice"/>
+        The device must already exist; see :py:func:`IMachine.attach_device` 
         for how to attach a new device.
         
         The @a controllerPort and @a device parameters specify the device slot and
-        have have the same meaning as with <link to="IMachine::attachDevice"/>.
+        have have the same meaning as with :py:func:`IMachine.attach_device` .
 
         in name of type str
             Name of the storage controller.
@@ -7774,11 +10613,11 @@ created differencing media, should not happen).
 
     def set_bandwidth_group_for_device(self, name, controller_port, device, bandwidth_group):
         """Sets the bandwidth group of an existing storage device.
-        The device must already exist; see <link to="IMachine::attachDevice"/>
+        The device must already exist; see :py:func:`IMachine.attach_device` 
         for how to attach a new device.
         
         The @a controllerPort and @a device parameters specify the device slot and
-        have have the same meaning as with <link to="IMachine::attachDevice"/>.
+        have have the same meaning as with :py:func:`IMachine.attach_device` .
 
         in name of type str
             Name of the storage controller.
@@ -7815,10 +10654,10 @@ created differencing media, should not happen).
 
     def set_no_bandwidth_group_for_device(self, name, controller_port, device):
         """Sets no bandwidth group for an existing storage device.
-        The device must already exist; see <link to="IMachine::attachDevice"/>
+        The device must already exist; see :py:func:`IMachine.attach_device` 
         for how to attach a new device.
         The @a controllerPort and @a device parameters specify the device slot and
-        have have the same meaning as with <link to="IMachine::attachDevice"/>.
+        have have the same meaning as with :py:func:`IMachine.attach_device` .
 
         in name of type str
             Name of the storage controller.
@@ -7849,9 +10688,9 @@ created differencing media, should not happen).
                      in_p=[name, controller_port, device])
 
     def unmount_medium(self, name, controller_port, device, force):
-        """Unmounts any currently mounted medium (<link to="IMedium"/>,
+        """Unmounts any currently mounted medium (:py:class:`IMedium` ,
         identified by the given UUID @a id) to the given storage controller
-        (<link to="IStorageController"/>, identified by @a name),
+        (:py:class:`IStorageController` , identified by @a name),
         at the indicated port and device. The device must already exist;
         
         This method is intended only for managing removable media, where the
@@ -7860,11 +10699,11 @@ created differencing media, should not happen).
         
         The @a controllerPort and @a device parameters specify the device slot
         and have have the same meaning as with
-        <link to="IMachine::attachDevice"/>.
+        :py:func:`IMachine.attach_device` .
         
         The specified device slot must have a medium mounted, which will be
         unmounted. If there is no mounted medium it will do nothing.
-        See <link to="IMedium"/> for more detailed information about
+        See :py:class:`IMedium`  for more detailed information about
         attaching/unmounting media.
 
         in name of type str
@@ -7908,24 +10747,24 @@ created differencing media, should not happen).
                      in_p=[name, controller_port, device, force])
 
     def mount_medium(self, name, controller_port, device, medium, force):
-        """Mounts a medium (<link to="IMedium"/>, identified
+        """Mounts a medium (:py:class:`IMedium` , identified
         by the given UUID @a id) to the given storage controller
-        (<link to="IStorageController"/>, identified by @a name),
+        (:py:class:`IStorageController` , identified by @a name),
         at the indicated port and device. The device must already exist;
-        see <link to="IMachine::attachDevice"/> for how to attach a new device.
+        see :py:func:`IMachine.attach_device`  for how to attach a new device.
         
         This method is intended only for managing removable media, where the
         device is fixed but media is changeable at runtime (such as DVDs
         and floppies). It cannot be used for fixed media such as hard disks.
         
         The @a controllerPort and @a device parameters specify the device slot and
-        have have the same meaning as with <link to="IMachine::attachDevice"/>.
+        have have the same meaning as with :py:func:`IMachine.attach_device` .
         
         The specified device slot can have a medium mounted, which will be
         unmounted first. Specifying a zero UUID (or an empty string) for
         @a medium does just an unmount.
         
-        See <link to="IMedium"/> for more detailed information about
+        See :py:class:`IMedium`  for more detailed information about
         attaching media.
 
         in name of type str
@@ -7975,9 +10814,9 @@ created differencing media, should not happen).
         bus.
         
         Note that if the medium was indirectly attached by
-        <link to="#mountMedium"/> to the given device slot then this
+        :py:func:`mount_medium`  to the given device slot then this
         method will return not the same object as passed to the
-        <link to="#mountMedium"/> call. See <link to="IMedium"/> for
+        :py:func:`mount_medium`  call. See :py:class:`IMedium`  for
         more detailed information about mounting a medium.
 
         in name of type str
@@ -8060,7 +10899,7 @@ created differencing media, should not happen).
         and most information will be delivered as IHostPCIDevicePlugEvent
         on IVirtualBox event source.
         
-        <link to="IHostPCIDevicePlugEvent"/>
+        :py:class:`IHostPCIDevicePlugEvent` 
 
         in host_address of type int
             Address of the host PCI device.
@@ -8097,7 +10936,7 @@ created differencing media, should not happen).
         will be delivered. As currently we don't support hot device
         unplug, IHostPCIDevicePlugEvent event is delivered immediately.
         
-        <link to="IHostPCIDevicePlugEvent"/>
+        :py:class:`IHostPCIDevicePlugEvent` 
 
         in host_address of type int
             Address of the host PCI device.
@@ -8124,7 +10963,7 @@ created differencing media, should not happen).
         """Returns the network adapter associated with the given slot.
         Slots are numbered sequentially, starting with zero. The total
         number of adapters per machine is defined by the
-        <link to="ISystemProperties::getMaxNetworkAdapters"/> property,
+        :py:func:`ISystemProperties.get_max_network_adapters`  property,
         so the maximum slot number is one less than that property's value.
 
         in slot of type int
@@ -8145,16 +10984,16 @@ created differencing media, should not happen).
     def add_storage_controller(self, name, connection_type):
         """Adds a new storage controller (SCSI, SAS or SATA controller) to the
         machine and returns it as an instance of
-        <link to="IStorageController"/>.
+        :py:class:`IStorageController` .
         
         @a name identifies the controller for subsequent calls such as
-        <link to="#getStorageControllerByName"/>,
-        <link to="#getStorageControllerByInstance"/>,
-        <link to="#removeStorageController"/>,
-        <link to="#attachDevice"/> or <link to="#mountMedium"/>.
+        :py:func:`get_storage_controller_by_name` ,
+        :py:func:`get_storage_controller_by_instance` ,
+        :py:func:`remove_storage_controller` ,
+        :py:func:`attach_device`  or :py:func:`mount_medium` .
         
         After the controller has been added, you can set its exact
-        type by setting the <link to="IStorageController::controllerType"/>.
+        type by setting the :py:func:`IStorageController.controller_type` .
 
         in name of type str
 
@@ -8255,7 +11094,7 @@ created differencing media, should not happen).
 
     def add_usb_controller(self, name, type_p):
         """Adds a new USB controller to the machine and returns it as an instance of
-        <link to="IUSBController"/>.
+        :py:class:`IUSBController` .
 
         in name of type str
 
@@ -8329,7 +11168,7 @@ created differencing media, should not happen).
         """Returns the serial port associated with the given slot.
         Slots are numbered sequentially, starting with zero. The total
         number of serial ports per machine is defined by the
-        <link to="ISystemProperties::serialPortCount"/> property,
+        :py:func:`ISystemProperties.serial_port_count`  property,
         so the maximum slot number is one less than that property's value.
 
         in slot of type int
@@ -8351,7 +11190,7 @@ created differencing media, should not happen).
         """Returns the parallel port associated with the given slot.
         Slots are numbered sequentially, starting with zero. The total
         number of parallel ports per machine is defined by the
-        <link to="ISystemProperties::parallelPortCount"/> property,
+        :py:func:`ISystemProperties.parallel_port_count`  property,
         so the maximum slot number is one less than that property's value.
 
         in slot of type int
@@ -8414,13 +11253,13 @@ created differencing media, should not happen).
         
         Before performing the actual data change, this method will ask all
         registered listeners using the
-        <link to="IExtraDataCanChangeEvent"/>
+        :py:class:`IExtraDataCanChangeEvent` 
         notification for a permission. If one of the listeners refuses the
         new value, the change will not be performed.
         
         
         On success, the
-        <link to="IExtraDataChangedEvent"/> notification
+        :py:class:`IExtraDataChangedEvent`  notification
         is called to inform all registered listeners about a successful data
         change.
         
@@ -8663,21 +11502,21 @@ created differencing media, should not happen).
     def save_settings(self):
         """Saves any changes to machine settings made since the session
         has been opened or a new machine has been created, or since the
-        last call to <link to="#saveSettings"/> or <link to="#discardSettings"/>.
+        last call to :py:func:`save_settings`  or :py:func:`discard_settings` .
         For registered machines, new settings become visible to all
         other VirtualBox clients after successful invocation of this
         method.
         
-        The method sends <link to="IMachineDataChangedEvent"/>
+        The method sends :py:class:`IMachineDataChangedEvent` 
         notification event after the configuration has been successfully
         saved (only for registered machines).
         
         
         Calling this method is only valid on instances returned
-        by <link to="ISession::machine"/> and on new machines
-        created by <link to="IVirtualBox::createMachine"/> but not
+        by :py:func:`ISession.machine`  and on new machines
+        created by :py:func:`IVirtualBox.create_machine`  but not
         yet registered, or on unregistered machines after calling
-        <link to="IMachine::unregister"/>.
+        :py:func:`IMachine.unregister` .
 
         raises VBOX_E_FILE_ERROR
             Settings file not accessible.
@@ -8693,15 +11532,15 @@ created differencing media, should not happen).
 
     def discard_settings(self):
         """Discards any changes to the machine settings made since the session
-        has been opened or since the last call to <link to="#saveSettings"/>
-        or <link to="#discardSettings"/>.
+        has been opened or since the last call to :py:func:`save_settings` 
+        or :py:func:`discard_settings` .
         
         Calling this method is only valid on instances returned
-        by <link to="ISession::machine"/> and on new machines
-        created by <link to="IVirtualBox::createMachine"/> or
-        opened by <link to="IVirtualBox::openMachine"/> but not
+        by :py:func:`ISession.machine`  and on new machines
+        created by :py:func:`IVirtualBox.create_machine`  or
+        opened by :py:func:`IVirtualBox.open_machine`  but not
         yet registered, or on unregistered machines after calling
-        <link to="IMachine::unregister"/>.
+        :py:func:`IMachine.unregister` .
 
         raises VBOX_E_INVALID_VM_STATE
             Virtual machine is not mutable.
@@ -8711,13 +11550,13 @@ created differencing media, should not happen).
 
     def unregister(self, cleanup_mode):
         """Unregisters a machine previously registered with
-        <link to="IVirtualBox::registerMachine"/> and optionally do additional
+        :py:func:`IVirtualBox.register_machine`  and optionally do additional
         cleanup before the machine is unregistered.
         
         This method does not delete any files. It only changes the machine configuration and
         the list of registered machines in the VirtualBox object. To delete the files which
         belonged to the machine, including the XML file of the machine itself, call
-        <link to="#deleteConfig"/>, optionally with the array of IMedium objects which was returned
+        :py:func:`delete_config` , optionally with the array of IMedium objects which was returned
         from this method.
         
         How thoroughly this method cleans up the machine configuration before unregistering
@@ -8726,7 +11565,7 @@ created differencing media, should not happen).
         
         With "UnregisterOnly", the machine will only be unregistered, but no additional
         cleanup will be performed. The call will fail if the machine is in "Saved" state
-        or has any snapshots or any media attached (see <link to="IMediumAttachment"/>).
+        or has any snapshots or any media attached (see :py:class:`IMediumAttachment` ).
         It is the responsibility of the caller to delete all such configuration in this mode.
         In this mode, the API behaves like the former @c IVirtualBox::unregisterMachine() API
         which it replaces.
@@ -8736,46 +11575,46 @@ created differencing media, should not happen).
         all of the machine's media will remain open.
         With "DetachAllReturnHardDisksOnly", the call will behave like with "DetachAllReturnNone",
         except that all the hard disk medium objects which were detached from the machine will
-        be returned as an array. This allows for quickly passing them to the <link to="#deleteConfig"/>
+        be returned as an array. This allows for quickly passing them to the :py:func:`delete_config` 
         API for closing and deletion.
         With "Full", the call will behave like with "DetachAllReturnHardDisksOnly", except
         that all media will be returned in the array, including removable media like DVDs and
         floppies. This might be useful if the user wants to inspect in detail which media were
-        attached to the machine. Be careful when passing the media array to <link to="#deleteConfig"/>
+        attached to the machine. Be careful when passing the media array to :py:func:`delete_config` 
         in that case because users will typically want to preserve ISO and RAW image files.
         
         
         A typical implementation will use "DetachAllReturnHardDisksOnly" and then pass the
-        resulting IMedium array to <link to="#deleteConfig"/>. This way, the machine is completely
+        resulting IMedium array to :py:func:`delete_config` . This way, the machine is completely
         deleted with all its saved states and hard disk images, but images for removable
         drives (such as ISO and RAW files) will remain on disk.
         
         This API does not verify whether the media files returned in the array are still
         attached to other machines (i.e. shared between several machines). If such a shared
-        image is passed to <link to="#deleteConfig"/> however, closing the image will fail there
+        image is passed to :py:func:`delete_config`  however, closing the image will fail there
         and the image will be silently skipped.
         
         This API may, however, move media from this machine's media registry to other media
-        registries (see <link to="IMedium"/> for details on media registries). For machines
+        registries (see :py:class:`IMedium`  for details on media registries). For machines
         created with VirtualBox 4.0 or later, if media from this machine's media registry
         are also attached to another machine (shared attachments), each such medium will be
         moved to another machine's registry. This is because without this machine's media
         registry, the other machine cannot find its media any more and would become inaccessible.
         
-        This API implicitly calls <link to="#saveSettings"/> to save all current machine settings
-        before unregistering it. It may also silently call <link to="#saveSettings"/> on other machines
+        This API implicitly calls :py:func:`save_settings`  to save all current machine settings
+        before unregistering it. It may also silently call :py:func:`save_settings`  on other machines
         if media are moved to other machines' media registries.
         
-        After successful method invocation, the <link to="IMachineRegisteredEvent"/> event
+        After successful method invocation, the :py:class:`IMachineRegisteredEvent`  event
         is fired.
         
-        The call will fail if the machine is currently locked (see <link to="ISession"/>).
+        The call will fail if the machine is currently locked (see :py:class:`ISession` ).
         
         
-        If the given machine is inaccessible (see <link to="#accessible"/>), it
+        If the given machine is inaccessible (see :py:func:`accessible` ), it
         will be unregistered and fully uninitialized right afterwards. As a result,
         the returned machine object will be unusable and an attempt to call
-        any method will return the "Object not ready" error.
+        **any** method will return the "Object not ready" error.
 
         in cleanup_mode of type CleanupMode
             How to clean up after the machine has been unregistered.
@@ -8798,22 +11637,22 @@ created differencing media, should not happen).
         """Deletes the files associated with this machine from disk. If medium objects are passed
         in with the @a aMedia argument, they are closed and, if closing was successful, their
         storage files are deleted as well. For convenience, this array of media files can be
-        the same as the one returned from a previous <link to="#unregister"/> call.
+        the same as the one returned from a previous :py:func:`unregister`  call.
         
         This method must only be called on machines which are either write-locked (i.e. on instances
-        returned by <link to="ISession::machine"/>) or on unregistered machines (i.e. not yet
-        registered machines created by <link to="IVirtualBox::createMachine"/> or opened by
-        <link to="IVirtualBox::openMachine"/>, or after having called <link to="#unregister"/>).
+        returned by :py:func:`ISession.machine` ) or on unregistered machines (i.e. not yet
+        registered machines created by :py:func:`IVirtualBox.create_machine`  or opened by
+        :py:func:`IVirtualBox.open_machine` , or after having called :py:func:`unregister` ).
         
         The following files will be deleted by this method:
         
-        If <link to="#unregister"/> had been previously called with a @a cleanupMode
+        If :py:func:`unregister`  had been previously called with a @a cleanupMode
         argument other than "UnregisterOnly", this will delete all saved state files that
         the machine had in use; possibly one if the machine was in "Saved" state and one
         for each online snapshot that the machine had.
         On each medium object passed in the @a aMedia array, this will call
-        <link to="IMedium::close"/>. If that succeeds, this will attempt to delete the
-        medium's storage on disk. Since the <link to="IMedium::close"/> call will fail if the medium is still
+        :py:func:`IMedium.close` . If that succeeds, this will attempt to delete the
+        medium's storage on disk. Since the :py:func:`IMedium.close`  call will fail if the medium is still
         in use, e.g. because it is still attached to a second machine; in that case the
         storage will not be deleted.
         Finally, the machine's own XML file will be deleted.
@@ -8825,7 +11664,7 @@ created differencing media, should not happen).
         being deleted (saved state or medium storage file).
         
         
-        <link to="#settingsModified"/> will return @c true after this
+        :py:func:`settings_modified`  will return @c true after this
         method successfully returns.
 
         in media of type IMedium
@@ -8853,7 +11692,7 @@ created differencing media, should not happen).
         return progress
 
     def export_to(self, appliance, location):
-        """Exports the machine to an OVF appliance. See <link to="IAppliance"/> for the
+        """Exports the machine to an OVF appliance. See :py:class:`IAppliance`  for the
         steps required to export VirtualBox machines to OVF.
 
         in appliance of type IAppliance
@@ -8882,7 +11721,7 @@ created differencing media, should not happen).
         A @c null argument can be used to obtain the first snapshot
         taken on this machine. To traverse the whole tree of snapshots
         starting from the root, inspect the root snapshot's
-        <link to="ISnapshot::children"/> attribute and recurse over those children.
+        :py:func:`ISnapshot.children`  attribute and recurse over those children.
 
         in name_or_id of type str
             What to search for. Name or UUID of the snapshot to find
@@ -8905,7 +11744,7 @@ created differencing media, should not happen).
         """Creates a new permanent shared folder by associating the given logical
         name with the given host path, adds it to the collection of shared
         folders and starts sharing it. Refer to the description of
-        <link to="ISharedFolder"/> to read more about logical names.
+        :py:class:`ISharedFolder`  to read more about logical names.
 
         in name of type str
             Unique logical name of the shared folder.
@@ -8940,7 +11779,7 @@ created differencing media, should not happen).
 
     def remove_shared_folder(self, name):
         """Removes the permanent shared folder with the given name previously
-        created by <link to="#createSharedFolder"/> from the collection of
+        created by :py:func:`create_shared_folder`  from the collection of
         shared folders and stops sharing it.
 
         in name of type str
@@ -8995,7 +11834,7 @@ created differencing media, should not happen).
         return win_id of type int
             Platform-dependent identifier of the top-level VM console
             window, or zero if this method has performed all actions
-            necessary to implement the show window semantics for
+            necessary to implement the *show window* semantics for
             the given platform and/or VirtualBox front-end.
 
         raises VBOX_E_INVALID_VM_STATE
@@ -9424,7 +12263,7 @@ created differencing media, should not happen).
         on), or as a linked clone (which uses its own differencing media,
         sharing the parent media with the source machine).
         
-        The target machine object must have been created previously with <link to="IVirtualBox::createMachine"/>, and all the settings will be
+        The target machine object must have been created previously with :py:func:`IVirtualBox.create_machine` , and all the settings will be
         transferred except the VM name and the hardware UUID. You can set the
         VM name and the new hardware UUID when creating the target machine. The
         network MAC addresses are newly created for all network adapters. You
@@ -9512,7 +12351,7 @@ class IEmulatedUSB(Interface):
 class IVRDEServerInfo(Interface):
     """
     Contains information about the remote desktop (VRDE) server capabilities and status.
-    This is used in the <link to="IConsole::VRDEServerInfo"/> attribute.
+    This is used in the :py:func:`IConsole.vrde_server_info`  attribute.
     """
     __uuid__ = '714434a1-58c3-4aab-9049-7652c5df113b'
     __wsmap__ = 'struct'
@@ -9650,16 +12489,16 @@ class IConsole(Interface):
     machine execution.
     
     A console object gets created when a machine has been locked for a
-    particular session (client process) using <link to="IMachine::lockMachine"/>
-    or <link to="IMachine::launchVMProcess"/>. The console object can
-    then be found in the session's <link to="ISession::console"/> attribute.
+    particular session (client process) using :py:func:`IMachine.lock_machine` 
+    or :py:func:`IMachine.launch_vm_process` . The console object can
+    then be found in the session's :py:func:`ISession.console`  attribute.
     
     Methods of the IConsole interface allow the caller to query the current
     virtual machine execution state, pause the machine or power it down, save
     the machine state or take a snapshot, attach and detach removable media
     and so on.
     
-    <link to="ISession"/>
+    :py:class:`ISession` 
     """
     __uuid__ = '8ab7c520-2442-4b66-8d74-4ff1e195d2b6'
     __wsmap__ = 'managed'
@@ -9670,7 +12509,7 @@ class IConsole(Interface):
         Machine object for this console session.
         
         This is a convenience property, it has the same value as
-        <link to="ISession::machine"/> of the corresponding session
+        :py:func:`ISession.machine`  of the corresponding session
         object.
         """
         ret = self._get_attr("machine")
@@ -9767,13 +12606,13 @@ class IConsole(Interface):
         are called transient shared folders because they are available to the
         guest OS running inside the associated virtual machine only for the
         duration of the session (as opposed to
-        <link to="IMachine::sharedFolders"/> which represent permanent shared
+        :py:func:`IMachine.shared_folders`  which represent permanent shared
         folders). When the session is closed (e.g. the machine is powered down),
         these folders are automatically discarded.
         
         New shared folders are added to the collection using
-        <link to="#createSharedFolder"/>. Existing shared folders can be
-        removed using <link to="#removeSharedFolder"/>.
+        :py:func:`create_shared_folder` . Existing shared folders can be
+        removed using :py:func:`remove_shared_folder` .
         """
         ret = self._get_attr("sharedFolders")
         return [ISharedFolder(a) for a in ret]
@@ -9839,7 +12678,7 @@ class IConsole(Interface):
         front-end, do not call this method. If you simply want to
         start virtual machine execution using one of the existing front-ends
         (for example the VirtualBox GUI or headless server), use
-        <link to="IMachine::launchVMProcess"/> instead; these
+        :py:func:`IMachine.launch_vm_process`  instead; these
         front-ends will power up the machine automatically for you.
         
         
@@ -9847,21 +12686,21 @@ class IConsole(Interface):
         start from the beginning (as if the real hardware were just
         powered on).
         
-        If the machine is in the <link to="MachineState_Saved"/> state,
+        If the machine is in the :py:attr:`MachineState.saved`  state,
         it will continue its execution the point where the state has
         been saved.
         
-        If the machine <link to="IMachine::teleporterEnabled"/> property is
+        If the machine :py:func:`IMachine.teleporter_enabled`  property is
         enabled on the machine being powered up, the machine will wait for an
-        incoming teleportation in the <link to="MachineState_TeleportingIn"/>
+        incoming teleportation in the :py:attr:`MachineState.teleporting_in` 
         state. The returned progress object will have at least three
         operations where the last three are defined as: (1) powering up and
         starting TCP server, (2) waiting for incoming teleportations, and
         (3) perform teleportation. These operations will be reflected as the
         last three operations of the progress objected returned by
-        <link to="IMachine::launchVMProcess"/> as well.
+        :py:func:`IMachine.launch_vm_process`  as well.
         
-        <link to="#saveState"/>
+        :py:func:`save_state` 
 
         return progress of type IProgress
             Progress object to track the operation completion.
@@ -9882,10 +12721,10 @@ class IConsole(Interface):
 
     def power_up_paused(self):
         """Identical to powerUp except that the VM will enter the
-        <link to="MachineState_Paused"/> state, instead of
-        <link to="MachineState_Running"/>.
+        :py:attr:`MachineState.paused`  state, instead of
+        :py:attr:`MachineState.running` .
         
-        <link to="#powerUp"/>
+        :py:func:`power_up` 
 
         return progress of type IProgress
             Progress object to track the operation completion.
@@ -10026,7 +12865,7 @@ class IConsole(Interface):
         
         
         On success, this method implicitly calls
-        <link to="IMachine::saveSettings"/> to save all current machine
+        :py:func:`IMachine.save_settings`  to save all current machine
         settings (including runtime changes to the DVD medium, etc.).
         Together with the impossibility to change any VM settings when it is
         in the Saved state, this guarantees adequate hardware
@@ -10040,7 +12879,7 @@ class IConsole(Interface):
         
         
         
-        <link to="#takeSnapshot"/>
+        :py:func:`take_snapshot` 
 
         return progress of type IProgress
             Progress object to track the operation completion.
@@ -10066,7 +12905,7 @@ class IConsole(Interface):
         
         The specified saved state file path may be absolute or relative to the
         folder the VM normally saves the state to (usually,
-        <link to="IMachine::snapshotFolder"/>).
+        :py:func:`IMachine.snapshot_folder` ).
         
         
         It's a caller's responsibility to make sure the given saved state
@@ -10089,7 +12928,7 @@ class IConsole(Interface):
 
     def discard_saved_state(self, f_remove_file):
         """Forcibly resets the machine to "Powered Off" state if it is
-        currently in the "Saved" state (previously created by <link to="#saveState"/>).
+        currently in the "Saved" state (previously created by :py:func:`save_state` ).
         Next time the machine is powered up, a clean boot will occur.
         
         This operation is equivalent to resetting or powering off
@@ -10100,9 +12939,9 @@ class IConsole(Interface):
         If @a fRemoveFile is @c true, the file in the machine directory
         into which the machine state was saved is also deleted. If
         this is @c false, then the state can be recovered and later
-        re-inserted into a machine using <link to="#adoptSavedState"/>.
+        re-inserted into a machine using :py:func:`adopt_saved_state` .
         The location of the file can be found in the
-        <link to="IMachine::stateFilePath"/> attribute.
+        :py:func:`IMachine.state_file_path`  attribute.
 
         in f_remove_file of type bool
             Whether to also remove the saved state file.
@@ -10139,17 +12978,17 @@ class IConsole(Interface):
         USB controller of the virtual machine.
         
         The device needs to be in one of the following states:
-        <link to="USBDeviceState_Busy"/>,
-        <link to="USBDeviceState_Available"/> or
-        <link to="USBDeviceState_Held"/>,
+        :py:attr:`USBDeviceState.busy` ,
+        :py:attr:`USBDeviceState.available`  or
+        :py:attr:`USBDeviceState.held` ,
         otherwise an error is immediately returned.
         
         When the device state is
-        <link to="USBDeviceState_Busy">Busy</link>, an error may also
+        :py:attr:`USBDeviceState.busy` Busy, an error may also
         be returned if the host computer refuses to release it for some reason.
         
-        <link to="IUSBDeviceFilters::deviceFilters"/>,
-        <link to="USBDeviceState"/>
+        :py:func:`IUSBDeviceFilters.device_filters` ,
+        :py:class:`USBDeviceState` 
 
         in id_p of type str
             UUID of the host USB device to attach.
@@ -10175,8 +13014,8 @@ class IConsole(Interface):
         to the host, but filters of this machine are ignored to avoid
         a possible automatic re-attachment.
         
-        <link to="IUSBDeviceFilters::deviceFilters"/>,
-        <link to="USBDeviceState"/>
+        :py:func:`IUSBDeviceFilters.device_filters` ,
+        :py:class:`USBDeviceState` 
 
         in id_p of type str
             UUID of the USB device to detach.
@@ -10203,7 +13042,7 @@ class IConsole(Interface):
         
         
         
-        <link to="IUSBDevice::address"/>
+        :py:func:`IUSBDevice.address` 
 
         in name of type str
             Address of the USB device (as assigned by the host) to
@@ -10228,7 +13067,7 @@ class IConsole(Interface):
         
         
         
-        <link to="IUSBDevice::id"/>
+        :py:func:`IUSBDevice.id_p` 
 
         in id_p of type str
             UUID of the USB device to search for.
@@ -10251,7 +13090,7 @@ class IConsole(Interface):
         """Creates a transient new shared folder by associating the given logical
         name with the given host path, adds it to the collection of shared
         folders and starts sharing it. Refer to the description of
-        <link to="ISharedFolder"/> to read more about logical names.
+        :py:class:`ISharedFolder`  to read more about logical names.
 
         in name of type str
             Unique logical name of the shared folder.
@@ -10286,7 +13125,7 @@ class IConsole(Interface):
 
     def remove_shared_folder(self, name):
         """Removes a transient shared folder with the given name previously
-        created by <link to="#createSharedFolder"/> from the collection of
+        created by :py:func:`create_shared_folder`  from the collection of
         shared folders and stops sharing it.
 
         in name of type str
@@ -10308,20 +13147,20 @@ class IConsole(Interface):
         """Saves the current execution state
         and all settings of the machine and creates differencing images
         for all normal (non-independent) media.
-        See <link to="ISnapshot"/> for an introduction to snapshots.
+        See :py:class:`ISnapshot`  for an introduction to snapshots.
         
         This method can be called for a PoweredOff, Saved (see
-        <link to="#saveState"/>), Running or
+        :py:func:`save_state` ), Running or
         Paused virtual machine. When the machine is PoweredOff, an
         offline snapshot is created. When the machine is Running a live
         snapshot is created, and an online snapshot is created when Paused.
         
         The taken snapshot is always based on the
-        <link to="IMachine::currentSnapshot">current snapshot</link>
+        :py:func:`IMachine.current_snapshot` current snapshot
         of the associated virtual machine and becomes a new current snapshot.
         
         
-        This method implicitly calls <link to="IMachine::saveSettings"/> to
+        This method implicitly calls :py:func:`IMachine.save_settings`  to
         save all current machine settings before taking an offline snapshot.
 
         in name of type str
@@ -10348,7 +13187,7 @@ class IConsole(Interface):
 
     def delete_snapshot(self, id_p):
         """Starts deleting the specified snapshot asynchronously.
-        See <link to="ISnapshot"/> for an introduction to snapshots.
+        See :py:class:`ISnapshot`  for an introduction to snapshots.
         
         The execution state and settings of the associated machine stored in
         the snapshot will be deleted. The contents of all differencing media of
@@ -10367,14 +13206,14 @@ class IConsole(Interface):
         
         If the deleted snapshot is the first or current snapshot, then the
         respective IMachine attributes will be adjusted. Deleting the current
-        snapshot will also implicitly call <link to="IMachine::saveSettings"/>
+        snapshot will also implicitly call :py:func:`IMachine.save_settings` 
         to make all current machine settings permanent.
         
         Deleting a snapshot has the following preconditions:
         
         
         Child media of all normal media of the deleted snapshot
-        must be accessible (see <link to="IMedium::state"/>) for this
+        must be accessible (see :py:func:`IMedium.state` ) for this
         operation to succeed. If only one running VM refers to all images
         which participates in merging the operation can be performed while
         the VM is running. Otherwise all virtual machines whose media are
@@ -10390,7 +13229,7 @@ class IConsole(Interface):
         attachments).
         
         
-        The virtual machine's <link to="IMachine::state">state</link> is
+        The virtual machine's :py:func:`IMachine.state` state is
         changed to "DeletingSnapshot", "DeletingSnapshotOnline" or
         "DeletingSnapshotPaused" while this operation is in progress.
         
@@ -10423,9 +13262,9 @@ text explains the reason for the failure.
 
     def delete_snapshot_and_all_children(self, id_p):
         """Starts deleting the specified snapshot and all its children
-        asynchronously. See <link to="ISnapshot"/> for an introduction to
+        asynchronously. See :py:class:`ISnapshot`  for an introduction to
         snapshots. The conditions and many details are the same as with
-        <link to="#deleteSnapshot"/>.
+        :py:func:`delete_snapshot` .
         
         This operation is very fast if the snapshot subtree does not include
         the current state. It is still significantly faster than deleting the
@@ -10463,10 +13302,10 @@ text explains the reason for the failure.
         linear snapshot lists, which means there may not be any other child
         snapshots other than the direct sequence between the start and end
         snapshot. If the start and end snapshot point to the same snapshot this
-        method is completely equivalent to <link to="#deleteSnapshot"/>. See
-        <link to="ISnapshot"/> for an introduction to snapshots. The
+        method is completely equivalent to :py:func:`delete_snapshot` . See
+        :py:class:`ISnapshot`  for an introduction to snapshots. The
         conditions and many details are the same as with
-        <link to="#deleteSnapshot"/>.
+        :py:func:`delete_snapshot` .
         
         This operation is generally faster than deleting snapshots one by one
         and often also needs less extra disk space before freeing up disk space
@@ -10507,13 +13346,13 @@ text explains the reason for the failure.
         in the given snapshot, asynchronously. All current settings of the
         machine will be reset and changes stored in differencing media
         will be lost.
-        See <link to="ISnapshot"/> for an introduction to snapshots.
+        See :py:class:`ISnapshot`  for an introduction to snapshots.
         
         After this operation is successfully completed, new empty differencing
         media are created for all normal media of the machine.
         
         If the given snapshot is an online snapshot, the machine will go to
-        the <link to="MachineState_Saved"> saved state</link>, so that the
+        the :py:attr:`MachineState.saved` saved state, so that the
         next time it is powered on, the execution state will be restored
         from the state of the snapshot.
         
@@ -10522,9 +13361,9 @@ text explains the reason for the failure.
         
         
         
-        If the machine state is <link to="MachineState_Saved">Saved</link>
+        If the machine state is :py:attr:`MachineState.saved` Saved
         prior to this operation, the saved state file will be implicitly
-        deleted (as if <link to="IConsole::discardSavedState"/> were
+        deleted (as if :py:func:`IConsole.discard_saved_state`  were
         called).
 
         in snapshot of type ISnapshot
@@ -10798,7 +13637,7 @@ class IHost(Interface):
     installation runs on.
     
     An object implementing this interface is returned by the
-    <link to="IVirtualBox::host"/> attribute. This interface contains
+    :py:func:`IVirtualBox.host`  attribute. This interface contains
     read-only information about the host's physical hardware (such as what
     processors and disks are available, what the host operating system is,
     and so on) and also allows for manipulating some of the host's hardware,
@@ -10844,20 +13683,20 @@ class IHost(Interface):
         When a new device is physically attached to the host computer,
         filters from this list are applied to it (in order they are stored
         in the list). The first matched filter will determine the
-        <link to="IHostUSBDeviceFilter::action">action</link>
+        :py:func:`IHostUSBDeviceFilter.action` action
         performed on the device.
         
         Unless the device is ignored by these filters, filters of all
         currently running virtual machines
-        (<link to="IUSBDeviceFilters::deviceFilters"/>) are applied to it.
+        (:py:func:`IUSBDeviceFilters.device_filters` ) are applied to it.
         
         
         If USB functionality is not available in the given edition of
         VirtualBox, this method will set the result code to @c E_NOTIMPL.
         
         
-        <link to="IHostUSBDeviceFilter"/>,
-        <link to="USBDeviceState"/>
+        :py:class:`IHostUSBDeviceFilter` ,
+        :py:class:`USBDeviceState` 
         """
         ret = self._get_attr("USBDeviceFilters")
         return [IHostUSBDeviceFilter(a) for a in ret]
@@ -10995,7 +13834,7 @@ class IHost(Interface):
         in sub_leaf of type int
             CPUID leaf sub index (ecx). This currently only applies to cache
             information on Intel CPUs. Use 0 if retrieving values for
-            <link to="IMachine::setCPUIDLeaf"/>.
+            :py:func:`IMachine.set_cpuid_leaf` .
 
         out val_eax of type int
             CPUID leaf value for register eax.
@@ -11109,15 +13948,15 @@ class IHost(Interface):
     def create_usb_device_filter(self, name):
         """Creates a new USB device filter. All attributes except
         the filter name are set to empty (any match),
-        active is @c false (the filter is not active).
+        *active* is @c false (the filter is not active).
         
         The created filter can be added to the list of filters using
-        <link to="#insertUSBDeviceFilter"/>.
+        :py:func:`insert_usb_device_filter` .
         
-        <link to="#USBDeviceFilters"/>
+        :py:func:`usb_device_filters` 
 
         in name of type str
-            Filter name. See <link to="IUSBDeviceFilter::name"/> for more information.
+            Filter name. See :py:func:`IUSBDeviceFilter.name`  for more information.
 
         return filter_p of type IHostUSBDeviceFilter
             Created filter object.
@@ -11147,7 +13986,7 @@ class IHost(Interface):
         VirtualBox, this method will set the result code to @c E_NOTIMPL.
         
         
-        <link to="#USBDeviceFilters"/>
+        :py:func:`usb_device_filters` 
 
         in position of type int
             Position to insert the filter to.
@@ -11182,7 +14021,7 @@ class IHost(Interface):
         VirtualBox, this method will set the result code to @c E_NOTIMPL.
         
         
-        <link to="#USBDeviceFilters"/>
+        :py:func:`usb_device_filters` 
 
         in position of type int
             Position to remove the filter from.
@@ -11300,7 +14139,7 @@ class IHost(Interface):
         
         
         
-        <link to="IUSBDevice::id"/>
+        :py:func:`IUSBDevice.id_p` 
 
         in id_p of type str
             UUID of the USB device to search for.
@@ -11324,7 +14163,7 @@ class IHost(Interface):
         
         
         
-        <link to="IUSBDevice::address"/>
+        :py:func:`IUSBDevice.address` 
 
         in name of type str
             Address of the USB device (as assigned by the host) to
@@ -11444,7 +14283,7 @@ class ISystemProperties(Interface):
     def serial_port_count(self):
         """Get int value for 'serialPortCount'
         Maximum number of serial ports associated with every
-        <link to="IMachine"/> instance.
+        :py:class:`IMachine`  instance.
         """
         ret = self._get_attr("serialPortCount")
         return ret
@@ -11453,7 +14292,7 @@ class ISystemProperties(Interface):
     def parallel_port_count(self):
         """Get int value for 'parallelPortCount'
         Maximum number of parallel ports associated with every
-        <link to="IMachine"/> instance.
+        :py:class:`IMachine`  instance.
         """
         ret = self._get_attr("parallelPortCount")
         return ret
@@ -11464,7 +14303,7 @@ class ISystemProperties(Interface):
         Maximum device position in the boot order. This value corresponds
         to the total number of devices a machine can boot from, to make it
         possible to include all possible devices to the boot list.
-        <link to="IMachine::setBootOrder"/>
+        :py:func:`IMachine.set_boot_order` 
         """
         ret = self._get_attr("maxBootPosition")
         return ret
@@ -11506,8 +14345,8 @@ class ISystemProperties(Interface):
         automatically as needed.
         
         
-        <link to="IVirtualBox::createMachine"/>,
-        <link to="IVirtualBox::openMachine"/>
+        :py:func:`IVirtualBox.create_machine` ,
+        :py:func:`IVirtualBox.open_machine` 
         """
         ret = self._get_attr("defaultMachineFolder")
         return ret
@@ -11539,21 +14378,24 @@ class ISystemProperties(Interface):
         installation.
         
         Keep in mind that the medium format identifier
-        (<link to="IMediumFormat::id"/>) used in other API calls like
-        <link to="IVirtualBox::createHardDisk"/> to refer to a particular
+        (:py:func:`IMediumFormat.id_p` ) used in other API calls like
+        :py:func:`IVirtualBox.create_hard_disk`  to refer to a particular
         medium format is a case-insensitive string. This means that, for
         example, all of the following strings:
         
-        "VDI"
-        "vdi"
-        "VdI"
+        ::
+
+             "VDI"
+             "vdi"
+             "VdI"
+
         refer to the same medium format.
         
         Note that the virtual medium framework is backend-based, therefore
         the list of supported formats depends on what backends are currently
         installed.
         
-        <link to="IMediumFormat"/>
+        :py:class:`IMediumFormat` 
         """
         ret = self._get_attr("mediumFormats")
         return [IMediumFormat(a) for a in ret]
@@ -11565,7 +14407,7 @@ class ISystemProperties(Interface):
         
         The medium format set by this attribute is used by VirtualBox
         when the medium format was not specified explicitly. One example is
-        <link to="IVirtualBox::createHardDisk"/> with the empty
+        :py:func:`IVirtualBox.create_hard_disk`  with the empty
         format argument. A more complex example is implicit creation of
         differencing media when taking a snapshot of a virtual machine:
         this operation will try to use a format of the parent medium first
@@ -11573,7 +14415,7 @@ class ISystemProperties(Interface):
         format specified by this argument will be used.
         
         The list of supported medium formats may be obtained by the
-        <link to="#mediumFormats"/> call. Note that the default medium
+        :py:func:`medium_formats`  call. Note that the default medium
         format must have a capability to create differencing media;
         otherwise operations that create media implicitly may fail
         unexpectedly.
@@ -11587,9 +14429,9 @@ class ISystemProperties(Interface):
         
         
         
-        <link to="#mediumFormats"/>,
-        <link to="IMediumFormat::id"/>,
-        <link to="IVirtualBox::createHardDisk"/>
+        :py:func:`medium_formats` ,
+        :py:func:`IMediumFormat.id_p` ,
+        :py:func:`IVirtualBox.create_hard_disk` 
         """
         ret = self._get_attr("defaultHardDiskFormat")
         return ret
@@ -11698,19 +14540,19 @@ class ISystemProperties(Interface):
         Library that provides authentication for webservice clients. The library
         is used if a virtual machine's authentication type is set to "external"
         in the VM RemoteDisplay configuration and will be called from
-        within the <link to="IWebsessionManager::logon"/> implementation.
+        within the :py:func:`IWebsessionManager.logon`  implementation.
         
-        As opposed to <link to="ISystemProperties::VRDEAuthLibrary"/>,
+        As opposed to :py:func:`ISystemProperties.vrde_auth_library` ,
         there is no per-VM setting for this, as the webservice is a global
         resource (if it is running). Only for this setting (for the webservice),
         setting this value to a literal "null" string disables authentication,
-        meaning that <link to="IWebsessionManager::logon"/> will always succeed,
+        meaning that :py:func:`IWebsessionManager.logon`  will always succeed,
         no matter what user name and password are supplied.
         
         The initial value of this property is "VBoxAuth",
         meaning that the webservice will use the same authentication
         library that is used by default for VRDE (again, see
-        <link to="ISystemProperties::VRDEAuthLibrary"/>).
+        :py:func:`ISystemProperties.vrde_auth_library` ).
         The format and calling convention of authentication libraries
         is the same for the webservice as it is for VRDE.
         
@@ -11806,15 +14648,15 @@ class ISystemProperties(Interface):
     def default_frontend(self):
         """Get or set str value for 'defaultFrontend'
         Selects which VM frontend should be used by default when launching
-        a VM through the <link to="IMachine::launchVMProcess"/> method.
+        a VM through the :py:func:`IMachine.launch_vm_process`  method.
         Empty or @c null strings do not define a particular default, it is up
-        to <link to="IMachine::launchVMProcess"/> to select one. See the
-        description of <link to="IMachine::launchVMProcess"/> for the valid
+        to :py:func:`IMachine.launch_vm_process`  to select one. See the
+        description of :py:func:`IMachine.launch_vm_process`  for the valid
         frontend types.
         
         This global setting is overridden by the per-VM attribute
-        <link to="IMachine::defaultFrontend"/> or a frontend type
-        passed to <link to="IMachine::launchVMProcess"/>.
+        :py:func:`IMachine.default_frontend`  or a frontend type
+        passed to :py:func:`IMachine.launch_vm_process` .
         """
         ret = self._get_attr("defaultFrontend")
         return ret
@@ -11827,7 +14669,7 @@ class ISystemProperties(Interface):
 
     def get_max_network_adapters(self, chipset):
         """Maximum total number of network adapters associated with every
-        <link to="IMachine"/> instance.
+        :py:class:`IMachine`  instance.
 
         in chipset of type ChipsetType
             The chipset type to get the value for.
@@ -11844,7 +14686,7 @@ class ISystemProperties(Interface):
 
     def get_max_network_adapters_of_type(self, chipset, type_p):
         """Maximum number of network adapters of a given attachment type,
-        associated with every <link to="IMachine"/> instance.
+        associated with every :py:class:`IMachine`  instance.
 
         in chipset of type ChipsetType
             The chipset type to get the value for.
@@ -11941,7 +14783,7 @@ class ISystemProperties(Interface):
 
     def get_device_types_for_storage_bus(self, bus):
         """Returns list of all the supported device types
-        (<link to="DeviceType"/>) for the given type of storage
+        (:py:class:`DeviceType` ) for the given type of storage
         bus.
 
         in bus of type StorageBus
@@ -12300,7 +15142,7 @@ class IGuestSession(Interface):
     """
     A guest session represents one impersonated user account on the guest, so
     every operation will use the same credentials specified when creating
-    the session object via <link to="IGuest::createSession"/>.
+    the session object via :py:func:`IGuest.create_session` .
     
     There can be a maximum of 32 sessions at once per VM, whereas session 0
     is reserved for the root session. This root session is controlling all
@@ -12308,15 +15150,15 @@ class IGuestSession(Interface):
     system level privileges. Each guest session keeps track of its started
     guest processes, opened guest files or guest directories.
     To work on guest files or directories a guest session offers methods to open
-    or create such objects (see <link to="IGuestSession::fileOpen"/> or
-    <link to="IGuestSession::directoryOpen"/> for example).
+    or create such objects (see :py:func:`IGuestSession.file_open`  or
+    :py:func:`IGuestSession.directory_open`  for example).
     
     When done with either of these objects, including the guest session itself,
     use the appropriate close() method to let the object do its cleanup work.
     
     Every guest session has its own environment variable block which gets
     automatically applied when starting a new guest process via
-    <link to="IGuestSession::processCreate"/> or <link to="IGuestSession::processCreateEx"/>.
+    :py:func:`IGuestSession.process_create`  or :py:func:`IGuestSession.process_create_ex` .
     To override (or unset) certain environment variables already set by the
     guest session, one can specify a per-process environment block when using
     one of the both above mentioned process creation calls.
@@ -12454,7 +15296,7 @@ class IGuestSession(Interface):
             Destination file name on the host.
 
         in flags of type CopyFileFlag
-            Copy flags; see <link to="CopyFileFlag"/> for more information.
+            Copy flags; see :py:class:`CopyFileFlag`  for more information.
 
         return progress of type IProgress
             Progress object to track the operation completion.
@@ -12488,7 +15330,7 @@ class IGuestSession(Interface):
             Destination file name on the guest.
 
         in flags of type CopyFileFlag
-            Copy flags; see <link to="CopyFileFlag"/> for more information.
+            Copy flags; see :py:class:`CopyFileFlag`  for more information.
 
         return progress of type IProgress
             Progress object to track the operation completion.
@@ -12522,7 +15364,7 @@ class IGuestSession(Interface):
             File creation mode.
 
         in flags of type DirectoryCreateFlag
-            Creation flags; see <link to="DirectoryCreateFlag"/> for more information.
+            Creation flags; see :py:class:`DirectoryCreateFlag`  for more information.
 
         raises VBOX_E_IPRT_ERROR
             Error while creating the directory.
@@ -12614,7 +15456,7 @@ option was requested.
         return exists
 
     def directory_open(self, path, filter_p, flags):
-        """Opens a directory and creates a <link to="IGuestDirectory"/> object that
+        """Opens a directory and creates a :py:class:`IGuestDirectory`  object that
         can be used for further operations.
 
         in path of type str
@@ -12624,10 +15466,10 @@ option was requested.
             Open filter to apply. This can include wildcards like ? and *.
 
         in flags of type DirectoryOpenFlag
-            Open flags; see <link to="DirectoryOpenFlag"/> for more information.
+            Open flags; see :py:class:`DirectoryOpenFlag`  for more information.
 
         return directory of type IGuestDirectory
-            <link to="IGuestDirectory"/> object containing the opened directory.
+            :py:class:`IGuestDirectory`  object containing the opened directory.
 
         raises VBOX_E_OBJECT_NOT_FOUND
             Directory to open was not found.
@@ -12658,7 +15500,7 @@ option was requested.
             Directory to query information for.
 
         return info of type IGuestFsObjInfo
-            <link to="IGuestFsObjInfo"/> object containing the queried information.
+            :py:class:`IGuestFsObjInfo`  object containing the queried information.
 
         raises VBOX_E_OBJECT_NOT_FOUND
             Directory to query information for was not found.
@@ -12693,7 +15535,7 @@ option was requested.
             Full path of directory to remove recursively.
 
         in flags of type DirectoryRemoveRecFlag
-            Remove flags; see <link to="DirectoryRemoveRecFlag"/> for more information.
+            Remove flags; see :py:class:`DirectoryRemoveRecFlag`  for more information.
 
         return progress of type IProgress
             Progress object to track the operation completion. This is not implemented
@@ -12723,7 +15565,7 @@ option was requested.
             Destination directory to rename the source to.
 
         in flags of type PathRenameFlag
-            Rename flags; see <link to="PathRenameFlag"/> for more information.
+            Rename flags; see :py:class:`PathRenameFlag`  for more information.
 
         """
         if not isinstance(source, basestring):
@@ -12915,7 +15757,7 @@ option was requested.
                      in_p=[path])
 
     def file_open(self, path, open_mode, disposition, creation_mode):
-        """Opens a file and creates a <link to="IGuestFile"/> object that
+        """Opens a file and creates a :py:class:`IGuestFile`  object that
         can be used for further operations.
 
         in path of type str
@@ -12948,7 +15790,7 @@ option was requested.
             represents the access rights for the file.
 
         return file_p of type IGuestFile
-            <link to="IGuestFile"/> object representing the opened file.
+            :py:class:`IGuestFile`  object representing the opened file.
 
         raises VBOX_E_OBJECT_NOT_FOUND
             File to open was not found.
@@ -12971,7 +15813,7 @@ option was requested.
         return file_p
 
     def file_open_ex(self, path, open_mode, disposition, sharing_mode, creation_mode, offset):
-        """Opens a file and creates a <link to="IGuestFile"/> object that
+        """Opens a file and creates a :py:class:`IGuestFile`  object that
         can be used for further operations, extended version.
 
         in path of type str
@@ -13011,7 +15853,7 @@ option was requested.
             The initial read/write offset (in bytes).
 
         return file_p of type IGuestFile
-            <link to="IGuestFile"/> object representing the opened file.
+            :py:class:`IGuestFile`  object representing the opened file.
 
         raises VBOX_E_OBJECT_NOT_FOUND
             File to open was not found.
@@ -13044,7 +15886,7 @@ option was requested.
             File to query information for.
 
         return info of type IGuestFsObjInfo
-            <link to="IGuestFsObjInfo"/> object containing the queried information.
+            :py:class:`IGuestFsObjInfo`  object containing the queried information.
 
         raises VBOX_E_OBJECT_NOT_FOUND
             File to query information for was not found.
@@ -13092,7 +15934,7 @@ option was requested.
             Destination file to rename the source to.
 
         in flags of type PathRenameFlag
-            Rename flags; see <link to="PathRenameFlag"/> for more information.
+            Rename flags; see :py:class:`PathRenameFlag`  for more information.
 
         """
         if not isinstance(source, basestring):
@@ -13132,7 +15974,7 @@ option was requested.
         """Creates a new process running on the guest. The new process will be
         started asynchronously, meaning on return of this function it is not
         guaranteed that the guest process is in a started state. To wait for
-        successful startup, use the <link to="IProcess::waitFor"/> call.
+        successful startup, use the :py:func:`IProcess.wait_for`  call.
         
         
         Starting at VirtualBox 4.2 guest process execution by default is limited
@@ -13161,13 +16003,13 @@ option was requested.
 
         in flags of type ProcessCreateFlag
             Process creation flags;
-            see <link to="ProcessCreateFlag"/> for more information.
+            see :py:class:`ProcessCreateFlag`  for more information.
 
         in timeout_ms of type int
             Timeout (in ms) for limiting the guest process' running time.
             Pass 0 for an infinite timeout. On timeout the guest process will be
             killed and its status will be put to an appropriate value. See
-            <link to="ProcessStatus"/> for more information.
+            :py:class:`ProcessStatus`  for more information.
 
         return guest_process of type IGuestProcess
             Guest process object of the newly created process.
@@ -13207,7 +16049,7 @@ option was requested.
         """<para>Creates a new process running on the guest. Extended version for
         also setting the process priority and affinity.</para>
         
-        <para>See <link to="IGuestSession::processCreate"/> for more
+        <para>See :py:func:`IGuestSession.process_create`  for more
         information.</para>
 
         in command of type str
@@ -13227,17 +16069,17 @@ option was requested.
 
         in flags of type ProcessCreateFlag
             Process creation flags;
-            see <link to="ProcessCreateFlag"/> for more information.
+            see :py:class:`ProcessCreateFlag`  for more information.
 
         in timeout_ms of type int
             Timeout (in ms) for limiting the guest process' running time.
             Pass 0 for an infinite timeout. On timeout the guest process will be
             killed and its status will be put to an appropriate value. See
-            <link to="ProcessStatus"/> for more information.
+            :py:class:`ProcessStatus`  for more information.
 
         in priority of type ProcessPriority
             Process priority to use for execution;
-            see see <link to="ProcessPriority"/> for more information.
+            see see :py:class:`ProcessPriority`  for more information.
 
         in affinity of type int
             Process affinity to use for execution. This parameter
@@ -13310,7 +16152,7 @@ option was requested.
 
         in type_p of type SymlinkType
             The symbolic link type;
-            see <link to="SymlinkReadFlag"/> for more information.
+            see :py:class:`SymlinkReadFlag`  for more information.
 
         raises E_NOTIMPL
             The method is not implemented yet.
@@ -13351,7 +16193,7 @@ option was requested.
             Full path to symbolic link to read.
 
         in flags of type SymlinkReadFlag
-            Read flags; see <link to="SymlinkReadFlag"/> for more information.
+            Read flags; see :py:class:`SymlinkReadFlag`  for more information.
 
         return target of type str
             Target of the symbolic link pointing to, if found.
@@ -13407,7 +16249,7 @@ option was requested.
 
         in wait_for of type int
             Specifies what to wait for;
-            see <link to="GuestSessionWaitForFlag"/> for more information.
+            see :py:class:`GuestSessionWaitForFlag`  for more information.
 
         in timeout_ms of type int
             Timeout (in ms) to wait for the operation to complete.
@@ -13415,7 +16257,7 @@ option was requested.
 
         return reason of type GuestSessionWaitResult
             The overall wait result;
-            see <link to="GuestSessionWaitResult"/> for more information.
+            see :py:class:`GuestSessionWaitResult`  for more information.
 
         """
         if not isinstance(wait_for, baseinteger):
@@ -13429,11 +16271,11 @@ option was requested.
 
     def wait_for_array(self, wait_for, timeout_ms):
         """Waits for one or more events to happen.
-        Scriptable version of <link to="#waitFor"/>.
+        Scriptable version of :py:func:`wait_for` .
 
         in wait_for of type GuestSessionWaitForFlag
             Specifies what to wait for;
-            see <link to="GuestSessionWaitForFlag"/> for more information.
+            see :py:class:`GuestSessionWaitForFlag`  for more information.
 
         in timeout_ms of type int
             Timeout (in ms) to wait for the operation to complete.
@@ -13441,7 +16283,7 @@ option was requested.
 
         return reason of type GuestSessionWaitResult
             The overall wait result;
-            see <link to="GuestSessionWaitResult"/> for more information.
+            see :py:class:`GuestSessionWaitResult`  for more information.
 
         """
         if not isinstance(wait_for, list):
@@ -13525,7 +16367,7 @@ class IProcess(Interface):
     @property
     def status(self):
         """Get ProcessStatus value for 'status'
-        The current process status; see <link to="ProcessStatus"/>
+        The current process status; see :py:class:`ProcessStatus` 
         for more information.
         """
         ret = self._get_attr("status")
@@ -13536,7 +16378,7 @@ class IProcess(Interface):
 
         in wait_for of type int
             Specifies what to wait for;
-            see <link to="ProcessWaitForFlag"/> for more information.
+            see :py:class:`ProcessWaitForFlag`  for more information.
 
         in timeout_ms of type int
             Timeout (in ms) to wait for the operation to complete.
@@ -13544,7 +16386,7 @@ class IProcess(Interface):
 
         return reason of type ProcessWaitResult
             The overall wait result;
-            see <link to="ProcessWaitResult"/> for more information.
+            see :py:class:`ProcessWaitResult`  for more information.
 
         """
         if not isinstance(wait_for, baseinteger):
@@ -13558,11 +16400,11 @@ class IProcess(Interface):
 
     def wait_for_array(self, wait_for, timeout_ms):
         """Waits for one or more events to happen.
-        Scriptable version of <link to="#waitFor"/>.
+        Scriptable version of :py:func:`wait_for` .
 
         in wait_for of type ProcessWaitForFlag
             Specifies what to wait for;
-            see <link to="ProcessWaitForFlag"/> for more information.
+            see :py:class:`ProcessWaitForFlag`  for more information.
 
         in timeout_ms of type int
             Timeout (in ms) to wait for the operation to complete.
@@ -13570,7 +16412,7 @@ class IProcess(Interface):
 
         return reason of type ProcessWaitResult
             The overall wait result;
-            see <link to="ProcessWaitResult"/> for more information.
+            see :py:class:`ProcessWaitResult`  for more information.
 
         """
         if not isinstance(wait_for, list):
@@ -13620,7 +16462,7 @@ class IProcess(Interface):
             Handle to write to. Usually 0 is stdin, 1 is stdout and 2 is stderr.
 
         in flags of type int
-            A combination of <link to="ProcessInputFlag"/> flags.
+            A combination of :py:class:`ProcessInputFlag`  flags.
 
         in data of type str
             Array of bytes to write. The size of the array also specifies
@@ -13652,13 +16494,13 @@ class IProcess(Interface):
 
     def write_array(self, handle, flags, data, timeout_ms):
         """Writes data to a running process.
-        Scriptable version of <link to="#write"/>.
+        Scriptable version of :py:func:`write` .
 
         in handle of type int
             Handle to write to. Usually 0 is stdin, 1 is stdout and 2 is stderr.
 
         in flags of type ProcessInputFlag
-            A combination of <link to="ProcessInputFlag"/> flags.
+            A combination of :py:class:`ProcessInputFlag`  flags.
 
         in data of type str
             Array of bytes to write. The size of the array also specifies
@@ -13704,7 +16546,7 @@ class IProcess(Interface):
 
 class IGuestProcess(IProcess):
     """
-    Implementation of the <link to="IProcess"/> object
+    Implementation of the :py:class:`IProcess`  object
     for processes on the guest.
     """
     __uuid__ = 'dfa39a36-5d43-4840-a025-67ea956b3111'
@@ -13746,7 +16588,7 @@ class IDirectory(Interface):
 
         return obj_info of type IFsObjInfo
             Object information of the current directory entry read. Also see
-            <link to="IFsObjInfo"/>.
+            :py:class:`IFsObjInfo` .
 
         raises VBOX_E_OBJECT_NOT_FOUND
             No more directory entries to read.
@@ -13759,7 +16601,7 @@ class IDirectory(Interface):
 
 class IGuestDirectory(IDirectory):
     """
-    Implementation of the <link to="IDirectory"/> object
+    Implementation of the :py:class:`IDirectory`  object
     for directories on the guest.
     """
     __uuid__ = 'af4a8ce0-0725-42b7-8826-46e3c7ba7357'
@@ -13857,7 +16699,7 @@ class IFile(Interface):
 
         return obj_info of type IFsObjInfo
             Object information of this file. Also see
-            <link to="IFsObjInfo"/>.
+            :py:class:`IFsObjInfo` .
 
         raises E_NOTIMPL
             The method is not implemented yet.
@@ -13929,7 +16771,7 @@ class IFile(Interface):
             Offset to seek.
 
         in whence of type FileSeekType
-            Seek mode; see <link to="FileSeekType"/> for more information.
+            Seek mode; see :py:class:`FileSeekType`  for more information.
 
         raises E_NOTIMPL
             The method is not implemented yet.
@@ -14022,7 +16864,7 @@ class IFile(Interface):
 
 class IGuestFile(IFile):
     """
-    Implementation of the <link to="IFile"/> object
+    Implementation of the :py:class:`IFile`  object
     for files on the guest.
     """
     __uuid__ = '60661aec-145f-4d11-b80e-8ea151598093'
@@ -14162,7 +17004,7 @@ class IFsObjInfo(Interface):
     @property
     def type_p(self):
         """Get FsObjType value for 'type'
-        The object type. See <link to="FsObjType"/> for more.
+        The object type. See :py:class:`FsObjType`  for more.
         """
         ret = self._get_attr("type")
         return FsObjType(ret)
@@ -14195,7 +17037,7 @@ class IFsObjInfo(Interface):
 class IGuestFsObjInfo(IFsObjInfo):
     """
     Represents the guest implementation of the
-    <link to="IFsObjInfo"/> object.
+    :py:class:`IFsObjInfo`  object.
     """
     __uuid__ = 'd5cf678e-3484-4e4a-ac55-329e15462e18'
     __wsmap__ = 'managed'
@@ -14205,7 +17047,7 @@ class IGuest(Interface):
     """
     The IGuest interface represents information about the operating system
     running inside the virtual machine. Used in
-    <link to="IConsole::guest"/>.
+    :py:func:`IConsole.guest` .
     
     IGuest provides information about the guest operating system, whether
     Guest Additions are installed and other OS-specific virtual machine
@@ -14219,12 +17061,12 @@ class IGuest(Interface):
         """Get str value for 'OSTypeId'
         Identifier of the Guest OS type as reported by the Guest
         Additions.
-        You may use <link to="IVirtualBox::getGuestOSType"/> to obtain
+        You may use :py:func:`IVirtualBox.get_guest_os_type`  to obtain
         an IGuestOSType object representing details about the given
         Guest OS type.
         
         If Guest Additions are not installed, this value will be
-        the same as <link to="IMachine::OSTypeId"/>.
+        the same as :py:func:`IMachine.os_type_id` .
         """
         ret = self._get_attr("OSTypeId")
         return ret
@@ -14241,7 +17083,7 @@ class IGuest(Interface):
     def additions_version(self):
         """Get str value for 'additionsVersion'
         Version of the Guest Additions in the same format as
-        <link to="IVirtualBox::version"/>.
+        :py:func:`IVirtualBox.version` .
         """
         ret = self._get_attr("additionsVersion")
         return ret
@@ -14251,7 +17093,7 @@ class IGuest(Interface):
         """Get int value for 'additionsRevision'
         The internal build revision number of the additions.
         
-        See also <link to="IVirtualBox::revision"/>.
+        See also :py:func:`IVirtualBox.revision` .
         """
         ret = self._get_attr("additionsRevision")
         return ret
@@ -14728,20 +17570,20 @@ class IGuest(Interface):
         """Creates a new guest session for controlling the guest. The new session
         will be started asynchronously, meaning on return of this function it is
         not guaranteed that the guest session is in a started and/or usable state.
-        To wait for successful startup, use the <link to="IGuestSession::waitFor"/>
+        To wait for successful startup, use the :py:func:`IGuestSession.wait_for` 
         call.
         
         A guest session represents one impersonated user account on the guest, so
         every operation will use the same credentials specified when creating
-        the session object via <link to="IGuest::createSession"/>. Anonymous
+        the session object via :py:func:`IGuest.create_session` . Anonymous
         sessions, that is, sessions without specifying a valid
         user account on the guest are not allowed due to security reasons.
         
         There can be a maximum of 32 sessions at once per VM. Each session keeps
         track of its started guest processes, opened guest files or guest directories.
         To work on guest files or directories a guest session offers methods to open
-        or create such objects (see <link to="IGuestSession::fileOpen"/> or
-        <link to="IGuestSession::directoryOpen"/> for example).
+        or create such objects (see :py:func:`IGuestSession.file_open`  or
+        :py:func:`IGuestSession.directory_open`  for example).
         
         There can be up to 2048 objects (guest processes, files or directories)
         a time per guest session. Exceeding the limit will result in an appropriate
@@ -14752,12 +17594,12 @@ class IGuest(Interface):
         
         Every guest session has its own environment variable block which gets
         automatically applied when starting a new guest process via
-        <link to="IGuestSession::processCreate"/> or <link to="IGuestSession::processCreateEx"/>.
+        :py:func:`IGuestSession.process_create`  or :py:func:`IGuestSession.process_create_ex` .
         To override (or unset) certain environment variables already set by the
         guest session, one can specify a per-process environment block when using
         one of the both above mentioned process creation calls.
         
-        Closing a session via <link to="IGuestSession::close"/> will try to close
+        Closing a session via :py:func:`IGuestSession.close`  will try to close
         all the mentioned objects above unless these objects are still used by
         a client.
 
@@ -14824,7 +17666,7 @@ class IGuest(Interface):
         without user interaction. However, to start a Guest Additions update for
         the mentioned Windows versions anyway, the flag
         AdditionsUpdateFlag_WaitForUpdateStartOnly can be specified. See
-        <link to="AdditionsUpdateFlag"/> for more information.
+        :py:class:`AdditionsUpdateFlag`  for more information.
 
         in source of type str
             Path to the Guest Additions .ISO file to use for the update.
@@ -14835,7 +17677,7 @@ class IGuest(Interface):
             before on the guest.
 
         in flags of type AdditionsUpdateFlag
-            <link to="AdditionsUpdateFlag"/> flags.
+            :py:class:`AdditionsUpdateFlag`  flags.
 
         return progress of type IProgress
             Progress object to track the operation completion.
@@ -14876,7 +17718,7 @@ class IProgress(Interface):
     An instance of this is returned every time VirtualBox starts
     an asynchronous task (in other words, a separate thread) which
     continues to run after a method call returns. For example,
-    <link to="IConsole::saveState"/>, which saves the state of
+    :py:func:`IConsole.save_state` , which saves the state of
     a running virtual machine, can take a long time to complete.
     To be able to display a progress bar, a user interface such as
     the VirtualBox graphical user interface can use the IProgress
@@ -14886,24 +17728,24 @@ class IProgress(Interface):
     that only the VirtualBox internals behind the Main API can
     create and manipulate progress objects, whereas client code
     can only use the IProgress object to monitor a task's
-    progress and, if <link to="#cancelable"/> is @c true,
-    cancel the task by calling <link to="#cancel"/>.
+    progress and, if :py:func:`cancelable`  is @c true,
+    cancel the task by calling :py:func:`cancel` .
     
     A task represented by IProgress consists of either one or
     several sub-operations that run sequentially, one by one (see
-    <link to="#operation"/> and <link to="#operationCount"/>).
+    :py:func:`operation`  and :py:func:`operation_count` ).
     Every operation is identified by a number (starting from 0)
     and has a separate description.
     
     You can find the individual percentage of completion of the current
-    operation in <link to="#operationPercent"/> and the
+    operation in :py:func:`operation_percent`  and the
     percentage of completion of the task as a whole
-    in <link to="#percent"/>.
+    in :py:func:`percent` .
     
     Similarly, you can wait for the completion of a particular
-    operation via <link to="#waitForOperationCompletion"/> or
+    operation via :py:func:`wait_for_operation_completion`  or
     for the completion of the whole task via
-    <link to="#waitForCompletion"/>.
+    :py:func:`wait_for_completion` .
     """
     __uuid__ = 'c20238e4-3221-4d3f-8891-81ce92d9f913'
     __wsmap__ = 'managed'
@@ -14945,7 +17787,7 @@ class IProgress(Interface):
         """Get int value for 'percent'
         Current progress value of the task as a whole, in percent.
         This value depends on how many operations are already complete.
-        Returns 100 if <link to="#completed"/> is @c true.
+        Returns 100 if :py:func:`completed`  is @c true.
         """
         ret = self._get_attr("percent")
         return ret
@@ -14986,7 +17828,7 @@ class IProgress(Interface):
     def result_code(self):
         """Get int value for 'resultCode'
         Result code of the progress task.
-        Valid only if <link to="#completed"/> is @c true.
+        Valid only if :py:func:`completed`  is @c true.
         """
         ret = self._get_attr("resultCode")
         return ret
@@ -14997,8 +17839,8 @@ class IProgress(Interface):
         Extended information about the unsuccessful result of the
         progress operation. May be @c null if no extended information
         is available.
-        Valid only if <link to="#completed"/> is @c true and
-        <link to="#resultCode"/> indicates a failure.
+        Valid only if :py:func:`completed`  is @c true and
+        :py:func:`result_code`  indicates a failure.
         """
         ret = self._get_attr("errorInfo")
         return IVirtualBoxErrorInfo(ret)
@@ -15114,11 +17956,11 @@ class IProgress(Interface):
         """Waits until the given operation is done with a given timeout in
         milliseconds; specify -1 for an indefinite wait.
         
-        See <link to="#waitForCompletion"> for event queue considerations.</link>
+        See :py:func:`wait_for_completion` for event queue considerations.
 
         in operation of type int
             Number of the operation to wait for.
-            Must be less than <link to="#operationCount"/>.
+            Must be less than :py:func:`operation_count` .
 
         in timeout of type int
             Maximum time in milliseconds to wait or -1 to wait indefinitely.
@@ -15165,7 +18007,7 @@ class IProgress(Interface):
     def cancel(self):
         """Cancels the task.
         
-        If <link to="#cancelable"/> is @c false, then this method will fail.
+        If :py:func:`cancelable`  is @c false, then this method will fail.
 
         raises VBOX_E_INVALID_OBJECT_STATE
             Operation cannot be canceled.
@@ -15184,12 +18026,12 @@ class ISnapshot(Interface):
     the exact state it was in when the snapshot was taken.
     
     The ISnapshot interface has no methods, only attributes; snapshots
-    are controlled through methods of the <link to="IConsole"/> interface
+    are controlled through methods of the :py:class:`IConsole`  interface
     which also manage the media associated with the snapshot.
     The following operations exist:
     
     
-    <link to="IConsole::takeSnapshot"/> creates a new snapshot
+    :py:func:`IConsole.take_snapshot`  creates a new snapshot
     by creating new, empty differencing images for the machine's
     media and saving the VM settings and (if the VM is running)
     the current VM state in the snapshot.
@@ -15197,27 +18039,27 @@ class ISnapshot(Interface):
     The differencing images will then receive all data written to
     the machine's media, while their parent (base) images
     remain unmodified after the snapshot has been taken (see
-    <link to="IMedium"/> for details about differencing images).
+    :py:class:`IMedium`  for details about differencing images).
     This simplifies restoring a machine to the state of a snapshot:
     only the differencing images need to be deleted.
     
     The current machine state is not changed by taking a snapshot
-    except that <link to="IMachine::currentSnapshot"/> is set to
+    except that :py:func:`IMachine.current_snapshot`  is set to
     the newly created snapshot, which is also added to the machine's
     snapshots tree.
     
     
-    <link to="IConsole::restoreSnapshot"/> resets a machine to
+    :py:func:`IConsole.restore_snapshot`  resets a machine to
     the state of a previous snapshot by deleting the differencing
     image of each of the machine's media and setting the machine's
     settings and state to the state that was saved in the snapshot (if any).
     
     This destroys the machine's current state. After calling this,
-    <link to="IMachine::currentSnapshot"/> points to the snapshot
+    :py:func:`IMachine.current_snapshot`  points to the snapshot
     that was restored.
     
     
-    <link to="IConsole::deleteSnapshot"/> deletes a snapshot
+    :py:func:`IConsole.delete_snapshot`  deletes a snapshot
     without affecting the current machine state.
     
     This does not change the current machine state, but instead frees the
@@ -15229,7 +18071,7 @@ class ISnapshot(Interface):
     by this operation, except that parent media will be modified
     to contain the disk data associated with the snapshot being deleted.
     
-    When deleting the current snapshot, the <link to="IMachine::currentSnapshot"/>
+    When deleting the current snapshot, the :py:func:`IMachine.current_snapshot` 
     attribute is set to the current snapshot's parent or @c null if it
     has no parent. Otherwise the attribute is unchanged.
     
@@ -15237,22 +18079,22 @@ class ISnapshot(Interface):
     
     Each snapshot contains a copy of virtual machine's settings (hardware
     configuration etc.). This copy is contained in an immutable (read-only)
-    instance of <link to="IMachine"/> which is available from the snapshot's
-    <link to="#machine"/> attribute. When restoring the snapshot, these
+    instance of :py:class:`IMachine`  which is available from the snapshot's
+    :py:func:`machine`  attribute. When restoring the snapshot, these
     settings are copied back to the original machine.
     
     In addition, if the machine was running when the
-    snapshot was taken (<link to="IMachine::state"/> is <link to="MachineState_Running"/>),
+    snapshot was taken (:py:func:`IMachine.state`  is :py:attr:`MachineState.running` ),
     the current VM state is saved in the snapshot (similarly to what happens
-    when a VM's state is saved). The snapshot is then said to be online
+    when a VM's state is saved). The snapshot is then said to be *online*
     because when restoring it, the VM will be running.
     
-    If the machine was in <link to="MachineState_Saved">saved</link> saved,
+    If the machine was in :py:attr:`MachineState.saved` saved saved,
     the snapshot receives a copy of the execution state file
-    (<link to="IMachine::stateFilePath"/>).
+    (:py:func:`IMachine.state_file_path` ).
     
-    Otherwise, if the machine was not running (<link to="MachineState_PoweredOff"/>
-    or <link to="MachineState_Aborted"/>), the snapshot is offline;
+    Otherwise, if the machine was not running (:py:attr:`MachineState.powered_off` 
+    or :py:attr:`MachineState.aborted` ), the snapshot is *offline*;
     it then contains a so-called "zero execution state", representing a
     machine that is powered off.
     """
@@ -15271,7 +18113,7 @@ class ISnapshot(Interface):
     def name(self):
         """Get or set str value for 'name'
         Short name of the snapshot.
-        Setting this attribute causes <link to="IMachine::saveSettings"/> to
+        Setting this attribute causes :py:func:`IMachine.save_settings`  to
         be called implicitly.
         """
         ret = self._get_attr("name")
@@ -15287,7 +18129,7 @@ class ISnapshot(Interface):
     def description(self):
         """Get or set str value for 'description'
         Optional description of the snapshot.
-        Setting this attribute causes <link to="IMachine::saveSettings"/> to
+        Setting this attribute causes :py:func:`IMachine.save_settings`  to
         be called implicitly.
         """
         ret = self._get_attr("description")
@@ -15313,8 +18155,8 @@ class ISnapshot(Interface):
         @c true if this snapshot is an online snapshot and @c false otherwise.
         
         When this attribute is @c true, the
-        <link to="IMachine::stateFilePath"/> attribute of the
-        <link to="#machine"/> object associated with this snapshot
+        :py:func:`IMachine.state_file_path`  attribute of the
+        :py:func:`machine`  object associated with this snapshot
         will point to the saved state file. Otherwise, it will be
         an empty string.
         """
@@ -15347,7 +18189,7 @@ class ISnapshot(Interface):
         """Get ISnapshot value for 'children'
         Child snapshots (all snapshots having this one as a parent).
         By inspecting this attribute starting with a machine's root snapshot
-        (which can be obtained by calling <link to="IMachine::findSnapshot"/>
+        (which can be obtained by calling :py:func:`IMachine.find_snapshot` 
         with a @c null UUID), a machine's snapshots tree can be iterated over.
         """
         ret = self._get_attr("children")
@@ -15366,11 +18208,11 @@ class ISnapshot(Interface):
 class IMediumAttachment(Interface):
     """
     The IMediumAttachment interface links storage media to virtual machines.
-    For each medium (<link to="IMedium"/>) which has been attached to a
-    storage controller (<link to="IStorageController"/>) of a machine
-    (<link to="IMachine"/>) via the <link to="IMachine::attachDevice"/>
+    For each medium (:py:class:`IMedium` ) which has been attached to a
+    storage controller (:py:class:`IStorageController` ) of a machine
+    (:py:class:`IMachine` ) via the :py:func:`IMachine.attach_device` 
     method, one instance of IMediumAttachment is added to the machine's
-    <link to="IMachine::mediumAttachments"/> array attribute.
+    :py:func:`IMachine.medium_attachments`  array attribute.
     
     Each medium attachment specifies the storage controller as well as a
     port and device number and the IMedium instance representing a virtual
@@ -15378,55 +18220,55 @@ class IMediumAttachment(Interface):
     
     For removable media (DVDs or floppies), there are two additional
     options. For one, the IMedium instance can be @c null to represent
-    an empty drive with no media inserted (see <link to="IMachine::mountMedium"/>);
+    an empty drive with no media inserted (see :py:func:`IMachine.mount_medium` );
     secondly, the medium can be one of the pseudo-media for host drives
-    listed in <link to="IHost::DVDDrives"/> or <link to="IHost::floppyDrives"/>.
+    listed in :py:func:`IHost.dvd_drives`  or :py:func:`IHost.floppy_drives` .
     
     Attaching Hard Disks
     
     Hard disks are attached to virtual machines using the
-    <link to="IMachine::attachDevice"/> method and detached using the
-    <link to="IMachine::detachDevice"/> method. Depending on a medium's
-    type (see <link to="IMedium::type"/>), hard disks are attached either
-    directly or indirectly.
+    :py:func:`IMachine.attach_device`  method and detached using the
+    :py:func:`IMachine.detach_device`  method. Depending on a medium's
+    type (see :py:func:`IMedium.type_p` ), hard disks are attached either
+    *directly* or *indirectly*.
     
     When a hard disk is being attached directly, it is associated with the
     virtual machine and used for hard disk operations when the machine is
     running. When a hard disk is being attached indirectly, a new differencing
     hard disk linked to it is implicitly created and this differencing hard
     disk is associated with the machine and used for hard disk operations.
-    This also means that if <link to="IMachine::attachDevice"/> performs
+    This also means that if :py:func:`IMachine.attach_device`  performs
     a direct attachment then the same hard disk will be returned in response
-    to the subsequent <link to="IMachine::getMedium"/> call; however if
+    to the subsequent :py:func:`IMachine.get_medium`  call; however if
     an indirect attachment is performed then
-    <link to="IMachine::getMedium"/> will return the implicitly created
-    differencing hard disk, not the original one passed to <link to="IMachine::attachDevice"/>. In detail:
+    :py:func:`IMachine.get_medium`  will return the implicitly created
+    differencing hard disk, not the original one passed to :py:func:`IMachine.attach_device` . In detail:
     
     
-    Normal base hard disks that do not have children (i.e.
+    **Normal base** hard disks that do not have children (i.e.
     differencing hard disks linked to them) and that are not already
-    attached to virtual machines in snapshots are attached directly.
-    Otherwise, they are attached indirectly because having
+    attached to virtual machines in snapshots are attached **directly**.
+    Otherwise, they are attached **indirectly** because having
     dependent children or being part of the snapshot makes it impossible
     to modify hard disk contents without breaking the integrity of the
-    dependent party. The <link to="IMedium::readOnly"/> attribute allows to
+    dependent party. The :py:func:`IMedium.read_only`  attribute allows to
     quickly determine the kind of the attachment for the given hard
     disk. Note that if a normal base hard disk is to be indirectly
     attached to a virtual machine with snapshots then a special
-    procedure called smart attachment is performed (see below).
-    Normal differencing hard disks are like normal base hard disks:
-    they are attached directly if they do not have children and are
-    not attached to virtual machines in snapshots, and indirectly
+    procedure called *smart attachment* is performed (see below).
+    **Normal differencing** hard disks are like normal base hard disks:
+    they are attached **directly** if they do not have children and are
+    not attached to virtual machines in snapshots, and **indirectly**
     otherwise. Note that the smart attachment procedure is never performed
     for differencing hard disks.
-    Immutable hard disks are always attached indirectly because
+    **Immutable** hard disks are always attached **indirectly** because
     they are designed to be non-writable. If an immutable hard disk is
     attached to a virtual machine with snapshots then a special
     procedure called smart attachment is performed (see below).
-    Writethrough hard disks are always attached directly,
+    **Writethrough** hard disks are always attached **directly**,
     also as designed. This also means that writethrough hard disks cannot
     have other hard disks linked to them at all.
-    Shareable hard disks are always attached directly,
+    **Shareable** hard disks are always attached **directly**,
     also as designed. This also means that shareable hard disks cannot
     have other hard disks linked to them at all. They behave almost
     like writethrough hard disks, except that shareable hard disks can
@@ -15441,34 +18283,34 @@ class IMediumAttachment(Interface):
     start other machines having this hard disk attached will fail until the
     first machine is powered down.
     
-    Detaching hard disks is performed in a deferred fashion. This means
+    Detaching hard disks is performed in a *deferred* fashion. This means
     that the given hard disk remains associated with the given machine after a
-    successful <link to="IMachine::detachDevice"/> call until
-    <link to="IMachine::saveSettings"/> is called to save all changes to
+    successful :py:func:`IMachine.detach_device`  call until
+    :py:func:`IMachine.save_settings`  is called to save all changes to
     machine settings to disk. This deferring is necessary to guarantee that
     the hard disk configuration may be restored at any time by a call to
-    <link to="IMachine::discardSettings"/> before the settings
+    :py:func:`IMachine.discard_settings`  before the settings
     are saved (committed).
     
-    Note that if <link to="IMachine::discardSettings"/> is called after
+    Note that if :py:func:`IMachine.discard_settings`  is called after
     indirectly attaching some hard disks to the machine but before a call to
-    <link to="IMachine::saveSettings"/> is made, it will implicitly delete
+    :py:func:`IMachine.save_settings`  is made, it will implicitly delete
     all differencing hard disks implicitly created by
-    <link to="IMachine::attachDevice"/> for these indirect attachments.
+    :py:func:`IMachine.attach_device`  for these indirect attachments.
     Such implicitly created hard disks will also be immediately deleted when
-    detached explicitly using the <link to="IMachine::detachDevice"/>
-    call if it is made before <link to="IMachine::saveSettings"/>. This
+    detached explicitly using the :py:func:`IMachine.detach_device` 
+    call if it is made before :py:func:`IMachine.save_settings` . This
     implicit deletion is safe because newly created differencing hard
     disks do not contain any user data.
     
     However, keep in mind that detaching differencing hard disks that were
-    implicitly created by <link to="IMachine::attachDevice"/>
-    before the last <link to="IMachine::saveSettings"/> call will
-    not implicitly delete them as they may already contain some data
+    implicitly created by :py:func:`IMachine.attach_device` 
+    before the last :py:func:`IMachine.save_settings`  call will
+    **not** implicitly delete them as they may already contain some data
     (for example, as a result of virtual machine execution). If these hard
     disks are no more necessary, the caller can always delete them explicitly
-    using <link to="IMedium::deleteStorage"/> after they are actually de-associated
-    from this machine by the <link to="IMachine::saveSettings"/> call.
+    using :py:func:`IMedium.delete_storage`  after they are actually de-associated
+    from this machine by the :py:func:`IMachine.save_settings`  call.
     
     Smart Attachment
     
@@ -15490,18 +18332,20 @@ class IMediumAttachment(Interface):
     It is easier to explain what smart attachment does using the
     following example:
     
-    BEFORE attaching B.vdi:       AFTER attaching B.vdi:
-    
-    Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
-    Snapshot 2 (D1->B.vdi)        Snapshot 2 (D1->B.vdi)
-    Snapshot 3 (D2->D1.vdi)       Snapshot 3 (D2->D1.vdi)
-    Snapshot 4 (none)             Snapshot 4 (none)
-    CurState   (none)             CurState   (D3->D2.vdi)
-    
-    NOT
-    ...
-    CurState   (D3->B.vdi)
-    
+    ::
+
+         BEFORE attaching B.vdi:       AFTER attaching B.vdi:
+         
+         Snapshot 1 (B.vdi)            Snapshot 1 (B.vdi)
+         Snapshot 2 (D1->B.vdi)        Snapshot 2 (D1->B.vdi)
+         Snapshot 3 (D2->D1.vdi)       Snapshot 3 (D2->D1.vdi)
+         Snapshot 4 (none)             Snapshot 4 (none)
+         CurState   (none)             CurState   (D3->D2.vdi)
+         
+         NOT
+         ...
+         CurState   (D3->B.vdi)
+
     The first column is the virtual machine configuration before the base hard
     disk B.vdi is attached, the second column shows the machine after
     this hard disk is attached. Constructs like D1->B.vdi and similar
@@ -15531,8 +18375,8 @@ class IMediumAttachment(Interface):
     as described above, the backup copy of the current list of hard disk
     attachment is searched for descendants. This backup copy is created when
     the hard disk configuration is changed for the first time after the last
-    <link to="IMachine::saveSettings"/> call and used by
-    <link to="IMachine::discardSettings"/> to undo the recent hard disk
+    :py:func:`IMachine.save_settings`  call and used by
+    :py:func:`IMachine.discard_settings`  to undo the recent hard disk
     changes. When such a descendant is found in this backup copy, it will be
     simply re-attached back, without creating a new differencing hard disk for
     it. This optimization is necessary to make it possible to re-attach the
@@ -15556,7 +18400,7 @@ class IMediumAttachment(Interface):
     def controller(self):
         """Get str value for 'controller'
         Name of the storage controller of this attachment; this
-        refers to one of the controllers in <link to="IMachine::storageControllers"/>
+        refers to one of the controllers in :py:func:`IMachine.storage_controllers` 
         by name.
         """
         ret = self._get_attr("controller")
@@ -15566,7 +18410,7 @@ class IMediumAttachment(Interface):
     def port(self):
         """Get int value for 'port'
         Port number of this attachment.
-        See <link to="IMachine::attachDevice"/> for the meaning of this value for the different controller types.
+        See :py:func:`IMachine.attach_device`  for the meaning of this value for the different controller types.
         """
         ret = self._get_attr("port")
         return ret
@@ -15575,7 +18419,7 @@ class IMediumAttachment(Interface):
     def device(self):
         """Get int value for 'device'
         Device slot number of this attachment.
-        See <link to="IMachine::attachDevice"/> for the meaning of this value for the different controller types.
+        See :py:func:`IMachine.attach_device`  for the meaning of this value for the different controller types.
         """
         ret = self._get_attr("device")
         return ret
@@ -15662,12 +18506,12 @@ class IMedium(Interface):
     by the following chain of object links:
     
     
-    <link to="IMachine::storageControllers"/> contains an array of
+    :py:func:`IMachine.storage_controllers`  contains an array of
     storage controllers (IDE, SATA, SCSI, SAS or a floppy controller;
-    these are instances of <link to="IStorageController"/>).
-    <link to="IMachine::mediumAttachments"/> contains an array of
-    medium attachments (instances of <link to="IMediumAttachment"/>
-    created by <link to="IMachine::attachDevice"/>),
+    these are instances of :py:class:`IStorageController` ).
+    :py:func:`IMachine.medium_attachments`  contains an array of
+    medium attachments (instances of :py:class:`IMediumAttachment` 
+    created by :py:func:`IMachine.attach_device` ),
     each containing a storage controller from the above array, a
     port/device specification, and an instance of IMedium representing
     the medium storage (image file).
@@ -15678,38 +18522,38 @@ class IMedium(Interface):
     will always have an IMedium object attached.
     Each IMedium in turn points to a storage unit (such as a file
     on the host computer or a network resource) that holds actual
-    data. This location is represented by the <link to="#location"/>
+    data. This location is represented by the :py:func:`location` 
     attribute.
     
     
-    Existing media are opened using <link to="IVirtualBox::openMedium"/>;
+    Existing media are opened using :py:func:`IVirtualBox.open_medium` ;
     new hard disk media can be created with the VirtualBox API using the
-    <link to="IVirtualBox::createHardDisk"/> method. Differencing hard
+    :py:func:`IVirtualBox.create_hard_disk`  method. Differencing hard
     disks (see below) are usually implicitly created by VirtualBox as
-    needed, but may also be created explicitly using <link to="#createDiffStorage"/>.
+    needed, but may also be created explicitly using :py:func:`create_diff_storage` .
     VirtualBox cannot create CD/DVD or floppy images (ISO and RAW files); these
     should be created with external tools and then opened from within VirtualBox.
     
     Only for CD/DVDs and floppies, an IMedium instance can also represent a host
-    drive. In that case the <link to="#id"/> attribute contains the UUID of
-    one of the drives in <link to="IHost::DVDDrives"/> or <link to="IHost::floppyDrives"/>.
+    drive. In that case the :py:func:`id_p`  attribute contains the UUID of
+    one of the drives in :py:func:`IHost.dvd_drives`  or :py:func:`IHost.floppy_drives` .
     
     Media registries
     
     When a medium has been opened or created using one of the aforementioned
     APIs, it becomes "known" to VirtualBox. Known media can be attached
-    to virtual machines and re-found through <link to="IVirtualBox::openMedium"/>.
+    to virtual machines and re-found through :py:func:`IVirtualBox.open_medium` .
     They also appear in the global
-    <link to="IVirtualBox::hardDisks"/>,
-    <link to="IVirtualBox::DVDImages"/> and
-    <link to="IVirtualBox::floppyImages"/> arrays.
+    :py:func:`IVirtualBox.hard_disks` ,
+    :py:func:`IVirtualBox.dvd_images`  and
+    :py:func:`IVirtualBox.floppy_images`  arrays.
     
     Prior to VirtualBox 4.0, opening a medium added it to a global media registry
     in the VirtualBox.xml file, which was shared between all machines and made
     transporting machines and their media from one host to another difficult.
     
     Starting with VirtualBox 4.0, media are only added to a registry when they are
-    attached to a machine using <link to="IMachine::attachDevice"/>. For
+    *attached* to a machine using :py:func:`IMachine.attach_device` . For
     backwards compatibility, which registry a medium is added to depends on which
     VirtualBox version created a machine:
     
@@ -15725,75 +18569,77 @@ class IMedium(Interface):
     backwards compatibility.
     
     
-    See <link to="IVirtualBox::openMedium"/> for more information.
+    See :py:func:`IVirtualBox.open_medium`  for more information.
     
-    Media are removed from media registries by the <link to="IMedium::close"/>,
-    <link to="#deleteStorage"/> and <link to="#mergeTo"/> methods.
+    Media are removed from media registries by the :py:func:`IMedium.close` ,
+    :py:func:`delete_storage`  and :py:func:`merge_to`  methods.
     
     Accessibility checks
     
-    VirtualBox defers media accessibility checks until the <link to="#refreshState"/>
+    VirtualBox defers media accessibility checks until the :py:func:`refresh_state` 
     method is called explicitly on a medium. This is done to make the VirtualBox object
     ready for serving requests as fast as possible and let the end-user
     application decide if it needs to check media accessibility right away or not.
     
     As a result, when VirtualBox starts up (e.g. the VirtualBox
     object gets created for the first time), all known media are in the
-    "Inaccessible" state, but the value of the <link to="#lastAccessError"/>
+    "Inaccessible" state, but the value of the :py:func:`last_access_error` 
     attribute is an empty string because no actual accessibility check has
     been made yet.
     
-    After calling <link to="#refreshState"/>, a medium is considered
-    accessible if its storage unit can be read. In that case, the
-    <link to="#state"/> attribute has a value of "Created". If the storage
+    After calling :py:func:`refresh_state` , a medium is considered
+    *accessible* if its storage unit can be read. In that case, the
+    :py:func:`state`  attribute has a value of "Created". If the storage
     unit cannot be read (for example, because it is located on a disconnected
     network resource, or was accidentally deleted outside VirtualBox),
-    the medium is considered inaccessible, which is indicated by the
+    the medium is considered *inaccessible*, which is indicated by the
     "Inaccessible" state. The exact reason why the medium is inaccessible can be
-    obtained by reading the <link to="#lastAccessError"/> attribute.
+    obtained by reading the :py:func:`last_access_error`  attribute.
     
     Medium types
     
     There are five types of medium behavior which are stored in the
-    <link to="#type"/> attribute (see <link to="MediumType"/>) and
+    :py:func:`type_p`  attribute (see :py:class:`MediumType` ) and
     which define the medium's behavior with attachments and snapshots.
     
-    All media can be also divided in two groups: base media and
-    differencing media. A base medium contains all sectors of the
+    All media can be also divided in two groups: *base* media and
+    *differencing* media. A base medium contains all sectors of the
     medium data in its own storage and therefore can be used independently.
     In contrast, a differencing medium is a "delta" to some other medium and
     contains only those sectors which differ from that other medium, which is
-    then called a parent. The differencing medium is said to be
-    linked to that parent. The parent may be itself a differencing
+    then called a *parent*. The differencing medium is said to be
+    *linked to* that parent. The parent may be itself a differencing
     medium, thus forming a chain of linked media. The last element in that
     chain must always be a base medium. Note that several differencing
     media may be linked to the same parent medium.
     
     Differencing media can be distinguished from base media by querying the
-    <link to="#parent"/> attribute: base media do not have parents they would
+    :py:func:`parent`  attribute: base media do not have parents they would
     depend on, so the value of this attribute is always @c null for them.
     Using this attribute, it is possible to walk up the medium tree (from the
     child medium to its parent). It is also possible to walk down the tree
-    using the <link to="#children"/> attribute.
+    using the :py:func:`children`  attribute.
     
     Note that the type of all differencing media is "normal"; all other
     values are meaningless for them. Base media may be of any type.
     
     Automatic composition of the file name part
     
-    Another extension to the <link to="IMedium::location"/> attribute is that
+    Another extension to the :py:func:`IMedium.location`  attribute is that
     there is a possibility to cause VirtualBox to compose a unique value for
     the file name part of the location using the UUID of the hard disk. This
-    applies only to hard disks in <link to="MediumState_NotCreated"/> state,
+    applies only to hard disks in :py:attr:`MediumState.not_created`  state,
     e.g. before the storage unit is created, and works as follows. You set the
-    value of the <link to="IMedium::location"/> attribute to a location
+    value of the :py:func:`IMedium.location`  attribute to a location
     specification which only contains the path specification but not the file
     name part and ends with either a forward slash or a backslash character.
     In response, VirtualBox will generate a new UUID for the hard disk and
     compose the file name using the following pattern:
     
-    <path>/{<uuid>}.<ext>
-    
+    ::
+
+         <path>/{<uuid>}.<ext>
+
     where <path> is the supplied path specification,
     <uuid> is the newly generated UUID and <ext>
     is the default extension for the storage format of this hard disk. After
@@ -15828,10 +18674,10 @@ class IMedium(Interface):
         
         
         For some storage types, reading this attribute may return an outdated
-        (last known) value when <link to="#state"/> is <link to="MediumState_Inaccessible"/> or <link to="MediumState_LockedWrite"/> because the value of this attribute is
+        (last known) value when :py:func:`state`  is :py:attr:`MediumState.inaccessible`  or :py:attr:`MediumState.locked_write`  because the value of this attribute is
         stored within the storage unit itself. Also note that changing the
         attribute value is not possible in such case, as well as when the
-        medium is the <link to="MediumState_LockedRead"/> state.
+        medium is the :py:attr:`MediumState.locked_read`  state.
         """
         ret = self._get_attr("description")
         return ret
@@ -15846,14 +18692,14 @@ class IMedium(Interface):
     def state(self):
         """Get MediumState value for 'state'
         Returns the current medium state, which is the last state set by
-        the accessibility check performed by <link to="#refreshState"/>.
+        the accessibility check performed by :py:func:`refresh_state` .
         If that method has not yet been called on the medium, the state
         is "Inaccessible"; as opposed to truly inaccessible media, the
-        value of <link to="#lastAccessError"/> will be an empty string in
+        value of :py:func:`last_access_error`  will be an empty string in
         that case.
         
         As of version 3.1, this no longer performs an accessibility check
-        automatically; call <link to="#refreshState"/> for that.
+        automatically; call :py:func:`refresh_state`  for that.
         """
         ret = self._get_attr("state")
         return MediumState(ret)
@@ -15862,8 +18708,8 @@ class IMedium(Interface):
     def variant(self):
         """Get MediumVariant value for 'variant'
         Returns the storage format variant information for this medium
-        as an array of the flags described at <link to="MediumVariant"/>.
-        Before <link to="#refreshState"/> is called this method returns
+        as an array of the flags described at :py:class:`MediumVariant` .
+        Before :py:func:`refresh_state`  is called this method returns
         an undefined value.
         """
         ret = self._get_attr("variant")
@@ -15886,7 +18732,7 @@ class IMedium(Interface):
         """Get str value for 'name'
         Name of the storage unit holding medium data.
         
-        The returned string is a short version of the <link to="#location"/>
+        The returned string is a short version of the :py:func:`location` 
         attribute that is suitable for representing the medium in situations
         where the full location specification is too long (such as lists
         and comboboxes in GUI frontends). This string is also used by frontends
@@ -15896,7 +18742,7 @@ class IMedium(Interface):
         system, the value of this attribute is just the file name (+ extension),
         without the path specification.
         
-        Note that as opposed to the <link to="#location"/> attribute, the name
+        Note that as opposed to the :py:func:`location`  attribute, the name
         attribute will not necessary be unique for a list of media of the
         given type and format.
         """
@@ -15926,8 +18772,8 @@ class IMedium(Interface):
         Physical size of the storage unit used to hold medium data (in bytes).
         
         
-        For media whose <link to="#state"/> is <link to="MediumState_Inaccessible"/>, the value of this property is the
-        last known size. For <link to="MediumState_NotCreated"/> media,
+        For media whose :py:func:`state`  is :py:attr:`MediumState.inaccessible` , the value of this property is the
+        last known size. For :py:attr:`MediumState.not_created`  media,
         the returned value is zero.
         """
         ret = self._get_attr("size")
@@ -15945,7 +18791,7 @@ class IMedium(Interface):
         
         The list of all storage formats supported by this VirtualBox
         installation can be obtained using
-        <link to="ISystemProperties::mediumFormats"/>.
+        :py:func:`ISystemProperties.medium_formats` .
         """
         ret = self._get_attr("format")
         return ret
@@ -15980,16 +18826,16 @@ class IMedium(Interface):
         changed.
         
         As long as the medium has children, its type cannot be set
-        to <link to="MediumType_Writethrough"/>.
+        to :py:attr:`MediumType.writethrough` .
         
         The type of all differencing media is
-        <link to="MediumType_Normal"/> and cannot be changed.
+        :py:attr:`MediumType.normal`  and cannot be changed.
         
         
         
         The type of a newly created or opened medium is set to
-        <link to="MediumType_Normal"/>, except for DVD and floppy media,
-        which have a type of <link to="MediumType_Writethrough"/>.
+        :py:attr:`MediumType.normal` , except for DVD and floppy media,
+        which have a type of :py:attr:`MediumType.writethrough` .
         """
         ret = self._get_attr("type")
         return MediumType(ret)
@@ -16062,15 +18908,15 @@ class IMedium(Interface):
         will be attached indirectly by creating a new differencing child
         medium for that. See the interface description for more information.
         
-        Note that all <link to="MediumType_Immutable">Immutable</link> media
+        Note that all :py:attr:`MediumType.immutable` Immutable media
         are always read-only while all
-        <link to="MediumType_Writethrough">Writethrough</link> media are
+        :py:attr:`MediumType.writethrough` Writethrough media are
         always not.
         
         
         The read-only condition represented by this attribute is related to
         the medium type and usage, not to the current
-        <link to="IMedium::state">medium state</link> and not to the read-only
+        :py:func:`IMedium.state` medium state and not to the read-only
         state of the storage unit.
         """
         ret = self._get_attr("readOnly")
@@ -16085,8 +18931,8 @@ class IMedium(Interface):
         and cannot be changed later.
         
         
-        For media whose state is <link to="#state"/> is <link to="MediumState_Inaccessible"/>, the value of this property is the
-        last known logical size. For <link to="MediumState_NotCreated"/>
+        For media whose state is :py:func:`state`  is :py:attr:`MediumState.inaccessible` , the value of this property is the
+        last known logical size. For :py:attr:`MediumState.not_created` 
         media, the returned value is zero.
         """
         ret = self._get_attr("logicalSize")
@@ -16099,9 +18945,9 @@ class IMedium(Interface):
         time a virtual machine it is attached to is powered up. This
         attribute is automatically set to @c true for the last
         differencing image of an "immutable" medium (see
-        <link to="MediumType"/>).
+        :py:class:`MediumType` ).
         
-        See <link to="#reset"/> for more information about resetting
+        See :py:func:`reset`  for more information about resetting
         differencing media.
         
         
@@ -16122,12 +18968,12 @@ class IMedium(Interface):
     def last_access_error(self):
         """Get str value for 'lastAccessError'
         Text message that represents the result of the last accessibility
-        check performed by <link to="#refreshState"/>.
+        check performed by :py:func:`refresh_state` .
         
         An empty string is returned if the last accessibility check
         was successful or has not yet been called. As a result, if
-        <link to="#state"/> is "Inaccessible" and this attribute is empty,
-        then <link to="#refreshState"/> has yet to be called; this is the
+        :py:func:`state`  is "Inaccessible" and this attribute is empty,
+        then :py:func:`refresh_state`  has yet to be called; this is the
         default value of media after VirtualBox initialization.
         A non-empty string indicates a failure and should normally describe
         a reason of the failure (for example, a file read error).
@@ -16146,7 +18992,7 @@ class IMedium(Interface):
         
         The returned array will include a machine even if this medium is not
         attached to that machine in the current state but attached to it in
-        one of the machine's snapshots. See <link to="#getSnapshotIds"/> for
+        one of the machine's snapshots. See :py:func:`get_snapshot_ids`  for
         details.
         """
         ret = self._get_attr("machineIds")
@@ -16190,9 +19036,9 @@ class IMedium(Interface):
                      in_p=[set_image_id, image_id, set_parent_id, parent_id])
 
     def refresh_state(self):
-        """If the current medium state (see <link to="MediumState"/>) is one of
+        """If the current medium state (see :py:class:`MediumState` ) is one of
         "Created", "Inaccessible" or "LockedRead", then this performs an
-        accessibility check on the medium and sets the value of the <link to="#state"/>
+        accessibility check on the medium and sets the value of the :py:func:`state` 
         attribute accordingly; that value is also returned for convenience.
         
         For all other state values, this does not perform a refresh but returns
@@ -16210,9 +19056,9 @@ class IMedium(Interface):
         
         If the last known state of the medium is "Created" and the accessibility
         check fails, then the state would be set to "Inaccessible", and
-        <link to="#lastAccessError"/> may be used to get more details about the
+        :py:func:`last_access_error`  may be used to get more details about the
         failure. If the state of the medium is "LockedRead", then it remains the
-        same, and a non-empty value of <link to="#lastAccessError"/> will
+        same, and a non-empty value of :py:func:`last_access_error`  will
         indicate a failed accessibility check in this case.
         
         Note that not all medium states are applicable to all medium types.
@@ -16259,7 +19105,7 @@ class IMedium(Interface):
         
         A read lock is shared: many clients can simultaneously lock the
         same medium for reading unless it is already locked for writing (see
-        <link to="#lockWrite"/>) in which case an error is returned.
+        :py:func:`lock_write` ) in which case an error is returned.
         
         When the medium is locked for reading, it cannot be modified
         from within VirtualBox. This means that any method that changes
@@ -16280,14 +19126,14 @@ class IMedium(Interface):
         machines simultaneously).
         
         A medium is also locked for reading when it is the source of a
-        write operation such as <link to="#cloneTo"/> or <link to="#mergeTo"/>.
+        write operation such as :py:func:`clone_to`  or :py:func:`merge_to` .
         
         The medium locked for reading must be unlocked by abandoning the
-        returned token object, see <link to="IToken"/>. Calls to
-        <link to="#lockRead"/> can be nested and the lock is actually released
+        returned token object, see :py:class:`IToken` . Calls to
+        :py:func:`lock_read`  can be nested and the lock is actually released
         when all callers have abandoned the token.
         
-        This method sets the medium state (see <link to="#state"/>) to
+        This method sets the medium state (see :py:func:`state` ) to
         "LockedRead" on success. The medium's previous state must be
         one of "Created", "Inaccessible" or "LockedRead".
         
@@ -16297,7 +19143,7 @@ class IMedium(Interface):
         storage unit.
         
         This method returns the current state of the medium
-        before the operation.
+        *before* the operation.
 
         return token of type IToken
             Token object, when this is released (reference count reaches 0) then
@@ -16316,7 +19162,7 @@ creating, deleting).
     def lock_write(self):
         """Locks this medium for writing.
         
-        A write lock, as opposed to <link to="#lockRead"/>, is
+        A write lock, as opposed to :py:func:`lock_read` , is
         exclusive: there may be only one client holding a write lock,
         and there may be no read locks while the write lock is held.
         As a result, read-locking fails if a write lock is held, and
@@ -16336,13 +19182,13 @@ creating, deleting).
         whereas its parents are locked for reading only.
         
         A medium is also locked for writing when it is the target of a
-        write operation such as <link to="#cloneTo"/> or <link to="#mergeTo"/>.
+        write operation such as :py:func:`clone_to`  or :py:func:`merge_to` .
         
         The medium locked for writing must be unlocked by abandoning the
-        returned token object, see <link to="IToken"/>. Write locks
-        cannot be nested.
+        returned token object, see :py:class:`IToken` . Write locks
+        *cannot* be nested.
         
-        This method sets the medium state (see <link to="#state"/>) to
+        This method sets the medium state (see :py:func:`state` ) to
         "LockedWrite" on success. The medium's previous state must be
         either "Created" or "Inaccessible".
         
@@ -16374,7 +19220,7 @@ creating, deleting).
         When the medium is successfully closed, it is removed from
         the list of registered media, but its storage unit is not
         deleted. In particular, this means that this medium can
-        later be opened again using the <link to="IVirtualBox::openMedium"/>
+        later be opened again using the :py:func:`IVirtualBox.open_medium` 
         call.
         
         Note that after this method successfully returns, the given medium
@@ -16402,7 +19248,7 @@ inaccessible).
         """Returns the value of the custom medium property with the given name.
         
         The list of all properties supported by the given medium format can
-        be obtained with <link to="IMediumFormat::describeProperties"/>.
+        be obtained with :py:func:`IMediumFormat.describe_properties` .
         
         If this method returns an empty string in @a value, the requested
         property is supported but currently not assigned any value.
@@ -16430,7 +19276,7 @@ inaccessible).
         """Sets the value of the custom medium property with the given name.
         
         The list of all properties supported by the given medium format can
-        be obtained with <link to="IMediumFormat::describeProperties"/>.
+        be obtained with :py:func:`IMediumFormat.describe_properties` .
         
         Setting the property value to @c null or an empty string is
         equivalent to deleting the existing value. A default value (if it is
@@ -16467,7 +19313,7 @@ inaccessible).
         always returns all existing properties.
         
         The list of all properties supported by the given medium format can
-        be obtained with <link to="IMediumFormat::describeProperties"/>.
+        be obtained with :py:func:`IMediumFormat.describe_properties` .
         
         The method returns two arrays, the array of property names corresponding
         to the @a names argument and the current values of these properties.
@@ -16507,11 +19353,11 @@ inaccessible).
         the method will fail before changing the values of any other properties
         from the @a names array.
         
-        Using this method over <link to="#setProperty"/> is preferred if you
+        Using this method over :py:func:`set_property`  is preferred if you
         need to set several properties at once since it is more efficient.
         
         The list of all properties supported by the given medium format can
-        be obtained with <link to="IMediumFormat::describeProperties"/>.
+        be obtained with :py:func:`IMediumFormat.describe_properties` .
         
         Setting the property value to @c null or an empty string is equivalent
         to deleting the existing value. A default value (if it is defined for
@@ -16543,15 +19389,15 @@ inaccessible).
         """Starts creating a hard disk storage unit (fixed/dynamic, according
         to the variant flags) in in the background. The previous storage unit
         created for this object, if any, must first be deleted using
-        <link to="#deleteStorage"/>, otherwise the operation will fail.
+        :py:func:`delete_storage` , otherwise the operation will fail.
         
         Before the operation starts, the medium is placed in
-        <link to="MediumState_Creating"/> state. If the create operation
-        fails, the medium will be placed back in <link to="MediumState_NotCreated"/>
+        :py:attr:`MediumState.creating`  state. If the create operation
+        fails, the medium will be placed back in :py:attr:`MediumState.not_created` 
         state.
         
         After the returned progress object reports that the operation has
-        successfully completed, the medium state will be set to <link to="MediumState_Created"/>, the medium will be remembered by this
+        successfully completed, the medium state will be set to :py:attr:`MediumState.created` , the medium will be remembered by this
         VirtualBox installation and may be attached to virtual machines.
 
         in logical_size of type int
@@ -16559,7 +19405,7 @@ inaccessible).
 
         in variant of type MediumVariant
             Exact image variant which should be created (as a combination of
-            <link to="MediumVariant"/> flags).
+            :py:class:`MediumVariant`  flags).
 
         return progress of type IProgress
             Progress object to track the operation completion.
@@ -16589,26 +19435,26 @@ inaccessible).
         It will also fail if there is no storage unit to delete or if deletion
         is already in progress, or if the medium is being in use (locked for
         read or for write) or inaccessible. Therefore, the only valid state for
-        this operation to succeed is <link to="MediumState_Created"/>.
+        this operation to succeed is :py:attr:`MediumState.created` .
         
         Before the operation starts, the medium is placed in
-        <link to="MediumState_Deleting"/> state and gets removed from the list
+        :py:attr:`MediumState.deleting`  state and gets removed from the list
         of remembered hard disks (media registry). If the delete operation
         fails, the medium will be remembered again and placed back to
-        <link to="MediumState_Created"/> state.
+        :py:attr:`MediumState.created`  state.
         
         After the returned progress object reports that the operation is
         complete, the medium state will be set to
-        <link to="MediumState_NotCreated"/> and you will be able to use one of
+        :py:attr:`MediumState.not_created`  and you will be able to use one of
         the storage creation methods to create it again.
         
-        <link to="#close"/>
+        :py:func:`close` 
         
         
         
         
         If the deletion operation fails, it is not guaranteed that the storage
-        unit still exists. You may check the <link to="IMedium::state"/> value
+        unit still exists. You may check the :py:func:`IMedium.state`  value
         to answer this question.
 
         return progress of type IProgress
@@ -16631,10 +19477,10 @@ operations are supported. See
         medium in the format and at the location defined by the @a target
         argument.
         
-        The target medium must be in <link to="MediumState_NotCreated"/>
+        The target medium must be in :py:attr:`MediumState.not_created` 
         state (i.e. must not have an existing storage unit). Upon successful
         completion, this operation will set the type of the target medium to
-        <link to="MediumType_Normal"/> and create a storage unit necessary to
+        :py:attr:`MediumType.normal`  and create a storage unit necessary to
         represent the differencing medium data in the given format (according
         to the storage format of the target object).
         
@@ -16643,7 +19489,7 @@ operations are supported. See
         VirtualBox installation and may be attached to virtual machines.
         
         
-        The medium will be set to <link to="MediumState_LockedRead"/>
+        The medium will be set to :py:attr:`MediumState.locked_read` 
         state for the duration of this operation.
 
         in target of type IMedium
@@ -16651,7 +19497,7 @@ operations are supported. See
 
         in variant of type MediumVariant
             Exact image variant which should be created (as a combination of
-            <link to="MediumVariant"/> flags).
+            :py:class:`MediumVariant`  flags).
 
         return progress of type IProgress
             Progress object to track the operation completion.
@@ -16680,8 +19526,8 @@ operations are supported. See
         The target medium must be either a descendant of this medium or
         its ancestor (otherwise this method will immediately return a failure).
         It follows that there are two logical directions of the merge operation:
-        from ancestor to descendant (forward merge) and from descendant to
-        ancestor (backward merge). Let us consider the following medium
+        from ancestor to descendant (*forward merge*) and from descendant to
+        ancestor (*backward merge*). Let us consider the following medium
         chain:
         
         Base <- Diff_1 <- Diff_2
@@ -16719,7 +19565,7 @@ operations are supported. See
         
         
         Neither the source medium nor the target medium is an
-        <link to="MediumType_Immutable"/> medium.
+        :py:attr:`MediumType.immutable`  medium.
         
         
         The part of the medium tree from the source medium to the
@@ -16732,14 +19578,14 @@ operations are supported. See
         
         
         None of the involved media are in
-        <link to="MediumState_LockedRead"/> or
-        <link to="MediumState_LockedWrite"/> state.
+        :py:attr:`MediumState.locked_read`  or
+        :py:attr:`MediumState.locked_write`  state.
         
         
         
         
-        This (source) medium and all intermediates will be placed to <link to="MediumState_Deleting"/> state and the target medium will be
-        placed to <link to="MediumState_LockedWrite"/> state and for the
+        This (source) medium and all intermediates will be placed to :py:attr:`MediumState.deleting`  state and the target medium will be
+        placed to :py:attr:`MediumState.locked_write`  state and for the
         duration of this operation.
 
         in target of type IMedium
@@ -16760,9 +19606,9 @@ operations are supported. See
         """Starts creating a clone of this medium in the format and at the
         location defined by the @a target argument.
         
-        The target medium must be either in <link to="MediumState_NotCreated"/>
+        The target medium must be either in :py:attr:`MediumState.not_created` 
         state (i.e. must not have an existing storage unit) or in
-        <link to="MediumState_Created"/> state (i.e. created and not locked, and
+        :py:attr:`MediumState.created`  state (i.e. created and not locked, and
         big enough to hold the data or else the copy will be partial). Upon
         successful completion, the cloned medium will contain exactly the
         same sector data as the medium being cloned, except that in the
@@ -16782,7 +19628,7 @@ operations are supported. See
         VirtualBox installation and may be attached to virtual machines.
         
         
-        This medium will be placed to <link to="MediumState_LockedRead"/>
+        This medium will be placed to :py:attr:`MediumState.locked_read` 
         state for the duration of this operation.
 
         in target of type IMedium
@@ -16790,7 +19636,7 @@ operations are supported. See
 
         in variant of type MediumVariant
             Exact image variant which should be created (as a combination of
-            <link to="MediumVariant"/> flags).
+            :py:class:`MediumVariant`  flags).
 
         in parent of type IMedium
             Parent of the cloned medium.
@@ -16821,9 +19667,9 @@ operations are supported. See
         """Starts creating a clone of this medium in the format and at the
         location defined by the @a target argument.
         
-        The target medium must be either in <link to="MediumState_NotCreated"/>
+        The target medium must be either in :py:attr:`MediumState.not_created` 
         state (i.e. must not have an existing storage unit) or in
-        <link to="MediumState_Created"/> state (i.e. created and not locked, and
+        :py:attr:`MediumState.created`  state (i.e. created and not locked, and
         big enough to hold the data or else the copy will be partial). Upon
         successful completion, the cloned medium will contain exactly the
         same sector data as the medium being cloned, except that in the
@@ -16843,14 +19689,14 @@ operations are supported. See
         VirtualBox installation and may be attached to virtual machines.
         
         
-        This medium will be placed to <link to="MediumState_LockedRead"/>
+        This medium will be placed to :py:attr:`MediumState.locked_read` 
         state for the duration of this operation.
 
         in target of type IMedium
             Target medium.
 
         in variant of type MediumVariant
-            <link to="MediumVariant"/> flags).
+            :py:class:`MediumVariant`  flags).
 
         return progress of type IProgress
             Progress object to track the operation completion.
@@ -16886,8 +19732,8 @@ operations are supported. See
         
         When setting a location for a medium which corresponds to a/several
         regular file(s) in the host's file system, the given file name may be
-        either relative to the <link to="IVirtualBox::homeFolder">VirtualBox
-        home folder</link> or absolute. Note that if the given location
+        either relative to the :py:func:`IVirtualBox.home_folder` VirtualBox
+        home folder or absolute. Note that if the given location
         specification does not contain the file extension part then a proper
         default extension will be automatically appended by the implementation
         depending on the medium type.
@@ -16918,9 +19764,9 @@ operations are supported. See
         This potentially creates temporary images, which can require a
         substantial amount of additional disk space.
         
-        This medium will be placed to <link to="MediumState_LockedWrite"/>
+        This medium will be placed to :py:attr:`MediumState.locked_write` 
         state and all its parent media (if any) will be placed to
-        <link to="MediumState_LockedRead"/> state for the duration of this
+        :py:attr:`MediumState.locked_read`  state for the duration of this
         operation.
         
         Please note that the results can be either returned straight away,
@@ -16950,7 +19796,7 @@ needs it).
         temporary copy of the medium, so the additional disk space requirement
         is usually much lower than using the clone operation.
         
-        This medium will be placed to <link to="MediumState_LockedWrite"/>
+        This medium will be placed to :py:attr:`MediumState.locked_write` 
         state for the duration of this operation.
         
         Please note that the results can be either returned straight away,
@@ -16980,11 +19826,11 @@ needs it).
         This operation will reset the differencing medium to its initial
         state when it does not contain any sector data and any read operation is
         redirected to its parent medium. This automatically gets called
-        during VM power-up for every medium whose <link to="#autoReset"/>
+        during VM power-up for every medium whose :py:func:`auto_reset` 
         attribute is @c true.
         
         The medium will be write-locked for the duration of this operation (see
-        <link to="#lockWrite"/>).
+        :py:func:`lock_write` ).
 
         return progress of type IProgress
             Progress object to track the operation completion.
@@ -17010,14 +19856,14 @@ class IMediumFormat(Interface):
     about the properties of the associated backend.
     
     Each medium format is identified by a string represented by the
-    <link to="#id"/> attribute. This string is used in calls like
-    <link to="IVirtualBox::createHardDisk"/> to specify the desired
+    :py:func:`id_p`  attribute. This string is used in calls like
+    :py:func:`IVirtualBox.create_hard_disk`  to specify the desired
     format.
     
     The list of all supported medium formats can be obtained using
-    <link to="ISystemProperties::mediumFormats"/>.
+    :py:func:`ISystemProperties.medium_formats` .
     
-    <link to="IMedium"/>
+    :py:class:`IMedium` 
     """
     __uuid__ = '6238e1cf-a17d-4ec1-8172-418bfb22b93a'
     __wsmap__ = 'managed'
@@ -17031,14 +19877,17 @@ class IMediumFormat(Interface):
         this string is case-insensitive. This means that, for example, all of
         the following strings:
         
-        "VDI"
-        "vdi"
-        "VdI"
+        ::
+
+             "VDI"
+             "vdi"
+             "VdI"
+
         refer to the same medium format.
         
         This string is used in methods of other interfaces where it is necessary
         to specify a medium format, such as
-        <link to="IVirtualBox::createHardDisk"/>.
+        :py:func:`IVirtualBox.create_hard_disk` .
         """
         ret = self._get_attr("id")
         return ret
@@ -17059,7 +19908,7 @@ class IMediumFormat(Interface):
         Capabilities of the format as an array of the flags.
         
         For the meaning of individual capability flags see
-        <link to="MediumFormatCapabilities"/>.
+        :py:class:`MediumFormatCapabilities` .
         """
         ret = self._get_attr("capabilities")
         return [MediumFormatCapabilities(a) for a in ret]
@@ -17073,7 +19922,7 @@ class IMediumFormat(Interface):
         Note that some backends do not work on files, so this array may be
         empty.
         
-        <link to="IMediumFormat::capabilities"/>
+        :py:func:`IMediumFormat.capabilities` 
 
         out extensions of type str
             The array of supported extensions.
@@ -17095,10 +19944,10 @@ class IMediumFormat(Interface):
         same and corresponds to the number of supported properties.
         
         The returned arrays are filled in only if the
-        <link to="MediumFormatCapabilities_Properties"/> flag is set.
+        :py:attr:`MediumFormatCapabilities.properties`  flag is set.
         All arguments must be non-@c null.
         
-        <link to="DataType"/>, <link to="DataFlags"/>
+        :py:class:`DataType` , :py:class:`DataFlags` 
 
         out names of type str
             Array of property names.
@@ -17125,7 +19974,7 @@ class IToken(Interface):
     """
     The IToken interface represents a token passed to an API client, which
     triggers cleanup actions when it is explicitly released by calling the
-    <link to="#abandon"/> method (preferred, as it is accurately defined
+    :py:func:`abandon`  method (preferred, as it is accurately defined
     when the release happens), or when the object reference count drops
     to 0. The latter way is implicitly used when an API client crashes,
     however the discovery that there was a crash can take rather long,
@@ -17137,7 +19986,7 @@ class IToken(Interface):
     
     def abandon(self):
         """Releases this token. Cannot be undone in any way, and makes the
-        token object unusable (even the <link to="#dummy"/> method will return
+        token object unusable (even the :py:func:`dummy`  method will return
         an error), ready for releasing. It is a more defined way than just
         letting the reference count drop to 0, because the latter (depending
         on the platform) can trigger asynchronous cleanup activity.
@@ -17157,7 +20006,7 @@ class IToken(Interface):
 class IKeyboard(Interface):
     """
     The IKeyboard interface represents the virtual machine's keyboard. Used
-    in <link to="IConsole::keyboard"/>.
+    in :py:func:`IConsole.keyboard` .
     
     Use this interface to send keystrokes or the Ctrl-Alt-Del sequence
     to the virtual machine.
@@ -17203,7 +20052,7 @@ class IKeyboard(Interface):
     def put_cad(self):
         """Sends the Ctrl-Alt-Del sequence to the keyboard. This
         function is nothing special, it is just a convenience function
-        calling <link to="IKeyboard::putScancodes"/> with the proper scancodes.
+        calling :py:func:`IKeyboard.put_scancodes`  with the proper scancodes.
 
         raises VBOX_E_IPRT_ERROR
             Could not send all scan codes to virtual keyboard.
@@ -17234,7 +20083,7 @@ class IKeyboard(Interface):
 class IMouse(Interface):
     """
     The IMouse interface represents the virtual machine's mouse. Used in
-    <link to="IConsole::mouse"/>.
+    :py:func:`IConsole.mouse` .
     
     Through this interface, the virtual machine's virtual mouse can be
     controlled.
@@ -17248,11 +20097,11 @@ class IMouse(Interface):
         Whether the guest OS supports absolute mouse pointer positioning
         or not.
         
-        You can use the <link to="IMouseCapabilityChangedEvent"/>
+        You can use the :py:class:`IMouseCapabilityChangedEvent` 
         event to be instantly informed about changes of this attribute
         during virtual machine execution.
         
-        <link to="#putMouseEventAbsolute"/>
+        :py:func:`put_mouse_event_absolute` 
         """
         ret = self._get_attr("absoluteSupported")
         return ret
@@ -17263,11 +20112,11 @@ class IMouse(Interface):
         Whether the guest OS supports relative mouse pointer positioning
         or not.
         
-        You can use the <link to="IMouseCapabilityChangedEvent"/>
+        You can use the :py:class:`IMouseCapabilityChangedEvent` 
         event to be instantly informed about changes of this attribute
         during virtual machine execution.
         
-        <link to="#putMouseEvent"/>
+        :py:func:`put_mouse_event` 
         """
         ret = self._get_attr("relativeSupported")
         return ret
@@ -17277,11 +20126,11 @@ class IMouse(Interface):
         """Get bool value for 'multiTouchSupported'
         Whether the guest OS has enabled the multi-touch reporting device.
         
-        You can use the <link to="IMouseCapabilityChangedEvent"/>
+        You can use the :py:class:`IMouseCapabilityChangedEvent` 
         event to be instantly informed about changes of this attribute
         during virtual machine execution.
         
-        <link to="#putMouseEvent"/>
+        :py:func:`put_mouse_event` 
         """
         ret = self._get_attr("multiTouchSupported")
         return ret
@@ -17292,11 +20141,11 @@ class IMouse(Interface):
         Whether the guest OS can currently switch to drawing it's own mouse
         cursor on demand.
         
-        You can use the <link to="IMouseCapabilityChangedEvent"/>
+        You can use the :py:class:`IMouseCapabilityChangedEvent` 
         event to be instantly informed about changes of this attribute
         during virtual machine execution.
         
-        <link to="#putMouseEvent"/>
+        :py:func:`put_mouse_event` 
         """
         ret = self._get_attr("needsHostCursor")
         return ret
@@ -17367,7 +20216,7 @@ class IMouse(Interface):
         positioning is supported by the guest OS.
         
         
-        <link to="#absoluteSupported"/>
+        :py:func:`absolute_supported` 
 
         in x of type int
             X coordinate of the pointer in pixels, starting from @c 1.
@@ -17427,7 +20276,7 @@ class IMouse(Interface):
         The guest may not understand or may choose to ignore this event.
         
         
-        <link to="#multiTouchSupported"/>
+        :py:func:`multi_touch_supported` 
 
         in count of type int
             Number of contacts in the event.
@@ -17465,10 +20314,10 @@ class IMouse(Interface):
                      in_p=[count, contacts, scan_time])
 
     def put_event_multi_touch_string(self, count, contacts, scan_time):
-        """<link to="#putEventMultiTouch"/>
+        """:py:func:`put_event_multi_touch` 
 
         in count of type int
-            <link to="#putEventMultiTouch"/>
+            :py:func:`put_event_multi_touch` 
 
         in contacts of type str
             Contains information about all contacts:
@@ -17476,7 +20325,7 @@ class IMouse(Interface):
             For example for two contacts: "0,10,20,1,1;1,30,40,1,1"
 
         in scan_time of type int
-            <link to="#putEventMultiTouch"/>
+            :py:func:`put_event_multi_touch` 
 
         """
         if not isinstance(count, baseinteger):
@@ -17531,7 +20380,7 @@ class IFramebuffer(Interface):
     @property
     def bits_per_pixel(self):
         """Get int value for 'bitsPerPixel'
-        Color depth, in bits per pixel. When <link to="#pixelFormat"/> is <link to="FramebufferPixelFormat_FOURCC_RGB">FOURCC_RGB</link>, valid values
+        Color depth, in bits per pixel. When :py:func:`pixel_format`  is :py:attr:`FramebufferPixelFormat.fourcc_rgb` FOURCC_RGB, valid values
         are: 8, 15, 16, 24 and 32.
         """
         ret = self._get_attr("bitsPerPixel")
@@ -17540,7 +20389,7 @@ class IFramebuffer(Interface):
     @property
     def bytes_per_line(self):
         """Get int value for 'bytesPerLine'
-        Scan line size, in bytes. When <link to="#pixelFormat"/> is <link to="FramebufferPixelFormat_FOURCC_RGB">FOURCC_RGB</link>, the
+        Scan line size, in bytes. When :py:func:`pixel_format`  is :py:attr:`FramebufferPixelFormat.fourcc_rgb` FOURCC_RGB, the
         size of the scan line must be aligned to 32 bits.
         """
         ret = self._get_attr("bytesPerLine")
@@ -17549,9 +20398,9 @@ class IFramebuffer(Interface):
     @property
     def pixel_format(self):
         """Get int value for 'pixelFormat'
-        Frame buffer pixel format. It's either one of the values defined by <link to="FramebufferPixelFormat"/> or a raw FOURCC code.
+        Frame buffer pixel format. It's either one of the values defined by :py:class:`FramebufferPixelFormat`  or a raw FOURCC code.
         
-        This attribute must never (and will never) return <link to="FramebufferPixelFormat_Opaque"/> -- the format of the frame
+        This attribute must never (and will never) return :py:attr:`FramebufferPixelFormat.opaque`  -- the format of the frame
         buffer must be always known.
         """
         ret = self._get_attr("pixelFormat")
@@ -17649,12 +20498,12 @@ class IFramebuffer(Interface):
         """Requests a size and pixel format change.
         
         There are two modes of working with the video buffer of the virtual
-        machine. The indirect mode implies that the IFramebuffer
+        machine. The *indirect* mode implies that the IFramebuffer
         implementation allocates a memory buffer for the requested display mode
-        and provides it to the virtual machine. In direct mode, the
+        and provides it to the virtual machine. In *direct* mode, the
         IFramebuffer implementation uses the memory buffer allocated and owned
         by the virtual machine. This buffer represents the video memory of the
-        emulated video adapter (so called guest VRAM). The direct mode is
+        emulated video adapter (so called *guest VRAM*). The direct mode is
         usually faster because the implementation gets a raw pointer to the
         guest VRAM buffer which it can directly use for visualizing the contents
         of the virtual display, as opposed to the indirect mode where the
@@ -17675,7 +20524,7 @@ class IFramebuffer(Interface):
         done automatically by the underlying code.
         
         The @a pixelFormat parameter defines whether the direct mode is
-        available or not. If @a pixelFormat is <link to="FramebufferPixelFormat_Opaque"/> then direct access to the guest
+        available or not. If @a pixelFormat is :py:attr:`FramebufferPixelFormat.opaque`  then direct access to the guest
         VRAM buffer is not available -- the @a VRAM, @a bitsPerPixel and
         @a bytesPerLine parameters must be ignored and the implementation must use
         the indirect mode (where it provides its own buffer in one of the
@@ -17683,8 +20532,8 @@ class IFramebuffer(Interface):
         @a bitsPerPixel and @a bytesPerLine define the format of the video memory
         buffer pointed to by the @a VRAM parameter and the implementation is
         free to choose which mode to use. To indicate that this frame buffer uses
-        the direct mode, the implementation of the <link to="#usesGuestVRAM"/>
-        attribute must return @c true and <link to="#address"/> must
+        the direct mode, the implementation of the :py:func:`uses_guest_vram` 
+        attribute must return @c true and :py:func:`address`  must
         return exactly the same address that is passed in the @a VRAM parameter
         of this method; otherwise it is assumed that the indirect strategy is
         chosen.
@@ -17694,41 +20543,41 @@ class IFramebuffer(Interface):
         provided memory buffer should be big enough to store data of the given
         display mode. In case of direct mode, it is guaranteed that the given
         @a VRAM buffer contains enough space to represent the display mode of the
-        given size. Note that this frame buffer's <link to="#width"/> and <link to="#height"/> attributes must return exactly the same values as
+        given size. Note that this frame buffer's :py:func:`width`  and :py:func:`height`  attributes must return exactly the same values as
         passed to this method after the resize is completed (see below).
         
         The @a finished output parameter determines if the implementation has
         finished resizing the frame buffer or not. If, for some reason, the
         resize cannot be finished immediately during this call, @a finished
         must be set to @c false, and the implementation must call
-        <link to="IDisplay::resizeCompleted"/> after it has returned from
+        :py:func:`IDisplay.resize_completed`  after it has returned from
         this method as soon as possible. If @a finished is @c false, the
         machine will not call any frame buffer methods until
-        <link to="IDisplay::resizeCompleted"/> is called.
+        :py:func:`IDisplay.resize_completed`  is called.
         
-        Note that if the direct mode is chosen, the <link to="#bitsPerPixel"/>,
-        <link to="#bytesPerLine"/> and <link to="#pixelFormat"/> attributes of
+        Note that if the direct mode is chosen, the :py:func:`bits_per_pixel` ,
+        :py:func:`bytes_per_line`  and :py:func:`pixel_format`  attributes of
         this frame buffer must return exactly the same values as specified in the
         parameters of this method, after the resize is completed. If the
         indirect mode is chosen, these attributes must return values describing
-        the format of the implementation's own memory buffer <link to="#address"/> points to. Note also that the <link to="#bitsPerPixel"/>
-        value must always correlate with <link to="#pixelFormat"/>. Note that
-        the <link to="#pixelFormat"/> attribute must never return <link to="FramebufferPixelFormat_Opaque"/> regardless of the selected mode.
+        the format of the implementation's own memory buffer :py:func:`address`  points to. Note also that the :py:func:`bits_per_pixel` 
+        value must always correlate with :py:func:`pixel_format` . Note that
+        the :py:func:`pixel_format`  attribute must never return :py:attr:`FramebufferPixelFormat.opaque`  regardless of the selected mode.
         
         
         This method is called by the IDisplay object under the
-        <link to="#lock"/> provided by this IFramebuffer
+        :py:func:`lock`  provided by this IFramebuffer
         implementation. If this method returns @c false in @a finished, then
         this lock is not released until
-        <link to="IDisplay::resizeCompleted"/> is called.
+        :py:func:`IDisplay.resize_completed`  is called.
 
         in screen_id of type int
             Logical screen number. Must be used in the corresponding call to
-            <link to="IDisplay::resizeCompleted"/> if this call is made.
+            :py:func:`IDisplay.resize_completed`  if this call is made.
 
         in pixel_format of type int
             Pixel format of the memory buffer pointed to by @a VRAM.
-            See also <link to="FramebufferPixelFormat"/>.
+            See also :py:class:`FramebufferPixelFormat` .
 
         in vram of type str
             Pointer to the virtual video card's VRAM (may be @c null).
@@ -17748,7 +20597,7 @@ class IFramebuffer(Interface):
         return finished of type bool
             Can the VM start using the new frame buffer immediately
             after this method returns or it should wait for
-            <link to="IDisplay::resizeCompleted"/>.
+            :py:func:`IDisplay.resize_completed` .
 
         """
         if not isinstance(screen_id, baseinteger):
@@ -17984,7 +20833,7 @@ class IDisplay(Interface):
     The IDisplay interface represents the virtual machine's display.
     
     The object implementing this interface is contained in each
-    <link to="IConsole::display"/> attribute and represents the visual
+    :py:func:`IConsole.display`  attribute and represents the visual
     output of the virtual machine.
     
     The virtual display supports pluggable output targets represented by the
@@ -18118,7 +20967,7 @@ class IDisplay(Interface):
         """Enables or disables seamless guest display rendering (seamless desktop
         integration) mode.
         
-        Calling this method has no effect if <link to="IGuest::getFacilityStatus"/> with facility @c Seamless
+        Calling this method has no effect if :py:func:`IGuest.get_facility_status`  with facility @c Seamless
         does not return @c Active.
 
         in enabled of type bool
@@ -18138,7 +20987,7 @@ class IDisplay(Interface):
         COM/XPCOM C++ API as it requires pointer support. It is not
         available for scripting languages, Java or any webservice clients.
         Unless you are writing a new VM frontend use
-        <link to="#takeScreenShotToArray"/>.
+        :py:func:`take_screen_shot_to_array` .
 
         in screen_id of type int
 
@@ -18358,12 +21207,12 @@ class INetworkAdapter(Interface):
     Represents a virtual network adapter that is attached to a virtual machine.
     Each virtual machine has a fixed number of network adapter slots with one
     instance of this attached to each of them. Call
-    <link to="IMachine::getNetworkAdapter"/> to get the network adapter that
+    :py:func:`IMachine.get_network_adapter`  to get the network adapter that
     is attached to a given slot in a given machine.
     
     Each network adapter can be in one of five attachment modes, which are
-    represented by the <link to="NetworkAttachmentType"/> enumeration;
-    see the <link to="#attachmentType"/> attribute.
+    represented by the :py:class:`NetworkAttachmentType`  enumeration;
+    see the :py:func:`attachment_type`  attribute.
     """
     __uuid__ = 'efa0f965-63c7-4c60-afdf-b1cc9943b9c0'
     __wsmap__ = 'managed'
@@ -18388,7 +21237,7 @@ class INetworkAdapter(Interface):
     def slot(self):
         """Get int value for 'slot'
         Slot number this adapter is plugged into. Corresponds to
-        the value you pass to <link to="IMachine::getNetworkAdapter"/>
+        the value you pass to :py:func:`IMachine.get_network_adapter` 
         to obtain this instance.
         """
         ret = self._get_attr("slot")
@@ -18722,7 +21571,7 @@ class ISerialPort(Interface):
     detect the serial port, but all port write operations will be discarded
     and all port read operations will return no data.
     
-    <link to="IMachine::getSerialPort"/>
+    :py:func:`IMachine.get_serial_port` 
     """
     __uuid__ = '937f6970-5103-4745-b78e-d28dcf1479a8'
     __wsmap__ = 'managed'
@@ -18731,7 +21580,7 @@ class ISerialPort(Interface):
     def slot(self):
         """Get int value for 'slot'
         Slot number this serial port is plugged into. Corresponds to
-        the value you pass to <link to="IMachine::getSerialPort"/>
+        the value you pass to :py:func:`IMachine.get_serial_port` 
         to obtain this instance.
         """
         ret = self._get_attr("slot")
@@ -18786,7 +21635,7 @@ class ISerialPort(Interface):
         How is this port connected to the host.
         
         Changing this attribute may fail if the conditions for
-        <link to="#path"/> are not met.
+        :py:func:`path`  are not met.
         """
         ret = self._get_attr("hostMode")
         return PortMode(ret)
@@ -18802,7 +21651,7 @@ class ISerialPort(Interface):
         """Get or set bool value for 'server'
         Flag whether this serial port acts as a server (creates a new pipe on
         the host) or as a client (uses the existing pipe). This attribute is
-        used only when <link to="#hostMode"/> is PortMode_HostPipe.
+        used only when :py:func:`host_mode`  is PortMode_HostPipe.
         """
         ret = self._get_attr("server")
         return ret
@@ -18816,9 +21665,9 @@ class ISerialPort(Interface):
     @property
     def path(self):
         """Get or set str value for 'path'
-        Path to the serial port's pipe on the host when <link to="ISerialPort::hostMode"/> is
+        Path to the serial port's pipe on the host when :py:func:`ISerialPort.host_mode`  is
         PortMode_HostPipe, or the host serial device name when
-        <link to="ISerialPort::hostMode"/> is PortMode_HostDevice. For both
+        :py:func:`ISerialPort.host_mode`  is PortMode_HostDevice. For both
         cases, setting a @c null or empty string as the attribute's value
         is an error. Otherwise, the value of this property is ignored.
         """
@@ -18845,7 +21694,7 @@ class IParallelPort(Interface):
     IRQ number that will be reported to the guest operating system and used
     to operate the given parallel port from within the virtual machine.
     
-    <link to="IMachine::getParallelPort"/>
+    :py:func:`IMachine.get_parallel_port` 
     """
     __uuid__ = '0c925f06-dd10-4b77-8de8-294d738c3214'
     __wsmap__ = 'managed'
@@ -18854,7 +21703,7 @@ class IParallelPort(Interface):
     def slot(self):
         """Get int value for 'slot'
         Slot number this parallel port is plugged into. Corresponds to
-        the value you pass to <link to="IMachine::getParallelPort"/>
+        the value you pass to :py:func:`IMachine.get_parallel_port` 
         to obtain this instance.
         """
         ret = self._get_attr("slot")
@@ -19205,7 +22054,7 @@ class IMachineDebugger(Interface):
 
         out values of type str
             Array parallel to the names holding the register values as if the
-            register was returned by <link to="IMachineDebugger::getRegister"/>.
+            register was returned by :py:func:`IMachineDebugger.get_register` .
 
         """
         if not isinstance(cpu_id, baseinteger):
@@ -19255,7 +22104,7 @@ class IMachineDebugger(Interface):
 
         in values of type str
             Array paralell to the names holding the register values. See
-            <link to="IMachineDebugger::setRegister"/> for formatting
+            :py:func:`IMachineDebugger.set_register`  for formatting
             guidelines.
 
         """
@@ -19588,21 +22437,21 @@ class IUSBDeviceFilters(Interface):
     If the machine is currently running, these filters are activated
     every time a new (supported) USB device is attached to the host
     computer that was not ignored by global filters
-    (<link to="IHost::USBDeviceFilters"/>).
+    (:py:func:`IHost.usb_device_filters` ).
     
     These filters are also activated when the machine is powered up.
     They are run against a list of all currently available USB
     devices (in states
-    <link to="USBDeviceState_Available"/>,
-    <link to="USBDeviceState_Busy"/>,
-    <link to="USBDeviceState_Held"/>) that were not previously
+    :py:attr:`USBDeviceState.available` ,
+    :py:attr:`USBDeviceState.busy` ,
+    :py:attr:`USBDeviceState.held` ) that were not previously
     ignored by global filters.
     
     If at least one filter matches the USB device in question, this
     device is automatically captured (attached to) the virtual USB
     controller of this machine.
     
-    <link to="IUSBDeviceFilter"/>, <link to="IUSBController"/>
+    :py:class:`IUSBDeviceFilter` , :py:class:`IUSBController` 
     """
     __uuid__ = '2ab550b2-53cc-4c2e-ae07-0adf4114e75c'
     __wsmap__ = 'managed'
@@ -19615,21 +22464,21 @@ class IUSBDeviceFilters(Interface):
         If the machine is currently running, these filters are activated
         every time a new (supported) USB device is attached to the host
         computer that was not ignored by global filters
-        (<link to="IHost::USBDeviceFilters"/>).
+        (:py:func:`IHost.usb_device_filters` ).
         
         These filters are also activated when the machine is powered up.
         They are run against a list of all currently available USB
         devices (in states
-        <link to="USBDeviceState_Available"/>,
-        <link to="USBDeviceState_Busy"/>,
-        <link to="USBDeviceState_Held"/>) that were not previously
+        :py:attr:`USBDeviceState.available` ,
+        :py:attr:`USBDeviceState.busy` ,
+        :py:attr:`USBDeviceState.held` ) that were not previously
         ignored by global filters.
         
         If at least one filter matches the USB device in question, this
         device is automatically captured (attached to) the virtual USB
         controller of this machine.
         
-        <link to="IUSBDeviceFilter"/>, <link to="IUSBController"/>
+        :py:class:`IUSBDeviceFilter` , :py:class:`IUSBController` 
         """
         ret = self._get_attr("deviceFilters")
         return [IUSBDeviceFilter(a) for a in ret]
@@ -19637,17 +22486,17 @@ class IUSBDeviceFilters(Interface):
     def create_device_filter(self, name):
         """Creates a new USB device filter. All attributes except
         the filter name are set to empty (any match),
-        active is @c false (the filter is not active).
+        *active* is @c false (the filter is not active).
         
         The created filter can then be added to the list of filters using
-        <link to="#insertDeviceFilter"/>.
+        :py:func:`insert_device_filter` .
         
         
         
-        <link to="#deviceFilters"/>
+        :py:func:`device_filters` 
 
         in name of type str
-            Filter name. See <link to="IUSBDeviceFilter::name"/>
+            Filter name. See :py:func:`IUSBDeviceFilter.name` 
             for more info.
 
         return filter_p of type IUSBDeviceFilter
@@ -19680,7 +22529,7 @@ class IUSBDeviceFilters(Interface):
         
         
         
-        <link to="#deviceFilters"/>
+        :py:func:`device_filters` 
 
         in position of type int
             Position to insert the filter to.
@@ -19713,7 +22562,7 @@ class IUSBDeviceFilters(Interface):
         position equal to or greater than the number of elements in
         the list will produce an error.
         
-        <link to="#deviceFilters"/>
+        :py:func:`device_filters` 
 
         in position of type int
             Position to remove the filter from.
@@ -19776,7 +22625,7 @@ class IUSBDevice(Interface):
     virtual machine.
     
     A collection of objects implementing this interface is stored in the
-    <link to="IConsole::USBDevices"/> attribute which lists all USB devices
+    :py:func:`IConsole.usb_devices`  attribute which lists all USB devices
     attached to a running virtual machine's USB controller.
     """
     __uuid__ = 'f8967b0b-4483-400f-92b5-8b675d98a85b'
@@ -19910,7 +22759,7 @@ class IUSBDeviceFilter(Interface):
     following filtering expressions are supported:
     
     
-    Interval filters. Used to specify valid intervals for
+    *Interval filters*. Used to specify valid intervals for
     integer device attributes (Vendor ID, Product ID and Revision).
     The format of the string is:
     
@@ -19923,13 +22772,13 @@ class IUSBDeviceFilter(Interface):
     is assumed; if n is omitted after a dash, the maximum
     possible integer is assumed.
     
-    Boolean filters. Used to specify acceptable values for
+    *Boolean filters*. Used to specify acceptable values for
     boolean device attributes. The format of the string is:
     
     true|false|yes|no|0|1
     
     
-    Exact match. Used to specify a single value for the given
+    *Exact match*. Used to specify a single value for the given
     device attribute. Any string that doesn't start with int:
     represents the exact match. String device attributes are compared to
     this string including case of symbols. Integer attributes are first
@@ -19937,7 +22786,7 @@ class IUSBDeviceFilter(Interface):
     compared ignoring case.
     
     
-    Any match. Any value of the corresponding device attribute
+    *Any match*. Any value of the corresponding device attribute
     will match the given filter. An empty or @c null string is
     used to construct this type of filtering expressions.
     
@@ -19947,13 +22796,13 @@ class IUSBDeviceFilter(Interface):
     
     On the Windows host platform, interval filters are not currently
     available. Also all string filter attributes
-    (<link to="#manufacturer"/>, <link to="#product"/>,
-    <link to="#serialNumber"/>) are ignored, so they behave as
-    any match no matter what string expression is specified.
+    (:py:func:`manufacturer` , :py:func:`product` ,
+    :py:func:`serial_number` ) are ignored, so they behave as
+    *any match* no matter what string expression is specified.
     
     
-    <link to="IUSBDeviceFilters::deviceFilters"/>,
-    <link to="IHostUSBDeviceFilter"/>
+    :py:func:`IUSBDeviceFilters.device_filters` ,
+    :py:class:`IHostUSBDeviceFilter` 
     """
     __uuid__ = 'd6831fb4-1a94-4c2c-96ef-8d0d6192066d'
     __wsmap__ = 'managed'
@@ -19991,8 +22840,8 @@ class IUSBDeviceFilter(Interface):
     @property
     def vendor_id(self):
         """Get or set str value for 'vendorId'
-        <link to="IUSBDevice::vendorId">Vendor ID</link> filter.
-        The string representation for the exact matching
+        :py:func:`IUSBDevice.vendor_id` Vendor ID filter.
+        The string representation for the *exact matching*
         has the form XXXX, where X is the hex digit
         (including leading zeroes).
         """
@@ -20008,8 +22857,8 @@ class IUSBDeviceFilter(Interface):
     @property
     def product_id(self):
         """Get or set str value for 'productId'
-        <link to="IUSBDevice::productId">Product ID</link> filter.
-        The string representation for the exact matching
+        :py:func:`IUSBDevice.product_id` Product ID filter.
+        The string representation for the *exact matching*
         has the form XXXX, where X is the hex digit
         (including leading zeroes).
         """
@@ -20025,8 +22874,8 @@ class IUSBDeviceFilter(Interface):
     @property
     def revision(self):
         """Get or set str value for 'revision'
-        <link to="IUSBDevice::productId">Product revision number</link>
-        filter. The string representation for the exact matching
+        :py:func:`IUSBDevice.product_id` Product revision number
+        filter. The string representation for the *exact matching*
         has the form IIFF, where I is the decimal digit
         of the integer part of the revision, and F is the
         decimal digit of its fractional part (including leading and
@@ -20048,7 +22897,7 @@ class IUSBDeviceFilter(Interface):
     @property
     def manufacturer(self):
         """Get or set str value for 'manufacturer'
-        <link to="IUSBDevice::manufacturer">Manufacturer</link> filter.
+        :py:func:`IUSBDevice.manufacturer` Manufacturer filter.
         """
         ret = self._get_attr("manufacturer")
         return ret
@@ -20062,7 +22911,7 @@ class IUSBDeviceFilter(Interface):
     @property
     def product(self):
         """Get or set str value for 'product'
-        <link to="IUSBDevice::product">Product</link> filter.
+        :py:func:`IUSBDevice.product` Product filter.
         """
         ret = self._get_attr("product")
         return ret
@@ -20076,7 +22925,7 @@ class IUSBDeviceFilter(Interface):
     @property
     def serial_number(self):
         """Get or set str value for 'serialNumber'
-        <link to="IUSBDevice::serialNumber">Serial number</link> filter.
+        :py:func:`IUSBDevice.serial_number` Serial number filter.
         """
         ret = self._get_attr("serialNumber")
         return ret
@@ -20090,7 +22939,7 @@ class IUSBDeviceFilter(Interface):
     @property
     def port(self):
         """Get or set str value for 'port'
-        <link to="IUSBDevice::port">Host USB port</link> filter.
+        :py:func:`IUSBDevice.port` Host USB port filter.
         """
         ret = self._get_attr("port")
         return ret
@@ -20104,7 +22953,7 @@ class IUSBDeviceFilter(Interface):
     @property
     def remote(self):
         """Get or set str value for 'remote'
-        <link to="IUSBDevice::remote">Remote state</link> filter.
+        :py:func:`IUSBDevice.remote` Remote state filter.
         
         This filter makes sense only for machine USB filters,
         i.e. it is ignored by IHostUSBDeviceFilter objects.
@@ -20143,11 +22992,11 @@ class IHostUSBDevice(IUSBDevice):
     to the host computer.
     
     Besides properties inherited from IUSBDevice, this interface adds the
-    <link to="#state"/> property that holds the current state of the USB
+    :py:func:`state`  property that holds the current state of the USB
     device.
     
-    <link to="IHost::USBDevices"/>,
-    <link to="IHost::USBDeviceFilters"/>
+    :py:func:`IHost.usb_devices` ,
+    :py:func:`IHost.usb_device_filters` 
     """
     __uuid__ = '173b4b44-d268-4334-a00d-b6521c9a740a'
     __wsmap__ = 'managed'
@@ -20165,19 +23014,19 @@ class IHostUSBDeviceFilter(IUSBDeviceFilter):
     """
     The IHostUSBDeviceFilter interface represents a global filter for a
     physical USB device used by the host computer. Used indirectly in
-    <link to="IHost::USBDeviceFilters"/>.
+    :py:func:`IHost.usb_device_filters` .
     
     Using filters of this type, the host computer determines the initial
     state of the USB device after it is physically attached to the
     host's USB controller.
     
     
-    The <link to="IUSBDeviceFilter::remote"/> attribute is ignored by this type of
+    The :py:func:`IUSBDeviceFilter.remote`  attribute is ignored by this type of
     filters, because it makes sense only for
-    <link to="IUSBDeviceFilters::deviceFilters">machine USB filters</link>.
+    :py:func:`IUSBDeviceFilters.device_filters` machine USB filters.
     
     
-    <link to="IHost::USBDeviceFilters"/>
+    :py:func:`IHost.usb_device_filters` 
     """
     __uuid__ = '4cc70246-d74a-400f-8222-3900489c0374'
     __wsmap__ = 'managed'
@@ -20201,7 +23050,7 @@ class IHostUSBDeviceFilter(IUSBDeviceFilter):
 class IAudioAdapter(Interface):
     """
     The IAudioAdapter interface represents the virtual audio adapter of
-    the virtual machine. Used in <link to="IMachine::audioAdapter"/>.
+    the virtual machine. Used in :py:func:`IMachine.audio_adapter` .
     """
     __uuid__ = '921873db-5f3f-4b69-91f9-7be9e535a2cb'
     __wsmap__ = 'managed'
@@ -20337,7 +23186,7 @@ class IVRDEServer(Interface):
     def vrde_ext_pack(self):
         """Get or set str value for 'VRDEExtPack'
         The name of Extension Pack providing VRDE for this VM. Overrides
-        <link to="ISystemProperties::defaultVRDEExtPack"/>.
+        :py:func:`ISystemProperties.default_vrde_ext_pack` .
         """
         ret = self._get_attr("VRDEExtPack")
         return ret
@@ -20352,7 +23201,7 @@ class IVRDEServer(Interface):
     def auth_library(self):
         """Get or set str value for 'authLibrary'
         Library used for authentication of RDP clients by this VM. Overrides
-        <link to="ISystemProperties::VRDEAuthLibrary"/>.
+        :py:func:`ISystemProperties.vrde_auth_library` .
         """
         ret = self._get_attr("authLibrary")
         return ret
@@ -20419,12 +23268,12 @@ class ISharedFolder(Interface):
     
     There are three types of shared folders:
     
-    Global (<link to="IVirtualBox::sharedFolders"/>), shared
+    *Global* (:py:func:`IVirtualBox.shared_folders` ), shared
     folders available to all virtual machines.
-    Permanent (<link to="IMachine::sharedFolders"/>),
+    *Permanent* (:py:func:`IMachine.shared_folders` ),
     VM-specific shared folders available to the given virtual machine at
     startup.
-    Transient (<link to="IConsole::sharedFolders"/>),
+    *Transient* (:py:func:`IConsole.shared_folders` ),
     VM-specific shared folders created in the session context (for
     example, when the virtual machine is running) and automatically
     discarded when the session is closed (the VM is powered off).
@@ -20514,7 +23363,7 @@ class ISharedFolder(Interface):
         Text message that represents the result of the last accessibility
         check.
         
-        Accessibility checks are performed each time the <link to="#accessible"/>
+        Accessibility checks are performed each time the :py:func:`accessible` 
         attribute is read. An empty string is returned if the last
         accessibility check was successful. A non-empty string indicates a
         failure and should normally describe a reason of the failure (for
@@ -20874,7 +23723,7 @@ class IInternalSessionControl(Interface):
     def on_usb_device_attach(self, device, error, masked_interfaces):
         """Triggered when a request to capture a USB device (as a result
         of matched USB filters or direct call to
-        <link to="IConsole::attachUSBDevice"/>) has completed.
+        :py:func:`IConsole.attach_usb_device` ) has completed.
         A @c null @a error object means success, otherwise it
         describes a failure.
 
@@ -20903,7 +23752,7 @@ class IInternalSessionControl(Interface):
     def on_usb_device_detach(self, id_p, error):
         """Triggered when a request to release the USB device (as a result
         of machine termination or direct call to
-        <link to="IConsole::detachUSBDevice"/>) has completed.
+        :py:func:`IConsole.detach_usb_device` ) has completed.
         A @c null @a error object means success, otherwise it
         describes a failure.
 
@@ -20926,11 +23775,11 @@ class IInternalSessionControl(Interface):
                      in_p=[id_p, error])
 
     def on_show_window(self, check):
-        """Called by <link to="IMachine::canShowConsoleWindow"/> and by
-        <link to="IMachine::showConsoleWindow"/> in order to notify
+        """Called by :py:func:`IMachine.can_show_console_window`  and by
+        :py:func:`IMachine.show_console_window`  in order to notify
         console listeners
-        <link to="ICanShowWindowEvent"/>
-        and <link to="IShowWindowEvent"/>.
+        :py:class:`ICanShowWindowEvent` 
+        and :py:class:`IShowWindowEvent` .
 
         in check of type bool
 
@@ -20961,8 +23810,8 @@ class IInternalSessionControl(Interface):
                      in_p=[bandwidth_group])
 
     def access_guest_property(self, name, value, flags, is_setter):
-        """Called by <link to="IMachine::getGuestProperty"/> and by
-        <link to="IMachine::setGuestProperty"/> in order to read and
+        """Called by :py:func:`IMachine.get_guest_property`  and by
+        :py:func:`IMachine.set_guest_property`  in order to read and
         modify guest properties.
 
         in name of type str
@@ -21095,7 +23944,7 @@ class IInternalSessionControl(Interface):
         behave slightly differently than a normal VM pause.
         
         
-        <link to="IConsole::pause"/>
+        :py:func:`IConsole.pause` 
 
         in reason of type Reason
             Specify the best matching reason code please.
@@ -21118,7 +23967,7 @@ class IInternalSessionControl(Interface):
         behave slightly differently than a normal VM resume.
         
         
-        <link to="IConsole::resume"/>
+        :py:func:`IConsole.resume` 
 
         in reason of type Reason
             Specify the best matching reason code please.
@@ -21141,7 +23990,7 @@ class IInternalSessionControl(Interface):
         might behave slightly differently than a normal VM save state.
         
         
-        <link to="IConsole::saveState"/>
+        :py:func:`IConsole.save_state` 
 
         in reason of type Reason
             Specify the best matching reason code please.
@@ -21172,7 +24021,7 @@ class ISession(Interface):
     
     Any caller wishing to manipulate a virtual machine needs to create a session
     object first, which lives in its own process space. Such session objects are
-    then associated with <link to="IMachine"/> objects living in the VirtualBox
+    then associated with :py:class:`IMachine`  objects living in the VirtualBox
     server process to coordinate such changes.
     
     There are two typical scenarios in which sessions are used:
@@ -21180,7 +24029,7 @@ class ISession(Interface):
     
     To alter machine settings or control a running virtual machine, one
     needs to lock a machine for a given session (client process) by calling
-    <link to="IMachine::lockMachine"/>.
+    :py:func:`IMachine.lock_machine` .
     
     Whereas multiple sessions may control a running virtual machine, only
     one process can obtain a write lock on the machine to prevent conflicting
@@ -21196,7 +24045,7 @@ class ISession(Interface):
     
     To start a VM using one of the existing VirtualBox front-ends (e.g. the
     VirtualBox GUI or VBoxHeadless), one would use
-    <link to="IMachine::launchVMProcess"/>, which also takes a session object
+    :py:func:`IMachine.launch_vm_process` , which also takes a session object
     as its first parameter. This session then identifies the caller and lets the
     caller control the started machine (for example, pause machine execution or
     power it down) as well as be notified about machine execution state changes.
@@ -21215,9 +24064,9 @@ class ISession(Interface):
     
     
     In the webservice, the session manager (IWebsessionManager) instead creates
-    a session object automatically whenever <link to="IWebsessionManager::logon"/>
+    a session object automatically whenever :py:func:`IWebsessionManager.logon` 
     is called. A managed object reference to that session object can be retrieved by
-    calling <link to="IWebsessionManager::getSessionObject"/>.
+    calling :py:func:`IWebsessionManager.get_session_object` .
     """
     __uuid__ = '12F4DCDB-12B2-4EC1-B7CD-DDD9F6C5BF4D'
     __wsmap__ = 'managed'
@@ -21235,7 +24084,7 @@ class ISession(Interface):
         """Get SessionType value for 'type'
         Type of this session. The value of this attribute is valid only
         if the session currently has a machine locked (i.e. its
-        <link to="#state"/> is Locked), otherwise an error will be returned.
+        :py:func:`state`  is Locked), otherwise an error will be returned.
         """
         ret = self._get_attr("type")
         return SessionType(ret)
@@ -21260,9 +24109,9 @@ class ISession(Interface):
         """Unlocks a machine that was previously locked for the current session.
         
         Calling this method is required every time a machine has been locked
-        for a particular session using the <link to="IMachine::launchVMProcess"/>
-        or <link to="IMachine::lockMachine"/> calls. Otherwise the state of
-        the machine will be set to <link to="MachineState_Aborted"/> on the
+        for a particular session using the :py:func:`IMachine.launch_vm_process` 
+        or :py:func:`IMachine.lock_machine`  calls. Otherwise the state of
+        the machine will be set to :py:attr:`MachineState.aborted`  on the
         server, and changes made to the machine settings will be lost.
         
         Generally, it is recommended to unlock all machines explicitly
@@ -21270,7 +24119,7 @@ class ISession(Interface):
         the termination).
         
         
-        Do not expect the session state (<link to="ISession::state"/>
+        Do not expect the session state (:py:func:`ISession.state` 
         to return to "Unlocked" immediately after you invoke this method,
         particularly if you have started a new VM process. The session
         state will automatically return to "Unlocked" once the VM is no
@@ -21286,18 +24135,18 @@ class ISession(Interface):
 class IStorageController(Interface):
     """
     Represents a storage controller that is attached to a virtual machine
-    (<link to="IMachine"/>). Just as drives (hard disks, DVDs, FDs) are
+    (:py:class:`IMachine` ). Just as drives (hard disks, DVDs, FDs) are
     attached to storage controllers in a real computer, virtual drives
-    (represented by <link to="IMediumAttachment"/>) are attached to virtual
+    (represented by :py:class:`IMediumAttachment` ) are attached to virtual
     storage controllers, represented by this interface.
     
     As opposed to physical hardware, VirtualBox has a very generic concept
     of a storage controller, and for purposes of the Main API, all virtual
     storage is attached to virtual machines via instances of this interface.
     There are five types of such virtual storage controllers: IDE, SCSI, SATA,
-    SAS and Floppy (see <link to="#bus"/>). Depending on which of these four
+    SAS and Floppy (see :py:func:`bus` ). Depending on which of these four
     is used, certain sub-types may be available and can be selected in
-    <link to="#controllerType"/>.
+    :py:func:`controller_type` .
     
     Depending on these settings, the guest operating system might see
     significantly different virtual hardware.
@@ -21309,9 +24158,9 @@ class IStorageController(Interface):
     def name(self):
         """Get str value for 'name'
         Name of the storage controller, as originally specified with
-        <link to="IMachine::addStorageController"/>. This then uniquely
+        :py:func:`IMachine.add_storage_controller` . This then uniquely
         identifies this controller with other method calls such as
-        <link to="IMachine::attachDevice"/> and <link to="IMachine::mountMedium"/>.
+        :py:func:`IMachine.attach_device`  and :py:func:`IMachine.mount_medium` .
         """
         ret = self._get_attr("name")
         return ret
@@ -21327,7 +24176,7 @@ class IStorageController(Interface):
     @property
     def min_port_count(self):
         """Get int value for 'minPortCount'
-        Minimum number of ports that <link to="IStorageController::portCount"/> can be set to.
+        Minimum number of ports that :py:func:`IStorageController.port_count`  can be set to.
         """
         ret = self._get_attr("minPortCount")
         return ret
@@ -21335,7 +24184,7 @@ class IStorageController(Interface):
     @property
     def max_port_count(self):
         """Get int value for 'maxPortCount'
-        Maximum number of ports that <link to="IStorageController::portCount"/> can be set to.
+        Maximum number of ports that :py:func:`IStorageController.port_count`  can be set to.
         """
         ret = self._get_attr("maxPortCount")
         return ret
@@ -21359,8 +24208,8 @@ class IStorageController(Interface):
         """Get or set int value for 'portCount'
         The number of currently usable ports on the controller.
         The minimum and maximum number of ports for one controller are
-        stored in <link to="IStorageController::minPortCount"/>
-        and <link to="IStorageController::maxPortCount"/>.
+        stored in :py:func:`IStorageController.min_port_count` 
+        and :py:func:`IStorageController.max_port_count` .
         """
         ret = self._get_attr("portCount")
         return ret
@@ -21516,11 +24365,11 @@ class IPerformanceCollector(Interface):
     
     Performance metrics are associated with objects of interfaces like IHost
     and IMachine. Each object has a distinct set of performance metrics. The
-    set can be obtained with <link to="IPerformanceCollector::getMetrics"/>.
+    set can be obtained with :py:func:`IPerformanceCollector.get_metrics` .
     
     Metric data is collected at the specified intervals and is retained
     internally. The interval and the number of retained samples can be set
-    with <link to="IPerformanceCollector::setupMetrics"/>. Both metric data
+    with :py:func:`IPerformanceCollector.setup_metrics` . Both metric data
     and collection settings are not persistent, they are discarded as soon as
     VBoxSVC process terminates. Moreover, metric settings and data associated
     with a particular VM only exist while VM is running. They disappear as
@@ -21538,7 +24387,7 @@ class IPerformanceCollector(Interface):
     retained samples can be set. Only base metrics can be enabled and
     disabled. All sub-metrics are collected when their base metric is
     collected. Collected values for any set of sub-metrics can be queried
-    with <link to="IPerformanceCollector::queryMetricsData"/>.
+    with :py:func:`IPerformanceCollector.query_metrics_data` .
     
     For example "CPU/Load/User:avg" metric name stands for the "CPU"
     category, "Load" metric, "User" submetric, "average" aggregate. An
@@ -21570,7 +24419,7 @@ class IPerformanceCollector(Interface):
     
     
     Obtain an instance of IPerformanceCollector with
-    <link to="IVirtualBox::performanceCollector"/>
+    :py:func:`IVirtualBox.performance_collector` 
     
     
     Allocate and populate an array with references to objects the metrics
@@ -21581,7 +24430,7 @@ class IPerformanceCollector(Interface):
     be collected for.
     
     
-    Call <link to="IPerformanceCollector::setupMetrics"/>. From now on
+    Call :py:func:`IPerformanceCollector.setup_metrics` . From now on
     the metric data will be collected and stored.
     
     
@@ -21597,7 +24446,7 @@ class IPerformanceCollector(Interface):
     collected for. Note that metric names differ from base metric names.
     
     
-    Call <link to="IPerformanceCollector::queryMetricsData"/>. The data
+    Call :py:func:`IPerformanceCollector.query_metrics_data` . The data
     that have been collected so far are returned. Note that the values
     are still retained internally and data collection continues.
     
@@ -21621,7 +24470,7 @@ class IPerformanceCollector(Interface):
         
         This array represents all metrics supported by the performance
         collector. Individual objects do not necessarily support all of them.
-        <link to="IPerformanceCollector::getMetrics"/> can be used to get the
+        :py:func:`IPerformanceCollector.get_metrics`  can be used to get the
         list of supported metrics for a particular object.
         """
         ret = self._get_attr("metricNames")
@@ -21663,7 +24512,7 @@ class IPerformanceCollector(Interface):
 
     def setup_metrics(self, metric_names, objects, period, count):
         """Sets parameters of specified base metrics for a set of objects. Returns
-        an array of <link to="IPerformanceMetric"/> describing the metrics
+        an array of :py:class:`IPerformanceMetric`  describing the metrics
         have been affected.
         
         @c Null or empty metric name array means all metrics. @c Null or
@@ -21714,7 +24563,7 @@ class IPerformanceCollector(Interface):
 
     def enable_metrics(self, metric_names, objects):
         """Turns on collecting specified base metrics. Returns an array of
-        <link to="IPerformanceMetric"/> describing the metrics have been
+        :py:class:`IPerformanceMetric`  describing the metrics have been
         affected.
         
         @c Null or empty metric name array means all metrics. @c Null or
@@ -21753,7 +24602,7 @@ class IPerformanceCollector(Interface):
 
     def disable_metrics(self, metric_names, objects):
         """Turns off collecting specified base metrics. Returns an array of
-        <link to="IPerformanceMetric"/> describing the metrics have been
+        :py:class:`IPerformanceMetric`  describing the metrics have been
         affected.
         
         @c Null or empty metric name array means all metrics. @c Null or
@@ -21887,7 +24736,7 @@ class INATEngine(Interface):
     """
     Interface for managing a NAT engine which is used with a virtual machine. This
     allows for changing NAT behavior such as port-forwarding rules. This interface is
-    used in the <link to="INetworkAdapter::NATEngine"/> attribute.
+    used in the :py:func:`INetworkAdapter.nat_engine`  attribute.
     """
     __uuid__ = '26451b99-3b2d-4dcb-8e4b-d63654218175'
     __wsmap__ = 'managed'
@@ -21970,9 +24819,7 @@ class INATEngine(Interface):
 
     @property
     def alias_mode(self):
-        """Get or set int value for 'aliasMode'
-        <desc/>
-        """
+        """Get or set int value for 'aliasMode'"""
         ret = self._get_attr("aliasMode")
         return ret
 
@@ -22070,7 +24917,7 @@ class INATEngine(Interface):
                      in_p=[mtu, sock_snd, sock_rcv, tcp_wnd_snd, tcp_wnd_rcv])
 
     def get_network_settings(self):
-        """Returns network configuration of NAT engine. See <link to="#setNetworkSettings"/>
+        """Returns network configuration of NAT engine. See :py:func:`set_network_settings` 
         for parameter descriptions.
 
         out mtu of type int
@@ -22213,7 +25060,7 @@ class IExtPackBase(Interface):
         version number and optionally a build indicator. No tree revision or
         tag will be included in the string as those things are available as
         separate properties. An optional publisher tag may be present like for
-        <link to="IVirtualBox::version"/>.
+        :py:func:`IVirtualBox.version` .
         
         Examples: "1.2.3", "1.2.3_BETA1" and "1.2.3_RC2".
         """
@@ -22289,7 +25136,7 @@ class IExtPackBase(Interface):
     def license_p(self):
         """Get str value for 'license'
         The default HTML license text for the extension pack. Same as
-        calling <link to="#queryLicense">queryLicense</link> with
+        calling :py:func:`query_license` queryLicense with
         preferredLocale and preferredLanguage as empty strings and format set
         to html.
         """
@@ -22358,7 +25205,7 @@ class IExtPack(IExtPackBase):
 class IExtPackFile(IExtPackBase):
     """
     Extension pack file (aka tarball, .vbox-extpack) representation returned
-    by <link to="IExtPackManager::openExtPackFile"/>. This provides the base
+    by :py:func:`IExtPackManager.open_ext_pack_file` . This provides the base
     extension pack information with the addition of the file name.
     """
     __uuid__ = 'b6b49f55-efcc-4f08-b486-56e8d8afb10b'
@@ -22687,7 +25534,7 @@ class IVirtualBoxClient(Interface):
         return IEventSource(ret)
 
     def check_machine_error(self, machine):
-        """Perform error checking before using an <link to="IMachine"/> object.
+        """Perform error checking before using an :py:class:`IMachine`  object.
         Generally useful before starting a VM and all other uses. If anything
         is not as it should be then this method will return an appropriate
         error.
@@ -22707,10 +25554,10 @@ class IEventSource(Interface):
     Event source. Generally, any object which could generate events can be an event source,
     or aggregate one. To simplify using one-way protocols such as webservices running on top of HTTP(S),
     an event source can work with listeners in either active or passive mode. In active mode it is up to
-    the IEventSource implementation to call <link to="IEventListener::handleEvent"/>, in passive mode the
+    the IEventSource implementation to call :py:func:`IEventListener.handle_event` , in passive mode the
     event source keeps track of pending events for each listener and returns available events on demand.
     
-    See <link to="IEvent"/> for an introduction to VirtualBox event handling.
+    See :py:class:`IEvent`  for an introduction to VirtualBox event handling.
     """
     __uuid__ = '9b6e1aee-35f3-4f4d-b5bb-ed0ecefd8538'
     __wsmap__ = 'managed'
@@ -22728,7 +25575,7 @@ class IEventSource(Interface):
     def create_aggregator(self, subordinates):
         """Creates an aggregator event source, collecting events from multiple sources.
         This way a single listener can listen for events coming from multiple sources,
-        using a single blocking <link to="#getEvent"/> on the returned aggregator.
+        using a single blocking :py:func:`get_event`  on the returned aggregator.
 
         in subordinates of type IEventSource
             Subordinate event source this one aggregates.
@@ -22753,27 +25600,27 @@ class IEventSource(Interface):
         
         
         To avoid system overload, the VirtualBox server process checks if passive event
-        listeners call <link to="IEventSource::getEvent"/> frequently enough. In the
+        listeners call :py:func:`IEventSource.get_event`  frequently enough. In the
         current implementation, if more than 500 pending events are detected for a passive
         event listener, it is forcefully unregistered by the system, and further
-        <link to="#getEvent"/> calls will return @c VBOX_E_OBJECT_NOT_FOUND.
+        :py:func:`get_event`  calls will return @c VBOX_E_OBJECT_NOT_FOUND.
 
         in listener of type IEventListener
             Listener to register.
 
         in interesting of type VBoxEventType
             Event types listener is interested in. One can use wildcards like -
-            <link to="VBoxEventType_Any"/> to specify wildcards, matching more
+            :py:attr:`VBoxEventType.any_p`  to specify wildcards, matching more
             than one event.
 
         in active of type bool
             Which mode this listener is operating in.
-            In active mode, <link to="IEventListener::handleEvent"/> is called directly.
+            In active mode, :py:func:`IEventListener.handle_event`  is called directly.
             In passive mode, an internal event queue is created for this this IEventListener.
             For each event coming in, it is added to queues for all interested registered passive
             listeners. It is then up to the external code to call the listener's
-            <link to="IEventListener::handleEvent"/> method. When done with an event, the
-            external code must call <link to="#eventProcessed"/>.
+            :py:func:`IEventListener.handle_event`  method. When done with an event, the
+            external code must call :py:func:`event_processed` .
 
         """
         if not isinstance(listener, IEventListener):
@@ -22827,7 +25674,7 @@ class IEventSource(Interface):
     def get_event(self, listener, timeout):
         """Get events from this peer's event queue (for passive mode). Calling this method
         regularly is required for passive event listeners to avoid system overload;
-        see <link to="IEventSource::registerListener"/> for details.
+        see :py:func:`IEventSource.register_listener`  for details.
 
         in listener of type IEventListener
             Which listener to get data for.
@@ -22855,7 +25702,7 @@ class IEventSource(Interface):
     def event_processed(self, listener, event):
         """Must be called for waitable events after a particular listener finished its
         event processing. When all listeners of a particular event have called this
-        method, the system will then call <link to="IEvent::setProcessed"/>.
+        method, the system will then call :py:func:`IEvent.set_processed` .
 
         in listener of type IEventListener
             Which listener processed event.
@@ -22876,17 +25723,17 @@ class IEventListener(Interface):
     """
     Event listener. An event listener can work in either active or passive mode, depending on the way
     it was registered.
-    See <link to="IEvent"/> for an introduction to VirtualBox event handling.
+    See :py:class:`IEvent`  for an introduction to VirtualBox event handling.
     """
     __uuid__ = '67099191-32e7-4f6c-85ee-422304c71b90'
     __wsmap__ = 'managed'
     
     def handle_event(self, event):
         """Handle event callback for active listeners. It is not called for
-        passive listeners. After calling <link to="#handleEvent"/> on all active listeners
+        passive listeners. After calling :py:func:`handle_event`  on all active listeners
         and having received acknowledgement from all passive listeners via
-        <link to="IEventSource::eventProcessed"/>, the event is marked as
-        processed and <link to="IEvent::waitProcessed"/> will return
+        :py:func:`IEventSource.event_processed` , the event is marked as
+        processed and :py:func:`IEvent.wait_processed`  will return
         immediately.
 
         in event of type IEvent
@@ -22904,16 +25751,16 @@ class IEvent(Interface):
     Abstract parent interface for VirtualBox events. Actual events will typically implement
     a more specific interface which derives from this (see below).
     
-    Introduction to VirtualBox events
+    **Introduction to VirtualBox events**
     
     Generally speaking, an event (represented by this interface) signals that something
-    happened, while an event listener (see <link to="IEventListener"/>) represents an
+    happened, while an event listener (see :py:class:`IEventListener` ) represents an
     entity that is interested in certain events. In order for this to work with
     unidirectional protocols (i.e. web services), the concepts of passive and active
     listener are used.
     
     Event consumers can register themselves as listeners, providing an array of
-    events they are interested in (see <link to="IEventSource::registerListener"/>).
+    events they are interested in (see :py:func:`IEventSource.register_listener` ).
     When an event triggers, the listener is notified about the event. The exact
     mechanism of the notification depends on whether the listener was registered as
     an active or passive listener:
@@ -22926,12 +25773,12 @@ class IEvent(Interface):
     
     Passive listeners are somewhat trickier to implement, but do not require
     a client function to be callable, which is not an option with scripting
-    languages or web service clients. Internally the <link to="IEventSource"/>
+    languages or web service clients. Internally the :py:class:`IEventSource` 
     implementation maintains an event queue for each passive listener, and
     newly arrived events are put in this queue. When the listener calls
-    <link to="IEventSource::getEvent"/>, first element from its internal event
+    :py:func:`IEventSource.get_event` , first element from its internal event
     queue is returned. When the client completes processing of an event,
-    the <link to="IEventSource::eventProcessed"/> function must be called,
+    the :py:func:`IEventSource.event_processed`  function must be called,
     acknowledging that the event was processed. It supports implementing
     waitable events. On passive listener unregistration, all events from its
     queue are auto-acknowledged.
@@ -22940,37 +25787,37 @@ class IEvent(Interface):
     
     Waitable events are useful in situations where the event generator wants to track
     delivery or a party wants to wait until all listeners have completed the event. A
-    typical example would be a vetoable event (see <link to="IVetoEvent"/>) where a
+    typical example would be a vetoable event (see :py:class:`IVetoEvent` ) where a
     listeners might veto a certain action, and thus the event producer has to make
     sure that all listeners have processed the event and not vetoed before taking
     the action.
     
     A given event may have both passive and active listeners at the same time.
     
-    Using events
+    **Using events**
     
     Any VirtualBox object capable of producing externally visible events provides an
-    @c eventSource read-only attribute, which is of the type <link to="IEventSource"/>.
+    @c eventSource read-only attribute, which is of the type :py:class:`IEventSource` .
     This event source object is notified by VirtualBox once something has happened, so
     consumers may register event listeners with this event source. To register a listener,
-    an object implementing the <link to="IEventListener"/> interface must be provided.
+    an object implementing the :py:class:`IEventListener`  interface must be provided.
     For active listeners, such an object is typically created by the consumer, while for
-    passive listeners <link to="IEventSource::createListener"/> should be used. Please
-    note that a listener created with <link to="IEventSource::createListener"/> must not be used as an active listener.
+    passive listeners :py:func:`IEventSource.create_listener`  should be used. Please
+    note that a listener created with :py:func:`IEventSource.create_listener`  must not be used as an active listener.
     
     Once created, the listener must be registered to listen for the desired events
-    (see <link to="IEventSource::registerListener"/>), providing an array of
-    <link to="VBoxEventType"/> enums. Those elements can either be the individual
+    (see :py:func:`IEventSource.register_listener` ), providing an array of
+    :py:class:`VBoxEventType`  enums. Those elements can either be the individual
     event IDs or wildcards matching multiple event IDs.
     
-    After registration, the callback's <link to="IEventListener::handleEvent"/> method is
+    After registration, the callback's :py:func:`IEventListener.handle_event`  method is
     called automatically when the event is triggered, while passive listeners have to call
-    <link to="IEventSource::getEvent"/> and <link to="IEventSource::eventProcessed"/> in
+    :py:func:`IEventSource.get_event`  and :py:func:`IEventSource.event_processed`  in
     an event processing loop.
     
     The IEvent interface is an abstract parent interface for all such VirtualBox events
-    coming in. As a result, the standard use pattern inside <link to="IEventListener::handleEvent"/>
-    or the event processing loop is to check the <link to="#type"/> attribute of the event and
+    coming in. As a result, the standard use pattern inside :py:func:`IEventListener.handle_event` 
+    or the event processing loop is to check the :py:func:`type_p`  attribute of the event and
     then cast to the appropriate specific interface using @c QueryInterface().
     """
     __uuid__ = '0ca2adba-8f30-401b-a8cd-fe31dbe839c0'
@@ -22995,8 +25842,8 @@ class IEvent(Interface):
     @property
     def waitable(self):
         """Get bool value for 'waitable'
-        If we can wait for this event being processed. If false, <link to="#waitProcessed"/> returns immediately,
-        and <link to="#setProcessed"/> doesn't make sense. Non-waitable events are generally better performing,
+        If we can wait for this event being processed. If false, :py:func:`wait_processed`  returns immediately,
+        and :py:func:`set_processed`  doesn't make sense. Non-waitable events are generally better performing,
         as no additional overhead associated with waitability imposed.
         Waitable events are needed when one need to be able to wait for particular event processed,
         for example for vetoable changes, or if event refers to some resource which need to be kept immutable
@@ -23007,7 +25854,7 @@ class IEvent(Interface):
 
     def set_processed(self):
         """Internal method called by the system when all listeners of a particular event have called
-        <link to="IEventSource::eventProcessed"/>. This should not be called by client code.
+        :py:func:`IEventSource.event_processed` . This should not be called by client code.
 
         """
         self._call("setProcessed")
@@ -23160,7 +26007,7 @@ class IMachineRegisteredEvent(IMachineEvent):
 class ISessionStateChangedEvent(IMachineEvent):
     """
     The state of the session for the given machine was changed.
-    <link to="IMachine::sessionState"/>
+    :py:func:`IMachine.session_state` 
     """
     __uuid__ = '714a3eef-799a-4489-86cd-fe8e45b2ff8e'
     __wsmap__ = 'managed'
@@ -23225,7 +26072,7 @@ class ISnapshotEvent(IMachineEvent):
 class ISnapshotTakenEvent(ISnapshotEvent):
     """
     A new snapshot of the machine has been taken.
-    <link to="ISnapshot"/>
+    :py:class:`ISnapshot` 
     """
     __uuid__ = 'd27c0b3d-6038-422c-b45e-6d4a0503d9f1'
     __wsmap__ = 'managed'
@@ -23236,12 +26083,12 @@ class ISnapshotDeletedEvent(ISnapshotEvent):
     Snapshot of the given machine has been deleted.
     
     
-    This notification is delivered after the snapshot
+    This notification is delivered **after** the snapshot
     object has been uninitialized on the server (so that any
     attempt to call its methods will return an error).
     
     
-    <link to="ISnapshot"/>
+    :py:class:`ISnapshot` 
     """
     __uuid__ = 'c48f3401-4a9e-43f4-b7a7-54bd285e22f4'
     __wsmap__ = 'managed'
@@ -23250,7 +26097,7 @@ class ISnapshotDeletedEvent(ISnapshotEvent):
 class ISnapshotChangedEvent(ISnapshotEvent):
     """
     Snapshot properties (name and/or description) have been changed.
-    <link to="ISnapshot"/>
+    :py:class:`ISnapshot` 
     """
     __uuid__ = '07541941-8079-447a-a33e-47a69c7980db'
     __wsmap__ = 'managed'
@@ -23334,7 +26181,7 @@ class IMousePointerShapeChangedEvent(IEvent):
         undefined.
         
         The XOR mask follows the AND mask on the next 4-byte aligned
-        offset: uint8_t *pXor = pAnd + (cbAnd + 3) &amp; ~3.
+        offset: uint8_t *pXor = pAnd + (cbAnd + 3) & ~3.
         Bytes in the gap between the AND and the XOR mask are undefined.
         The XOR mask scanlines have no gap between them and the size of
         the XOR mask is: cXor = width * 4 * height.
@@ -23450,7 +26297,7 @@ class IAdditionsStateChangedEvent(IEvent):
 class INetworkAdapterChangedEvent(IEvent):
     """
     Notification when a property of one of the
-    virtual <link to="IMachine::getNetworkAdapter">network adapters</link>
+    virtual :py:func:`IMachine.get_network_adapter` network adapters
     changes. Interested callees should use INetworkAdapter methods and
     attributes to find out what has changed.
     """
@@ -23469,7 +26316,7 @@ class INetworkAdapterChangedEvent(IEvent):
 class ISerialPortChangedEvent(IEvent):
     """
     Notification when a property of one of the
-    virtual <link to="IMachine::getSerialPort">serial ports</link> changes.
+    virtual :py:func:`IMachine.get_serial_port` serial ports changes.
     Interested callees should use ISerialPort methods and attributes
     to find out what has changed.
     """
@@ -23488,7 +26335,7 @@ class ISerialPortChangedEvent(IEvent):
 class IParallelPortChangedEvent(IEvent):
     """
     Notification when a property of one of the
-    virtual <link to="IMachine::getParallelPort">parallel ports</link>
+    virtual :py:func:`IMachine.get_parallel_port` parallel ports
     changes. Interested callees should use ISerialPort methods and
     attributes to find out what has changed.
     """
@@ -23507,7 +26354,7 @@ class IParallelPortChangedEvent(IEvent):
 class IStorageControllerChangedEvent(IEvent):
     """
     Notification when a
-    <link to="IMachine::mediumAttachments">medium attachment</link>
+    :py:func:`IMachine.medium_attachments` medium attachment
     changes.
     """
     __uuid__ = '715212BF-DA59-426E-8230-3831FAA52C56'
@@ -23517,7 +26364,7 @@ class IStorageControllerChangedEvent(IEvent):
 class IMediumChangedEvent(IEvent):
     """
     Notification when a
-    <link to="IMachine::mediumAttachments">medium attachment</link>
+    :py:func:`IMachine.medium_attachments` medium attachment
     changes.
     """
     __uuid__ = '0FE2DA40-5637-472A-9736-72019EABD7DE'
@@ -23778,7 +26625,7 @@ class IGuestSessionStateChangedEvent(IGuestSessionEvent):
         """Get IVirtualBoxErrorInfo value for 'error'
         Error information in case of new session status is indicating an error.
         
-        The attribute <link to="IVirtualBoxErrorInfo::resultDetail"/> will contain
+        The attribute :py:func:`IVirtualBoxErrorInfo.result_detail`  will contain
         the runtime (IPRT) error code from the guest. See include/iprt/err.h and
         include/VBox/err.h for details.
         """
@@ -23864,7 +26711,7 @@ class IGuestProcessStateChangedEvent(IGuestProcessEvent):
         """Get IVirtualBoxErrorInfo value for 'error'
         Error information in case of new session status is indicating an error.
         
-        The attribute <link to="IVirtualBoxErrorInfo::resultDetail"/> will contain
+        The attribute :py:func:`IVirtualBoxErrorInfo.result_detail`  will contain
         the runtime (IPRT) error code from the guest. See include/iprt/err.h and
         include/VBox/err.h for details.
         """
@@ -23983,7 +26830,7 @@ class IGuestFileStateChangedEvent(IGuestFileEvent):
         """Get IVirtualBoxErrorInfo value for 'error'
         Error information in case of new session status is indicating an error.
         
-        The attribute <link to="IVirtualBoxErrorInfo::resultDetail"/> will contain
+        The attribute :py:func:`IVirtualBoxErrorInfo.result_detail`  will contain
         the runtime (IPRT) error code from the guest. See include/iprt/err.h and
         include/VBox/err.h for details.
         """
@@ -24050,7 +26897,7 @@ class IGuestFileWriteEvent(IGuestFileIOEvent):
 class IVRDEServerChangedEvent(IEvent):
     """
     Notification when a property of the
-    <link to="IMachine::VRDEServer">VRDE server</link> changes.
+    :py:func:`IMachine.vrde_server` VRDE server changes.
     Interested callees should use IVRDEServer methods and attributes to
     find out what has changed.
     """
@@ -24061,7 +26908,7 @@ class IVRDEServerChangedEvent(IEvent):
 class IVRDEServerInfoChangedEvent(IEvent):
     """
     Notification when the status of the VRDE server changes. Interested callees
-    should use <link to="IConsole::VRDEServerInfo">IVRDEServerInfo</link>
+    should use :py:func:`IConsole.vrde_server_info` IVRDEServerInfo
     attributes to find out what is the current status.
     """
     __uuid__ = 'dd6a1080-e1b7-4339-a549-f0878115596e'
@@ -24079,7 +26926,7 @@ class IVideoCaptureChangedEvent(IEvent):
 class IUSBControllerChangedEvent(IEvent):
     """
     Notification when a property of the virtual
-    <link to="IMachine::USBControllers">USB controllers</link> changes.
+    :py:func:`IMachine.usb_controllers` USB controllers changes.
     Interested callees should use IUSBController methods and attributes to
     find out what has changed.
     """
@@ -24095,15 +26942,15 @@ class IUSBDeviceStateChangedEvent(IEvent):
     This notification is sent as a result of the indirect
     request to attach the device because it matches one of the
     machine USB filters, or as a result of the direct request
-    issued by <link to="IConsole::attachUSBDevice"/> or
-    <link to="IConsole::detachUSBDevice"/>.
+    issued by :py:func:`IConsole.attach_usb_device`  or
+    :py:func:`IConsole.detach_usb_device` .
     
     This notification is sent in case of both a succeeded and a
     failed request completion. When the request succeeds, the
     @a error parameter is @c null, and the given device has been
     already added to (when @a attached is @c true) or removed from
     (when @a attached is @c false) the collection represented by
-    <link to="IConsole::USBDevices"/>. On failure, the collection
+    :py:func:`IConsole.usb_devices` . On failure, the collection
     doesn't change and the @a error parameter represents the error
     message describing the failure.
     """
@@ -24139,11 +26986,11 @@ class ISharedFolderChangedEvent(IEvent):
     """
     Notification when a shared folder is added or removed.
     The @a scope argument defines one of three scopes:
-    <link to="IVirtualBox::sharedFolders">global shared folders</link>
-    (<link to="Scope_Global">Global</link>),
-    <link to="IMachine::sharedFolders">permanent shared folders</link> of
-    the machine (<link to="Scope_Machine">Machine</link>) or <link to="IConsole::sharedFolders">transient shared folders</link> of the
-    machine (<link to="Scope_Session">Session</link>). Interested callees
+    :py:func:`IVirtualBox.shared_folders` global shared folders
+    (:py:attr:`Scope.global_p` Global),
+    :py:func:`IMachine.shared_folders` permanent shared folders of
+    the machine (:py:attr:`Scope.machine` Machine) or :py:func:`IConsole.shared_folders` transient shared folders of the
+    machine (:py:attr:`Scope.session` Session). Interested callees
     should use query the corresponding collections to find out what has
     changed.
     """
@@ -24166,38 +27013,38 @@ class IRuntimeErrorEvent(IEvent):
     
     There are three kinds of runtime errors:
     
-    fatal
-    non-fatal with retry
-    non-fatal warnings
+    *fatal*
+    *non-fatal with retry*
+    *non-fatal warnings*
     
     
-    Fatal errors are indicated by the @a fatal parameter set
+    **Fatal** errors are indicated by the @a fatal parameter set
     to @c true. In case of fatal errors, the virtual machine
     execution is always paused before calling this notification, and
     the notification handler is supposed either to immediately save
-    the virtual machine state using <link to="IConsole::saveState"/>
-    or power it off using <link to="IConsole::powerDown"/>.
+    the virtual machine state using :py:func:`IConsole.save_state` 
+    or power it off using :py:func:`IConsole.power_down` .
     Resuming the execution can lead to unpredictable results.
     
-    Non-fatal errors and warnings are indicated by the
+    **Non-fatal** errors and warnings are indicated by the
     @a fatal parameter set to @c false. If the virtual machine
     is in the Paused state by the time the error notification is
-    received, it means that the user can try to resume the machine
+    received, it means that the user can *try to resume* the machine
     execution after attempting to solve the problem that caused the
     error. In this case, the notification handler is supposed
     to show an appropriate message to the user (depending on the
     value of the @a id parameter) that offers several actions such
-    as Retry, Save or Power Off. If the user
+    as *Retry*, *Save* or *Power Off*. If the user
     wants to retry, the notification handler should continue
-    the machine execution using the <link to="IConsole::resume"/>
+    the machine execution using the :py:func:`IConsole.resume` 
     call. If the machine execution is not Paused during this
-    notification, then it means this notification is a warning
+    notification, then it means this notification is a *warning*
     (for example, about a fatal condition that can happen very soon);
     no immediate action is required from the user, the machine
     continues its normal execution.
     
     Note that in either case the notification handler
-    must not perform any action directly on a thread
+    **must not** perform any action directly on a thread
     where this notification is called. Everything it is allowed to
     do is to post a message to another thread that will then talk
     to the user and take the corresponding action.
@@ -24373,14 +27220,14 @@ class IExtraDataCanChangeEvent(IVetoEvent):
 class ICanShowWindowEvent(IVetoEvent):
     """
     Notification when a call to
-    <link to="IMachine::canShowConsoleWindow"/> is made by a
+    :py:func:`IMachine.can_show_console_window`  is made by a
     front-end to check if a subsequent call to
-    <link to="IMachine::showConsoleWindow"/> can succeed.
+    :py:func:`IMachine.show_console_window`  can succeed.
     
     The callee should give an answer appropriate to the current
     machine state using event veto. This answer must
     remain valid at least until the next
-    <link to="IConsole::state">machine state</link> change.
+    :py:func:`IConsole.state` machine state change.
     """
     __uuid__ = 'adf292b0-92c9-4a77-9d35-e058b39fe0b9'
     __wsmap__ = 'managed'
@@ -24389,7 +27236,7 @@ class ICanShowWindowEvent(IVetoEvent):
 class IShowWindowEvent(IEvent):
     """
     Notification when a call to
-    <link to="IMachine::showConsoleWindow"/>
+    :py:func:`IMachine.show_console_window` 
     requests the console window to be activated and brought to
     foreground on the desktop of the host PC.
     
@@ -24422,7 +27269,7 @@ class IShowWindowEvent(IEvent):
         """Get or set int value for 'winId'
         Platform-dependent identifier of the top-level VM console
         window, or zero if this method has performed all actions
-        necessary to implement the show window semantics for
+        necessary to implement the *show window* semantics for
         the given platform and/or this VirtualBox front-end.
         """
         ret = self._get_attr("winId")
@@ -24511,9 +27358,9 @@ class IHostPCIDevicePlugEvent(IMachineEvent):
     """
     Notification when host PCI device is plugged/unplugged. Plugging
     usually takes place on VM startup, unplug - when
-    <link to="IMachine::detachHostPCIDevice"/> is called.
+    :py:func:`IMachine.detach_host_pci_device`  is called.
     
-    <link to="IMachine::detachHostPCIDevice"/>
+    :py:func:`IMachine.detach_host_pci_device` 
     """
     __uuid__ = 'a0bad6df-d612-47d3-89d4-db3992533948'
     __wsmap__ = 'managed'
@@ -24672,7 +27519,7 @@ class IGuestUserStateChangedEvent(IEvent):
     @property
     def state(self):
         """Get GuestUserState value for 'state'
-        What was changed for this guest user. See <link to="GuestUserState"/> for
+        What was changed for this guest user. See :py:class:`GuestUserState`  for
         more information.
         """
         ret = self._get_attr("state")
@@ -24681,7 +27528,7 @@ class IGuestUserStateChangedEvent(IEvent):
     @property
     def state_details(self):
         """Get str value for 'stateDetails'
-        Optional state details, depending on the <link to="#state"/> attribute.
+        Optional state details, depending on the :py:func:`state`  attribute.
         """
         ret = self._get_attr("stateDetails")
         return ret
@@ -24690,7 +27537,7 @@ class IGuestUserStateChangedEvent(IEvent):
 class IStorageDeviceChangedEvent(IEvent):
     """
     Notification when a
-    <link to="IMachine::mediumAttachments">storage device</link>
+    :py:func:`IMachine.medium_attachments` storage device
     is attached or removed.
     """
     __uuid__ = '232e9151-ae84-4b8e-b0f3-5c20c35caac9'

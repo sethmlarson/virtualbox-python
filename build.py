@@ -69,20 +69,118 @@ vbox_error = {}
 
 '''
 
-remove = ['desc', 'pre', 'tt', 'ul', 'li', 'note', 'b', 'ol', 'i', 'h3',
+remove = ['desc', 'tt', 'ul', 'li', 'note', 'ol', 'h3',
            'tr', 'td', 'table', 'see']
+
+replace_words = [('&gt;', '>'), 
+                 ('&lt;', '<'), 
+                 ('&quot;', '"'),
+                 ('&amp;', '&'),
+                 ('<desc>', ''),
+                 ('</desc>', ''),
+                 ('<desc/>', ''),
+                 ('<pre>', ''),
+                 ('</pre>', ''),
+                 ('<ms>', ''),
+                 ('<note internal="yes">', ''),
+                 ('%VirtualBox.VirtualBox', ':py:class:`IVirtualBox`'),
+                 ('VirtualBox.VirtualBox', ':py:class:`IVirtualBox`'),
+                 ('%VirtualBox.Session', ':py:class:`ISession`'),
+                 ('VirtualBox.Session', ':py:class:`ISession`'),
+                 ]
+
+def link_class_func(m):
+    d = m.groupdict()
+    d['func'] = pythonic_name(d['func'])
+    d['text'] = d.get('text', '').strip()
+    return ":py:func:`%(class)s.%(func)s` %(text)s" % d
+
+def link_class_attr(m):
+    d = m.groupdict()
+    d['attr'] = pythonic_name(d['attr'])
+    d['text'] = d.get('text', '').strip()
+    return ":py:attr:`%(class)s.%(attr)s` %(text)s" % d
+
+def link_class(m):
+    d = m.groupdict()
+    d['text'] = d.get('text', '').strip()
+    return ":py:class:`%(class)s` %(text)s" % d 
+
+def link_func(m):
+    d = m.groupdict()
+    d['func'] = pythonic_name(d['func'])
+    d['text'] = d.get('text', '').strip()
+    return ":py:func:`%(func)s` %(text)s" % d
+
+def bold_text(m):
+    return "**%(text)s**" % m.groupdict()
+
+def italic_text(m):
+    return "*%(text)s*" % m.groupdict()
+
+def pre_multiline_text(m):
+    text = []
+    lines = m.groupdict()['text'].splitlines()
+    indent = len(lines[0]) - len(lines[0].lstrip())
+    for line in lines:
+        text.append("     " + line)
+    return "\n" + " " * indent + "::\n\n%s\n" % "\n".join(text).rstrip()
+
+def desc_text(m):
+    return "%(text)s" % m.groupdict()
+
+
+TEXT = "(?P<text>[^<]+)"
+replace_rules = [\
+    (re.compile('<link to="(?P<class>[a-zA-Z]+)::(?P<func>[a-zA-Z]+)"/>'),
+        link_class_func),
+    (re.compile('<link to="(?P<class>[a-zA-Z]+)::(?P<func>[a-zA-Z]+)">' + TEXT + '</link>'),
+        link_class_func),
+    (re.compile('<link to="(?P<class>[a-zA-Z]+)_(?P<attr>[a-zA-Z_]+)"/>'),
+        link_class_attr),
+    (re.compile('<link to="(?P<class>[a-zA-Z]+)_(?P<attr>[a-zA-Z_]+)">' + TEXT + '</link>'),
+        link_class_attr),
+    (re.compile('<link to="(?P<class>[a-zA-Z]+)"/>'),
+        link_class),
+    (re.compile('<link to="(?P<class>[a-zA-Z]+)">' + TEXT + '</link>'),
+        link_class),
+    (re.compile('<link to="#(?P<func>[a-zA-Z]+)"/>'),
+        link_func),
+    (re.compile('<link to="#(?P<func>[a-zA-Z]+)">' + TEXT + '</link>'),
+        link_func),
+    (re.compile('<b>' + TEXT + '</b>'), 
+        bold_text),
+    (re.compile('<i>' + TEXT + '</i>'), 
+        italic_text),
+    (re.compile('<pre>\n(?P<text>[^<]+)</pre>'),
+        pre_multiline_text),
+    ]
 
 def get_doc(node, whitespace=12):
     docnode = node.getElementsByTagName('desc')
     if docnode:
-        xml = docnode[0].toxml()
-        html = xml.replace('&gt;', '>').replace('&lt;', '<')
-        html = html.replace('&quot;', '"')
+        html = docnode[0].toxml()
+
+        # Strip out stuff we don't want.
         for r in remove:
             html = html.replace('<%s>' % r, '').replace('</%s>' % r, '')
         html, _ = re.subn('(<result).*(</result>)', '', html, flags=re.DOTALL)
         doc = [l.strip() for l in html.splitlines()]
-        return ("\n" + " " * whitespace).join(doc).rstrip().strip()
+        doc = ("\n" + " " * whitespace).join(doc).rstrip().strip()
+        doc = "".join(doc)
+
+        # Run replace rules
+        for rule, sub_func in replace_rules:
+            m = rule.search(doc)
+            while m:
+                sub_text = sub_func(m)
+                doc = doc.replace(doc[m.start():m.end()], sub_text)
+                m = rule.search(doc)
+
+        # Replace words.
+        for pattern, word in replace_words:
+            doc = doc.replace(pattern, word)
+        return doc
     else:
         return ''
 
@@ -134,7 +232,7 @@ def process_enum(node):
     name = node.getAttribute('name')
     uuid = "'%s'" % node.getAttribute('uuid')
     code = []
-    enum_doc = get_doc(node, 4)
+    enum_doc = [get_doc(node, 4), "\n"]
     enums = ['[\\']
     for child in node.childNodes:
         tagname = getattr(child, 'tagName', None)
@@ -148,6 +246,10 @@ def process_enum(node):
         else:
             value = int(value)
         enums.append(ENUM_ROW % dict(label=label, value=value, doc=doc))
+        
+        enum_doc.append("""    .. describe:: %s(%s)\n\n            %s\n""" % (pythonic_name(label), value, doc))
+
+    enum_doc = "\n".join(enum_doc)
     enums.append('        ]')
     enums = "\n".join(enums)
 
