@@ -50,11 +50,9 @@ class IGuest(library.IGuest):
         if not os.path.exists(source):
             raise IOError("ISO path '%s' not found" % source)
         
-        #BUG:doesn't take "arguments" as specified in xidl
-        #super(IGuest, self).update_guest_additions(source, arguments, flags)
-        p = self._call('updateGuestAdditions', in_p=[source, flags])
-        p = library.IProgress(p)
-        return p
+        return super(IGuest, self).update_guest_additions(source, 
+                                                          arguments, 
+                                                          flags)
     update_guest_additions.__doc__ = \
                        library.IGuest.update_guest_additions.__doc__
 
