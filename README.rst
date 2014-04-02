@@ -225,6 +225,13 @@ which have a running vboxapi.
 Change log
 ==========
 
+version 0.1.3 (04/03/2014)
+
+ * Bug fix for API support.
+ * Added markup generation to library documentation.
+ * Improved Manager bootstrap design.
+ * Py3 compatibility (although vboxapi does not support py3).
+
 version 0.1.2 (28/02/2014)
 
 * Bug fix for virtualenv support
