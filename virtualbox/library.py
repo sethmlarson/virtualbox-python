@@ -87,7 +87,7 @@ about how to call a method or attribute from a specific programming language.
 lib_version = 1.3
 lib_app_uuid = '819B4D85-9CEE-493C-B6FC-64FFE759B3C9'
 lib_uuid = 'd7569351-1750-46f0-936e-bd127d5bc264'
-xidl_hash = '3bd2921834d0c969f2d57b0c7f300fb0'
+xidl_hash = '55571b4d37c1761370948b688450d5c9'
 
 
 #container lookup for the different error types
@@ -26077,6 +26077,12 @@ class ISnapshotTakenEvent(ISnapshotEvent):
     __uuid__ = 'd27c0b3d-6038-422c-b45e-6d4a0503d9f1'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_snapshot_taken
+    @property
+    def midl_does_not_lik_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+        return ret
+
 
 class ISnapshotDeletedEvent(ISnapshotEvent):
     """
@@ -26093,6 +26099,12 @@ class ISnapshotDeletedEvent(ISnapshotEvent):
     __uuid__ = 'c48f3401-4a9e-43f4-b7a7-54bd285e22f4'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_snapshot_deleted
+    @property
+    def midl_does_not_lik_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+        return ret
+
 
 class ISnapshotChangedEvent(ISnapshotEvent):
     """
@@ -26102,6 +26114,12 @@ class ISnapshotChangedEvent(ISnapshotEvent):
     __uuid__ = '07541941-8079-447a-a33e-47a69c7980db'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_snapshot_changed
+    @property
+    def midl_does_not_lik_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+        return ret
+
 
 class IMousePointerShapeChangedEvent(IEvent):
     """
@@ -26293,6 +26311,12 @@ class IAdditionsStateChangedEvent(IEvent):
     __uuid__ = 'D70F7915-DA7C-44C8-A7AC-9F173490446A'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_additions_state_changed
+    @property
+    def midl_does_not_lik_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+        return ret
+
 
 class INetworkAdapterChangedEvent(IEvent):
     """
@@ -26360,6 +26384,12 @@ class IStorageControllerChangedEvent(IEvent):
     __uuid__ = '715212BF-DA59-426E-8230-3831FAA52C56'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_storage_controller_changed
+    @property
+    def midl_does_not_lik_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+        return ret
+
 
 class IMediumChangedEvent(IEvent):
     """
@@ -26869,6 +26899,12 @@ class IGuestFileOffsetChangedEvent(IGuestFileIOEvent):
     __uuid__ = 'e8f79a21-1207-4179-94cf-ca250036308f'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_guest_file_offset_changed
+    @property
+    def midl_does_not_lik_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+        return ret
+
 
 class IGuestFileReadEvent(IGuestFileIOEvent):
     """
@@ -26893,6 +26929,12 @@ class IGuestFileWriteEvent(IGuestFileIOEvent):
     __uuid__ = 'e062a915-3cf5-4c0a-bc90-9b8d4cc94d89'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_guest_file_write
+    @property
+    def midl_does_not_lik_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+        return ret
+
 
 class IVRDEServerChangedEvent(IEvent):
     """
@@ -26904,6 +26946,12 @@ class IVRDEServerChangedEvent(IEvent):
     __uuid__ = 'a06fd66a-3188-4c8c-8756-1395e8cb691c'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_vrde_server_changed
+    @property
+    def midl_does_not_lik_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+        return ret
+
 
 class IVRDEServerInfoChangedEvent(IEvent):
     """
@@ -26914,6 +26962,12 @@ class IVRDEServerInfoChangedEvent(IEvent):
     __uuid__ = 'dd6a1080-e1b7-4339-a549-f0878115596e'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_vrde_server_info_changed
+    @property
+    def midl_does_not_lik_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+        return ret
+
 
 class IVideoCaptureChangedEvent(IEvent):
     """
@@ -26922,6 +26976,12 @@ class IVideoCaptureChangedEvent(IEvent):
     __uuid__ = '6215d169-25dd-4719-ab34-c908701efb58'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_video_capture_changed
+    @property
+    def midl_does_not_lik_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+        return ret
+
 
 class IUSBControllerChangedEvent(IEvent):
     """
@@ -26933,6 +26993,12 @@ class IUSBControllerChangedEvent(IEvent):
     __uuid__ = '93BADC0C-61D9-4940-A084-E6BB29AF3D83'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_usb_controller_changed
+    @property
+    def midl_does_not_lik_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+        return ret
+
 
 class IUSBDeviceStateChangedEvent(IEvent):
     """
@@ -27232,6 +27298,12 @@ class ICanShowWindowEvent(IVetoEvent):
     __uuid__ = 'adf292b0-92c9-4a77-9d35-e058b39fe0b9'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_can_show_window
+    @property
+    def midl_does_not_lik_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+        return ret
+
 
 class IShowWindowEvent(IEvent):
     """
@@ -27709,3 +27781,9 @@ class IHostNameResolutionConfigurationChangeEvent(IEvent):
     __uuid__ = 'f9b9e1cf-cb63-47a1-84fb-02c4894b89a9'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_host_name_resolution_configuration_change
+    @property
+    def midl_does_not_lik_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+        return ret
+
