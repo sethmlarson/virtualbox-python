@@ -225,6 +225,10 @@ which have a running vboxapi.
 Change log
 ==========
 
+version 0.1.4 (09/04/2014)
+ 
+ * Fixed bug in error class container.
+
 version 0.1.3 (04/03/2014)
 
  * Bug fix for API support.

@@ -98,7 +98,7 @@ class VBoxErrorMeta(type):
             vbox_error[cls.value] = cls
 
 
-@add_metaclass
+@add_metaclass(VBoxErrorMeta)
 class VBoxError(Exception): 
     """Generic VBoxError"""
     name = "undef"
