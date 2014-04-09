@@ -90,92 +90,78 @@ lib_uuid = 'd7569351-1750-46f0-936e-bd127d5bc264'
 xidl_hash = '55571b4d37c1761370948b688450d5c9'
 
 
-#container lookup for the different error types
-vbox_error = {}
 
 
 class VBoxErrorObjectNotFound(VBoxError):
     """Object corresponding to the supplied arguments does not exist."""
     name = 'VBOX_E_OBJECT_NOT_FOUND'
     value = 0x80BB0001
-vbox_error[0x80BB0001] = VBoxErrorObjectNotFound
 
 
 class VBoxErrorInvalidVmState(VBoxError):
     """Current virtual machine state prevents the operation."""
     name = 'VBOX_E_INVALID_VM_STATE'
     value = 0x80BB0002
-vbox_error[0x80BB0002] = VBoxErrorInvalidVmState
 
 
 class VBoxErrorVmError(VBoxError):
     """Virtual machine error occurred attempting the operation."""
     name = 'VBOX_E_VM_ERROR'
     value = 0x80BB0003
-vbox_error[0x80BB0003] = VBoxErrorVmError
 
 
 class VBoxErrorFileError(VBoxError):
     """File not accessible or erroneous file contents."""
     name = 'VBOX_E_FILE_ERROR'
     value = 0x80BB0004
-vbox_error[0x80BB0004] = VBoxErrorFileError
 
 
 class VBoxErrorIprtError(VBoxError):
     """Runtime subsystem error."""
     name = 'VBOX_E_IPRT_ERROR'
     value = 0x80BB0005
-vbox_error[0x80BB0005] = VBoxErrorIprtError
 
 
 class VBoxErrorPdmError(VBoxError):
     """Pluggable Device Manager error."""
     name = 'VBOX_E_PDM_ERROR'
     value = 0x80BB0006
-vbox_error[0x80BB0006] = VBoxErrorPdmError
 
 
 class VBoxErrorInvalidObjectState(VBoxError):
     """Current object state prohibits operation."""
     name = 'VBOX_E_INVALID_OBJECT_STATE'
     value = 0x80BB0007
-vbox_error[0x80BB0007] = VBoxErrorInvalidObjectState
 
 
 class VBoxErrorHostError(VBoxError):
     """Host operating system related error."""
     name = 'VBOX_E_HOST_ERROR'
     value = 0x80BB0008
-vbox_error[0x80BB0008] = VBoxErrorHostError
 
 
 class VBoxErrorNotSupported(VBoxError):
     """Requested operation is not supported."""
     name = 'VBOX_E_NOT_SUPPORTED'
     value = 0x80BB0009
-vbox_error[0x80BB0009] = VBoxErrorNotSupported
 
 
 class VBoxErrorXmlError(VBoxError):
     """Invalid XML found."""
     name = 'VBOX_E_XML_ERROR'
     value = 0x80BB000A
-vbox_error[0x80BB000A] = VBoxErrorXmlError
 
 
 class VBoxErrorInvalidSessionState(VBoxError):
     """Current session state prohibits operation."""
     name = 'VBOX_E_INVALID_SESSION_STATE'
     value = 0x80BB000B
-vbox_error[0x80BB000B] = VBoxErrorInvalidSessionState
 
 
 class VBoxErrorObjectInUse(VBoxError):
     """Object being in use prohibits operation."""
     name = 'VBOX_E_OBJECT_IN_USE'
     value = 0x80BB000C
-vbox_error[0x80BB000C] = VBoxErrorObjectInUse
 
 
 class SettingsVersion(Enum):

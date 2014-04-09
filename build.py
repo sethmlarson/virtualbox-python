@@ -64,8 +64,6 @@ xidl_hash = '%(xidl_hash)s'
 """
 
 LIB_DEFINES = r'''
-#container lookup for the different error types
-vbox_error = {}
 
 '''
 
@@ -195,7 +193,6 @@ class %(pname)s(VBoxError):
     """%(doc)s"""
     name = '%(name)s'
     value = %(value)s
-vbox_error[%(value)s] = %(pname)s
 
 '''
 

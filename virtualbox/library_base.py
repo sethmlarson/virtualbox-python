@@ -88,6 +88,26 @@ class Enum(object):
         return self.__class__[k]
 
 
+vbox_error = {}
+
+
+class VBoxErrorMeta(type):
+    def __init__(cls, name, bases, dct):
+        global vbox_error
+        if cls.value != -1:
+            vbox_error[cls.value] = cls
+
+
+@add_metaclass
+class VBoxError(Exception): 
+    """Generic VBoxError"""
+    name = "undef"
+    value = -1
+    msg = ""
+    def __str__(self):
+        return "0x%x (%s)" % (self.value, self.msg)
+
+
 class Interface(object):
     """Interface objects provide a wrapper for the VirtualBox COM objects"""
     def __init__(self, interface=None):
@@ -163,15 +183,6 @@ class Interface(object):
             errobj.msg = getattr(exc, 'msg', exc.message)
             raise errobj
         return ret
-
-
-class VBoxError(Exception): 
-    """Generic VBoxError"""
-    name = "undef"
-    value = -1
-    msg = ""
-    def __str__(self):
-        return "0x%x (%s)" % (self.value, self.msg)
 
 
 
