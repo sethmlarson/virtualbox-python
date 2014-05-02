@@ -87,7 +87,7 @@ about how to call a method or attribute from a specific programming language.
 lib_version = 1.3
 lib_app_uuid = '819B4D85-9CEE-493C-B6FC-64FFE759B3C9'
 lib_uuid = 'd7569351-1750-46f0-936e-bd127d5bc264'
-xidl_hash = '55571b4d37c1761370948b688450d5c9'
+xidl_hash = 'd2d0667503d605680d02dd6b73aaef2d'
 
 
 
@@ -859,6 +859,49 @@ class HWVirtExPropertyType(Enum):
         ('Force', 6, 
          '''Whether the VM should fail to start if hardware virtualization (VT-x/AMD-V) cannot be used. If
             not set, there will be an automatic fallback to software virtualization.'''),
+        ] 
+
+
+class ParavirtProvider(Enum):
+    """The paravirtualized guest interface provider. This enumeration represents possible
+    values for the :py:func:`IMachine.paravirt_provider`  attribute.
+
+
+    .. describe:: none(0)
+
+            No provider is used.
+
+    .. describe:: default(1)
+
+            A default provider is automatically chosen according to the guest OS type.
+
+    .. describe:: legacy(2)
+
+            Used for VMs which didn't used to have any provider settings. Usually
+            interpreted as @c None for most VMs.
+
+    .. describe:: minimal(3)
+
+            A minimal set of features to expose to the paravirtualized guest.
+
+    .. describe:: hyper_v(4)
+
+            Microsoft Hyper-V.
+
+    """
+    __uuid__ = 'f9448c17-7caa-4ca7-9349-edafe369fcb5'
+    _enums = [\
+        ('None', 0, 
+         '''No provider is used.'''),
+        ('Default', 1, 
+         '''A default provider is automatically chosen according to the guest OS type.'''),
+        ('Legacy', 2, 
+         '''Used for VMs which didn't used to have any provider settings. Usually
+            interpreted as @c None for most VMs.'''),
+        ('Minimal', 3, 
+         '''A minimal set of features to expose to the paravirtualized guest.'''),
+        ('HyperV', 4, 
+         '''Microsoft Hyper-V.'''),
         ] 
 
 
@@ -9572,6 +9615,20 @@ class IMachine(Interface):
         if not isinstance(value, basestring):
             raise TypeError("value is not an instance of basestring")
         return self._set_attr("teleporterPassword", value)
+
+    @property
+    def paravirt_provider(self):
+        """Get or set ParavirtProvider value for 'paravirtProvider'
+        The paravirtualized guest interface provider.
+        """
+        ret = self._get_attr("paravirtProvider")
+        return ParavirtProvider(ret)
+
+    @paravirt_provider.setter
+    def paravirt_provider(self, value):
+        if not isinstance(value, ParavirtProvider):
+            raise TypeError("value is not an instance of ParavirtProvider")
+        return self._set_attr("paravirtProvider", value)
 
     @property
     def fault_tolerance_state(self):
