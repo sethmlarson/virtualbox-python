@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import inspect
 
 import virtualbox
@@ -12,18 +13,20 @@ from virtualbox import library
 
 
 # Import extension modules
-from virtualbox.library_ext.vbox import IVirtualBox
-from virtualbox.library_ext.session import ISession
-from virtualbox.library_ext.keyboard import IKeyboard
-from virtualbox.library_ext.guest_session import IGuestSession
-from virtualbox.library_ext.guest import IGuest
-from virtualbox.library_ext.machine import IMachine
-from virtualbox.library_ext.progress import IProgress
-from virtualbox.library_ext.console import IConsole
-from virtualbox.library_ext.event_source import IEventSource
-from virtualbox.library_ext.mouse import IMouse
-from virtualbox.library_ext.process import IProcess
-from virtualbox.library_ext.guest_process import IGuestProcess
+from .vbox import IVirtualBox
+from .session import ISession
+from .keyboard import IKeyboard
+from .guest_session import IGuestSession
+from .guest import IGuest
+from .machine import IMachine
+from .progress import IProgress
+from .console import IConsole
+from .event_source import IEventSource
+from .mouse import IMouse
+from .process import IProcess
+from .guest_process import IGuestProcess
+from .appliance import IAppliance
+from .virtual_system_description import IVirtualSystemDescription
 
 
 # Replace original with extension
