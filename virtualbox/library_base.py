@@ -61,7 +61,7 @@ def add_metaclass(metaclass):
 class Enum(object):
     """Enum objects provide a container for VirtualBox enumerations"""
     _enums = {}
-    def __init__(self, value=None):
+    def __init__(self, value):
         if value not in self._lookup_label:
             raise ValueError("Can not find enumeration where value=%s" % value)
         self._value = value
@@ -142,9 +142,7 @@ class Interface(object):
         if prefix is not None:
             prefix_name = prefix + name[0].upper() + name[1:]
             attr = getattr(self._i, prefix_name, attr)
-        if attr is not None:
-            return attr
-        return None
+        return attr
 
     def _get_attr(self, name):
         attr = self._search_attr(name, prefix='get')
