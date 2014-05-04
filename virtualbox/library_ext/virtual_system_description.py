@@ -14,16 +14,21 @@ class IVirtualSystemDescription(library.IVirtualSystemDescription):
     __doc__ = library.IVirtualSystemDescription.__doc__
 
     def set_final_value(self, description_type, value):
-        "Set the value for the given description type"
+        """Set the value for the given description type.
+        
+        in description_type type :class:`VirtualSystemDescriptionType`
+
+        in value type str
+        """
         types, _, _, vbox_values, extra_config = self.get_description()
 
-        # find offset to Name
+        # find offset to description type 
         offset = 0
         for offset, t in enumerate(types):
             if t == description_type:
                 break
         else:
-            raise Exception("Failed to find name type")
+            raise Exception("Failed to find type for %s" % description_type)
 
         enabled = [True] * len(types)
         vbox_values = list(vbox_values)
