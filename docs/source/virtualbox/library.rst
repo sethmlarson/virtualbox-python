@@ -49,6 +49,10 @@ to generate doc for the extended classes found in `library_ext`.
         :members: 
         :inherited-members:
 
+    .. autoclass:: virtualbox.library.IGuestProcess
+        :members: 
+        :inherited-members:
+
     .. autoclass:: virtualbox.library.IMachine
         :members: 
         :inherited-members:
@@ -69,6 +73,20 @@ to generate doc for the extended classes found in `library_ext`.
         :members: 
         :inherited-members:
 
+    .. autoclass:: virtualbox.library.IProcess
+        :members: 
+        :inherited-members:
 
+    .. autoclass:: virtualbox.library.IConsole
+        :members: 
+        :inherited-members:
+
+    .. autoclass:: virtualbox.library.IAppliance
+        :members: 
+        :inherited-members:
+
+    .. autoclass:: virtualbox.library.IVirtualSystemDescription
+        :members: 
+        :inherited-members:
 
 

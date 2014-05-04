@@ -10,6 +10,7 @@ pyvbox doc
    virtualbox/library_ext.rst
    virtualbox/events.rst
    virtualbox/library.rst
+   virtualbox/library_base.rst
 
 
 Indices and tables
