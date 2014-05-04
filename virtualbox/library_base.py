@@ -1,8 +1,4 @@
-"""This module provides the base types used by library.py
-
- By Michael Dorman
- [mjdorma+pyvbox@gmail.com]
-
+"""This module provides the base types used by :mod:`virtualbox.library`.
 """
 
 import re

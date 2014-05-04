@@ -49,7 +49,6 @@ A reliable version of the above code would look like this::
                 print("Error raised on release: %s" % err)
 
 
-
 """
 from __future__ import absolute_import
 from contextlib import contextmanager
