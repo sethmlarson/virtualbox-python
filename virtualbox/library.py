@@ -164,6 +164,42 @@ class VBoxErrorObjectInUse(VBoxError):
     value = 0x80BB000C
 
 
+class OleErrorFail(VBoxError):
+    """Unspecified error"""
+    name = 'E_FAIL'
+    value = 0x80004005
+
+
+class OleErrorNointerface(VBoxError):
+    """No such interface supported"""
+    name = 'E_NOINTERFACE'
+    value = 0x80004002
+
+
+class OleErrorAccessdenied(VBoxError):
+    """General access denied error"""
+    name = 'E_ACCESSDENIED'
+    value = 0x80070005
+
+
+class OleErrorNotimpl(VBoxError):
+    """Not implemented"""
+    name = 'E_NOTIMPL'
+    value = 0x80004001
+
+
+class OleErrorUnexpected(VBoxError):
+    """Catastrophic failure"""
+    name = 'E_UNEXPECTED'
+    value = 0x8000FFFF
+
+
+class OleErrorInvalidarg(VBoxError):
+    """One or more arguments are invalid"""
+    name = 'E_INVALIDARG'
+    value = 0x80070057
+
+
 class SettingsVersion(Enum):
     """Settings version of VirtualBox settings files. This is written to
     the "version" attribute of the root "VirtualBox" element in the settings
@@ -341,6 +377,7 @@ class MachineState(Enum):
          |                                                       |                     |
          +-------------- Stopping -------[powerDown()]<----------+---------------------+
 
+
     
     Note that states to the right from PoweredOff, Aborted and Saved in the
     above diagram are called *online VM states*. These states
@@ -359,6 +396,7 @@ class MachineState(Enum):
          {
          ...the machine is being executed...
          }
+
 
     
     When the virtual machine is in one of the online VM states (that is, being
@@ -402,6 +440,7 @@ class MachineState(Enum):
          |                |
          +-> Saved -------+
 
+
     
     The next two diagrams demonstrate the process of taking a snapshot of a
     powered off virtual machine, restoring the state to that as of a snapshot
@@ -423,6 +462,7 @@ class MachineState(Enum):
          +-> Saved -------+                                                      |
          |                                                                       |
          +---(Saved if restored from an online snapshot, PoweredOff otherwise)---+
+
 
     
     Note that the Saving state is present in both the offline state group and
@@ -5715,7 +5755,7 @@ class INATNetwork(Interface):
 
         in rule_name of type str
 
-        in proto of type NATProtocol
+        in proto of type :class:`NATProtocol`
             Protocol handled with the rule.
 
         in host_ip of type str
@@ -5858,7 +5898,7 @@ class IDHCPServer(Interface):
     def add_global_option(self, option, value):
         """
 
-        in option of type DhcpOpt
+        in option of type :class:`DhcpOpt`
 
         in value of type str
 
@@ -5889,7 +5929,7 @@ class IDHCPServer(Interface):
 
         in slot of type int
 
-        in option of type DhcpOpt
+        in option of type :class:`DhcpOpt`
 
         in value of type str
 
@@ -5967,7 +6007,7 @@ class IDHCPServer(Interface):
         in to_ip_address of type str
             server To IP address for address range
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             invalid configuration supplied
         
         """
@@ -5994,7 +6034,7 @@ class IDHCPServer(Interface):
         in trunk_type of type str
             Type of internal network trunk.
 
-        raises E_FAIL
+        raises :class:`OleErrorFail`
             Failed to start the process.
         
         """
@@ -6010,7 +6050,7 @@ class IDHCPServer(Interface):
     def stop(self):
         """Stops DHCP server process.
 
-        raises E_FAIL
+        raises :class:`OleErrorFail`
             Failed to stop the process.
         
         """
@@ -6421,17 +6461,17 @@ class IVirtualBox(Interface):
             directoryIncludesUUID=1 to switch to a special VM directory
             naming scheme which should not be used unless necessary.
 
-        return machine of type IMachine
+        return machine of type :class:`IMachine`
             Created machine object.
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             @a osTypeId is invalid.
         
-        raises VBOX_E_FILE_ERROR
+        raises :class:`VBoxErrorFileError`
             Resulting settings file name is invalid or the settings file already
 exists or could not be created due to an I/O error.
         
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             @a name is empty or @c null.
         
         """
@@ -6471,10 +6511,10 @@ exists or could not be created due to an I/O error.
         in settings_file of type str
             Name of the machine settings file.
 
-        return machine of type IMachine
+        return machine of type :class:`IMachine`
             Opened machine object.
 
-        raises VBOX_E_FILE_ERROR
+        raises :class:`VBoxErrorFileError`
             Settings file name invalid, not found or sharing violation.
         
         """
@@ -6496,12 +6536,12 @@ exists or could not be created due to an I/O error.
         This method implicitly calls :py:func:`IMachine.save_settings` 
         to save all current machine settings before registering it.
 
-        in machine of type IMachine
+        in machine of type :class:`IMachine`
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             No matching virtual machine found.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Virtual machine was not created within this VirtualBox instance.
         
         """
@@ -6519,10 +6559,10 @@ exists or could not be created due to an I/O error.
         in name_or_id of type str
             What to search for. This can either be the UUID or the name of a virtual machine.
 
-        return machine of type IMachine
+        return machine of type :class:`IMachine`
             Machine object, if found.
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             Could not find registered machine matching @a nameOrId.
         
         """
@@ -6541,7 +6581,7 @@ exists or could not be created due to an I/O error.
             passing an empty list will match VMs in the toplevel group, likewise
             the empty string.
 
-        return machines of type IMachine
+        return machines of type :class:`IMachine`
             All machines which matched.
 
         """
@@ -6559,10 +6599,10 @@ exists or could not be created due to an I/O error.
     def get_machine_states(self, machines):
         """Gets the state of several machines in a single operation.
 
-        in machines of type IMachine
+        in machines of type :class:`IMachine`
             Array with the machine references.
 
-        return states of type MachineState
+        return states of type :class:`MachineState`
             Machine states, corresponding to the machines.
 
         """
@@ -6582,7 +6622,7 @@ exists or could not be created due to an I/O error.
         Format (OVF). This can then be used to import an OVF appliance into VirtualBox or to export
         machines as an OVF appliance; see the documentation for :py:class:`IAppliance`  for details.
 
-        return appliance of type IAppliance
+        return appliance of type :class:`IAppliance`
             New appliance.
 
         """
@@ -6627,13 +6667,13 @@ exists or could not be created due to an I/O error.
         in location of type str
             Location of the storage unit for the new medium.
 
-        return medium of type IMedium
+        return medium of type :class:`IMedium`
             Created medium object.
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             @a format identifier is invalid. See
         
-        raises VBOX_E_FILE_ERROR
+        raises :class:`VBoxErrorFileError`
             @a location is a not valid file name (for file-based formats only).
         
         """
@@ -6705,10 +6745,10 @@ exists or could not be created due to an I/O error.
             Location of the storage unit that contains medium data in one of
             the supported storage formats.
 
-        in device_type of type DeviceType
+        in device_type of type :class:`DeviceType`
             Must be one of "HardDisk", "DVD" or "Floppy".
 
-        in access_mode of type AccessMode
+        in access_mode of type :class:`AccessMode`
             Whether to open the image in read/write or read-only mode. For
             a "DVD" device type, this is ignored and read-only mode is always assumed.
 
@@ -6718,20 +6758,20 @@ exists or could not be created due to an I/O error.
             copy of a previously opened image, as this would normally fail due to
             the duplicate UUID.
 
-        return medium of type IMedium
+        return medium of type :class:`IMedium`
             Opened medium object.
 
-        raises VBOX_E_FILE_ERROR
+        raises :class:`VBoxErrorFileError`
             Invalid medium storage file location or could not find the medium
 at the specified location.
         
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Could not get medium storage format.
         
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             Invalid medium storage format.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Medium has already been added to a media registry.
         
         """
@@ -6765,10 +6805,10 @@ at the specified location.
         in id_p of type str
             Guest OS type ID string.
 
-        return type_p of type IGuestOSType
+        return type_p of type :class:`IGuestOSType`
             Guest OS type object.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             @a id is not a valid Guest OS type.
         
         """
@@ -6853,10 +6893,10 @@ at the specified location.
         return value of type str
             Value of the requested data key.
 
-        raises VBOX_E_FILE_ERROR
+        raises :class:`VBoxErrorFileError`
             Settings file not accessible.
         
-        raises VBOX_E_XML_ERROR
+        raises :class:`VBoxErrorXmlError`
             Could not parse the settings file.
         
         """
@@ -6891,13 +6931,13 @@ at the specified location.
         in value of type str
             Value to assign to the key.
 
-        raises VBOX_E_FILE_ERROR
+        raises :class:`VBoxErrorFileError`
             Settings file not accessible.
         
-        raises VBOX_E_XML_ERROR
+        raises :class:`VBoxErrorXmlError`
             Could not parse the settings file.
         
-        raises E_ACCESSDENIED
+        raises :class:`OleErrorAccessdenied`
             Modification request refused.
         
         """
@@ -6915,7 +6955,7 @@ at the specified location.
         in password of type str
             The cipher key.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine is not mutable.
         
         """
@@ -6930,10 +6970,10 @@ at the specified location.
         in name of type str
             server name
 
-        return server of type IDHCPServer
+        return server of type :class:`IDHCPServer`
             DHCP server settings
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             Host network interface @a name already exists.
         
         """
@@ -6950,10 +6990,10 @@ at the specified location.
         in name of type str
             server name
 
-        return server of type IDHCPServer
+        return server of type :class:`IDHCPServer`
             DHCP server settings
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             Host network interface @a name already exists.
         
         """
@@ -6967,10 +7007,10 @@ at the specified location.
     def remove_dhcp_server(self, server):
         """Removes the DHCP server settings
 
-        in server of type IDHCPServer
+        in server of type :class:`IDHCPServer`
             DHCP server settings to be removed
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             Host network interface @a name already exists.
         
         """
@@ -6984,7 +7024,7 @@ at the specified location.
 
         in network_name of type str
 
-        return network of type INATNetwork
+        return network of type :class:`INATNetwork`
 
         """
         if not isinstance(network_name, basestring):
@@ -6999,7 +7039,7 @@ at the specified location.
 
         in network_name of type str
 
-        return network of type INATNetwork
+        return network of type :class:`INATNetwork`
 
         """
         if not isinstance(network_name, basestring):
@@ -7012,7 +7052,7 @@ at the specified location.
     def remove_nat_network(self, network):
         """
 
-        in network of type INATNetwork
+        in network of type :class:`INATNetwork`
 
         """
         if not isinstance(network, INATNetwork):
@@ -7026,7 +7066,7 @@ at the specified location.
         Optionally, this may return a hint where this firmware can be
         downloaded from.
 
-        in firmware_type of type FirmwareType
+        in firmware_type of type :class:`FirmwareType`
             Type of firmware to check.
 
         in version of type str
@@ -7082,7 +7122,7 @@ class IVFSExplorer(Interface):
         current directory level. Use :py:func:`entry_list`  to get the full list
         after a call to this method.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
         """
@@ -7096,7 +7136,7 @@ class IVFSExplorer(Interface):
         in dir_p of type str
             The name of the directory to go in.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
         """
@@ -7110,7 +7150,7 @@ class IVFSExplorer(Interface):
     def cd_up(self):
         """Go one directory upwards from the current directory level.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
         """
@@ -7165,7 +7205,7 @@ class IVFSExplorer(Interface):
         in names of type str
             The names to remove.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
         """
@@ -7341,7 +7381,7 @@ class IAppliance(Interface):
             Name of appliance file to open (either with an .ovf or .ova extension, depending
             on whether the appliance is distributed as a set of files or as a single file, respectively).
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
         """
@@ -7385,10 +7425,10 @@ class IAppliance(Interface):
         After the import succeeded, the UUIDs of the IMachine instances created can be
         retrieved from the :py:func:`machines`  array attribute.
 
-        in options of type ImportOptions
+        in options of type :class:`ImportOptions`
             Options for the importing operation.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
         """
@@ -7409,7 +7449,7 @@ class IAppliance(Interface):
         in uri of type str
             The URI describing the file system to use.
 
-        return explorer of type IVFSExplorer
+        return explorer of type :class:`IVFSExplorer`
 
         """
         if not isinstance(uri, basestring):
@@ -7433,14 +7473,14 @@ class IAppliance(Interface):
             Output format, as a string. Currently supported formats are "ovf-0.9", "ovf-1.0"
             and "ovf-2.0"; future versions of VirtualBox may support additional formats.
 
-        in options of type ExportOptions
+        in options of type :class:`ExportOptions`
             Options for the exporting operation.
 
         in path of type str
             Name of appliance file to open (either with an .ovf or .ova extension, depending
             on whether the appliance is distributed as a set of files or as a single file, respectively).
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
         """
@@ -7600,7 +7640,7 @@ class IVirtualSystemDescription(Interface):
         machine in VirtualBox will always be presented with the standard VirtualBox soundcard, which
         may be different from the virtual soundcard expected by the appliance.
 
-        out types of type VirtualSystemDescriptionType
+        out types of type :class:`VirtualSystemDescriptionType`
 
         out refs of type str
 
@@ -7619,9 +7659,9 @@ class IVirtualSystemDescription(Interface):
         """This is the same as :py:func:`get_description`  except that you can specify which types
         should be returned.
 
-        in type_p of type VirtualSystemDescriptionType
+        in type_p of type :class:`VirtualSystemDescriptionType`
 
-        out types of type VirtualSystemDescriptionType
+        out types of type :class:`VirtualSystemDescriptionType`
 
         out refs of type str
 
@@ -7644,9 +7684,9 @@ class IVirtualSystemDescription(Interface):
         value types should be returned. See :py:class:`VirtualSystemDescriptionValueType`  for possible
         values.
 
-        in type_p of type VirtualSystemDescriptionType
+        in type_p of type :class:`VirtualSystemDescriptionType`
 
-        in which of type VirtualSystemDescriptionValueType
+        in which of type :class:`VirtualSystemDescriptionValueType`
 
         return values of type str
 
@@ -7710,7 +7750,7 @@ class IVirtualSystemDescription(Interface):
         values which aren't directly supported by VirtualBox. One example would
         be the License type of :py:class:`VirtualSystemDescriptionType` .
 
-        in type_p of type VirtualSystemDescriptionType
+        in type_p of type :class:`VirtualSystemDescriptionType`
 
         in v_box_value of type str
 
@@ -7754,7 +7794,7 @@ class IInternalMachineControl(Interface):
         information about the saved state file and delete this file from disk
         when appropriate.
 
-        in state of type MachineState
+        in state of type :class:`MachineState`
 
         """
         if not isinstance(state, MachineState):
@@ -7771,7 +7811,7 @@ class IInternalMachineControl(Interface):
         object will call :py:func:`IInternalMachineControl.end_power_up` 
         to signal the completion of the progress object.
 
-        in progress of type IProgress
+        in progress of type :class:`IProgress`
 
         """
         if not isinstance(progress, IProgress):
@@ -7798,7 +7838,7 @@ class IInternalMachineControl(Interface):
         """Called by the VM process to inform the server it wants to
         stop the VM execution and power down.
 
-        out progress of type IProgress
+        out progress of type :class:`IProgress`
             Progress object created by VBoxSVC to wait until
             the VM is powered down.
 
@@ -7818,10 +7858,10 @@ class IInternalMachineControl(Interface):
         in err_msg of type str
             @c human readable error message in case of failure.
 
-        raises VBOX_E_FILE_ERROR
+        raises :class:`VBoxErrorFileError`
             Settings file not accessible.
         
-        raises VBOX_E_XML_ERROR
+        raises :class:`VBoxErrorXmlError`
             Could not parse the settings file.
         
         """
@@ -7841,7 +7881,7 @@ class IInternalMachineControl(Interface):
         ones don't require to call this method (this is done
         implicitly by the Host and USBProxyService).
 
-        in device of type IUSBDevice
+        in device of type :class:`IUSBDevice`
 
         out matched of type bool
 
@@ -7923,10 +7963,10 @@ class IInternalMachineControl(Interface):
         """Triggered by the given session object when the session is about
         to close normally.
 
-        in session of type ISession
+        in session of type :class:`ISession`
             Session that is being closed
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Used to wait until the corresponding machine is actually
             dissociated from the given session on the server.
             Returned only when this session is a direct one.
@@ -7943,7 +7983,7 @@ class IInternalMachineControl(Interface):
         """Called by the VM process to inform the server it wants to
         save the current state and stop the VM execution.
 
-        out progress of type IProgress
+        out progress of type :class:`IProgress`
             Progress object created by VBoxSVC to wait until
             the state is saved.
 
@@ -7966,10 +8006,10 @@ class IInternalMachineControl(Interface):
         in err_msg of type str
             @c human readable error message in case of failure.
 
-        raises VBOX_E_FILE_ERROR
+        raises :class:`VBoxErrorFileError`
             Settings file not accessible.
         
-        raises VBOX_E_XML_ERROR
+        raises :class:`VBoxErrorXmlError`
             Could not parse the settings file.
         
         """
@@ -7986,7 +8026,7 @@ class IInternalMachineControl(Interface):
         in saved_state_file of type str
             Path to the saved state file to adopt.
 
-        raises VBOX_E_FILE_ERROR
+        raises :class:`VBoxErrorFileError`
             Invalid saved state file path.
         
         """
@@ -8000,7 +8040,7 @@ class IInternalMachineControl(Interface):
         server-side actions of creating a snapshot (creating differencing images
         and the snapshot object).
 
-        in initiator of type IConsole
+        in initiator of type :class:`IConsole`
             The console object that initiated this call.
 
         in name of type str
@@ -8009,7 +8049,7 @@ class IInternalMachineControl(Interface):
         in description of type str
             Snapshot description.
 
-        in console_progress of type IProgress
+        in console_progress of type :class:`IProgress`
             Progress object created by the VM process tracking the
             snapshot's progress. This has the following sub-operations:
             
@@ -8025,10 +8065,10 @@ class IInternalMachineControl(Interface):
         out state_file_path of type str
             File path the VM process must save the execution state to.
 
-        raises VBOX_E_FILE_ERROR
+        raises :class:`VBoxErrorFileError`
             Settings file not accessible.
         
-        raises VBOX_E_XML_ERROR
+        raises :class:`VBoxErrorXmlError`
             Could not parse the settings file.
         
         """
@@ -8065,7 +8105,7 @@ class IInternalMachineControl(Interface):
         :py:func:`IConsole.delete_snapshot_and_all_children`  and
         :py:func:`IConsole.delete_snapshot_range` .
 
-        in initiator of type IConsole
+        in initiator of type :class:`IConsole`
             The console object that initiated this call.
 
         in start_id of type str
@@ -8077,13 +8117,13 @@ class IInternalMachineControl(Interface):
         in delete_all_children of type bool
             Whether all children should be deleted.
 
-        out machine_state of type MachineState
+        out machine_state of type :class:`MachineState`
             New machine state after this operation is started.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Snapshot has more than one child snapshot. Only possible if the
 delete operation does not delete all children or the range does
 not meet the linearity condition.
@@ -8113,16 +8153,16 @@ not meet the linearity condition.
     def restore_snapshot(self, initiator, snapshot):
         """Gets called by :py:func:`IConsole.restore_snapshot` .
 
-        in initiator of type IConsole
+        in initiator of type :class:`IConsole`
             The console object that initiated this call.
 
-        in snapshot of type ISnapshot
+        in snapshot of type :class:`ISnapshot`
             The snapshot to restore the VM state from.
 
-        out machine_state of type MachineState
+        out machine_state of type :class:`MachineState`
             New machine state after this operation is started.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
         """
@@ -8213,10 +8253,10 @@ not meet the linearity condition.
         """Tells VBoxSVC that the guest has ejected the medium associated with
         the medium attachment.
 
-        in attachment of type IMediumAttachment
+        in attachment of type :class:`IMediumAttachment`
             The medium attachment where the eject happened.
 
-        return new_attachment of type IMediumAttachment
+        return new_attachment of type :class:`IMediumAttachment`
             A new reference to the medium attachment, as the config change can
             result in the creation of a new instance.
 
@@ -9976,24 +10016,24 @@ class IMachine(Interface):
         
         Release the write lock by calling :py:func:`ISession.unlock_machine` .
 
-        in session of type ISession
+        in session of type :class:`ISession`
             Session object for which the machine will be locked.
 
-        in lock_type of type LockType
+        in lock_type of type :class:`LockType`
             If set to @c Write, then attempt to acquire an exclusive write lock or fail.
             If set to @c Shared, then either acquire an exclusive write lock or establish
             a link to an existing session.
 
-        raises E_UNEXPECTED
+        raises :class:`OleErrorUnexpected`
             Virtual machine not registered.
         
-        raises E_ACCESSDENIED
+        raises :class:`OleErrorAccessdenied`
             Process not started by OpenRemoteSession.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Session already open or being opened.
         
-        raises VBOX_E_VM_ERROR
+        raises :class:`VBoxErrorVmError`
             Failed to assign machine to session.
         
         """
@@ -10056,6 +10096,7 @@ class IMachine(Interface):
              NAME[=VALUE]\n
              ...
 
+
         where \\n is the new line character. These environment
         variables will be appended to the environment of the VirtualBox server
         process. If an environment variable exists both in the server process
@@ -10065,7 +10106,7 @@ class IMachine(Interface):
         If the environment string is @c null or empty, the server environment
         is inherited by the started process as is.
 
-        in session of type ISession
+        in session of type :class:`ISession`
             Client session object to which the VM process will be connected (this
             must be in "Unlocked" state).
 
@@ -10090,25 +10131,25 @@ class IMachine(Interface):
         in environment of type str
             Environment to pass to the VM process.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises E_UNEXPECTED
+        raises :class:`OleErrorUnexpected`
             Virtual machine not registered.
         
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             Invalid session type @a type.
         
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             No machine matching @a machineId found.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Session already open or being opened.
         
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Launching process for machine failed.
         
-        raises VBOX_E_VM_ERROR
+        raises :class:`VBoxErrorVmError`
             Failed to assign machine to session.
         
         """
@@ -10137,13 +10178,13 @@ class IMachine(Interface):
             devices the machine can boot from, as returned by
             :py:func:`ISystemProperties.max_boot_position` ).
 
-        in device of type DeviceType
+        in device of type :class:`DeviceType`
             The type of the device used to boot at the given position.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             Boot @a position out of range.
         
-        raises E_NOTIMPL
+        raises :class:`OleErrorNotimpl`
             Booting from USB @a device currently not supported.
         
         """
@@ -10173,10 +10214,10 @@ class IMachine(Interface):
             devices the machine can boot from, as returned by
             :py:func:`ISystemProperties.max_boot_position` ).
 
-        return device of type DeviceType
+        return device of type :class:`DeviceType`
             Device at the given position.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             Boot @a position out of range.
         
         """
@@ -10253,25 +10294,25 @@ class IMachine(Interface):
             1 specifies the slave device. For all other controller types, this must
             be 0.
 
-        in type_p of type DeviceType
+        in type_p of type :class:`DeviceType`
             Device type of the attached device. For media opened by
             :py:func:`IVirtualBox.open_medium` , this must match the device type
             specified there.
 
-        in medium of type IMedium
+        in medium of type :class:`IMedium`
             Medium to mount or @c null for an empty drive.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             SATA device, SATA port, IDE port or IDE slot out of range, or
 file or UUID not found.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Machine must be registered before media can be attached.
         
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Invalid machine state.
         
-        raises VBOX_E_OBJECT_IN_USE
+        raises :class:`VBoxErrorObjectInUse`
             A medium is already attached to this or another virtual machine.
         
         """
@@ -10350,22 +10391,22 @@ file or UUID not found.
             1 specifies the slave device. For all other controller types, this must
             be 0.
 
-        in type_p of type DeviceType
+        in type_p of type :class:`DeviceType`
             Device type of the attached device. For media opened by
             :py:func:`IVirtualBox.open_medium` , this must match the device type
             specified there.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             SATA device, SATA port, IDE port or IDE slot out of range, or
 file or UUID not found.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Machine must be registered before media can be attached.
         
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Invalid machine state.
         
-        raises VBOX_E_OBJECT_IN_USE
+        raises :class:`VBoxErrorObjectInUse`
             A medium is already attached to this or another virtual machine.
         
         """
@@ -10409,13 +10450,13 @@ file or UUID not found.
         in device of type int
             Device slot number to detach the medium from.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Attempt to detach medium from a running virtual machine.
         
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             No medium attached to given slot/bus.
         
-        raises VBOX_E_NOT_SUPPORTED
+        raises :class:`VBoxErrorNotSupported`
             Medium format does not support storage deletion (only for implicitly
 created differencing media, should not happen).
         
@@ -10451,13 +10492,13 @@ created differencing media, should not happen).
         in passthrough of type bool
             New value for the passthrough setting.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             SATA device, SATA port, IDE port or IDE slot out of range.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Attempt to modify an unregistered virtual machine.
         
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Invalid machine state.
         
         """
@@ -10494,13 +10535,13 @@ created differencing media, should not happen).
         in temporary_eject of type bool
             New value for the eject behavior.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             SATA device, SATA port, IDE port or IDE slot out of range.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Attempt to modify an unregistered virtual machine.
         
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Invalid machine state.
         
         """
@@ -10540,13 +10581,13 @@ created differencing media, should not happen).
         in non_rotational of type bool
             New value for the non-rotational device flag.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             SATA device, SATA port, IDE port or IDE slot out of range.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Attempt to modify an unregistered virtual machine.
         
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Invalid machine state.
         
         """
@@ -10586,13 +10627,13 @@ created differencing media, should not happen).
         in discard of type bool
             New value for the discard device flag.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             SATA device, SATA port, SCSI port out of range.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Attempt to modify an unregistered virtual machine.
         
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Invalid machine state.
         
         """
@@ -10630,16 +10671,16 @@ created differencing media, should not happen).
         in hot_pluggable of type bool
             New value for the hot-pluggable device flag.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             SATA device, SATA port, IDE port or IDE slot out of range.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Attempt to modify an unregistered virtual machine.
         
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Invalid machine state.
         
-        raises VBOX_E_NOT_SUPPORTED
+        raises :class:`VBoxErrorNotSupported`
             Controller doesn't support hot plugging.
         
         """
@@ -10671,16 +10712,16 @@ created differencing media, should not happen).
         in device of type int
             Device slot in the given port.
 
-        in bandwidth_group of type IBandwidthGroup
+        in bandwidth_group of type :class:`IBandwidthGroup`
             New value for the bandwidth group or @c null for no group.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             SATA device, SATA port, IDE port or IDE slot out of range.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Attempt to modify an unregistered virtual machine.
         
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Invalid machine state.
         
         """
@@ -10711,13 +10752,13 @@ created differencing media, should not happen).
         in device of type int
             Device slot in the given port.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             SATA device, SATA port, IDE port or IDE slot out of range.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Attempt to modify an unregistered virtual machine.
         
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Invalid machine state.
         
         """
@@ -10762,19 +10803,19 @@ created differencing media, should not happen).
             Allows to force unmount of a medium which is locked by
             the device slot in the given port medium is attached to.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             SATA device, SATA port, IDE port or IDE slot out of range.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Attempt to unmount medium that is not removable - not DVD or floppy.
         
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Invalid machine state.
         
-        raises VBOX_E_OBJECT_IN_USE
+        raises :class:`VBoxErrorObjectInUse`
             Medium already attached to this or another virtual machine.
         
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             Medium not attached to specified port, device, controller.
         
         """
@@ -10819,23 +10860,23 @@ created differencing media, should not happen).
         in device of type int
             Device slot in the given port to attach the medium to.
 
-        in medium of type IMedium
+        in medium of type :class:`IMedium`
             Medium to mount or @c null for an empty drive.
 
         in force of type bool
             Allows to force unmount/mount of a medium which is locked by
             the device slot in the given port to attach the medium to.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             SATA device, SATA port, IDE port or IDE slot out of range.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Attempt to attach medium to an unregistered virtual machine.
         
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Invalid machine state.
         
-        raises VBOX_E_OBJECT_IN_USE
+        raises :class:`VBoxErrorObjectInUse`
             Medium already attached to this or another virtual machine.
         
         """
@@ -10871,10 +10912,10 @@ created differencing media, should not happen).
         in device of type int
             Device slot in the given port to query.
 
-        return medium of type IMedium
+        return medium of type :class:`IMedium`
             Attached medium object.
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             No medium attached to given slot/bus.
         
         """
@@ -10895,9 +10936,9 @@ created differencing media, should not happen).
 
         in name of type str
 
-        return medium_attachments of type IMediumAttachment
+        return medium_attachments of type :class:`IMediumAttachment`
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             A storage controller with given name doesn't exist.
         
         """
@@ -10918,9 +10959,9 @@ created differencing media, should not happen).
 
         in device of type int
 
-        return attachment of type IMediumAttachment
+        return attachment of type :class:`IMediumAttachment`
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             No attachment exists for the given controller/port/device combination.
         
         """
@@ -10954,13 +10995,13 @@ created differencing media, should not happen).
             If VMM shall try to unbind existing drivers from the
             device before attaching it to the guest.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine state is not stopped (PCI hotplug not yet implemented).
         
-        raises VBOX_E_PDM_ERROR
+        raises :class:`VBoxErrorPdmError`
             Virtual machine does not have a PCI controller allowing attachment of physical devices.
         
-        raises VBOX_E_NOT_SUPPORTED
+        raises :class:`VBoxErrorNotSupported`
             Hardware or host OS doesn't allow PCI device passthrough.
         
         """
@@ -10984,16 +11025,16 @@ created differencing media, should not happen).
         in host_address of type int
             Address of the host PCI device.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine state is not stopped (PCI hotplug not yet implemented).
         
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             This host device is not attached to this machine.
         
-        raises VBOX_E_PDM_ERROR
+        raises :class:`VBoxErrorPdmError`
             Virtual machine does not have a PCI controller allowing attachment of physical devices.
         
-        raises VBOX_E_NOT_SUPPORTED
+        raises :class:`VBoxErrorNotSupported`
             Hardware or host OS doesn't allow PCI device passthrough.
         
         """
@@ -11011,9 +11052,9 @@ created differencing media, should not happen).
 
         in slot of type int
 
-        return adapter of type INetworkAdapter
+        return adapter of type :class:`INetworkAdapter`
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             Invalid @a slot number.
         
         """
@@ -11040,14 +11081,14 @@ created differencing media, should not happen).
 
         in name of type str
 
-        in connection_type of type StorageBus
+        in connection_type of type :class:`StorageBus`
 
-        return controller of type IStorageController
+        return controller of type :class:`IStorageController`
 
-        raises VBOX_E_OBJECT_IN_USE
+        raises :class:`VBoxErrorObjectInUse`
             A storage controller with given name exists already.
         
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             Invalid @a controllerType.
         
         """
@@ -11065,9 +11106,9 @@ created differencing media, should not happen).
 
         in name of type str
 
-        return storage_controller of type IStorageController
+        return storage_controller of type :class:`IStorageController`
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             A storage controller with given name doesn't exist.
         
         """
@@ -11083,9 +11124,9 @@ created differencing media, should not happen).
 
         in instance of type int
 
-        return storage_controller of type IStorageController
+        return storage_controller of type :class:`IStorageController`
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             A storage controller with given instance number doesn't exist.
         
         """
@@ -11101,10 +11142,10 @@ created differencing media, should not happen).
 
         in name of type str
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             A storage controller with given name doesn't exist.
         
-        raises VBOX_E_NOT_SUPPORTED
+        raises :class:`VBoxErrorNotSupported`
             Medium format does not support storage deletion (only for implicitly
 created differencing media, should not happen).
         
@@ -11121,10 +11162,10 @@ created differencing media, should not happen).
 
         in bootable of type bool
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             A storage controller with given name doesn't exist.
         
-        raises VBOX_E_OBJECT_IN_USE
+        raises :class:`VBoxErrorObjectInUse`
             Another storage controller is marked as bootable already.
         
         """
@@ -11141,14 +11182,14 @@ created differencing media, should not happen).
 
         in name of type str
 
-        in type_p of type USBControllerType
+        in type_p of type :class:`USBControllerType`
 
-        return controller of type IUSBController
+        return controller of type :class:`IUSBController`
 
-        raises VBOX_E_OBJECT_IN_USE
+        raises :class:`VBoxErrorObjectInUse`
             A USB controller with given type exists already.
         
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             Invalid @a controllerType.
         
         """
@@ -11166,7 +11207,7 @@ created differencing media, should not happen).
 
         in name of type str
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             A USB controller with given type doesn't exist.
         
         """
@@ -11180,9 +11221,9 @@ created differencing media, should not happen).
 
         in name of type str
 
-        return controller of type IUSBController
+        return controller of type :class:`IUSBController`
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             A USB controller with given name doesn't exist.
         
         """
@@ -11196,7 +11237,7 @@ created differencing media, should not happen).
     def get_usb_controller_count_by_type(self, type_p):
         """Returns the number of USB controllers of the given type attached to the VM.
 
-        in type_p of type USBControllerType
+        in type_p of type :class:`USBControllerType`
 
         return controllers of type int
 
@@ -11216,9 +11257,9 @@ created differencing media, should not happen).
 
         in slot of type int
 
-        return port of type ISerialPort
+        return port of type :class:`ISerialPort`
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             Invalid @a slot number.
         
         """
@@ -11238,9 +11279,9 @@ created differencing media, should not happen).
 
         in slot of type int
 
-        return port of type IParallelPort
+        return port of type :class:`IParallelPort`
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             Invalid @a slot number.
         
         """
@@ -11274,10 +11315,10 @@ created differencing media, should not happen).
         return value of type str
             Value of the requested data key.
 
-        raises VBOX_E_FILE_ERROR
+        raises :class:`VBoxErrorFileError`
             Settings file not accessible.
         
-        raises VBOX_E_XML_ERROR
+        raises :class:`VBoxErrorXmlError`
             Could not parse the settings file.
         
         """
@@ -11317,10 +11358,10 @@ created differencing media, should not happen).
         in value of type str
             Value to assign to the key.
 
-        raises VBOX_E_FILE_ERROR
+        raises :class:`VBoxErrorFileError`
             Settings file not accessible.
         
-        raises VBOX_E_XML_ERROR
+        raises :class:`VBoxErrorXmlError`
             Could not parse the settings file.
         
         """
@@ -11334,13 +11375,13 @@ created differencing media, should not happen).
     def get_cpu_property(self, property_p):
         """Returns the virtual CPU boolean value of the specified property.
 
-        in property_p of type CPUPropertyType
+        in property_p of type :class:`CPUPropertyType`
             Property type to query.
 
         return value of type bool
             Property value.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             Invalid property.
         
         """
@@ -11353,13 +11394,13 @@ created differencing media, should not happen).
     def set_cpu_property(self, property_p, value):
         """Sets the virtual CPU boolean value of the specified property.
 
-        in property_p of type CPUPropertyType
+        in property_p of type :class:`CPUPropertyType`
             Property type to query.
 
         in value of type bool
             Property value.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             Invalid property.
         
         """
@@ -11395,7 +11436,7 @@ created differencing media, should not happen).
         out val_edx of type int
             CPUID leaf value for register edx.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             Invalid id.
         
         """
@@ -11434,7 +11475,7 @@ created differencing media, should not happen).
         in val_edx of type int
             CPUID leaf value for register edx.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             Invalid id.
         
         """
@@ -11457,7 +11498,7 @@ created differencing media, should not happen).
         in id_p of type int
             CPUID leaf index.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             Invalid id.
         
         """
@@ -11475,13 +11516,13 @@ created differencing media, should not happen).
     def get_hw_virt_ex_property(self, property_p):
         """Returns the value of the specified hardware virtualization boolean property.
 
-        in property_p of type HWVirtExPropertyType
+        in property_p of type :class:`HWVirtExPropertyType`
             Property type to query.
 
         return value of type bool
             Property value.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             Invalid property.
         
         """
@@ -11494,13 +11535,13 @@ created differencing media, should not happen).
     def set_hw_virt_ex_property(self, property_p, value):
         """Sets a new value for the specified hardware virtualization boolean property.
 
-        in property_p of type HWVirtExPropertyType
+        in property_p of type :class:`HWVirtExPropertyType`
             Property type to set.
 
         in value of type bool
             New property value.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             Invalid property.
         
         """
@@ -11528,10 +11569,10 @@ created differencing media, should not happen).
             location for the attached media if it is in the same directory or
             below as the original settings file.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises E_NOTIMPL
+        raises :class:`OleErrorNotimpl`
             The operation is not implemented yet.
         
         """
@@ -11561,13 +11602,13 @@ created differencing media, should not happen).
         yet registered, or on unregistered machines after calling
         :py:func:`IMachine.unregister` .
 
-        raises VBOX_E_FILE_ERROR
+        raises :class:`VBoxErrorFileError`
             Settings file not accessible.
         
-        raises VBOX_E_XML_ERROR
+        raises :class:`VBoxErrorXmlError`
             Could not parse the settings file.
         
-        raises E_ACCESSDENIED
+        raises :class:`OleErrorAccessdenied`
             Modification request refused.
         
         """
@@ -11585,7 +11626,7 @@ created differencing media, should not happen).
         yet registered, or on unregistered machines after calling
         :py:func:`IMachine.unregister` .
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine is not mutable.
         
         """
@@ -11659,13 +11700,13 @@ created differencing media, should not happen).
         the returned machine object will be unusable and an attempt to call
         **any** method will return the "Object not ready" error.
 
-        in cleanup_mode of type CleanupMode
+        in cleanup_mode of type :class:`CleanupMode`
             How to clean up after the machine has been unregistered.
 
-        return media of type IMedium
+        return media of type :class:`IMedium`
             List of media detached from the machine, depending on the @a cleanupMode parameter.
 
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Machine is currently locked for a session.
         
         """
@@ -11710,16 +11751,16 @@ created differencing media, should not happen).
         :py:func:`settings_modified`  will return @c true after this
         method successfully returns.
 
-        in media of type IMedium
+        in media of type :class:`IMedium`
             List of media to be closed and whose storage files will be deleted.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Machine is registered but not write-locked.
         
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Could not delete the settings file.
         
         """
@@ -11738,13 +11779,13 @@ created differencing media, should not happen).
         """Exports the machine to an OVF appliance. See :py:class:`IAppliance`  for the
         steps required to export VirtualBox machines to OVF.
 
-        in appliance of type IAppliance
+        in appliance of type :class:`IAppliance`
             Appliance to export this machine to.
 
         in location of type str
             The target location.
 
-        return description of type IVirtualSystemDescription
+        return description of type :class:`IVirtualSystemDescription`
             VirtualSystemDescription object which is created for this machine.
 
         """
@@ -11769,10 +11810,10 @@ created differencing media, should not happen).
         in name_or_id of type str
             What to search for. Name or UUID of the snapshot to find
 
-        return snapshot of type ISnapshot
+        return snapshot of type :class:`ISnapshot`
             Snapshot object with the given name.
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             Virtual machine has no snapshots or snapshot not found.
         
         """
@@ -11802,10 +11843,10 @@ created differencing media, should not happen).
             Whether the share gets automatically mounted by the guest
             or not.
 
-        raises VBOX_E_OBJECT_IN_USE
+        raises :class:`VBoxErrorObjectInUse`
             Shared folder already exists.
         
-        raises VBOX_E_FILE_ERROR
+        raises :class:`VBoxErrorFileError`
             Shared folder @a hostPath not accessible.
         
         """
@@ -11828,10 +11869,10 @@ created differencing media, should not happen).
         in name of type str
             Logical name of the shared folder to remove.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine is not mutable.
         
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             Shared folder @a name does not exist.
         
         """
@@ -11851,7 +11892,7 @@ created differencing media, should not happen).
         return can_show of type bool
             @c true if the console window can be shown and @c false otherwise.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Machine session is not open.
         
         """
@@ -11880,7 +11921,7 @@ created differencing media, should not happen).
             necessary to implement the *show window* semantics for
             the given platform and/or VirtualBox front-end.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Machine session is not open.
         
         """
@@ -11905,7 +11946,7 @@ created differencing media, should not happen).
             Additional property parameters, passed as a comma-separated list of
             "name=value" type entries.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Machine session is not open.
         
         """
@@ -11925,7 +11966,7 @@ created differencing media, should not happen).
             The value of the property. If the property does not exist then this
             will be empty.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Machine session is not open.
         
         """
@@ -11945,7 +11986,7 @@ created differencing media, should not happen).
             The timestamp. If the property does not exist then this will be
             empty.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Machine session is not open.
         
         """
@@ -11972,16 +12013,16 @@ created differencing media, should not happen).
             Additional property parameters, passed as a comma-separated list of
             "name=value" type entries.
 
-        raises E_ACCESSDENIED
+        raises :class:`OleErrorAccessdenied`
             Property cannot be changed.
         
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             Invalid @a flags.
         
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine is not mutable or session not open.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Cannot set transient property when machine not running.
         
         """
@@ -12007,13 +12048,13 @@ created differencing media, should not happen).
             property does not yet exist and value is non-empty, it will be
             created.
 
-        raises E_ACCESSDENIED
+        raises :class:`OleErrorAccessdenied`
             Property cannot be changed.
         
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine is not mutable or session not open.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Cannot set transient property when machine not running.
         
         """
@@ -12030,7 +12071,7 @@ created differencing media, should not happen).
         in name of type str
             The name of the property to delete.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Machine session is not open.
         
         """
@@ -12314,19 +12355,19 @@ created differencing media, should not happen).
         performed asynchronously, so the machine object will be not be usable
         until the @a progress object signals completion.
 
-        in target of type IMachine
+        in target of type :class:`IMachine`
             Target machine object.
 
-        in mode of type CloneMode
+        in mode of type :class:`CloneMode`
             Which states should be cloned.
 
-        in options of type CloneOptions
+        in options of type :class:`CloneOptions`
             Options for the cloning operation.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             @a target is @c null.
         
         """
@@ -12745,16 +12786,16 @@ class IConsole(Interface):
         
         :py:func:`save_state` 
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine already running.
         
-        raises VBOX_E_HOST_ERROR
+        raises :class:`VBoxErrorHostError`
             Host interface does not exist or name not set.
         
-        raises VBOX_E_FILE_ERROR
+        raises :class:`VBoxErrorFileError`
             Invalid saved state file.
         
         """
@@ -12769,16 +12810,16 @@ class IConsole(Interface):
         
         :py:func:`power_up` 
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine already running.
         
-        raises VBOX_E_HOST_ERROR
+        raises :class:`VBoxErrorHostError`
             Host interface does not exist or name not set.
         
-        raises VBOX_E_FILE_ERROR
+        raises :class:`VBoxErrorFileError`
             Invalid saved state file.
         
         """
@@ -12794,10 +12835,10 @@ class IConsole(Interface):
         IProgress object. After the operation is complete, the machine will go
         to the PoweredOff state.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine must be Running, Paused or Stuck to be powered down.
         
         """
@@ -12808,10 +12849,10 @@ class IConsole(Interface):
     def reset(self):
         """Resets the virtual machine.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine not in Running state.
         
-        raises VBOX_E_VM_ERROR
+        raises :class:`VBoxErrorVmError`
             Virtual machine error in reset operation.
         
         """
@@ -12820,10 +12861,10 @@ class IConsole(Interface):
     def pause(self):
         """Pauses the virtual machine execution.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine not in Running state.
         
-        raises VBOX_E_VM_ERROR
+        raises :class:`VBoxErrorVmError`
             Virtual machine error in suspend operation.
         
         """
@@ -12832,10 +12873,10 @@ class IConsole(Interface):
     def resume(self):
         """Resumes the virtual machine execution.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine not in Paused state.
         
-        raises VBOX_E_VM_ERROR
+        raises :class:`VBoxErrorVmError`
             Virtual machine error in resume operation.
         
         """
@@ -12844,10 +12885,10 @@ class IConsole(Interface):
     def power_button(self):
         """Sends the ACPI power button event to the guest.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine not in Running state.
         
-        raises VBOX_E_PDM_ERROR
+        raises :class:`VBoxErrorPdmError`
             Controlled power off failed.
         
         """
@@ -12856,10 +12897,10 @@ class IConsole(Interface):
     def sleep_button(self):
         """Sends the ACPI sleep button event to the guest.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine not in Running state.
         
-        raises VBOX_E_PDM_ERROR
+        raises :class:`VBoxErrorPdmError`
             Sending sleep button event failed.
         
         """
@@ -12870,7 +12911,7 @@ class IConsole(Interface):
 
         return handled of type bool
 
-        raises VBOX_E_PDM_ERROR
+        raises :class:`VBoxErrorPdmError`
             Checking if the event was handled by the guest OS failed.
         
         """
@@ -12884,7 +12925,7 @@ class IConsole(Interface):
 
         return entered of type bool
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine not in Running state.
         
         """
@@ -12924,13 +12965,13 @@ class IConsole(Interface):
         
         :py:func:`take_snapshot` 
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine state neither Running nor Paused.
         
-        raises VBOX_E_FILE_ERROR
+        raises :class:`VBoxErrorFileError`
             Failed to create directory for saved state file.
         
         """
@@ -12960,7 +13001,7 @@ class IConsole(Interface):
         in saved_state_file of type str
             Path to the saved state file to adopt.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine state neither PoweredOff nor Aborted.
         
         """
@@ -12989,7 +13030,7 @@ class IConsole(Interface):
         in f_remove_file of type bool
             Whether to also remove the saved state file.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine not in state Saved.
         
         """
@@ -13001,11 +13042,11 @@ class IConsole(Interface):
     def get_device_activity(self, type_p):
         """Gets the current activity type of a given device or device group.
 
-        in type_p of type DeviceType
+        in type_p of type :class:`DeviceType`
 
-        return activity of type DeviceActivity
+        return activity of type :class:`DeviceActivity`
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             Invalid device type.
         
         """
@@ -13036,10 +13077,10 @@ class IConsole(Interface):
         in id_p of type str
             UUID of the host USB device to attach.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine state neither Running nor Paused.
         
-        raises VBOX_E_PDM_ERROR
+        raises :class:`VBoxErrorPdmError`
             Virtual machine does not have a USB controller.
         
         """
@@ -13063,13 +13104,13 @@ class IConsole(Interface):
         in id_p of type str
             UUID of the USB device to detach.
 
-        return device of type IUSBDevice
+        return device of type :class:`IUSBDevice`
             Detached USB device.
 
-        raises VBOX_E_PDM_ERROR
+        raises :class:`VBoxErrorPdmError`
             Virtual machine does not have a USB controller.
         
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             USB device not attached to this virtual machine.
         
         """
@@ -13091,10 +13132,10 @@ class IConsole(Interface):
             Address of the USB device (as assigned by the host) to
             search for.
 
-        return device of type IUSBDevice
+        return device of type :class:`IUSBDevice`
             Found USB device object.
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             Given @c name does not correspond to any USB device.
         
         """
@@ -13115,10 +13156,10 @@ class IConsole(Interface):
         in id_p of type str
             UUID of the USB device to search for.
 
-        return device of type IUSBDevice
+        return device of type :class:`IUSBDevice`
             Found USB device object.
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             Given @c id does not correspond to any USB device.
         
         """
@@ -13148,10 +13189,10 @@ class IConsole(Interface):
             Whether the share gets automatically mounted by the guest
             or not.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine in Saved state or currently changing state.
         
-        raises VBOX_E_FILE_ERROR
+        raises :class:`VBoxErrorFileError`
             Shared folder already exists or not accessible.
         
         """
@@ -13174,10 +13215,10 @@ class IConsole(Interface):
         in name of type str
             Logical name of the shared folder to remove.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine in Saved state or currently changing state.
         
-        raises VBOX_E_FILE_ERROR
+        raises :class:`VBoxErrorFileError`
             Shared folder does not exists.
         
         """
@@ -13212,10 +13253,10 @@ class IConsole(Interface):
         in description of type str
             Optional description of the snapshot.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine currently changing state.
         
         """
@@ -13286,10 +13327,10 @@ class IConsole(Interface):
         in id_p of type str
             UUID of the snapshot to delete.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             The running virtual machine prevents deleting this snapshot. This
 happens only in very specific situations, usually snapshots can be
 deleted without trouble while a VM is running. The error message
@@ -13320,16 +13361,16 @@ text explains the reason for the failure.
         in id_p of type str
             UUID of the snapshot to delete, including all its children.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             The running virtual machine prevents deleting this snapshot. This
 happens only in very specific situations, usually snapshots can be
 deleted without trouble while a VM is running. The error message
 text explains the reason for the failure.
         
-        raises E_NOTIMPL
+        raises :class:`OleErrorNotimpl`
             The method is not implemented yet.
         
         """
@@ -13362,16 +13403,16 @@ text explains the reason for the failure.
         in end_id of type str
             UUID of the last snapshot to delete.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             The running virtual machine prevents deleting this snapshot. This
 happens only in very specific situations, usually snapshots can be
 deleted without trouble while a VM is running. The error message
 text explains the reason for the failure.
         
-        raises E_NOTIMPL
+        raises :class:`OleErrorNotimpl`
             The method is not implemented yet.
         
         """
@@ -13409,13 +13450,13 @@ text explains the reason for the failure.
         deleted (as if :py:func:`IConsole.discard_saved_state`  were
         called).
 
-        in snapshot of type ISnapshot
+        in snapshot of type :class:`ISnapshot`
             The snapshot to restore the VM state from.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine is running.
         
         """
@@ -13452,10 +13493,10 @@ text explains the reason for the failure.
             The current implementation treats this a guideline, not as an
             absolute rule.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine not running or paused.
         
         """
@@ -13829,7 +13870,7 @@ class IHost(Interface):
     def get_processor_feature(self, feature):
         """Query whether a CPU feature is supported or not.
 
-        in feature of type ProcessorFeature
+        in feature of type :class:`ProcessorFeature`
             CPU Feature identifier.
 
         return supported of type bool
@@ -13953,13 +13994,13 @@ class IHost(Interface):
     def create_host_only_network_interface(self):
         """Creates a new adapter for Host Only Networking.
 
-        out host_interface of type IHostNetworkInterface
+        out host_interface of type :class:`IHostNetworkInterface`
             Created host interface object.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             Host network interface @a name already exists.
         
         """
@@ -13974,10 +14015,10 @@ class IHost(Interface):
         in id_p of type str
             Adapter GUID.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             No host network interface matching @a id found.
         
         """
@@ -14001,7 +14042,7 @@ class IHost(Interface):
         in name of type str
             Filter name. See :py:func:`IUSBDeviceFilter.name`  for more information.
 
-        return filter_p of type IHostUSBDeviceFilter
+        return filter_p of type :class:`IHostUSBDeviceFilter`
             Created filter object.
 
         """
@@ -14034,13 +14075,13 @@ class IHost(Interface):
         in position of type int
             Position to insert the filter to.
 
-        in filter_p of type IHostUSBDeviceFilter
+        in filter_p of type :class:`IHostUSBDeviceFilter`
             USB device filter to insert.
 
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             USB device filter is not created within this VirtualBox instance.
         
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             USB device filter already in list.
         
         """
@@ -14069,7 +14110,7 @@ class IHost(Interface):
         in position of type int
             Position to remove the filter from.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             USB device filter list empty or invalid @a position.
         
         """
@@ -14084,10 +14125,10 @@ class IHost(Interface):
         in name of type str
             Name of the host drive to search for
 
-        return drive of type IMedium
+        return drive of type :class:`IMedium`
             Found host drive object
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             Given @c name does not correspond to any host drive.
         
         """
@@ -14104,10 +14145,10 @@ class IHost(Interface):
         in name of type str
             Name of the host floppy drive to search for
 
-        return drive of type IMedium
+        return drive of type :class:`IMedium`
             Found host floppy drive object
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             Given @c name does not correspond to any host floppy drive.
         
         """
@@ -14128,7 +14169,7 @@ class IHost(Interface):
         in name of type str
             Name of the host network interface to search for.
 
-        return network_interface of type IHostNetworkInterface
+        return network_interface of type :class:`IHostNetworkInterface`
             Found host network interface object.
 
         """
@@ -14149,7 +14190,7 @@ class IHost(Interface):
         in id_p of type str
             GUID of the host network interface to search for.
 
-        return network_interface of type IHostNetworkInterface
+        return network_interface of type :class:`IHostNetworkInterface`
             Found host network interface object.
 
         """
@@ -14163,10 +14204,10 @@ class IHost(Interface):
     def find_host_network_interfaces_of_type(self, type_p):
         """Searches through all host network interfaces and returns a list of interfaces of the specified type
 
-        in type_p of type HostNetworkInterfaceType
+        in type_p of type :class:`HostNetworkInterfaceType`
             type of the host network interfaces to search for.
 
-        return network_interfaces of type IHostNetworkInterface
+        return network_interfaces of type :class:`IHostNetworkInterface`
             Found host network interface objects.
 
         """
@@ -14187,10 +14228,10 @@ class IHost(Interface):
         in id_p of type str
             UUID of the USB device to search for.
 
-        return device of type IHostUSBDevice
+        return device of type :class:`IHostUSBDevice`
             Found USB device object.
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             Given @c id does not correspond to any USB device.
         
         """
@@ -14212,10 +14253,10 @@ class IHost(Interface):
             Address of the USB device (as assigned by the host) to
             search for.
 
-        return device of type IHostUSBDevice
+        return device of type :class:`IHostUSBDevice`
             Found USB device object.
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             Given @c name does not correspond to any USB device.
         
         """
@@ -14431,6 +14472,7 @@ class ISystemProperties(Interface):
              "VDI"
              "vdi"
              "VdI"
+
 
         refer to the same medium format.
         
@@ -14714,7 +14756,7 @@ class ISystemProperties(Interface):
         """Maximum total number of network adapters associated with every
         :py:class:`IMachine`  instance.
 
-        in chipset of type ChipsetType
+        in chipset of type :class:`ChipsetType`
             The chipset type to get the value for.
 
         return max_network_adapters of type int
@@ -14731,10 +14773,10 @@ class ISystemProperties(Interface):
         """Maximum number of network adapters of a given attachment type,
         associated with every :py:class:`IMachine`  instance.
 
-        in chipset of type ChipsetType
+        in chipset of type :class:`ChipsetType`
             The chipset type to get the value for.
 
-        in type_p of type NetworkAttachmentType
+        in type_p of type :class:`NetworkAttachmentType`
             Type of attachment.
 
         return max_network_adapters of type int
@@ -14754,7 +14796,7 @@ class ISystemProperties(Interface):
         """Returns the maximum number of devices which can be attached to a port
         for the given storage bus.
 
-        in bus of type StorageBus
+        in bus of type :class:`StorageBus`
             The storage bus type to get the value for.
 
         return max_devices_per_port of type int
@@ -14771,7 +14813,7 @@ class ISystemProperties(Interface):
     def get_min_port_count_for_storage_bus(self, bus):
         """Returns the minimum number of ports the given storage bus supports.
 
-        in bus of type StorageBus
+        in bus of type :class:`StorageBus`
             The storage bus type to get the value for.
 
         return min_port_count of type int
@@ -14787,7 +14829,7 @@ class ISystemProperties(Interface):
     def get_max_port_count_for_storage_bus(self, bus):
         """Returns the maximum number of ports the given storage bus supports.
 
-        in bus of type StorageBus
+        in bus of type :class:`StorageBus`
             The storage bus type to get the value for.
 
         return max_port_count of type int
@@ -14806,10 +14848,10 @@ class ISystemProperties(Interface):
         storage controllers one can have. Value may depend on chipset type
         used.
 
-        in chipset of type ChipsetType
+        in chipset of type :class:`ChipsetType`
             The chipset type to get the value for.
 
-        in bus of type StorageBus
+        in bus of type :class:`StorageBus`
             The storage bus type to get the value for.
 
         return max_instances of type int
@@ -14829,10 +14871,10 @@ class ISystemProperties(Interface):
         (:py:class:`DeviceType` ) for the given type of storage
         bus.
 
-        in bus of type StorageBus
+        in bus of type :class:`StorageBus`
             The storage bus type to get the value for.
 
-        return device_types of type DeviceType
+        return device_types of type :class:`DeviceType`
             The list of all supported device types for the given storage bus.
 
         """
@@ -14847,7 +14889,7 @@ class ISystemProperties(Interface):
         """Returns the default I/O cache setting for the
         given storage controller
 
-        in controller_type of type StorageControllerType
+        in controller_type of type :class:`StorageControllerType`
             The storage controller to the setting for.
 
         return enabled of type bool
@@ -14864,7 +14906,7 @@ class ISystemProperties(Interface):
         """Returns whether the given storage controller supports
         hot-plugging devices.
 
-        in controller_type of type StorageControllerType
+        in controller_type of type :class:`StorageControllerType`
             The storage controller to check for.
 
         return hotplug_capable of type bool
@@ -14883,10 +14925,10 @@ class ISystemProperties(Interface):
         USB controllers one can have. Value may depend on chipset type
         used.
 
-        in chipset of type ChipsetType
+        in chipset of type :class:`ChipsetType`
             The chipset type to get the value for.
 
-        in type_p of type USBControllerType
+        in type_p of type :class:`USBControllerType`
             The USB controller type to get the value for.
 
         return max_instances of type int
@@ -15338,13 +15380,13 @@ class IGuestSession(Interface):
         in dest of type str
             Destination file name on the host.
 
-        in flags of type CopyFileFlag
+        in flags of type :class:`CopyFileFlag`
             Copy flags; see :py:class:`CopyFileFlag`  for more information.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Error starting the copy operation.
         
         """
@@ -15372,13 +15414,13 @@ class IGuestSession(Interface):
         in dest of type str
             Destination file name on the guest.
 
-        in flags of type CopyFileFlag
+        in flags of type :class:`CopyFileFlag`
             Copy flags; see :py:class:`CopyFileFlag`  for more information.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Error starting the copy operation.
         
         """
@@ -15406,10 +15448,10 @@ class IGuestSession(Interface):
         in mode of type int
             File creation mode.
 
-        in flags of type DirectoryCreateFlag
+        in flags of type :class:`DirectoryCreateFlag`
             Creation flags; see :py:class:`DirectoryCreateFlag`  for more information.
 
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Error while creating the directory.
         
         """
@@ -15453,15 +15495,15 @@ class IGuestSession(Interface):
             On success this will contain the name of the directory created
             with full path.
 
-        raises VBOX_E_NOT_SUPPORTED
+        raises :class:`VBoxErrorNotSupported`
             The operation is not possible as requested on this particular
 guest type.
         
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             Invalid argument. This includes an incorrectly formatted template,
 or a non-absolute path.
         
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             The temporary directory could not be created. Possible reasons
 include a non-existing path or an insecure path when the secure
 option was requested.
@@ -15488,7 +15530,7 @@ option was requested.
         return exists of type bool
             Returns @c true if the directory exists, @c false if not.
 
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Error while checking existence of the directory specified.
         
         """
@@ -15508,16 +15550,16 @@ option was requested.
         in filter_p of type str
             Open filter to apply. This can include wildcards like ? and *.
 
-        in flags of type DirectoryOpenFlag
+        in flags of type :class:`DirectoryOpenFlag`
             Open flags; see :py:class:`DirectoryOpenFlag`  for more information.
 
-        return directory of type IGuestDirectory
+        return directory of type :class:`IGuestDirectory`
             :py:class:`IGuestDirectory`  object containing the opened directory.
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             Directory to open was not found.
         
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Error while opening the directory.
         
         """
@@ -15542,13 +15584,13 @@ option was requested.
         in path of type str
             Directory to query information for.
 
-        return info of type IGuestFsObjInfo
+        return info of type :class:`IGuestFsObjInfo`
             :py:class:`IGuestFsObjInfo`  object containing the queried information.
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             Directory to query information for was not found.
         
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Error querying information.
         
         """
@@ -15577,10 +15619,10 @@ option was requested.
         in path of type str
             Full path of directory to remove recursively.
 
-        in flags of type DirectoryRemoveRecFlag
+        in flags of type :class:`DirectoryRemoveRecFlag`
             Remove flags; see :py:class:`DirectoryRemoveRecFlag`  for more information.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion. This is not implemented
             yet and therefore this method call will block until deletion is completed.
 
@@ -15607,7 +15649,7 @@ option was requested.
         in dest of type str
             Destination directory to rename the source to.
 
-        in flags of type PathRenameFlag
+        in flags of type :class:`PathRenameFlag`
             Rename flags; see :py:class:`PathRenameFlag`  for more information.
 
         """
@@ -15633,7 +15675,7 @@ option was requested.
         in acl of type str
             Actual ACL string to set. Must comply with the guest OS.
 
-        raises E_NOTIMPL
+        raises :class:`OleErrorNotimpl`
             The method is not implemented yet.
         
         """
@@ -15647,7 +15689,7 @@ option was requested.
     def environment_clear(self):
         """Clears (deletes) all session environment variables.
 
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Error while clearing the session environment variables.
         
         """
@@ -15663,7 +15705,7 @@ option was requested.
             Value of the session environment variable specified. If this variable
             does not exist and empty value will be returned.
 
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Error while getting the value of the session environment variable.
         
         """
@@ -15682,7 +15724,7 @@ option was requested.
         in value of type str
             Value to set the session environment variable to.
 
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Error while setting the session environment variable.
         
         """
@@ -15699,7 +15741,7 @@ option was requested.
         in name of type str
             Name of session environment variable to unset (clear).
 
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Error while unsetting the session environment variable.
         
         """
@@ -15731,19 +15773,19 @@ option was requested.
             it has been created. Also causes the mode specified to be ignored.
             May not be supported on all guest types.
 
-        return file_p of type IGuestFile
+        return file_p of type :class:`IGuestFile`
             On success this will contain an open file object for the new
             temporary file.
 
-        raises VBOX_E_NOT_SUPPORTED
+        raises :class:`VBoxErrorNotSupported`
             The operation is not possible as requested on this particular
 guest type.
         
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             Invalid argument. This includes an incorrectly formatted template,
 or a non-absolute path.
         
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             The temporary file could not be created. Possible reasons include
 a non-existing path or an insecure path when the secure
 option was requested.
@@ -15771,7 +15813,7 @@ option was requested.
         return exists of type bool
             Returns @c true if the file exists, @c false if not.
 
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Error while checking existence of the file specified.
         
         """
@@ -15787,10 +15829,10 @@ option was requested.
         in path of type str
             Path to the file to remove.
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             File to remove was not found.
         
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Error while removing the file.
         
         """
@@ -15832,13 +15874,13 @@ option was requested.
             The mode to create the file with. Must be a three-digit octal number which
             represents the access rights for the file.
 
-        return file_p of type IGuestFile
+        return file_p of type :class:`IGuestFile`
             :py:class:`IGuestFile`  object representing the opened file.
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             File to open was not found.
         
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Error while opening the file.
         
         """
@@ -15895,13 +15937,13 @@ option was requested.
         in offset of type int
             The initial read/write offset (in bytes).
 
-        return file_p of type IGuestFile
+        return file_p of type :class:`IGuestFile`
             :py:class:`IGuestFile`  object representing the opened file.
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             File to open was not found.
         
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Error while opening the file.
         
         """
@@ -15928,13 +15970,13 @@ option was requested.
         in path of type str
             File to query information for.
 
-        return info of type IGuestFsObjInfo
+        return info of type :class:`IGuestFsObjInfo`
             :py:class:`IGuestFsObjInfo`  object containing the queried information.
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             File to query information for was not found.
         
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Error querying information.
         
         """
@@ -15954,10 +15996,10 @@ option was requested.
         return size of type int
             Queried file size.
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             File to rename was not found.
         
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Error querying file size.
         
         """
@@ -15976,7 +16018,7 @@ option was requested.
         in dest of type str
             Destination file to rename the source to.
 
-        in flags of type PathRenameFlag
+        in flags of type :class:`PathRenameFlag`
             Rename flags; see :py:class:`PathRenameFlag`  for more information.
 
         """
@@ -16002,7 +16044,7 @@ option was requested.
         in acl of type str
             Actual ACL string to set. Must comply with the guest OS.
 
-        raises E_NOTIMPL
+        raises :class:`OleErrorNotimpl`
             The method is not implemented yet.
         
         """
@@ -16044,7 +16086,7 @@ option was requested.
             the guest session, which will be applied to the newly started process
             in any case.</para>
 
-        in flags of type ProcessCreateFlag
+        in flags of type :class:`ProcessCreateFlag`
             Process creation flags;
             see :py:class:`ProcessCreateFlag`  for more information.
 
@@ -16054,10 +16096,10 @@ option was requested.
             killed and its status will be put to an appropriate value. See
             :py:class:`ProcessStatus`  for more information.
 
-        return guest_process of type IGuestProcess
+        return guest_process of type :class:`IGuestProcess`
             Guest process object of the newly created process.
 
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Error creating guest process.
         
         """
@@ -16110,7 +16152,7 @@ option was requested.
             the guest session, which will be applied to the newly started process
             in any case.</para>
 
-        in flags of type ProcessCreateFlag
+        in flags of type :class:`ProcessCreateFlag`
             Process creation flags;
             see :py:class:`ProcessCreateFlag`  for more information.
 
@@ -16120,7 +16162,7 @@ option was requested.
             killed and its status will be put to an appropriate value. See
             :py:class:`ProcessStatus`  for more information.
 
-        in priority of type ProcessPriority
+        in priority of type :class:`ProcessPriority`
             Process priority to use for execution;
             see see :py:class:`ProcessPriority`  for more information.
 
@@ -16128,7 +16170,7 @@ option was requested.
             Process affinity to use for execution. This parameter
             is not implemented yet.
 
-        return guest_process of type IGuestProcess
+        return guest_process of type :class:`IGuestProcess`
             Guest process object of the newly created process.
 
         """
@@ -16173,7 +16215,7 @@ option was requested.
         in pid of type int
             Process ID (PID) to get guest process for.
 
-        return guest_process of type IGuestProcess
+        return guest_process of type :class:`IGuestProcess`
             Guest process of specified process ID (PID).
 
         """
@@ -16193,11 +16235,11 @@ option was requested.
         in target of type str
             The path to the symbolic link target.
 
-        in type_p of type SymlinkType
+        in type_p of type :class:`SymlinkType`
             The symbolic link type;
             see :py:class:`SymlinkReadFlag`  for more information.
 
-        raises E_NOTIMPL
+        raises :class:`OleErrorNotimpl`
             The method is not implemented yet.
         
         """
@@ -16219,7 +16261,7 @@ option was requested.
         return exists of type bool
             Returns @c true if the symbolic link exists, @c false if not.
 
-        raises E_NOTIMPL
+        raises :class:`OleErrorNotimpl`
             The method is not implemented yet.
         
         """
@@ -16235,13 +16277,13 @@ option was requested.
         in symlink of type str
             Full path to symbolic link to read.
 
-        in flags of type SymlinkReadFlag
+        in flags of type :class:`SymlinkReadFlag`
             Read flags; see :py:class:`SymlinkReadFlag`  for more information.
 
         return target of type str
             Target of the symbolic link pointing to, if found.
 
-        raises E_NOTIMPL
+        raises :class:`OleErrorNotimpl`
             The method is not implemented yet.
         
         """
@@ -16263,7 +16305,7 @@ option was requested.
         in path of type str
             Symbolic link to remove.
 
-        raises E_NOTIMPL
+        raises :class:`OleErrorNotimpl`
             The method is not implemented yet.
         
         """
@@ -16278,7 +16320,7 @@ option was requested.
         in file_p of type str
             Symbolic link to remove.
 
-        raises E_NOTIMPL
+        raises :class:`OleErrorNotimpl`
             The method is not implemented yet.
         
         """
@@ -16298,7 +16340,7 @@ option was requested.
             Timeout (in ms) to wait for the operation to complete.
             Pass 0 for an infinite timeout.
 
-        return reason of type GuestSessionWaitResult
+        return reason of type :class:`GuestSessionWaitResult`
             The overall wait result;
             see :py:class:`GuestSessionWaitResult`  for more information.
 
@@ -16316,7 +16358,7 @@ option was requested.
         """Waits for one or more events to happen.
         Scriptable version of :py:func:`wait_for` .
 
-        in wait_for of type GuestSessionWaitForFlag
+        in wait_for of type :class:`GuestSessionWaitForFlag`
             Specifies what to wait for;
             see :py:class:`GuestSessionWaitForFlag`  for more information.
 
@@ -16324,7 +16366,7 @@ option was requested.
             Timeout (in ms) to wait for the operation to complete.
             Pass 0 for an infinite timeout.
 
-        return reason of type GuestSessionWaitResult
+        return reason of type :class:`GuestSessionWaitResult`
             The overall wait result;
             see :py:class:`GuestSessionWaitResult`  for more information.
 
@@ -16427,7 +16469,7 @@ class IProcess(Interface):
             Timeout (in ms) to wait for the operation to complete.
             Pass 0 for an infinite timeout.
 
-        return reason of type ProcessWaitResult
+        return reason of type :class:`ProcessWaitResult`
             The overall wait result;
             see :py:class:`ProcessWaitResult`  for more information.
 
@@ -16445,7 +16487,7 @@ class IProcess(Interface):
         """Waits for one or more events to happen.
         Scriptable version of :py:func:`wait_for` .
 
-        in wait_for of type ProcessWaitForFlag
+        in wait_for of type :class:`ProcessWaitForFlag`
             Specifies what to wait for;
             see :py:class:`ProcessWaitForFlag`  for more information.
 
@@ -16453,7 +16495,7 @@ class IProcess(Interface):
             Timeout (in ms) to wait for the operation to complete.
             Pass 0 for an infinite timeout.
 
-        return reason of type ProcessWaitResult
+        return reason of type :class:`ProcessWaitResult`
             The overall wait result;
             see :py:class:`ProcessWaitResult`  for more information.
 
@@ -16542,7 +16584,7 @@ class IProcess(Interface):
         in handle of type int
             Handle to write to. Usually 0 is stdin, 1 is stdout and 2 is stderr.
 
-        in flags of type ProcessInputFlag
+        in flags of type :class:`ProcessInputFlag`
             A combination of :py:class:`ProcessInputFlag`  flags.
 
         in data of type str
@@ -16629,11 +16671,11 @@ class IDirectory(Interface):
     def read(self):
         """Reads the next directory entry of this directory.
 
-        return obj_info of type IFsObjInfo
+        return obj_info of type :class:`IFsObjInfo`
             Object information of the current directory entry read. Also see
             :py:class:`IFsObjInfo` .
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             No more directory entries to read.
         
         """
@@ -16740,11 +16782,11 @@ class IFile(Interface):
     def query_info(self):
         """Queries information about this file.
 
-        return obj_info of type IFsObjInfo
+        return obj_info of type :class:`IFsObjInfo`
             Object information of this file. Also see
             :py:class:`IFsObjInfo` .
 
-        raises E_NOTIMPL
+        raises :class:`OleErrorNotimpl`
             The method is not implemented yet.
         
         """
@@ -16765,7 +16807,7 @@ class IFile(Interface):
         return data of type str
             Array of data read.
 
-        raises E_NOTIMPL
+        raises :class:`OleErrorNotimpl`
             The method is not implemented yet.
         
         """
@@ -16793,7 +16835,7 @@ class IFile(Interface):
         return data of type str
             Array of data read.
 
-        raises E_NOTIMPL
+        raises :class:`OleErrorNotimpl`
             The method is not implemented yet.
         
         """
@@ -16813,10 +16855,10 @@ class IFile(Interface):
         in offset of type int
             Offset to seek.
 
-        in whence of type FileSeekType
+        in whence of type :class:`FileSeekType`
             Seek mode; see :py:class:`FileSeekType`  for more information.
 
-        raises E_NOTIMPL
+        raises :class:`OleErrorNotimpl`
             The method is not implemented yet.
         
         """
@@ -16833,7 +16875,7 @@ class IFile(Interface):
         in acl of type str
             ACL string to set.
 
-        raises E_NOTIMPL
+        raises :class:`OleErrorNotimpl`
             The method is not implemented yet.
         
         """
@@ -16886,7 +16928,7 @@ class IFile(Interface):
         return written of type int
             How much bytes were written.
 
-        raises E_NOTIMPL
+        raises :class:`OleErrorNotimpl`
             The method is not implemented yet.
         
         """
@@ -17243,13 +17285,13 @@ class IGuest(Interface):
     def get_facility_status(self, facility):
         """Get the current status of a Guest Additions facility.
 
-        in facility of type AdditionsFacilityType
+        in facility of type :class:`AdditionsFacilityType`
             Facility to check status for.
 
         out timestamp of type int
             Timestamp (in ms) of last status update seen by the host.
 
-        return status of type AdditionsFacilityStatus
+        return status of type :class:`AdditionsFacilityStatus`
             The current (latest) facility status.
 
         """
@@ -17263,13 +17305,13 @@ class IGuest(Interface):
     def get_additions_status(self, level):
         """Retrieve the current status of a certain Guest Additions run level.
 
-        in level of type AdditionsRunLevelType
+        in level of type :class:`AdditionsRunLevelType`
             Status level to check
 
         return active of type bool
             Flag whether the status level has been reached or not
 
-        raises VBOX_E_NOT_SUPPORTED
+        raises :class:`VBoxErrorNotSupported`
             Wrong status level specified.
         
         """
@@ -17300,7 +17342,7 @@ class IGuest(Interface):
             interactively specify different credentials. This flag might
             not be supported by all versions of the Additions.
 
-        raises VBOX_E_VM_ERROR
+        raises :class:`VBoxErrorVmError`
             VMM device is not available.
         
         """
@@ -17329,19 +17371,19 @@ class IGuest(Interface):
         in x of type int
             x-position of the event.
 
-        in default_action of type DragAndDropAction
+        in default_action of type :class:`DragAndDropAction`
             The default action to use.
 
-        in allowed_actions of type DragAndDropAction
+        in allowed_actions of type :class:`DragAndDropAction`
             The actions which are allowed.
 
         in formats of type str
             The supported mime types.
 
-        return result_action of type DragAndDropAction
+        return result_action of type :class:`DragAndDropAction`
             The resulting action of this event.
 
-        raises VBOX_E_VM_ERROR
+        raises :class:`VBoxErrorVmError`
             VMM device is not available.
         
         """
@@ -17384,19 +17426,19 @@ class IGuest(Interface):
         in y of type int
             y-position of the event.
 
-        in default_action of type DragAndDropAction
+        in default_action of type :class:`DragAndDropAction`
             The default action to use.
 
-        in allowed_actions of type DragAndDropAction
+        in allowed_actions of type :class:`DragAndDropAction`
             The actions which are allowed.
 
         in formats of type str
             The supported mime types.
 
-        return result_action of type DragAndDropAction
+        return result_action of type :class:`DragAndDropAction`
             The resulting action of this event.
 
-        raises VBOX_E_VM_ERROR
+        raises :class:`VBoxErrorVmError`
             VMM device is not available.
         
         """
@@ -17433,7 +17475,7 @@ class IGuest(Interface):
         in screen_id of type int
             The screen id where the Drag and Drop event occurred.
 
-        raises VBOX_E_VM_ERROR
+        raises :class:`VBoxErrorVmError`
             VMM device is not available.
         
         """
@@ -17456,10 +17498,10 @@ class IGuest(Interface):
         in y of type int
             y-position of the event.
 
-        in default_action of type DragAndDropAction
+        in default_action of type :class:`DragAndDropAction`
             The default action to use.
 
-        in allowed_actions of type DragAndDropAction
+        in allowed_actions of type :class:`DragAndDropAction`
             The actions which are allowed.
 
         in formats of type str
@@ -17468,10 +17510,10 @@ class IGuest(Interface):
         out format_p of type str
             The resulting format of this event.
 
-        return result_action of type DragAndDropAction
+        return result_action of type :class:`DragAndDropAction`
             The resulting action of this event.
 
-        raises VBOX_E_VM_ERROR
+        raises :class:`VBoxErrorVmError`
             VMM device is not available.
         
         """
@@ -17514,10 +17556,10 @@ class IGuest(Interface):
         in data of type str
             The actual data.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises VBOX_E_VM_ERROR
+        raises :class:`VBoxErrorVmError`
             VMM device is not available.
         
         """
@@ -17549,13 +17591,13 @@ class IGuest(Interface):
         out formats of type str
             On return the supported mime types.
 
-        out allowed_actions of type DragAndDropAction
+        out allowed_actions of type :class:`DragAndDropAction`
             On return the actions which are allowed.
 
-        return default_action of type DragAndDropAction
+        return default_action of type :class:`DragAndDropAction`
             On return the default action to use.
 
-        raises VBOX_E_VM_ERROR
+        raises :class:`VBoxErrorVmError`
             VMM device is not available.
         
         """
@@ -17575,13 +17617,13 @@ class IGuest(Interface):
         in format_p of type str
             The mime type the data must be in.
 
-        in action of type DragAndDropAction
+        in action of type :class:`DragAndDropAction`
             The action to use.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises VBOX_E_VM_ERROR
+        raises :class:`VBoxErrorVmError`
             VMM device is not available.
         
         """
@@ -17602,7 +17644,7 @@ class IGuest(Interface):
         return data of type str
             The actual data.
 
-        raises VBOX_E_VM_ERROR
+        raises :class:`VBoxErrorVmError`
             VMM device is not available.
         
         """
@@ -17661,7 +17703,7 @@ class IGuest(Interface):
         in session_name of type str
             The session's friendly name. Optional, can be empty.
 
-        return guest_session of type IGuestSession
+        return guest_session of type :class:`IGuestSession`
             The newly created session object.
 
         """
@@ -17685,7 +17727,7 @@ class IGuest(Interface):
         in session_name of type str
             The session's friendly name to find. Wildcards like ? and * are allowed.
 
-        return sessions of type IGuestSession
+        return sessions of type :class:`IGuestSession`
             Array with all guest sessions found matching the name specified.
 
         """
@@ -17719,17 +17761,17 @@ class IGuest(Interface):
             installer. Useful for retrofitting features which weren't installed
             before on the guest.
 
-        in flags of type AdditionsUpdateFlag
+        in flags of type :class:`AdditionsUpdateFlag`
             :py:class:`AdditionsUpdateFlag`  flags.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises VBOX_E_NOT_SUPPORTED
+        raises :class:`VBoxErrorNotSupported`
             Guest OS is not supported for automated Guest Additions updates or the
 already installed Guest Additions are not ready yet.
         
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Error while updating.
         
         """
@@ -17986,7 +18028,7 @@ class IProgress(Interface):
         in timeout of type int
             Maximum time in milliseconds to wait or -1 to wait indefinitely.
 
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Failed to wait for task completion.
         
         """
@@ -18008,7 +18050,7 @@ class IProgress(Interface):
         in timeout of type int
             Maximum time in milliseconds to wait or -1 to wait indefinitely.
 
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Failed to wait for operation completion.
         
         """
@@ -18038,7 +18080,7 @@ class IProgress(Interface):
         check any operation error within the other progress object, after
         this method returns.
 
-        in p_progress_async of type IProgress
+        in p_progress_async of type :class:`IProgress`
             The progress object of the asynchrony process.
 
         """
@@ -18052,7 +18094,7 @@ class IProgress(Interface):
         
         If :py:func:`cancelable`  is @c false, then this method will fail.
 
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Operation cannot be canceled.
         
         """
@@ -18389,6 +18431,7 @@ class IMediumAttachment(Interface):
          ...
          CurState   (D3->B.vdi)
 
+
     The first column is the virtual machine configuration before the base hard
     disk B.vdi is attached, the second column shows the machine after
     this hard disk is attached. Constructs like D1->B.vdi and similar
@@ -18682,6 +18725,7 @@ class IMedium(Interface):
     ::
 
          <path>/{<uuid>}.<ext>
+
 
     where <path> is the supplied path specification,
     <uuid> is the newly generated UUID and <ext>
@@ -19060,10 +19104,10 @@ class IMedium(Interface):
             new UUID is automatically created, provided @a setParentId is
             @c true. A zero UUID is valid.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             Invalid parameter combination.
         
-        raises VBOX_E_NOT_SUPPORTED
+        raises :class:`VBoxErrorNotSupported`
             Medium is not a hard disk medium.
         
         """
@@ -19106,7 +19150,7 @@ class IMedium(Interface):
         
         Note that not all medium states are applicable to all medium types.
 
-        return state of type MediumState
+        return state of type :class:`MediumState`
             New medium state.
 
         """
@@ -19188,12 +19232,12 @@ class IMedium(Interface):
         This method returns the current state of the medium
         *before* the operation.
 
-        return token of type IToken
+        return token of type :class:`IToken`
             Token object, when this is released (reference count reaches 0) then
             the lock count is decreased. The lock is released when the lock count
             reaches 0.
 
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Invalid medium state (e.g. not created, locked, inaccessible,
 creating, deleting).
         
@@ -19240,11 +19284,11 @@ creating, deleting).
         the VirtualBox API, not a physical file-system lock of the underlying
         storage unit.
 
-        return token of type IToken
+        return token of type :class:`IToken`
             Token object, when this is released (reference count reaches 0) then
             the lock is released.
 
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Invalid medium state (e.g. not created, locked, inaccessible,
 creating, deleting).
         
@@ -19271,17 +19315,17 @@ creating, deleting).
         to call any of its methods or attributes will fail with the
         "Object not ready" (E_ACCESSDENIED) error.
 
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Invalid medium state (other than not created, created or
 inaccessible).
         
-        raises VBOX_E_OBJECT_IN_USE
+        raises :class:`VBoxErrorObjectInUse`
             Medium attached to virtual machine.
         
-        raises VBOX_E_FILE_ERROR
+        raises :class:`VBoxErrorFileError`
             Settings file not accessible.
         
-        raises VBOX_E_XML_ERROR
+        raises :class:`VBoxErrorXmlError`
             Could not parse the settings file.
         
         """
@@ -19302,10 +19346,10 @@ inaccessible).
         return value of type str
             Current property value.
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             Requested property does not exist (not supported by the format).
         
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             @a name is @c null or empty.
         
         """
@@ -19332,10 +19376,10 @@ inaccessible).
         in value of type str
             Property value to set.
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             Requested property does not exist (not supported by the format).
         
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             @a name is @c null or empty.
         
         """
@@ -19446,14 +19490,14 @@ inaccessible).
         in logical_size of type int
             Maximum logical size of the medium in bytes.
 
-        in variant of type MediumVariant
+        in variant of type :class:`MediumVariant`
             Exact image variant which should be created (as a combination of
             :py:class:`MediumVariant`  flags).
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises VBOX_E_NOT_SUPPORTED
+        raises :class:`VBoxErrorNotSupported`
             The variant of storage creation operation is not supported. See
         
         """
@@ -19500,13 +19544,13 @@ inaccessible).
         unit still exists. You may check the :py:func:`IMedium.state`  value
         to answer this question.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises VBOX_E_OBJECT_IN_USE
+        raises :class:`VBoxErrorObjectInUse`
             Medium is attached to a virtual machine.
         
-        raises VBOX_E_NOT_SUPPORTED
+        raises :class:`VBoxErrorNotSupported`
             Storage deletion is not allowed because neither of storage creation
 operations are supported. See
         
@@ -19535,17 +19579,17 @@ operations are supported. See
         The medium will be set to :py:attr:`MediumState.locked_read` 
         state for the duration of this operation.
 
-        in target of type IMedium
+        in target of type :class:`IMedium`
             Target medium.
 
-        in variant of type MediumVariant
+        in variant of type :class:`MediumVariant`
             Exact image variant which should be created (as a combination of
             :py:class:`MediumVariant`  flags).
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises VBOX_E_OBJECT_IN_USE
+        raises :class:`VBoxErrorObjectInUse`
             Medium not in @c NotCreated state.
         
         """
@@ -19631,10 +19675,10 @@ operations are supported. See
         placed to :py:attr:`MediumState.locked_write`  state and for the
         duration of this operation.
 
-        in target of type IMedium
+        in target of type :class:`IMedium`
             Target medium.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
         """
@@ -19674,20 +19718,20 @@ operations are supported. See
         This medium will be placed to :py:attr:`MediumState.locked_read` 
         state for the duration of this operation.
 
-        in target of type IMedium
+        in target of type :class:`IMedium`
             Target medium.
 
-        in variant of type MediumVariant
+        in variant of type :class:`MediumVariant`
             Exact image variant which should be created (as a combination of
             :py:class:`MediumVariant`  flags).
 
-        in parent of type IMedium
+        in parent of type :class:`IMedium`
             Parent of the cloned medium.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises E_NOTIMPL
+        raises :class:`OleErrorNotimpl`
             The specified cloning variant is not supported at the moment.
         
         """
@@ -19735,16 +19779,16 @@ operations are supported. See
         This medium will be placed to :py:attr:`MediumState.locked_read` 
         state for the duration of this operation.
 
-        in target of type IMedium
+        in target of type :class:`IMedium`
             Target medium.
 
-        in variant of type MediumVariant
+        in variant of type :class:`MediumVariant`
             :py:class:`MediumVariant`  flags).
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises E_NOTIMPL
+        raises :class:`OleErrorNotimpl`
             The specified cloning variant is not supported at the moment.
         
         """
@@ -19784,13 +19828,13 @@ operations are supported. See
         in location of type str
             New location.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises E_NOTIMPL
+        raises :class:`OleErrorNotimpl`
             The operation is not implemented yet.
         
-        raises VBOX_E_NOT_SUPPORTED
+        raises :class:`VBoxErrorNotSupported`
             Medium format does not support changing the location.
         
         """
@@ -19816,10 +19860,10 @@ operations are supported. See
         or later as the result of the background operation via the object
         returned via the @a progress parameter.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises VBOX_E_NOT_SUPPORTED
+        raises :class:`VBoxErrorNotSupported`
             Medium format does not support compacting (but potentially
 needs it).
         
@@ -19849,10 +19893,10 @@ needs it).
         in logical_size of type int
             New nominal capacity of the medium in bytes.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises VBOX_E_NOT_SUPPORTED
+        raises :class:`VBoxErrorNotSupported`
             Medium format does not support resizing.
         
         """
@@ -19875,13 +19919,13 @@ needs it).
         The medium will be write-locked for the duration of this operation (see
         :py:func:`lock_write` ).
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises VBOX_E_NOT_SUPPORTED
+        raises :class:`VBoxErrorNotSupported`
             This is not a differencing medium.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Medium is not in
         
         """
@@ -19925,6 +19969,7 @@ class IMediumFormat(Interface):
              "VDI"
              "vdi"
              "VdI"
+
 
         refer to the same medium format.
         
@@ -19970,7 +20015,7 @@ class IMediumFormat(Interface):
         out extensions of type str
             The array of supported extensions.
 
-        out types of type DeviceType
+        out types of type :class:`DeviceType`
             The array which indicates the device type for every given extension.
 
         """
@@ -19998,7 +20043,7 @@ class IMediumFormat(Interface):
         out descriptions of type str
             Array of property descriptions.
 
-        out types of type DataType
+        out types of type :class:`DataType`
             Array of property types.
 
         out flags of type int
@@ -20062,7 +20107,7 @@ class IKeyboard(Interface):
 
         in scancode of type int
 
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Could not send scan code to virtual keyboard.
         
         """
@@ -20078,7 +20123,7 @@ class IKeyboard(Interface):
 
         return codes_stored of type int
 
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Could not send all scan codes to virtual keyboard.
         
         """
@@ -20097,7 +20142,7 @@ class IKeyboard(Interface):
         function is nothing special, it is just a convenience function
         calling :py:func:`IKeyboard.put_scancodes`  with the proper scancodes.
 
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Could not send all scan codes to virtual keyboard.
         
         """
@@ -20108,7 +20153,7 @@ class IKeyboard(Interface):
         currently pressed. Useful when host and guest keyboard may be out
         of sync.
 
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Could not release some or all keys.
         
         """
@@ -20226,10 +20271,10 @@ class IMouse(Interface):
             A value of 1 means the corresponding button is pressed.
             otherwise it is released.
 
-        raises E_ACCESSDENIED
+        raises :class:`OleErrorAccessdenied`
             Console not powered up.
         
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Could not send mouse event to virtual mouse.
         
         """
@@ -20288,10 +20333,10 @@ class IMouse(Interface):
             A value of @c 1 means the corresponding button is pressed.
             otherwise it is released.
 
-        raises E_ACCESSDENIED
+        raises :class:`OleErrorAccessdenied`
             Console not powered up.
         
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Could not send mouse event to virtual mouse.
         
         """
@@ -20336,10 +20381,10 @@ class IMouse(Interface):
         in scan_time of type int
             Timestamp of the event in milliseconds. Only relative time between events is important.
 
-        raises E_ACCESSDENIED
+        raises :class:`OleErrorAccessdenied`
             Console not powered up.
         
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Could not send event to virtual device.
         
         """
@@ -20913,7 +20958,7 @@ class IDisplay(Interface):
 
         in screen_id of type int
 
-        in framebuffer of type IFramebuffer
+        in framebuffer of type :class:`IFramebuffer`
 
         """
         if not isinstance(screen_id, baseinteger):
@@ -20928,7 +20973,7 @@ class IDisplay(Interface):
 
         in screen_id of type int
 
-        out framebuffer of type IFramebuffer
+        out framebuffer of type :class:`IFramebuffer`
 
         out x_origin of type int
 
@@ -20983,7 +21028,7 @@ class IDisplay(Interface):
 
         in bits_per_pixel of type int
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             The @a display is not associated with any monitor.
         
         """
@@ -21040,10 +21085,10 @@ class IDisplay(Interface):
 
         in height of type int
 
-        raises E_NOTIMPL
+        raises :class:`OleErrorNotimpl`
             Feature not implemented.
         
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Could not take a screenshot.
         
         """
@@ -21079,10 +21124,10 @@ class IDisplay(Interface):
         return screen_data of type str
             Array with resulting screen data.
 
-        raises E_NOTIMPL
+        raises :class:`OleErrorNotimpl`
             Feature not implemented.
         
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Could not take a screenshot.
         
         """
@@ -21112,10 +21157,10 @@ class IDisplay(Interface):
         return screen_data of type str
             Array with resulting screen data.
 
-        raises E_NOTIMPL
+        raises :class:`OleErrorNotimpl`
             Feature not implemented.
         
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Could not take a screenshot.
         
         """
@@ -21151,10 +21196,10 @@ class IDisplay(Interface):
         in height of type int
             Desired image height.
 
-        raises E_NOTIMPL
+        raises :class:`OleErrorNotimpl`
             Feature not implemented.
         
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Could not draw to screen.
         
         """
@@ -21177,7 +21222,7 @@ class IDisplay(Interface):
         """Does a full invalidation of the VM display and instructs the VM
         to update it.
 
-        raises VBOX_E_IPRT_ERROR
+        raises :class:`VBoxErrorIprtError`
             Could not invalidate and update screen.
         
         """
@@ -21188,7 +21233,7 @@ class IDisplay(Interface):
 
         in screen_id of type int
 
-        raises VBOX_E_NOT_SUPPORTED
+        raises :class:`VBoxErrorNotSupported`
             Operation only valid for external frame buffers.
         
         """
@@ -21227,7 +21272,7 @@ class IDisplay(Interface):
         in height of type int
             Viewport height.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             The specified viewport data is invalid.
         
         """
@@ -21527,7 +21572,7 @@ class INetworkAdapter(Interface):
         return value of type str
             Current property value.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             @a name is @c null or empty.
         
         """
@@ -21549,7 +21594,7 @@ class INetworkAdapter(Interface):
         in value of type str
             Property value to set.
 
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             @a name is @c null or empty.
         
         """
@@ -22542,10 +22587,10 @@ class IUSBDeviceFilters(Interface):
             Filter name. See :py:func:`IUSBDeviceFilter.name` 
             for more info.
 
-        return filter_p of type IUSBDeviceFilter
+        return filter_p of type :class:`IUSBDeviceFilter`
             Created filter object.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             The virtual machine is not mutable.
         
         """
@@ -22577,16 +22622,16 @@ class IUSBDeviceFilters(Interface):
         in position of type int
             Position to insert the filter to.
 
-        in filter_p of type IUSBDeviceFilter
+        in filter_p of type :class:`IUSBDeviceFilter`
             USB device filter to insert.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine is not mutable.
         
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             USB device filter not created within this VirtualBox instance.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             USB device filter already in list.
         
         """
@@ -22610,13 +22655,13 @@ class IUSBDeviceFilters(Interface):
         in position of type int
             Position to remove the filter from.
 
-        return filter_p of type IUSBDeviceFilter
+        return filter_p of type :class:`IUSBDeviceFilter`
             Removed USB device filter.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine is not mutable.
         
-        raises E_INVALIDARG
+        raises :class:`OleErrorInvalidarg`
             USB device filter list empty or invalid @a position.
         
         """
@@ -23435,12 +23480,12 @@ class IInternalSessionControl(Interface):
     def get_remote_console(self):
         """Returns the console object suitable for remote control.
 
-        return console of type IConsole
+        return console of type :class:`IConsole`
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Session state prevents operation.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Session type prevents operation.
         
         """
@@ -23453,16 +23498,16 @@ class IInternalSessionControl(Interface):
         session or informs the session that it will be a remote one
         (if @a machine == @c null).
 
-        in machine of type IMachine
+        in machine of type :class:`IMachine`
 
-        in lock_type of type LockType
+        in lock_type of type :class:`LockType`
 
-        in token of type IToken
+        in token of type :class:`IToken`
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Session state prevents operation.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Session type prevents operation.
         
         """
@@ -23479,11 +23524,11 @@ class IInternalSessionControl(Interface):
         """Assigns the machine and the (remote) console object associated with
         this remote-type session.
 
-        in machine of type IMachine
+        in machine of type :class:`IMachine`
 
-        in console of type IConsole
+        in console of type :class:`IConsole`
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Session state prevents operation.
         
         """
@@ -23499,12 +23544,12 @@ class IInternalSessionControl(Interface):
         Must be called only in certain cases
         (see the method implementation).
 
-        in machine_state of type MachineState
+        in machine_state of type :class:`MachineState`
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Session state prevents operation.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Session type prevents operation.
         
         """
@@ -23518,7 +23563,7 @@ class IInternalSessionControl(Interface):
         the corresponding remote session when the direct session dies
         or gets closed.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Session state prevents operation.
         
         """
@@ -23528,14 +23573,14 @@ class IInternalSessionControl(Interface):
         """Triggered when settings of a network adapter of the
         associated virtual machine have changed.
 
-        in network_adapter of type INetworkAdapter
+        in network_adapter of type :class:`INetworkAdapter`
 
         in change_adapter of type bool
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Session state prevents operation.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Session type prevents operation.
         
         """
@@ -23550,12 +23595,12 @@ class IInternalSessionControl(Interface):
         """Triggered when settings of a serial port of the
         associated virtual machine have changed.
 
-        in serial_port of type ISerialPort
+        in serial_port of type :class:`ISerialPort`
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Session state prevents operation.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Session type prevents operation.
         
         """
@@ -23568,12 +23613,12 @@ class IInternalSessionControl(Interface):
         """Triggered when settings of a parallel port of the
         associated virtual machine have changed.
 
-        in parallel_port of type IParallelPort
+        in parallel_port of type :class:`IParallelPort`
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Session state prevents operation.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Session type prevents operation.
         
         """
@@ -23586,10 +23631,10 @@ class IInternalSessionControl(Interface):
         """Triggered when settings of a storage controller of the
         associated virtual machine have changed.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Session state prevents operation.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Session type prevents operation.
         
         """
@@ -23599,16 +23644,16 @@ class IInternalSessionControl(Interface):
         """Triggered when attached media of the
         associated virtual machine have changed.
 
-        in medium_attachment of type IMediumAttachment
+        in medium_attachment of type :class:`IMediumAttachment`
             The medium attachment which changed.
 
         in force of type bool
             If the medium change was forced.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Session state prevents operation.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Session type prevents operation.
         
         """
@@ -23623,7 +23668,7 @@ class IInternalSessionControl(Interface):
         """Triggered when attached storage devices of the
         associated virtual machine have changed.
 
-        in medium_attachment of type IMediumAttachment
+        in medium_attachment of type :class:`IMediumAttachment`
             The medium attachment which changed.
 
         in remove of type bool
@@ -23633,10 +23678,10 @@ class IInternalSessionControl(Interface):
             TRUE if the device is is silently reconfigured without
             notifying the guest about it.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Session state prevents operation.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Session type prevents operation.
         
         """
@@ -23652,7 +23697,7 @@ class IInternalSessionControl(Interface):
     def on_clipboard_mode_change(self, clipboard_mode):
         """Notification when the shared clipboard mode changes.
 
-        in clipboard_mode of type ClipboardMode
+        in clipboard_mode of type :class:`ClipboardMode`
             The new shared clipboard mode.
 
         """
@@ -23664,7 +23709,7 @@ class IInternalSessionControl(Interface):
     def on_drag_and_drop_mode_change(self, drag_and_drop_mode):
         """Notification when the drag'n'drop mode changes.
 
-        in drag_and_drop_mode of type DragAndDropMode
+        in drag_and_drop_mode of type :class:`DragAndDropMode`
             The new mode for drag'n'drop.
 
         """
@@ -23709,10 +23754,10 @@ class IInternalSessionControl(Interface):
         in restart of type bool
             Flag whether the server must be restarted
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Session state prevents operation.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Session type prevents operation.
         
         """
@@ -23731,10 +23776,10 @@ class IInternalSessionControl(Interface):
         """Triggered when settings of the USB controller object of the
         associated virtual machine have changed.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Session state prevents operation.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Session type prevents operation.
         
         """
@@ -23751,10 +23796,10 @@ class IInternalSessionControl(Interface):
 
         in global_p of type bool
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Session state prevents operation.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Session type prevents operation.
         
         """
@@ -23770,16 +23815,16 @@ class IInternalSessionControl(Interface):
         A @c null @a error object means success, otherwise it
         describes a failure.
 
-        in device of type IUSBDevice
+        in device of type :class:`IUSBDevice`
 
-        in error of type IVirtualBoxErrorInfo
+        in error of type :class:`IVirtualBoxErrorInfo`
 
         in masked_interfaces of type int
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Session state prevents operation.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Session type prevents operation.
         
         """
@@ -23801,12 +23846,12 @@ class IInternalSessionControl(Interface):
 
         in id_p of type str
 
-        in error of type IVirtualBoxErrorInfo
+        in error of type :class:`IVirtualBoxErrorInfo`
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Session state prevents operation.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Session type prevents operation.
         
         """
@@ -23830,7 +23875,7 @@ class IInternalSessionControl(Interface):
 
         out win_id of type int
 
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Session type prevents operation.
         
         """
@@ -23843,7 +23888,7 @@ class IInternalSessionControl(Interface):
     def on_bandwidth_group_change(self, bandwidth_group):
         """Notification when one of the bandwidth groups change.
 
-        in bandwidth_group of type IBandwidthGroup
+        in bandwidth_group of type :class:`IBandwidthGroup`
             The bandwidth group which changed.
 
         """
@@ -23871,10 +23916,10 @@ class IInternalSessionControl(Interface):
 
         out ret_flags of type str
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Machine session is not open.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Session type is not direct.
         
         """
@@ -23914,10 +23959,10 @@ class IInternalSessionControl(Interface):
             The flags of the properties returned. The array entries match the
             corresponding entries in the @a key array.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Machine session is not open.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Session type is not direct.
         
         """
@@ -23931,7 +23976,7 @@ class IInternalSessionControl(Interface):
         """Triggers online merging of a hard disk. Used internally when deleting
         a snapshot while a VM referring to the same hard disk chain is running.
 
-        in medium_attachment of type IMediumAttachment
+        in medium_attachment of type :class:`IMediumAttachment`
             The medium attachment to identify the medium chain.
 
         in source_idx of type int
@@ -23942,13 +23987,13 @@ class IInternalSessionControl(Interface):
             The index of the target image in the chain.
             Redundant, but drastically reduces IPC.
 
-        in progress of type IProgress
+        in progress of type :class:`IProgress`
             Progress object for this operation.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Machine session is not open.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Session type is not direct.
         
         """
@@ -23969,10 +24014,10 @@ class IInternalSessionControl(Interface):
         in enable of type bool
             True enables statistics collection.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Machine session is not open.
         
-        raises VBOX_E_INVALID_OBJECT_STATE
+        raises :class:`VBoxErrorInvalidObjectState`
             Session type is not direct.
         
         """
@@ -23989,13 +24034,13 @@ class IInternalSessionControl(Interface):
         
         :py:func:`IConsole.pause` 
 
-        in reason of type Reason
+        in reason of type :class:`Reason`
             Specify the best matching reason code please.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine not in Running state.
         
-        raises VBOX_E_VM_ERROR
+        raises :class:`VBoxErrorVmError`
             Virtual machine error in suspend operation.
         
         """
@@ -24012,13 +24057,13 @@ class IInternalSessionControl(Interface):
         
         :py:func:`IConsole.resume` 
 
-        in reason of type Reason
+        in reason of type :class:`Reason`
             Specify the best matching reason code please.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine not in Paused state.
         
-        raises VBOX_E_VM_ERROR
+        raises :class:`VBoxErrorVmError`
             Virtual machine error in resume operation.
         
         """
@@ -24035,16 +24080,16 @@ class IInternalSessionControl(Interface):
         
         :py:func:`IConsole.save_state` 
 
-        in reason of type Reason
+        in reason of type :class:`Reason`
             Specify the best matching reason code please.
 
-        return progress of type IProgress
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        raises VBOX_E_INVALID_VM_STATE
+        raises :class:`VBoxErrorInvalidVmState`
             Virtual machine state neither Running nor Paused.
         
-        raises VBOX_E_FILE_ERROR
+        raises :class:`VBoxErrorFileError`
             Failed to create directory for saved state file.
         
         """
@@ -24168,7 +24213,7 @@ class ISession(Interface):
         state will automatically return to "Unlocked" once the VM is no
         longer executing, which can of course take a very long time.
 
-        raises E_UNEXPECTED
+        raises :class:`OleErrorUnexpected`
             Session is not locked.
         
         """
@@ -24532,7 +24577,7 @@ class IPerformanceCollector(Interface):
         in objects of type Interface
             Set of objects to return metric parameters for.
 
-        return metrics of type IPerformanceMetric
+        return metrics of type :class:`IPerformanceMetric`
             Array of returned metric parameters.
 
         """
@@ -24579,7 +24624,7 @@ class IPerformanceCollector(Interface):
             Number of samples to retain in performance data history. Older
             samples get discarded.
 
-        return affected_metrics of type IPerformanceMetric
+        return affected_metrics of type :class:`IPerformanceMetric`
             Array of metrics that have been modified by the call to this method.
 
         """
@@ -24622,7 +24667,7 @@ class IPerformanceCollector(Interface):
         in objects of type Interface
             Set of objects to enable metrics for.
 
-        return affected_metrics of type IPerformanceMetric
+        return affected_metrics of type :class:`IPerformanceMetric`
             Array of metrics that have been modified by the call to this method.
 
         """
@@ -24661,7 +24706,7 @@ class IPerformanceCollector(Interface):
         in objects of type Interface
             Set of objects to disable metrics for.
 
-        return affected_metrics of type IPerformanceMetric
+        return affected_metrics of type :class:`IPerformanceMetric`
             Array of metrics that have been modified by the call to this method.
 
         """
@@ -24984,7 +25029,7 @@ class INATEngine(Interface):
             The name of the rule. An empty name is acceptable, in which case the NAT engine
             auto-generates one using the other parameters.
 
-        in proto of type NATProtocol
+        in proto of type :class:`NATProtocol`
             Protocol handled with the rule.
 
         in host_ip of type str
@@ -25272,7 +25317,7 @@ class IExtPackFile(IExtPackBase):
         in display_info of type str
             Platform specific display information. Reserved for future hacks.
 
-        return progess of type IProgress
+        return progess of type :class:`IProgress`
             Progress object for the operation.
 
         """
@@ -25310,10 +25355,10 @@ class IExtPackManager(Interface):
         in name of type str
             The name of the extension pack to locate.
 
-        return return_data of type IExtPack
+        return return_data of type :class:`IExtPack`
             The extension pack if found.
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             No extension pack matching @a name was found.
         
         """
@@ -25332,7 +25377,7 @@ class IExtPackManager(Interface):
             The path of the extension pack tarball. This can optionally be
             followed by a "::SHA-256=hex-digit" of the tarball.
 
-        return file_p of type IExtPackFile
+        return file_p of type :class:`IExtPackFile`
             The interface of the extension pack file object.
 
         """
@@ -25356,7 +25401,7 @@ class IExtPackManager(Interface):
         in display_info of type str
             Platform specific display information. Reserved for future hacks.
 
-        return progess of type IProgress
+        return progess of type :class:`IProgress`
             Progress object for the operation.
 
         """
@@ -25482,7 +25527,7 @@ class IBandwidthControl(Interface):
         in name of type str
             Name of the bandwidth group.
 
-        in type_p of type BandwidthGroupType
+        in type_p of type :class:`BandwidthGroupType`
             The type of the bandwidth group (network or disk).
 
         in max_bytes_per_sec of type int
@@ -25517,7 +25562,7 @@ class IBandwidthControl(Interface):
         in name of type str
             Name of the bandwidth group to get.
 
-        return bandwidth_group of type IBandwidthGroup
+        return bandwidth_group of type :class:`IBandwidthGroup`
             Where to store the bandwidth group on success.
 
         """
@@ -25531,7 +25576,7 @@ class IBandwidthControl(Interface):
     def get_all_bandwidth_groups(self):
         """Get all managed bandwidth groups.
 
-        return bandwidth_groups of type IBandwidthGroup
+        return bandwidth_groups of type :class:`IBandwidthGroup`
             The array of managed bandwidth groups.
 
         """
@@ -25582,7 +25627,7 @@ class IVirtualBoxClient(Interface):
         is not as it should be then this method will return an appropriate
         error.
 
-        in machine of type IMachine
+        in machine of type :class:`IMachine`
             The machine object to check.
 
         """
@@ -25608,7 +25653,7 @@ class IEventSource(Interface):
     def create_listener(self):
         """Creates a new listener object, useful for passive mode.
 
-        return listener of type IEventListener
+        return listener of type :class:`IEventListener`
 
         """
         listener = self._call("createListener")
@@ -25620,10 +25665,10 @@ class IEventSource(Interface):
         This way a single listener can listen for events coming from multiple sources,
         using a single blocking :py:func:`get_event`  on the returned aggregator.
 
-        in subordinates of type IEventSource
+        in subordinates of type :class:`IEventSource`
             Subordinate event source this one aggregates.
 
-        return result of type IEventSource
+        return result of type :class:`IEventSource`
             Event source aggregating passed sources.
 
         """
@@ -25648,10 +25693,10 @@ class IEventSource(Interface):
         event listener, it is forcefully unregistered by the system, and further
         :py:func:`get_event`  calls will return @c VBOX_E_OBJECT_NOT_FOUND.
 
-        in listener of type IEventListener
+        in listener of type :class:`IEventListener`
             Listener to register.
 
-        in interesting of type VBoxEventType
+        in interesting of type :class:`VBoxEventType`
             Event types listener is interested in. One can use wildcards like -
             :py:attr:`VBoxEventType.any_p`  to specify wildcards, matching more
             than one event.
@@ -25683,7 +25728,7 @@ class IEventSource(Interface):
         """Unregister an event listener. If listener is passive, and some waitable events are still
         in queue they are marked as processed automatically.
 
-        in listener of type IEventListener
+        in listener of type :class:`IEventListener`
             Listener to unregister.
 
         """
@@ -25695,7 +25740,7 @@ class IEventSource(Interface):
     def fire_event(self, event, timeout):
         """Fire an event for this source.
 
-        in event of type IEvent
+        in event of type :class:`IEvent`
             Event to deliver.
 
         in timeout of type int
@@ -25719,17 +25764,17 @@ class IEventSource(Interface):
         regularly is required for passive event listeners to avoid system overload;
         see :py:func:`IEventSource.register_listener`  for details.
 
-        in listener of type IEventListener
+        in listener of type :class:`IEventListener`
             Which listener to get data for.
 
         in timeout of type int
             Maximum time to wait for events, in ms;
             0 = no wait, -1 = indefinite wait.
 
-        return event of type IEvent
+        return event of type :class:`IEvent`
             Event retrieved, or null if none available.
 
-        raises VBOX_E_OBJECT_NOT_FOUND
+        raises :class:`VBoxErrorObjectNotFound`
             Listener is not registered, or autounregistered.
         
         """
@@ -25747,10 +25792,10 @@ class IEventSource(Interface):
         event processing. When all listeners of a particular event have called this
         method, the system will then call :py:func:`IEvent.set_processed` .
 
-        in listener of type IEventListener
+        in listener of type :class:`IEventListener`
             Which listener processed event.
 
-        in event of type IEvent
+        in event of type :class:`IEvent`
             Which event.
 
         """
@@ -25779,7 +25824,7 @@ class IEventListener(Interface):
         processed and :py:func:`IEvent.wait_processed`  will return
         immediately.
 
-        in event of type IEvent
+        in event of type :class:`IEvent`
             Event available.
 
         """
