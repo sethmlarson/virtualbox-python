@@ -67,6 +67,12 @@ LIB_DEFINES = r'''
 
 '''
 
+###########################################################
+#
+# Doc strip and formatting code
+#
+###########################################################
+
 remove = ['desc', 'tt', 'ul', 'li', 'note', 'ol', 'h3',
            'tr', 'td', 'table', 'see']
 
@@ -122,7 +128,7 @@ def pre_multiline_text(m):
     indent = len(lines[0]) - len(lines[0].lstrip())
     for line in lines:
         text.append("     " + line)
-    return "\n" + " " * indent + "::\n\n%s\n" % "\n".join(text).rstrip()
+    return "\n" + " " * indent + "::\n\n%s\n\n" % "\n".join(text).rstrip()
 
 def desc_text(m):
     return "%(text)s" % m.groupdict()
@@ -195,16 +201,36 @@ class %(pname)s(VBoxError):
     value = %(value)s
 
 '''
+# Only bother defining the errors explicitly defined 
+# in VirtualBox.xidl
+OLE_ERRORS = [
+        ("E_FAIL",          "0x80004005", "Unspecified error"),
+        ("E_NOINTERFACE",   "0x80004002", "No such interface supported"),
+        ("E_ACCESSDENIED",  "0x80070005", "General access denied error"),
+        ("E_NOTIMPL",       "0x80004001", "Not implemented"),
+        ("E_UNEXPECTED",    "0x8000FFFF", "Catastrophic failure"),
+        ("E_INVALIDARG",    "0x80070057", "One or more arguments are invalid"),
+        ]
 
+def error_name_to_pname(name):
+    if name.count('_') > 1:
+        pname = "".join([e.title() for e in name.lower().split('_')[2:]])
+        pname = "VBoxError%s" % pname
+    else:
+        pname = name.lower().split('_')[1].title()
+        pname = "OleError%s" % pname
+    return pname
 
-def process_result(node):
+def build_error_result(name, value, doc):
+    pname = error_name_to_pname(name)
+    return RESULT % dict(name=name, value=value, doc=doc, pname=pname)
+
+def process_result_node(node):
     name = node.getAttribute('name')
-    pname = "".join([e.title() for e in name.lower().split('_')[2:]])
-    pname = "VBoxError%s" % pname
     value = node.getAttribute('value')
     descnode = node.getElementsByTagName('desc')[0]
     doc = descnode.childNodes[0].wholeText.strip()
-    return RESULT % dict(name=name, value=value, doc=doc, pname=pname)
+    return build_error_result(name, value, doc)
 
 
 ###########################################################
@@ -225,7 +251,7 @@ ENUM_ROW = """\
         ('%(label)s', %(value)s, 
          '''%(doc)s'''),"""
 
-def process_enum(node):
+def process_enum_node(node):
     name = node.getAttribute('name')
     uuid = "'%s'" % node.getAttribute('uuid')
     code = []
@@ -270,7 +296,7 @@ class %(name)s(%(extends)s):
     __wsmap__ = '%(wsmap)s'
     %(event_id)s'''
 
-def process_interface(node):
+def process_interface_node(node):
     name = node.getAttribute('name')
     uuid = node.getAttribute('uuid')
     extends = node.getAttribute('extends')
@@ -343,6 +369,10 @@ def type_to_name(t):
         return known_types[t]
     return t 
 
+def type_to_name_doc(t):
+    if t in known_types:
+        return known_types[t]
+    return ":class:`%s`" % t
 
 def process_interface_attribute(node):
     name = node.getAttribute('name')
@@ -436,7 +466,8 @@ METHOD_RETURN = '''\
 
 def process_interface_method(node):
     def process_result(c):
-        cname = c.getAttribute('name')
+        name = c.getAttribute('name')
+        cname = ":class:`%s` %s" % (error_name_to_pname(name), name)
         d = c.childNodes[0]
         cdoc = getattr(d, 'wholeText', '').strip()
         if cdoc:
@@ -481,7 +512,7 @@ def process_interface_method(node):
     doc = [method_doc]
     doc.append('')
     for n, io, d, t, _ in params: 
-        ptype = type_to_name(t)
+        ptype = type_to_name_doc(t)
         if d:
             d = "\n            %s" % d
         doc.append(METHOD_DOC_PARAM % dict(io=io, pname=pythonic_name(n), 
@@ -638,11 +669,15 @@ def main(virtualbox_xidl):
         if name is None:
             continue
         if name == 'result':
-            source['result'].append(process_result(node))
+            source['result'].append(process_result_node(node))
         elif name == 'enum':
-            source['enum'].append(process_enum(node))
+            source['enum'].append(process_enum_node(node))
         elif name == 'interface':
-            source['interface'].append(process_interface(node))
+            source['interface'].append(process_interface_node(node))
+
+    # Add OLE errors to 'result'
+    for args in OLE_ERRORS:
+        source['result'].append(build_error_result(*args))
 
     #get lib meta
     uuid = library.getAttribute('uuid')
