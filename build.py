@@ -467,7 +467,7 @@ METHOD_RETURN = '''\
 def process_interface_method(node):
     def process_result(c):
         name = c.getAttribute('name')
-        cname = ":class:`%s` %s" % (error_name_to_pname(name), name)
+        cname = ":class:`%s`" % error_name_to_pname(name)
         d = c.childNodes[0]
         cdoc = getattr(d, 'wholeText', '').strip()
         if cdoc:
