@@ -167,14 +167,18 @@ class Interface(object):
         try:
             ret = method(*in_params)
         except Exception as exc:
-            if hasattr(exc, 'errno'):
-                errno = exc.errno & 0xFFFFFFFF
-                errclass = vbox_error.get(errno, VBoxError)
-                errobj = errclass()
-                errobj.value = errno
+            errno = getattr(exc, 'errno', getattr(exc, 'hresult', -1))
+            errno = errno & 0xFFFFFFFF
+            errclass = vbox_error.get(errno, VBoxError)
+            errobj = errclass()
+            errobj.exc = exc
+            errobj.value = errno
+            # TODO: Is this the only way to get a message from exc... 
+            #       does this also vary between nix vs windows.
+            if hasattr(exc, 'args'):
+                errobj.msg = exc.args[2][2]
             else:
-                errobj = VBoxError()
-            errobj.msg = getattr(exc, 'msg', exc.message)
+                errojb.msg = getattr(exc, 'msg', getattr(exc, 'message'))
             raise errobj
         return ret
 
