@@ -15,7 +15,7 @@ class IVirtualSystemDescription(library.IVirtualSystemDescription):
 
     def set_final_value(self, description_type, value):
         """Set the value for the given description type.
-        
+
         in description_type type :class:`VirtualSystemDescriptionType`
 
         in value type str
@@ -33,7 +33,7 @@ class IVirtualSystemDescription(library.IVirtualSystemDescription):
         enabled = [True] * len(types)
         vbox_values = list(vbox_values)
         extra_config = list(extra_config)
-        vbox_values[offset] = value 
+        vbox_values[offset] = value
         self.set_final_values(enabled, vbox_values, extra_config)
 
     def set_name(self, value):
@@ -83,8 +83,3 @@ class IVirtualSystemDescription(library.IVirtualSystemDescription):
     def set_hard_disk_image(self, value):
         "Set hard_disk_image value."
         self.set_final_value(DescType.hard_disk_image, value)
-
-
-
-
-
