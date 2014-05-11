@@ -1,5 +1,4 @@
 include *.rst
 include LICENSE 
-include distribute_setup.py
 recursive-include tests *.py
 
