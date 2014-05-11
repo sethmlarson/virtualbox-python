@@ -225,16 +225,23 @@ which have a running vboxapi.
 Change log
 ==========
 
+version 0.1.5 
+
+* Improve error handling and documentation of error types.
+* Appliance extension.
+* Update to latest API (includes Paravirt provider).
+* Thanks to contributions by @nilp0inter
+
 version 0.1.4 (09/04/2014)
  
- * Fixed bug in error class container.
+* Fixed bug in error class container.
 
 version 0.1.3 (04/03/2014)
 
- * Bug fix for API support.
- * Added markup generation to library documentation.
- * Improved Manager bootstrap design.
- * Py3 compatibility (although vboxapi does not support py3).
+* Bug fix for API support.
+* Added markup generation to library documentation.
+* Improved Manager bootstrap design.
+* Py3 compatibility (although vboxapi does not support py3).
 
 version 0.1.2 (28/02/2014)
 
