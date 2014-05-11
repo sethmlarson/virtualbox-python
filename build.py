@@ -641,7 +641,8 @@ http://www.virtualbox.org/svn/vbox/trunk/src/VBox/Main/idl/VirtualBox.xidl"""
 
 def main(virtualbox_xidl):
     if not os.path.exists(virtualbox_xidl):
-        os.system('wget %s' % XIDL)
+        if 0 != os.system('wget %s' % XIDL):
+            assert 0 == os.system('curl %s > VirtualBox.xidl' % XIDL) 
         virtualbox_xidl = 'VirtualBox.xidl'
         assert os.path.exists(virtualbox_xidl), "failed to download %s" % XIDL
             
