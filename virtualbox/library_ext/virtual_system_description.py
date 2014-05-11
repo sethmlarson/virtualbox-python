@@ -3,6 +3,7 @@ import os
 
 import virtualbox
 from virtualbox import library
+from virtualbox.library_base import Enum
 from virtualbox.library import VirtualSystemDescriptionType as DescType
 
 """
@@ -33,7 +34,17 @@ class IVirtualSystemDescription(library.IVirtualSystemDescription):
         enabled = [True] * len(types)
         vbox_values = list(vbox_values)
         extra_config = list(extra_config)
-        vbox_values[offset] = value
+
+        if isinstance(value, basestring):
+            final_value = value
+        elif isinstance(value, Enum):
+            final_value = str(value._value)
+        elif isinstance(value, int):
+            final_value = str(value)
+        else:
+            raise ValueError("Incorrect value type.")
+
+        vbox_values[offset] = final_value
         self.set_final_values(enabled, vbox_values, extra_config)
 
     def set_name(self, value):
