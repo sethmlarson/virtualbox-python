@@ -4,6 +4,7 @@
 import re
 import inspect
 import sys
+import platform
 
 # Py2 and Py3 compatibility  
 try:
@@ -175,10 +176,15 @@ class Interface(object):
             errobj.value = errno
             # TODO: Is this the only way to get a message from exc... 
             #       does this also vary between nix vs windows.
-            if hasattr(exc, 'args'):
-                errobj.msg = exc.args[2][2]
-            else:
-                errojb.msg = getattr(exc, 'msg', getattr(exc, 'message'))
+            errobj.msg = None
+            if platform.system() == 'Windows':
+                if hasattr(exc, 'args'):
+                    print(exc.args)
+                    errobj.msg = exc.args[2][2]
+	    # TODO: get the Linux/Darwin specific args struct
+
+            if errobj.msg is None:
+                errobj.msg = getattr(exc, 'msg', getattr(exc, 'message'))
             raise errobj
         return ret
 
