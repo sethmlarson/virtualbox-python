@@ -26,8 +26,8 @@ class EnumType(type):
     the Enum class object's values defined in Enum.lookup_label"""
     def __init__(cls, name, bases, dct):
         cls._value = None
-        cls._lookup_label = {v:l for l, v, _ in cls._enums}
-        cls._lookup_doc = {v:d for _, v, d in cls._enums}
+        cls._lookup_label = dict((v, l) for l, v, _ in cls._enums)
+        cls._lookup_doc = dict((v, d) for _, v, d in cls._enums)
         for l, v, _ in cls._enums:
             setattr(cls, pythonic_name(l), cls(v))
 
