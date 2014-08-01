@@ -225,6 +225,11 @@ which have a running vboxapi.
 Change log
 ==========
 
+version 0.1.6
+
+* Bug fixes (compatability issue with py26 and virtual keyboard).
+* Thanks to contributions by @D4rkC4t and @Guilherme Moro.
+
 version 0.1.5 
 
 * Improve error handling and documentation of error types.
