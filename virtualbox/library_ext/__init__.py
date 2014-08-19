@@ -6,7 +6,7 @@ from virtualbox import library
 
 """
  This module is responsible for shimming out the auto generated libraries found
- under librar.py.  The intension for the extension classes is to fix up or
+ under library.py.  The intension for the extension classes is to fix up or
  improve on the default COM API behaviour and auto generated Python library
  file when interacting through an Interface to the Main library API.
 """
@@ -18,6 +18,7 @@ from .session import ISession
 from .keyboard import IKeyboard
 from .guest_session import IGuestSession
 from .guest import IGuest
+from .host import IHost
 from .machine import IMachine
 from .progress import IProgress
 from .console import IConsole
