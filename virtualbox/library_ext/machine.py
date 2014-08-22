@@ -11,6 +11,10 @@ from virtualbox import library
 Add helper code to the default IMachine class.
 """
 
+try:
+    basestring = basestring
+except:
+    basestring = (str, bytes)
 
 # Extend and fix IMachine :) 
 class IMachine(library.IMachine):
@@ -82,7 +86,7 @@ class IMachine(library.IMachine):
         vbox = virtualbox.VirtualBox()
 
         if snapshot_name_or_id is not None:
-            if snapshot_name_or_id in [str, unicode]:
+            if isinstance(snapshot_name_or_id, basestring):
                 snapshot = self.find_snapshot(snapshot_name_or_id)
             else:
                 snapshot = snapshot_name_or_id
