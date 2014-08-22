@@ -56,8 +56,9 @@ class IMachine(library.IMachine):
             progress.wait_for_completion(-1)
             media = []
         
-        # if delete - let's remove the settings folder too
-        if delete:
+        # if delete - At some virtualbox didn't do a full cleanup of this dir.
+        #             Let's double check it has been cleaned up.
+        if delete and os.path.exists(settings_dir):
             shutil.rmtree(settings_dir)
 
         return media
