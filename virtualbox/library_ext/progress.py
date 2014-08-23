@@ -10,7 +10,7 @@ Add helper code to the default IProgress class.
 _progress_template = """\
 (%(o)s/%(oc)s) %(od)s %(p)-3s%% (%(tr)s s remaining)"""
 class IProgress(library.IProgress):
-    __doct__ = library.IProgress.__doc__
+    __doc__ = library.IProgress.__doc__
 
     def __str__(self):
        return _progress_template % dict(o=self.operation, p=self.percent,
