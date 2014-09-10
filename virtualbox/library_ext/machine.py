@@ -33,7 +33,7 @@ class IMachine(library.IMachine):
         """
         if self.state >= library.MachineState.running:
             session = virtualbox.Session()
-            self.lock_machine(session, LockType.shared)
+            self.lock_machine(session, library.LockType.shared)
             try:
                 progress = session.console.power_down()
                 progress.wait_for_completion(-1)
