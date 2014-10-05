@@ -175,7 +175,7 @@ class WebServiceManager(Manager):
             vbox = VirtualBox(manager=manager)
             ...
         """
-        params = (url, user, password)
+        params = {"url":url, "user":user, "password":password}
         super(WebServiceManager, self).__init__("WEBSERVICE", params)
 
 
