@@ -5,6 +5,7 @@ import re
 import inspect
 import sys
 import platform
+import time
 
 # Py2 and Py3 compatibility  
 try:
@@ -133,12 +134,22 @@ class Interface(object):
 
     def _search_attr(self, name, prefix=None):
         attr_name = name
-        attr = getattr(self._i, attr_name, None)
-        # if a prefix is defined, try to get that prefixed name and use that
-        # attribute instead, else, stick with the attr value pulled out above
-        if prefix is not None:
-            prefix_name = prefix + name[0].upper() + name[1:]
-            attr = getattr(self._i, prefix_name, attr)
+        # Dodgy hack to triple check the xpcom interface object has the attribute before
+        # raising what is going to be an unrecoverable attr error.
+        for i in range(3):
+            attr = getattr(self._i, attr_name, None)
+            # If a prefix is defined, try to get that prefixed name and use that
+            # attribute instead, else, stick with the attr value pulled out above.
+            if prefix is not None:
+                prefix_name = prefix + name[0].upper() + name[1:]
+                attr = getattr(self._i, prefix_name, attr)
+            if attr:
+                break
+            else:
+                # Give the interface a chance to be "sane"
+                time.sleep(0.1)
+        else:
+            raise AttributeError("Failed to find attribute %s in %s" % (name, self))
         return attr
 
     def _get_attr(self, name):
