@@ -9,6 +9,7 @@ import os
 import sys
 import platform
 import copy
+import atexit
 from multiprocessing import current_process
 from threading import current_thread
 
@@ -81,7 +82,7 @@ def import_vboxapi():
         yield vboxapi
 
 
-_manager = {} 
+_managers = {} 
 class Manager(object):
     """The Manager maintains a single point of entry into vboxapi.
     
@@ -96,7 +97,9 @@ class Manager(object):
     """
     def __init__(self, mtype=None, mparams=None):
         pid = current_process().ident
-        if pid not in _manager:
+        if _managers is None:
+            raise RuntimeError("Can create a new manager following a system exit.")
+        if pid not in _managers:
             with import_vboxapi() as vboxapi:
                 self.manager = vboxapi.VirtualBoxManager(mtype, mparams)
 
@@ -110,14 +113,18 @@ class Manager(object):
         Session or VirtualBox object as both of these classes will default
         to this object's global singleton during construction. 
         """
-        return _manager[current_process().ident]
+        if _managers is None:
+            raise RuntimeError("Can not get the manager following a system exit.")
+        return _managers[current_process().ident]
 
     @manager.setter
     def manager(self, value):
-        "Set the manager object in the global _manager dict."
+        "Set the manager object in the global _managers dict."
         pid = current_process().ident
-        if pid not in _manager:
-            _manager[pid] = value 
+        if _managers is None:
+            raise RuntimeError("Can not set the manager following a system exit.")
+        if pid not in _managers:
+            _managers[pid] = value 
         else:
             raise Exception("Manager already set for pid %s" % pid)
 
@@ -156,6 +163,21 @@ class Manager(object):
         :rtype: str
         """
         return self.manager.getBinDir()
+
+
+# Attempt to close left over manager objects cleanly. 
+def _cleanup_managers():
+    global _managers
+    managers = _managers
+    _managers = None 
+    for manager in managers.values():
+        try:
+            manager.deinit()
+        except:
+            pass
+
+
+atexit.register(_cleanup_managers)
 
 
 class WebServiceManager(Manager):
