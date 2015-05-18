@@ -87,7 +87,7 @@ about how to call a method or attribute from a specific programming language.
 lib_version = 1.3
 lib_app_uuid = '819B4D85-9CEE-493C-B6FC-64FFE759B3C9'
 lib_uuid = 'd7569351-1750-46f0-936e-bd127d5bc264'
-xidl_hash = '288681452330d2c461c240e50b9787f3'
+xidl_hash = '77ce51e615d4c4f47eddc93474390509'
 
 
 
@@ -162,6 +162,12 @@ class VBoxErrorObjectInUse(VBoxError):
     """Object being in use prohibits operation."""
     name = 'VBOX_E_OBJECT_IN_USE'
     value = 0x80BB000C
+
+
+class VBoxErrorPasswordIncorrect(VBoxError):
+    """A provided password was incorrect."""
+    name = 'VBOX_E_PASSWORD_INCORRECT'
+    value = 0x80BB000D
 
 
 class OleErrorFail(VBoxError):
@@ -276,7 +282,7 @@ class SettingsVersion(Enum):
 
     .. describe:: v1_15(17)
 
-            Settings version "1.15", written by VirtualBox 4.4.x.
+            Settings version "1.15", written by VirtualBox 5.0.x.
 
     .. describe:: future(99999)
 
@@ -320,7 +326,7 @@ class SettingsVersion(Enum):
         ('v1_14', 16, 
          '''Settings version "1.14", written by VirtualBox 4.3.x.'''),
         ('v1_15', 17, 
-         '''Settings version "1.15", written by VirtualBox 4.4.x.'''),
+         '''Settings version "1.15", written by VirtualBox 5.0.x.'''),
         ('Future', 99999, 
          '''Settings version greater than "1.15", written by a future VirtualBox version.'''),
         ] 
@@ -355,7 +361,7 @@ class MachineState(Enum):
     
     Below is the basic virtual machine state diagram. It shows how the state
     changes during virtual machine execution. The text in square braces shows
-    a method of the IConsole interface that performs the given state
+    a method of the IConsole or IMachine interface that performs the given state
     transition.
     
     
@@ -371,7 +377,7 @@ class MachineState(Enum):
          |     ^                                               | |                   | |
          |     |     +-----------------------------------------+-|-------------------+ +
          |     |     |                                           |                     |
-         |     |     +-- Saving <--------[takeSnapshot()]<-------+---------------------+
+         |     |     +- OnlineSnapshotting <--[takeSnapshot()]<--+---------------------+
          |     |                                                 |                     |
          |     +-------- Saving <--------[saveState()]<----------+---------------------+
          |                                                       |                     |
@@ -452,7 +458,7 @@ class MachineState(Enum):
          +----------------------------------(same state as before the call)------+
          |                                                                       |
          +-> PoweredOff --+                                                      |
-         |                +-->[takeSnapshot()] -------------------> Saving ------+
+         |                +-->[takeSnapshot()] ------------------> Snapshotting -+
          +-> Aborted -----+
          
          +-> PoweredOff --+
@@ -464,13 +470,6 @@ class MachineState(Enum):
          +---(Saved if restored from an online snapshot, PoweredOff otherwise)---+
 
 
-    
-    Note that the Saving state is present in both the offline state group and
-    online state group. Currently, the only way to determine what group is
-    assumed in a particular case is to remember the previous machine state: if
-    it was Running or Paused, then Saving is an online state, otherwise it is
-    an offline state. This inconsistency may be removed in one of the future
-    versions of VirtualBox by adding a new state.
     
     
     For whoever decides to touch this enum: In order to keep the
@@ -551,7 +550,7 @@ class MachineState(Enum):
             A live snapshot is being taken. The machine is running normally, but
             some of the runtime configuration options are inaccessible. Also, if
             paused while in this state it will transition to
-            @c Saving and it will not be resume the
+            @c OnlineSnapshotting and it will not be resume the
             execution until the snapshot operation has completed.
 
     .. describe:: starting(10)
@@ -566,8 +565,7 @@ class MachineState(Enum):
 
     .. describe:: saving(12)
 
-            Machine is saving its execution state to a file, or an online
-            snapshot of the machine is being taken.
+            Machine is saving its execution state to a file.
 
     .. describe:: restoring(13)
 
@@ -578,7 +576,7 @@ class MachineState(Enum):
 
             The machine is being teleported to another host or process, but it is
             not running. This is the paused variant of the
-            @c state.
+            @c Teleporting state.
 
     .. describe:: teleporting_in(15)
 
@@ -598,25 +596,34 @@ class MachineState(Enum):
             Like @c DeletingSnapshotOnline, but the machine was paused when the
             merging of differencing media was started.
 
-    .. describe:: restoring_snapshot(19)
+    .. describe:: online_snapshotting(19)
+
+            Like @c LiveSnapshotting, but the machine was paused when the
+            merging of differencing media was started.
+
+    .. describe:: restoring_snapshot(20)
 
             A machine snapshot is being restored; this typically does not take long.
 
-    .. describe:: deleting_snapshot(20)
+    .. describe:: deleting_snapshot(21)
 
             A machine snapshot is being deleted; this can take a long time since this
             may require merging differencing media. This value indicates that the
             machine is not running while the snapshot is being deleted.
 
-    .. describe:: setting_up(21)
+    .. describe:: setting_up(22)
 
             Lengthy setup operation is in progress.
+
+    .. describe:: snapshotting(23)
+
+            Taking an (offline) snapshot.
 
     .. describe:: first_online(5)
 
             Pseudo-state: first online state (for use in relational expressions).
 
-    .. describe:: last_online(18)
+    .. describe:: last_online(19)
 
             Pseudo-state: last online state (for use in relational expressions).
 
@@ -624,12 +631,12 @@ class MachineState(Enum):
 
             Pseudo-state: first transient state (for use in relational expressions).
 
-    .. describe:: last_transient(21)
+    .. describe:: last_transient(23)
 
             Pseudo-state: last transient state (for use in relational expressions).
 
     """
-    __uuid__ = 'ec6c6a9e-113d-4ff4-b44f-0b69f21c97fe'
+    __uuid__ = '87f085c3-ca67-4e45-9225-6057f32e9e8e'
     _enums = [\
         ('Null', 0, 
          '''Null value (never used by the API).'''),
@@ -680,7 +687,7 @@ class MachineState(Enum):
          '''A live snapshot is being taken. The machine is running normally, but
             some of the runtime configuration options are inaccessible. Also, if
             paused while in this state it will transition to
-            @c Saving and it will not be resume the
+            @c OnlineSnapshotting and it will not be resume the
             execution until the snapshot operation has completed.'''),
         ('Starting', 10, 
          '''Machine is being started after powering it on from a
@@ -689,15 +696,14 @@ class MachineState(Enum):
          '''Machine is being normally stopped powering it off, or after the guest OS
             has initiated a shutdown sequence.'''),
         ('Saving', 12, 
-         '''Machine is saving its execution state to a file, or an online
-            snapshot of the machine is being taken.'''),
+         '''Machine is saving its execution state to a file.'''),
         ('Restoring', 13, 
          '''Execution state of the machine is being restored from a file
             after powering it on from the saved execution state.'''),
         ('TeleportingPausedVM', 14, 
          '''The machine is being teleported to another host or process, but it is
             not running. This is the paused variant of the
-            @c state.'''),
+            @c Teleporting state.'''),
         ('TeleportingIn', 15, 
          '''Teleporting the machine state in from another host or process.'''),
         ('FaultTolerantSyncing', 16, 
@@ -708,21 +714,26 @@ class MachineState(Enum):
         ('DeletingSnapshotPaused', 18, 
          '''Like @c DeletingSnapshotOnline, but the machine was paused when the
             merging of differencing media was started.'''),
-        ('RestoringSnapshot', 19, 
+        ('OnlineSnapshotting', 19, 
+         '''Like @c LiveSnapshotting, but the machine was paused when the
+            merging of differencing media was started.'''),
+        ('RestoringSnapshot', 20, 
          '''A machine snapshot is being restored; this typically does not take long.'''),
-        ('DeletingSnapshot', 20, 
+        ('DeletingSnapshot', 21, 
          '''A machine snapshot is being deleted; this can take a long time since this
             may require merging differencing media. This value indicates that the
             machine is not running while the snapshot is being deleted.'''),
-        ('SettingUp', 21, 
+        ('SettingUp', 22, 
          '''Lengthy setup operation is in progress.'''),
+        ('Snapshotting', 23, 
+         '''Taking an (offline) snapshot.'''),
         ('FirstOnline', 5, 
          '''Pseudo-state: first online state (for use in relational expressions).'''),
-        ('LastOnline', 18, 
+        ('LastOnline', 19, 
          '''Pseudo-state: last online state (for use in relational expressions).'''),
         ('FirstTransient', 8, 
          '''Pseudo-state: first transient state (for use in relational expressions).'''),
-        ('LastTransient', 21, 
+        ('LastTransient', 23, 
          '''Pseudo-state: last transient state (for use in relational expressions).'''),
         ] 
 
@@ -812,23 +823,18 @@ class CPUPropertyType(Enum):
             Extension (PAE) feature of the host CPU to the guest. Note that in case PAE
             is not available, it will not be reported.
 
-    .. describe:: synthetic(2)
-
-            This setting determines whether VirtualBox will expose a synthetic CPU to the guest to allow
-            teleporting between host systems that differ significantly.
-
-    .. describe:: long_mode(3)
+    .. describe:: long_mode(2)
 
             This setting determines whether VirtualBox will advertise long mode
             (i.e. 64-bit guest support) and let the guest enter it.
 
-    .. describe:: triple_fault_reset(4)
+    .. describe:: triple_fault_reset(3)
 
             This setting determines whether a triple fault within a guest will trigger an internal
             error condition and stop the VM (default) or reset the virtual CPU and continue execution.
 
     """
-    __uuid__ = '52bc41f4-a279-45da-88ab-3a1d86fb73eb'
+    __uuid__ = 'ed4094c1-d00e-483a-93e9-7163549ebd6e'
     _enums = [\
         ('Null', 0, 
          '''Null value (never used by the API).'''),
@@ -836,13 +842,10 @@ class CPUPropertyType(Enum):
          '''This setting determines whether VirtualBox will expose the Physical Address
             Extension (PAE) feature of the host CPU to the guest. Note that in case PAE
             is not available, it will not be reported.'''),
-        ('Synthetic', 2, 
-         '''This setting determines whether VirtualBox will expose a synthetic CPU to the guest to allow
-            teleporting between host systems that differ significantly.'''),
-        ('LongMode', 3, 
+        ('LongMode', 2, 
          '''This setting determines whether VirtualBox will advertise long mode
             (i.e. 64-bit guest support) and let the guest enter it.'''),
-        ('TripleFaultReset', 4, 
+        ('TripleFaultReset', 3, 
          '''This setting determines whether a triple fault within a guest will trigger an internal
             error condition and stop the VM (default) or reset the virtual CPU and continue execution.'''),
         ] 
@@ -932,8 +935,12 @@ class ParavirtProvider(Enum):
 
             Microsoft Hyper-V.
 
+    .. describe:: kvm(5)
+
+            Linux KVM.
+
     """
-    __uuid__ = 'f9448c17-7caa-4ca7-9349-edafe369fcb5'
+    __uuid__ = '696453ec-3742-4a05-bead-658ccbf2c944'
     _enums = [\
         ('None', 0, 
          '''No provider is used.'''),
@@ -946,6 +953,8 @@ class ParavirtProvider(Enum):
          '''A minimal set of features to expose to the paravirtualized guest.'''),
         ('HyperV', 4, 
          '''Microsoft Hyper-V.'''),
+        ('KVM', 5, 
+         '''Linux KVM.'''),
         ] 
 
 
@@ -981,6 +990,16 @@ class LockType(Enum):
     """Used with :py:func:`IMachine.lock_machine` .
 
 
+    .. describe:: null(0)
+
+            Placeholder value, do not use when obtaining a lock.
+
+    .. describe:: shared(1)
+
+            Request only a shared lock for remote-controlling the machine.
+            Such a lock allows changing certain VM settings which can be safely
+            modified for a running VM.
+
     .. describe:: write(2)
 
             Lock the machine for writing. This requests an exclusive lock, i.e.
@@ -989,30 +1008,26 @@ class LockType(Enum):
             which implicitly holds the equivalent of a shared lock during the
             entire VM runtime.
 
-    .. describe:: shared(1)
-
-            Request only a shared lock for remote-controlling the machine.
-            Such a lock allows changing certain VM settings which can be safely
-            modified for a running VM.
-
     .. describe:: vm(3)
 
             Lock the machine for writing, and create objects necessary for
             running a VM in this process.
 
     """
-    __uuid__ = '168a6a8e-12fd-4878-a1f9-38a750a56089'
+    __uuid__ = '678aaf14-2815-4c3e-b20a-e86ed0216498'
     _enums = [\
+        ('Null', 0, 
+         '''Placeholder value, do not use when obtaining a lock.'''),
+        ('Shared', 1, 
+         '''Request only a shared lock for remote-controlling the machine.
+            Such a lock allows changing certain VM settings which can be safely
+            modified for a running VM.'''),
         ('Write', 2, 
          '''Lock the machine for writing. This requests an exclusive lock, i.e.
             there cannot be any other API client holding any type of lock for this
             VM concurrently. Remember that a VM process counts as an API client
             which implicitly holds the equivalent of a shared lock during the
             entire VM runtime.'''),
-        ('Shared', 1, 
-         '''Request only a shared lock for remote-controlling the machine.
-            Such a lock allows changing certain VM settings which can be safely
-            modified for a running VM.'''),
         ('VM', 3, 
          '''Lock the machine for writing, and create objects necessary for
             running a VM in this process.'''),
@@ -1453,7 +1468,15 @@ class BitmapFormat(Enum):
 
     .. describe:: bgr(542263106)
 
-            Generic BGR format. Pixel layout depends on the number of bits per pixel.
+            Generic BGR format without alpha channel.
+            Pixel layout depends on the number of bits per pixel:
+            
+            
+            **32** - bits 31:24 undefined, bits 23:16 R, bits 15:8 G, bits 7:0 B.
+            
+            
+            
+            **16** - bits 15:11 R, bits 10:5 G, bits 4:0 B.
 
     .. describe:: bgr0(810698562)
 
@@ -1471,14 +1494,26 @@ class BitmapFormat(Enum):
 
             PNG image.
 
+    .. describe:: jpeg(1195724874)
+
+            JPEG image.
+
     """
-    __uuid__ = '2526302a-cd88-4491-8637-ae50b9804fbc'
+    __uuid__ = 'afb2bf39-8b1e-4f9f-8948-d1b887f83eb0'
     _enums = [\
         ('Opaque', 0, 
          '''Unknown buffer format (the user may not assume any particular format of
             the buffer).'''),
         ('BGR', 542263106, 
-         '''Generic BGR format. Pixel layout depends on the number of bits per pixel.'''),
+         '''Generic BGR format without alpha channel.
+            Pixel layout depends on the number of bits per pixel:
+            
+            
+            **32** - bits 31:24 undefined, bits 23:16 R, bits 15:8 G, bits 7:0 B.
+            
+            
+            
+            **16** - bits 15:11 R, bits 10:5 G, bits 4:0 B.'''),
         ('BGR0', 810698562, 
          '''4 bytes per pixel: B, G, R, 0.'''),
         ('BGRA', 1095911234, 
@@ -1487,6 +1522,8 @@ class BitmapFormat(Enum):
          '''4 bytes per pixel: R, G, B, A.'''),
         ('PNG', 541544016, 
          '''PNG image.'''),
+        ('JPEG', 1195724874, 
+         '''JPEG image.'''),
         ] 
 
 
@@ -1878,6 +1915,28 @@ class DhcpOpt(Enum):
         ] 
 
 
+class DhcpOptEncoding(Enum):
+    """
+
+
+    .. describe:: legacy(0)
+
+            
+
+    .. describe:: hex_p(1)
+
+            
+
+    """
+    __uuid__ = '88ea6d70-8648-4871-ba30-1f49c61cfaa2'
+    _enums = [\
+        ('Legacy', 0, 
+         ''''''),
+        ('Hex', 1, 
+         ''''''),
+        ] 
+
+
 class VFSType(Enum):
     """Virtual file systems supported by VFSExplorer.
 
@@ -1912,70 +1971,6 @@ class VFSType(Enum):
         ] 
 
 
-class VFSFileType(Enum):
-    """File types known by VFSExplorer.
-
-
-    .. describe:: unknown(1)
-
-            
-
-    .. describe:: fifo(2)
-
-            
-
-    .. describe:: dev_char(3)
-
-            
-
-    .. describe:: directory(4)
-
-            
-
-    .. describe:: dev_block(5)
-
-            
-
-    .. describe:: file_p(6)
-
-            
-
-    .. describe:: sym_link(7)
-
-            
-
-    .. describe:: socket(8)
-
-            
-
-    .. describe:: white_out(9)
-
-            
-
-    """
-    __uuid__ = '714333cd-44e2-415f-a245-d378fa9b1242'
-    _enums = [\
-        ('Unknown', 1, 
-         ''''''),
-        ('Fifo', 2, 
-         ''''''),
-        ('DevChar', 3, 
-         ''''''),
-        ('Directory', 4, 
-         ''''''),
-        ('DevBlock', 5, 
-         ''''''),
-        ('File', 6, 
-         ''''''),
-        ('SymLink', 7, 
-         ''''''),
-        ('Socket', 8, 
-         ''''''),
-        ('WhiteOut', 9, 
-         ''''''),
-        ] 
-
-
 class ImportOptions(Enum):
     """Import options, used with :py:func:`IAppliance.import_machines` .
 
@@ -1988,6 +1983,10 @@ class ImportOptions(Enum):
 
             Don't generate new MAC addresses of the attached network adapters when they are using NAT.
 
+    .. describe:: import_to_vdi(3)
+
+            Import all disks to VDI format
+
     """
     __uuid__ = '0a981523-3b20-4004-8ee3-dfd322202ace'
     _enums = [\
@@ -1995,6 +1994,8 @@ class ImportOptions(Enum):
          '''Don't generate new MAC addresses of the attached network adapters.'''),
         ('KeepNATMACs', 2, 
          '''Don't generate new MAC addresses of the attached network adapters when they are using NAT.'''),
+        ('ImportToVDI', 3, 
+         '''Import all disks to VDI format'''),
         ] 
 
 
@@ -2912,7 +2913,7 @@ class GuestUserState(Enum):
 
             A guest user has locked its account. This might
             include running a password-protected screensaver
-            on the guest.
+            in the guest.
             This property is not implemented yet!
 
     .. describe:: unlocked(4)
@@ -2934,7 +2935,7 @@ class GuestUserState(Enum):
             reporting contiguous idle times up to 49.7 days per user.
             The event will be triggered if a guest user is not active for
             at least 5 seconds. This threshold can be adjusted by either altering
-            VBoxService's command line on the guest to
+            VBoxService's command line in the guest to
             --vminfo-user-idle-threshold 
             , or by setting the per-VM guest property
             /VirtualBox/GuestAdd/VBoxService/--vminfo-user-idle-threshold 
@@ -3008,7 +3009,7 @@ class GuestUserState(Enum):
         ('Locked', 3, 
          '''A guest user has locked its account. This might
             include running a password-protected screensaver
-            on the guest.
+            in the guest.
             This property is not implemented yet!'''),
         ('Unlocked', 4, 
          '''A guest user has unlocked its account.
@@ -3024,7 +3025,7 @@ class GuestUserState(Enum):
             reporting contiguous idle times up to 49.7 days per user.
             The event will be triggered if a guest user is not active for
             at least 5 seconds. This threshold can be adjusted by either altering
-            VBoxService's command line on the guest to
+            VBoxService's command line in the guest to
             --vminfo-user-idle-threshold 
             , or by setting the per-VM guest property
             /VirtualBox/GuestAdd/VBoxService/--vminfo-user-idle-threshold 
@@ -3066,25 +3067,33 @@ class GuestUserState(Enum):
         ] 
 
 
-class FileSeekType(Enum):
-    """File seeking types.
+class FileSeekOrigin(Enum):
+    """What a file seek (:py:func:`IFile.seek` ) is relative to.
 
 
-    .. describe:: set_p(0)
+    .. describe:: begin(0)
 
-            Seek from the start of the file.
+            Seek from the beginning of the file.
 
     .. describe:: current(1)
 
             Seek from the current file position.
 
+    .. describe:: end(2)
+
+            Seek relative to the end of the file.  To seek to the position two
+            bytes from the end of the file, specify -2 as the seek offset.
+
     """
-    __uuid__ = '1b73f4f3-3515-4073-a506-76878d9e2541'
+    __uuid__ = 'ad32f789-4279-4530-979c-f16892e1c263'
     _enums = [\
-        ('Set', 0, 
-         '''Seek from the start of the file.'''),
+        ('Begin', 0, 
+         '''Seek from the beginning of the file.'''),
         ('Current', 1, 
          '''Seek from the current file position.'''),
+        ('End', 2, 
+         '''Seek relative to the end of the file.  To seek to the position two
+            bytes from the end of the file, specify -2 as the seek offset.'''),
         ] 
 
 
@@ -3186,7 +3195,7 @@ class ProcessWaitResult(Enum):
     
     To wait for a guest process to terminate after it has been
     created by :py:func:`IGuestSession.process_create`  or :py:func:`IGuestSession.process_create_ex` 
-    one would specify ProcessWaitResult_Terminate.
+    one would specify ProcessWaitFor_Terminate.
     
     If a guest process has been started with ProcessCreateFlag_WaitForStdOut
     a client can wait with ProcessWaitResult_StdOut for new data to arrive on
@@ -3217,14 +3226,12 @@ class ProcessWaitResult(Enum):
 
     .. describe:: timeout(5)
 
-            The waiting operation timed out. This also will happen
-            when no event has been occurred matching the
-            current waiting flags in a :py:func:`IProcess.wait_for`  call.
+            The waiting operation timed out. Also use if the guest process has
+            timed out in the guest side (kill attempted).
 
     .. describe:: std_in(6)
 
-            The process signalled that stdin became available for writing
-            and that the process awaits input now.
+            The process signalled that stdin became available for writing.
 
     .. describe:: std_out(7)
 
@@ -3254,12 +3261,10 @@ class ProcessWaitResult(Enum):
         ('Error', 4, 
          '''Error while executing the process.'''),
         ('Timeout', 5, 
-         '''The waiting operation timed out. This also will happen
-            when no event has been occurred matching the
-            current waiting flags in a :py:func:`IProcess.wait_for`  call.'''),
+         '''The waiting operation timed out. Also use if the guest process has
+            timed out in the guest side (kill attempted).'''),
         ('StdIn', 6, 
-         '''The process signalled that stdin became available for writing
-            and that the process awaits input now.'''),
+         '''The process signalled that stdin became available for writing.'''),
         ('StdOut', 7, 
          '''Data on stdout became available for reading.'''),
         ('StdErr', 8, 
@@ -3270,43 +3275,88 @@ class ProcessWaitResult(Enum):
         ] 
 
 
-class CopyFileFlag(Enum):
+class FileCopyFlag(Enum):
     """File copying flags.
+    Not flags are implemented yet.
 
 
     .. describe:: none(0)
 
             No flag set.
 
-    .. describe:: recursive(1)
+    .. describe:: no_replace(1)
 
-            Copy directories recursively.
+            Do not replace the destination file if it exists.
             This flag is not implemented yet.
 
-    .. describe:: update(2)
+    .. describe:: follow_links(2)
+
+            Follow symbolic links.
+            This flag is not implemented yet.
+
+    .. describe:: update(4)
 
             Only copy when the source file is newer than the destination file
-            or when the destination file is missing. This flag is not implemented
-            yet.
-
-    .. describe:: follow_links(4)
-
-            Follow symbolic links. This flag is not implemented yet.
+            or when the destination file is missing.
+            This flag is not implemented yet.
 
     """
-    __uuid__ = '23f79fdf-738a-493d-b80b-42d607c9b916'
+    __uuid__ = '791909d7-4c64-2fa4-4303-adb10658d347'
     _enums = [\
         ('None', 0, 
          '''No flag set.'''),
-        ('Recursive', 1, 
-         '''Copy directories recursively.
+        ('NoReplace', 1, 
+         '''Do not replace the destination file if it exists.
             This flag is not implemented yet.'''),
-        ('Update', 2, 
+        ('FollowLinks', 2, 
+         '''Follow symbolic links.
+            This flag is not implemented yet.'''),
+        ('Update', 4, 
          '''Only copy when the source file is newer than the destination file
-            or when the destination file is missing. This flag is not implemented
-            yet.'''),
-        ('FollowLinks', 4, 
-         '''Follow symbolic links. This flag is not implemented yet.'''),
+            or when the destination file is missing.
+            This flag is not implemented yet.'''),
+        ] 
+
+
+class FsObjMoveFlags(Enum):
+    """File moving flags.
+
+
+    .. describe:: none(0)
+
+            No flag set.
+
+    .. describe:: replace(1)
+
+            Replace the destination file, symlink, etc if it exists, however this
+            does not allow replacing any directories.
+
+    .. describe:: follow_links(2)
+
+            Follow symbolic links in the final components or not (only applied to
+            the given source and target paths, not to anything else).
+
+    .. describe:: allow_directory_moves(4)
+
+            Allow moving directories accross file system boundraries. Because it
+            is could be a big undertaking, we require extra assurance that we
+            should do it when requested.
+
+    """
+    __uuid__ = '98fdd11f-4063-ac60-5737-e49092aab95f'
+    _enums = [\
+        ('None', 0, 
+         '''No flag set.'''),
+        ('Replace', 1, 
+         '''Replace the destination file, symlink, etc if it exists, however this
+            does not allow replacing any directories.'''),
+        ('FollowLinks', 2, 
+         '''Follow symbolic links in the final components or not (only applied to
+            the given source and target paths, not to anything else).'''),
+        ('AllowDirectoryMoves', 4, 
+         '''Allow moving directories accross file system boundraries. Because it
+            is could be a big undertaking, we require extra assurance that we
+            should do it when requested.'''),
         ] 
 
 
@@ -3332,8 +3382,35 @@ class DirectoryCreateFlag(Enum):
         ] 
 
 
+class DirectoryCopyFlags(Enum):
+    """Directory copying flags.
+    Not flags are implemented yet.
+
+
+    .. describe:: none(0)
+
+            No flag set.
+
+    .. describe:: copy_into_existing(1)
+
+            Allow copying into an existing destination directory.
+
+    """
+    __uuid__ = 'cc500f0c-4a54-88c9-56b3-7e9310416da7'
+    _enums = [\
+        ('None', 0, 
+         '''No flag set.'''),
+        ('CopyIntoExisting', 1, 
+         '''Allow copying into an existing destination directory.'''),
+        ] 
+
+
 class DirectoryRemoveRecFlag(Enum):
     """Directory recursive removement flags.
+    
+    WARNING!! THE FLAGS ARE CURRENTLY IGNORED. THE METHOD APPLIES
+    :py:attr:`DirectoryRemoveRecFlag.content_and_dir`  REGARDLESS
+    OF THE INPUT.
 
 
     .. describe:: none(0)
@@ -3360,42 +3437,36 @@ class DirectoryRemoveRecFlag(Enum):
         ] 
 
 
-class PathRenameFlag(Enum):
-    """Path renaming flags.
+class FsObjRenameFlag(Enum):
+    """Flags for use when renaming file system objects (files, directories,
+    symlink, etc), see :py:func:`IGuestSession.fs_obj_rename` .
 
 
-    .. describe:: none(0)
+    .. describe:: no_replace(0)
 
-            No flag set.
+            Do not replace any destination object.
 
-    .. describe:: no_replace(1)
+    .. describe:: replace(1)
 
-            Do not replace anything.
-
-    .. describe:: replace(2)
-
-            This will replace attempt any target which isn't a directory.
-
-    .. describe:: no_symlinks(4)
-
-            Don't allow symbolic links as part of the path.
+            This will attempt to replace any destination object other except
+            directories. (The default is to fail if the destination exists.)
 
     """
-    __uuid__ = 'f3baa09f-c758-453d-b91c-c7787d76351d'
+    __uuid__ = '59bbf3a1-4e23-d7cf-05d5-ccae32080ed2'
     _enums = [\
-        ('None', 0, 
-         '''No flag set.'''),
-        ('NoReplace', 1, 
-         '''Do not replace anything.'''),
-        ('Replace', 2, 
-         '''This will replace attempt any target which isn't a directory.'''),
-        ('NoSymlinks', 4, 
-         '''Don't allow symbolic links as part of the path.'''),
+        ('NoReplace', 0, 
+         '''Do not replace any destination object.'''),
+        ('Replace', 1, 
+         '''This will attempt to replace any destination object other except
+            directories. (The default is to fail if the destination exists.)'''),
         ] 
 
 
 class ProcessCreateFlag(Enum):
     """Guest process execution flags.
+    The values are passed to the guest additions, so its not possible
+    to change (move) or reuse values.here.  See EXECUTEPROCESSFLAG_XXX
+    in GuestControlSvc.h.
 
 
     .. describe:: none(0)
@@ -3430,9 +3501,20 @@ class ProcessCreateFlag(Enum):
     .. describe:: expand_arguments(64)
 
             Expands environment variables in process arguments.
+            
+            This is not yet implemented and is currently silently ignored.
+            We will document the protocolVersion number for this feature once it
+            appears, so don't use it till then.
+
+    .. describe:: unquoted_arguments(128)
+
+            Work around for Windows and OS/2 applications not following normal
+            argument quoting and escaping rules. The arguments are passed to the
+            application without any extra quoting, just a single space between each.
+            Present since VirtualBox 4.3.28 and 5.0 beta 3.
 
     """
-    __uuid__ = '35192799-bfde-405d-9bea-c735ab9998e4'
+    __uuid__ = 'be8c8dbd-4a76-e9ac-20df-468e86edf383'
     _enums = [\
         ('None', 0, 
          '''No flag set.'''),
@@ -3450,7 +3532,16 @@ class ProcessCreateFlag(Enum):
         ('WaitForStdErr', 32, 
          '''The guest process waits until all data from stderr is read out.'''),
         ('ExpandArguments', 64, 
-         '''Expands environment variables in process arguments.'''),
+         '''Expands environment variables in process arguments.
+            
+            This is not yet implemented and is currently silently ignored.
+            We will document the protocolVersion number for this feature once it
+            appears, so don't use it till then.'''),
+        ('UnquotedArguments', 128, 
+         '''Work around for Windows and OS/2 applications not following normal
+            argument quoting and escaping rules. The arguments are passed to the
+            application without any extra quoting, just a single space between each.
+            Present since VirtualBox 4.3.28 and 5.0 beta 3.'''),
         ] 
 
 
@@ -3477,7 +3568,8 @@ class ProcessPriority(Enum):
 
 
 class SymlinkType(Enum):
-    """Symbolic link types.
+    """Symbolic link types.  This is significant when creating links on the
+    Windows platform, ignored elsewhere.
 
 
     .. describe:: unknown(0)
@@ -3490,7 +3582,7 @@ class SymlinkType(Enum):
 
     .. describe:: file_p(2)
 
-            The link targets a file (or whatever else).
+            The link targets a file (or whatever else except directories).
 
     """
     __uuid__ = '37794668-f8f1-4714-98a5-6f8fa2ed0118'
@@ -3500,7 +3592,7 @@ class SymlinkType(Enum):
         ('Directory', 1, 
          '''The link targets a directory.'''),
         ('File', 2, 
-         '''The link targets a file (or whatever else).'''),
+         '''The link targets a file (or whatever else except directories).'''),
         ] 
 
 
@@ -3648,6 +3740,223 @@ class ProcessInputStatus(Enum):
         ] 
 
 
+class PathStyle(Enum):
+    """The path style of a system.
+    (Values matches the RTPATH_STR_F_STYLE_XXX defines in iprt/path.h!)
+
+
+    .. describe:: dos(1)
+
+            DOS-style paths with forward and backward slashes, drive
+            letters and UNC.  Known from DOS, OS/2 and Windows.
+
+    .. describe:: unix(2)
+
+            UNIX-style paths with forward slashes only.
+
+    .. describe:: unknown(8)
+
+            The path style is not known, most likely because the guest additions
+            aren't active yet.
+
+    """
+    __uuid__ = '97303a5b-42e8-0a55-d16f-d2a92c295261'
+    _enums = [\
+        ('DOS', 1, 
+         '''DOS-style paths with forward and backward slashes, drive
+            letters and UNC.  Known from DOS, OS/2 and Windows.'''),
+        ('UNIX', 2, 
+         '''UNIX-style paths with forward slashes only.'''),
+        ('Unknown', 8, 
+         '''The path style is not known, most likely because the guest additions
+            aren't active yet.'''),
+        ] 
+
+
+class FileAccessMode(Enum):
+    """File open access mode for use with :py:func:`IGuestSession.file_open` 
+    and :py:func:`IGuestSession.file_open_ex` .
+
+
+    .. describe:: read_only(1)
+
+            Open the file only with read access.
+
+    .. describe:: write_only(2)
+
+            Open the file only with write access.
+
+    .. describe:: read_write(3)
+
+            Open the file with both read and write access.
+
+    .. describe:: append_only(4)
+
+            Open the file for appending only, no read or seek access.
+            Not yet implemented.
+
+    .. describe:: append_read(5)
+
+            Open the file for appending and read.  Writes always goes to the
+            end of the file while reads are done at the current or specified file
+            position.
+            Not yet implemented.
+
+    """
+    __uuid__ = '231a578f-47fb-ea30-3b3e-8489558227f0'
+    _enums = [\
+        ('ReadOnly', 1, 
+         '''Open the file only with read access.'''),
+        ('WriteOnly', 2, 
+         '''Open the file only with write access.'''),
+        ('ReadWrite', 3, 
+         '''Open the file with both read and write access.'''),
+        ('AppendOnly', 4, 
+         '''Open the file for appending only, no read or seek access.
+            Not yet implemented.'''),
+        ('AppendRead', 5, 
+         '''Open the file for appending and read.  Writes always goes to the
+            end of the file while reads are done at the current or specified file
+            position.
+            Not yet implemented.'''),
+        ] 
+
+
+class FileOpenAction(Enum):
+    """What action :py:func:`IGuestSession.file_open`  and :py:func:`IGuestSession.file_open_ex` 
+    should take whether the file being opened exists or not.
+
+
+    .. describe:: open_existing(1)
+
+            Opens an existing file, fails if no file exists. (Was "oe".)
+
+    .. describe:: open_or_create(2)
+
+            Opens an existing file, creates a new one if no file exists. (Was "oc".)
+
+    .. describe:: create_new(3)
+
+            Creates a new file is no file exists, fails if there is a file there already. (Was "ce".)
+
+    .. describe:: create_or_replace(4)
+
+            Creates a new file, replace any existing file. (Was "ca".)
+            
+            Currently undefined whether we will inherit mode and ACLs from the
+            existing file or replace them.
+
+    .. describe:: open_existing_truncated(5)
+
+            Opens and truncate an existing file, fails if no file exists. (Was "ot".)
+
+    .. describe:: append_or_create(99)
+
+            Opens an existing file and places the file pointer at the end of
+            the file, creates the file if it does not exist.  This action implies
+            write access. (Was "oa".)
+            
+            <!-- @todo r=bird: See iprt/file.h, RTFILE_O_APPEND - not an action/disposition!
+            Moving the file pointer to the end, is almost fine, but impliying 'write' access
+            isn't. That is something that is exclusively reserved for the opening mode. -->
+            Deprecated. Only here for historical reasons. Do not use!
+
+    """
+    __uuid__ = '12bc97e2-4fc6-a8b4-4f84-0cbf4ab970d2'
+    _enums = [\
+        ('OpenExisting', 1, 
+         '''Opens an existing file, fails if no file exists. (Was "oe".)'''),
+        ('OpenOrCreate', 2, 
+         '''Opens an existing file, creates a new one if no file exists. (Was "oc".)'''),
+        ('CreateNew', 3, 
+         '''Creates a new file is no file exists, fails if there is a file there already. (Was "ce".)'''),
+        ('CreateOrReplace', 4, 
+         '''Creates a new file, replace any existing file. (Was "ca".)
+            
+            Currently undefined whether we will inherit mode and ACLs from the
+            existing file or replace them.'''),
+        ('OpenExistingTruncated', 5, 
+         '''Opens and truncate an existing file, fails if no file exists. (Was "ot".)'''),
+        ('AppendOrCreate', 99, 
+         '''Opens an existing file and places the file pointer at the end of
+            the file, creates the file if it does not exist.  This action implies
+            write access. (Was "oa".)
+            
+            <!-- @todo r=bird: See iprt/file.h, RTFILE_O_APPEND - not an action/disposition!
+            Moving the file pointer to the end, is almost fine, but impliying 'write' access
+            isn't. That is something that is exclusively reserved for the opening mode. -->
+            Deprecated. Only here for historical reasons. Do not use!'''),
+        ] 
+
+
+class FileSharingMode(Enum):
+    """File sharing mode for :py:func:`IGuestSession.file_open_ex` .
+
+
+    .. describe:: read(1)
+
+            Only share read access to the file.
+
+    .. describe:: write(2)
+
+            Only share write access to the file.
+
+    .. describe:: read_write(3)
+
+            Share both read and write access to the file, but deny deletion.
+
+    .. describe:: delete(4)
+
+            Only share delete access, denying read and write.
+
+    .. describe:: read_delete(5)
+
+            Share read and delete access to the file, denying writing.
+
+    .. describe:: write_delete(6)
+
+            Share write and delete access to the file, denying reading.
+
+    .. describe:: all_p(7)
+
+            Share all access, i.e. read, write and delete, to the file.
+
+    """
+    __uuid__ = 'f87dfe58-425b-c5ba-7d6d-22adeea25de1'
+    _enums = [\
+        ('Read', 1, 
+         '''Only share read access to the file.'''),
+        ('Write', 2, 
+         '''Only share write access to the file.'''),
+        ('ReadWrite', 3, 
+         '''Share both read and write access to the file, but deny deletion.'''),
+        ('Delete', 4, 
+         '''Only share delete access, denying read and write.'''),
+        ('ReadDelete', 5, 
+         '''Share read and delete access to the file, denying writing.'''),
+        ('WriteDelete', 6, 
+         '''Share write and delete access to the file, denying reading.'''),
+        ('All', 7, 
+         '''Share all access, i.e. read, write and delete, to the file.'''),
+        ] 
+
+
+class FileOpenExFlags(Enum):
+    """Open flags for :py:func:`IGuestSession.file_open_ex` .
+
+
+    .. describe:: none(0)
+
+            No flag set.
+
+    """
+    __uuid__ = '9d62017b-ddd3-4e5a-a08e-14d1c23bbac1'
+    _enums = [\
+        ('None', 0, 
+         '''No flag set.'''),
+        ] 
+
+
 class FileStatus(Enum):
     """File statuses.
 
@@ -3701,66 +4010,70 @@ class FileStatus(Enum):
 
 
 class FsObjType(Enum):
-    """File system object type.
+    """File system object (file) types.
 
 
-    .. describe:: undefined(0)
+    .. describe:: unknown(1)
 
-            Type is undefined / unknown.
+            Used either if the object has type that is not in this enum, or
+            if the type has not yet been determined or set.
 
-    .. describe:: fifo(1)
+    .. describe:: fifo(2)
 
-            Named pipe.
+            FIFO or named pipe, depending on the platform/terminology.
 
-    .. describe:: dev_char(10)
+    .. describe:: dev_char(3)
 
             Character device.
 
-    .. describe:: dev_block(11)
-
-            Block device.
-
-    .. describe:: directory(50)
+    .. describe:: directory(4)
 
             Directory.
 
-    .. describe:: file_p(80)
+    .. describe:: dev_block(5)
 
-            File.
+            Block device.
 
-    .. describe:: symlink(100)
+    .. describe:: file_p(6)
 
-            Symlink.
+            Regular file.
 
-    .. describe:: socket(200)
+    .. describe:: symlink(7)
+
+            Symbolic link.
+
+    .. describe:: socket(8)
 
             Socket.
 
-    .. describe:: whiteout(400)
+    .. describe:: white_out(9)
 
-            Whiteout.
+            A white-out file.  Found in union mounts where it is used for
+            hiding files after deletion, I think.
 
     """
-    __uuid__ = 'a1ed437c-b3c3-4ca2-b19c-4239d658d5e8'
+    __uuid__ = '34a0d1aa-491e-e209-e150-84964d6cee5f'
     _enums = [\
-        ('Undefined', 0, 
-         '''Type is undefined / unknown.'''),
-        ('FIFO', 1, 
-         '''Named pipe.'''),
-        ('DevChar', 10, 
+        ('Unknown', 1, 
+         '''Used either if the object has type that is not in this enum, or
+            if the type has not yet been determined or set.'''),
+        ('Fifo', 2, 
+         '''FIFO or named pipe, depending on the platform/terminology.'''),
+        ('DevChar', 3, 
          '''Character device.'''),
-        ('DevBlock', 11, 
-         '''Block device.'''),
-        ('Directory', 50, 
+        ('Directory', 4, 
          '''Directory.'''),
-        ('File', 80, 
-         '''File.'''),
-        ('Symlink', 100, 
-         '''Symlink.'''),
-        ('Socket', 200, 
+        ('DevBlock', 5, 
+         '''Block device.'''),
+        ('File', 6, 
+         '''Regular file.'''),
+        ('Symlink', 7, 
+         '''Symbolic link.'''),
+        ('Socket', 8, 
          '''Socket.'''),
-        ('Whiteout', 400, 
-         '''Whiteout.'''),
+        ('WhiteOut', 9, 
+         '''A white-out file.  Found in union mounts where it is used for
+            hiding files after deletion, I think.'''),
         ] 
 
 
@@ -3982,6 +4295,10 @@ class MediumVariant(Enum):
 
             VMDK format variant used on ESX products.
 
+    .. describe:: vdi_zero_expand(256)
+
+            Fill new blocks with zeroes while expanding image file.
+
     .. describe:: fixed(65536)
 
             Fixed image. Only allowed for base images.
@@ -3996,7 +4313,7 @@ class MediumVariant(Enum):
             Only used when passing the medium variant as an input parameter.
 
     """
-    __uuid__ = '80685b6b-e42f-497d-8271-e77bf3c61ada'
+    __uuid__ = '0282e97f-4ef3-4411-a8e0-47c384803cb6'
     _enums = [\
         ('Standard', 0, 
          '''No particular variant requested, results in using the backend default.'''),
@@ -4009,6 +4326,8 @@ class MediumVariant(Enum):
             read-only/append-only.'''),
         ('VmdkESX', 8, 
          '''VMDK format variant used on ESX products.'''),
+        ('VdiZeroExpand', 256, 
+         '''Fill new blocks with zeroes while expanding image file.'''),
         ('Fixed', 65536, 
          '''Fixed image. Only allowed for base images.'''),
         ('Diff', 131072, 
@@ -4175,6 +4494,34 @@ class MediumFormatCapabilities(Enum):
         ] 
 
 
+class KeyboardLED(Enum):
+    """Keyboard LED indicators.
+
+
+    .. describe:: num_lock(1)
+
+            
+
+    .. describe:: caps_lock(2)
+
+            
+
+    .. describe:: scroll_lock(4)
+
+            
+
+    """
+    __uuid__ = 'ef29ea38-409b-49c7-a817-c858d426dfba'
+    _enums = [\
+        ('NumLock', 1, 
+         ''''''),
+        ('CapsLock', 2, 
+         ''''''),
+        ('ScrollLock', 4, 
+         ''''''),
+        ] 
+
+
 class MouseButtonState(Enum):
     """Mouse button state.
 
@@ -4267,25 +4614,53 @@ class TouchContactState(Enum):
         ] 
 
 
-class FramebufferUpdateMode(Enum):
-    """How a framebuffer is notified about screen updates.
+class FramebufferCapabilities(Enum):
+    """Framebuffer capability flags.
 
 
-    .. describe:: notify_update(0)
+    .. describe:: update_image(1)
 
-            IFramebuffer::NotifyUpdate is called.
+            Requires NotifyUpdateImage. NotifyUpdate must not be called.
 
-    .. describe:: notify_update_image(1)
+    .. describe:: vhwa(2)
 
-            IFramebuffer::NotifyUpdateImage is called.
+            Supports VHWA interface. If set, then IFramebuffer::processVHWACommand can be called.
+
+    .. describe:: visible_region(4)
+
+            Supports visible region. If set, then IFramebuffer::setVisibleRegion can be called.
 
     """
-    __uuid__ = '1268d8ab-dd2f-443c-bc56-d93d3ced5cde'
+    __uuid__ = 'cc395839-30fa-4ca5-ae65-e6360e3edd7a'
     _enums = [\
-        ('NotifyUpdate', 0, 
-         '''IFramebuffer::NotifyUpdate is called.'''),
-        ('NotifyUpdateImage', 1, 
-         '''IFramebuffer::NotifyUpdateImage is called.'''),
+        ('UpdateImage', 1, 
+         '''Requires NotifyUpdateImage. NotifyUpdate must not be called.'''),
+        ('VHWA', 2, 
+         '''Supports VHWA interface. If set, then IFramebuffer::processVHWACommand can be called.'''),
+        ('VisibleRegion', 4, 
+         '''Supports visible region. If set, then IFramebuffer::setVisibleRegion can be called.'''),
+        ] 
+
+
+class GuestMonitorStatus(Enum):
+    """The current status of the guest display.
+
+
+    .. describe:: disabled(0)
+
+            The guest monitor is disabled in the guest.
+
+    .. describe:: enabled(1)
+
+            The guest monitor is enabled in the guest.
+
+    """
+    __uuid__ = 'a0001cb1-97c9-496d-82bc-616c19a9e212'
+    _enums = [\
+        ('Disabled', 0, 
+         '''The guest monitor is disabled in the guest.'''),
+        ('Enabled', 1, 
+         '''The guest monitor is enabled in the guest.'''),
         ] 
 
 
@@ -4446,8 +4821,12 @@ class PortMode(Enum):
 
             Virtual device is attached to a raw file.
 
+    .. describe:: tcp(4)
+
+            Virtual device is attached to a TCP socket.
+
     """
-    __uuid__ = '533b5fe3-0185-4197-86a7-17e37dd39d76'
+    __uuid__ = '7485fcfd-d603-470a-87af-26d33beb7de9'
     _enums = [\
         ('Disconnected', 0, 
          '''Virtual device is not attached to any real host device.'''),
@@ -4457,6 +4836,8 @@ class PortMode(Enum):
          '''Virtual device is attached to a host device.'''),
         ('RawFile', 3, 
          '''Virtual device is attached to a raw file.'''),
+        ('TCP', 4, 
+         '''Virtual device is attached to a TCP socket.'''),
         ] 
 
 
@@ -4497,6 +4878,63 @@ class USBControllerType(Enum):
          ''''''),
         ('Last', 4, 
          '''Last element (invalid). Used for parameter checks.'''),
+        ] 
+
+
+class USBConnectionSpeed(Enum):
+    """USB device/port speed state. This enumeration represents speeds at
+    which a USB device can communicate with the host.
+    
+    The speed is a function of both the device itself and the port which
+    it is attached to, including hubs and cables in the path.
+    
+    
+    Due to differences in USB stack implementations on various hosts,
+    the reported speed may not exactly match the actual speed.
+    
+    
+    :py:class:`IHostUSBDevice` 
+
+
+    .. describe:: null(0)
+
+            @c null value. Never returned by the API.
+
+    .. describe:: low(1)
+
+            Low speed, 1.5 Mbps.
+
+    .. describe:: full(2)
+
+            Full speed, 12 Mbps.
+
+    .. describe:: high(3)
+
+            High speed, 480 Mbps.
+
+    .. describe:: super_p(4)
+
+            SuperSpeed, 5 Gbps.
+
+    .. describe:: super_plus(5)
+
+            SuperSpeedPlus, 10 Gbps.
+
+    """
+    __uuid__ = 'd2915840-ea26-4fb4-b72a-21eaf6b888ff'
+    _enums = [\
+        ('Null', 0, 
+         '''@c null value. Never returned by the API.'''),
+        ('Low', 1, 
+         '''Low speed, 1.5 Mbps.'''),
+        ('Full', 2, 
+         '''Full speed, 12 Mbps.'''),
+        ('High', 3, 
+         '''High speed, 480 Mbps.'''),
+        ('Super', 4, 
+         '''SuperSpeed, 5 Gbps.'''),
+        ('SuperPlus', 5, 
+         '''SuperSpeedPlus, 10 Gbps.'''),
         ] 
 
 
@@ -4753,6 +5191,10 @@ class Reason(Enum):
 
             Host is running low on battery (power management event).
 
+    .. describe:: snapshot(4)
+
+            A snapshot of the VM is being taken.
+
     """
     __uuid__ = 'e7e8e097-299d-4e98-8bbc-c31c2d47d0cc'
     _enums = [\
@@ -4764,6 +5206,8 @@ class Reason(Enum):
          '''Host is being resumed (power management event).'''),
         ('HostBatteryLow', 3, 
          '''Host is running low on battery (power management event).'''),
+        ('Snapshot', 4, 
+         '''A snapshot of the VM is being taken.'''),
         ] 
 
 
@@ -5295,12 +5739,16 @@ class VBoxEventType(Enum):
 
             See :py:class:`IHostNameResolutionConfigurationChangeEvent` IHostNameResolutionConfigurationChangeEvent.
 
-    .. describe:: last(95)
+    .. describe:: on_snapshot_restored(95)
+
+            See :py:class:`ISnapshotRestoredEvent` ISnapshotRestoredEvent.
+
+    .. describe:: last(96)
 
             Must be last event, used for iterations and structures relying on numerical event values.
 
     """
-    __uuid__ = '1622f8d2-6c76-4410-9e78-86e083046efc'
+    __uuid__ = 'b2ddb312-2f9e-4e69-98df-7235e43b2149'
     _enums = [\
         ('Invalid', 0, 
          '''Invalid event, must be first.'''),
@@ -5455,7 +5903,9 @@ class VBoxEventType(Enum):
          '''See :py:class:`IGuestMouseEvent` IGuestMouseEvent.'''),
         ('OnHostNameResolutionConfigurationChange', 94, 
          '''See :py:class:`IHostNameResolutionConfigurationChangeEvent` IHostNameResolutionConfigurationChangeEvent.'''),
-        ('Last', 95, 
+        ('OnSnapshotRestored', 95, 
+         '''See :py:class:`ISnapshotRestoredEvent` ISnapshotRestoredEvent.'''),
+        ('Last', 96, 
          '''Must be last event, used for iterations and structures relying on numerical event values.'''),
         ] 
 
@@ -6125,7 +6575,7 @@ class IVirtualBox(Interface):
     To enumerate all the virtual machines on the host, use the
     :py:func:`IVirtualBox.machines`  attribute.
     """
-    __uuid__ = 'fafa4e17-1ee2-4905-a10e-fe7c18bf5554'
+    __uuid__ = '3afa096e-2cad-4cb0-aba2-47fe3fc62bd8'
     __wsmap__ = 'managed'
     
     @property
@@ -6683,7 +7133,7 @@ exists or could not be created due to an I/O error.
         appliance = IAppliance(appliance)
         return appliance
 
-    def create_hard_disk(self, format_p, location):
+    def create_medium(self, format_p, location, access_mode, a_device_type_type):
         """Creates a new base medium object that will use the given storage
         format and location for medium data.
         
@@ -6700,16 +7150,30 @@ exists or could not be created due to an I/O error.
         remain uninitialized until the medium storage unit is successfully
         created by one of the above methods.
         
-        After the storage unit is successfully created, it will be
-        accessible through the :py:func:`open_medium`  method and can
-        be found in the :py:func:`hard_disks`  array.
+        Depending on the given device type, the file at the storage location
+        must be in one of the media formats understood by VirtualBox:
+        
+        
+        With a "HardDisk" device type, the file must be a hard disk image
+        in one of the formats supported by VirtualBox (see
+        :py:func:`ISystemProperties.medium_formats` ).
+        After the storage unit is successfully created and this method succeeds,
+        if the medium is a base medium, it
+        will be added to the :py:func:`hard_disks`  array attribute.
+        With a "DVD" device type, the file must be an ISO 9960 CD/DVD image.
+        After this method succeeds, the medium will be added to the
+        :py:func:`dvd_images`  array attribute.
+        With a "Floppy" device type, the file must be an RAW floppy image.
+        After this method succeeds, the medium will be added to the
+        :py:func:`floppy_images`  array attribute.
+        
         
         The list of all storage formats supported by this VirtualBox
         installation can be obtained using
         :py:func:`ISystemProperties.medium_formats` . If the @a format
         attribute is empty or @c null then the default storage format
         specified by :py:func:`ISystemProperties.default_hard_disk_format`  will
-        be used for creating a storage unit of the medium.
+        be used for disks r creating a storage unit of the medium.
         
         Note that the format of the location string is storage format specific.
         See :py:func:`IMedium.location`  and IMedium for more details.
@@ -6719,6 +7183,13 @@ exists or could not be created due to an I/O error.
 
         in location of type str
             Location of the storage unit for the new medium.
+
+        in access_mode of type :class:`AccessMode`
+            Whether to open the image in read/write or read-only mode. For
+            a "DVD" device type, this is ignored and read-only mode is always assumed.
+
+        in a_device_type_type of type :class:`DeviceType`
+            Must be one of "HardDisk", "DVD" or "Floppy".
 
         return medium of type :class:`IMedium`
             Created medium object.
@@ -6734,8 +7205,12 @@ exists or could not be created due to an I/O error.
             raise TypeError("format_p can only be an instance of type basestring")
         if not isinstance(location, basestring):
             raise TypeError("location can only be an instance of type basestring")
-        medium = self._call("createHardDisk",
-                     in_p=[format_p, location])
+        if not isinstance(access_mode, AccessMode):
+            raise TypeError("access_mode can only be an instance of type AccessMode")
+        if not isinstance(a_device_type_type, DeviceType):
+            raise TypeError("a_device_type_type can only be an instance of type DeviceType")
+        medium = self._call("createMedium",
+                     in_p=[format_p, location, access_mode, a_device_type_type])
         medium = IMedium(medium)
         return medium
 
@@ -7219,7 +7694,7 @@ class IVFSExplorer(Interface):
             The list of names for the entries.
 
         out types of type int
-            The list of types for the entries.
+            The list of types for the entries. :py:class:`FsObjType` 
 
         out sizes of type int
             The list of sizes (in bytes) for the entries.
@@ -7348,7 +7823,7 @@ class IAppliance(Interface):
     Finally, call :py:func:`write`  with a path specification to have the OVF
     file written.
     """
-    __uuid__ = '3059cf9e-25c7-4f0b-9fa5-3c42e441670b'
+    __uuid__ = 'a529d52c-cf23-4936-9150-e8a6ce77fdad'
     __wsmap__ = 'managed'
     
     @property
@@ -7560,6 +8035,56 @@ class IAppliance(Interface):
         """
         warnings = self._call("getWarnings")
         return warnings
+
+    def get_password_ids(self):
+        """Returns a list of password identifiers which must be supplied to import or export
+        encrypted virtual machines.
+
+        return identifiers of type str
+
+        """
+        identifiers = self._call("getPasswordIds")
+        return identifiers
+
+    def get_medium_ids_for_password_id(self, password_id):
+        """Returns a list of medium identifiers which use the given password identifier.
+
+        in password_id of type str
+
+        return identifiers of type str
+
+        """
+        if not isinstance(password_id, basestring):
+            raise TypeError("password_id can only be an instance of type basestring")
+        identifiers = self._call("getMediumIdsForPasswordId",
+                     in_p=[password_id])
+        return identifiers
+
+    def add_passwords(self, identifiers, passwords):
+        """Adds a list of passwords required to import or export encrypted virtual
+        machines.
+
+        in identifiers of type str
+            List of identifiers.
+
+        in passwords of type str
+            List of matching passwords.
+
+        """
+        if not isinstance(identifiers, list):
+            raise TypeError("identifiers can only be an instance of type list")
+        for a in identifiers[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
+        if not isinstance(passwords, list):
+            raise TypeError("passwords can only be an instance of type list")
+        for a in passwords[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
+        self._call("addPasswords",
+                     in_p=[identifiers, passwords])
 
 
 class IVirtualSystemDescription(Interface):
@@ -7822,24 +8347,15 @@ class IVirtualSystemDescription(Interface):
 
 class IInternalMachineControl(Interface):
     """
-    Updates the flag whether the saved state file is removed on a
-    machine state change from Saved to PoweredOff.
+    Updates the VM state.
+    
+    This operation will also update the settings file with the correct
+    information about the saved state file and delete this file from disk
+    when appropriate.
     """
-    __uuid__ = '2d9ce4b7-0ab2-4931-ac4a-e45aa66465ef'
+    __uuid__ = '2cfec73b-4447-4ff8-bae5-e4306e6197e8'
     __wsmap__ = 'suppress'
     
-    def set_remove_saved_state_file(self, remove):
-        """Updates the flag whether the saved state file is removed on a
-        machine state change from Saved to PoweredOff.
-
-        in remove of type bool
-
-        """
-        if not isinstance(remove, bool):
-            raise TypeError("remove can only be an instance of type bool")
-        self._call("setRemoveSavedStateFile",
-                     in_p=[remove])
-
     def update_state(self, state):
         """Updates the VM state.
         
@@ -7947,7 +8463,7 @@ class IInternalMachineControl(Interface):
                      in_p=[device])
         return (matched, masked_interfaces)
 
-    def capture_usb_device(self, id_p):
+    def capture_usb_device(self, id_p, capture_filename):
         """Requests a capture of the given host USB device.
         When the request is completed, the VM process will
         get a :py:func:`IInternalSessionControl.on_usb_device_attach` 
@@ -7955,11 +8471,15 @@ class IInternalMachineControl(Interface):
 
         in id_p of type str
 
+        in capture_filename of type str
+
         """
         if not isinstance(id_p, basestring):
             raise TypeError("id_p can only be an instance of type basestring")
+        if not isinstance(capture_filename, basestring):
+            raise TypeError("capture_filename can only be an instance of type basestring")
         self._call("captureUSBDevice",
-                     in_p=[id_p])
+                     in_p=[id_p, capture_filename])
 
     def detach_usb_device(self, id_p, done):
         """Notification that a VM is going to detach (@a done = @c false) or has
@@ -8032,202 +8552,12 @@ class IInternalMachineControl(Interface):
         progress = IProgress(progress)
         return progress
 
-    def begin_saving_state(self):
-        """Called by the VM process to inform the server it wants to
-        save the current state and stop the VM execution.
-
-        out progress of type :class:`IProgress`
-            Progress object created by VBoxSVC to wait until
-            the state is saved.
-
-        out state_file_path of type str
-            File path the VM process must save the execution state to.
-
-        """
-        (progress, state_file_path) = self._call("beginSavingState")
-        progress = IProgress(progress)
-        return (progress, state_file_path)
-
-    def end_saving_state(self, result, err_msg):
-        """Called by the VM process to inform the server that saving
-        the state previously requested by #beginSavingState is either
-        successfully finished or there was a failure.
-
-        in result of type int
-            @c S_OK to indicate success.
-
-        in err_msg of type str
-            @c human readable error message in case of failure.
-
-        raises :class:`VBoxErrorFileError`
-            Settings file not accessible.
-        
-        raises :class:`VBoxErrorXmlError`
-            Could not parse the settings file.
-        
-        """
-        if not isinstance(result, baseinteger):
-            raise TypeError("result can only be an instance of type baseinteger")
-        if not isinstance(err_msg, basestring):
-            raise TypeError("err_msg can only be an instance of type basestring")
-        self._call("endSavingState",
-                     in_p=[result, err_msg])
-
-    def adopt_saved_state(self, saved_state_file):
-        """Gets called by :py:func:`IConsole.adopt_saved_state` .
-
-        in saved_state_file of type str
-            Path to the saved state file to adopt.
-
-        raises :class:`VBoxErrorFileError`
-            Invalid saved state file path.
-        
-        """
-        if not isinstance(saved_state_file, basestring):
-            raise TypeError("saved_state_file can only be an instance of type basestring")
-        self._call("adoptSavedState",
-                     in_p=[saved_state_file])
-
-    def begin_taking_snapshot(self, initiator, name, description, console_progress, f_taking_snapshot_online):
-        """Called from the VM process to request from the server to perform the
-        server-side actions of creating a snapshot (creating differencing images
-        and the snapshot object).
-
-        in initiator of type :class:`IConsole`
-            The console object that initiated this call.
-
-        in name of type str
-            Snapshot name.
-
-        in description of type str
-            Snapshot description.
-
-        in console_progress of type :class:`IProgress`
-            Progress object created by the VM process tracking the
-            snapshot's progress. This has the following sub-operations:
-            
-            setting up (weight 1);
-            one for each medium attachment that needs a differencing image (weight 1 each);
-            another one to copy the VM state (if offline with saved state, weight is VM memory size in MB);
-            another one to save the VM state (if online, weight is VM memory size in MB);
-            finishing up (weight 1)
-
-        in f_taking_snapshot_online of type bool
-            Whether this is an online snapshot (i.e. the machine is running).
-
-        out state_file_path of type str
-            File path the VM process must save the execution state to.
-
-        raises :class:`VBoxErrorFileError`
-            Settings file not accessible.
-        
-        raises :class:`VBoxErrorXmlError`
-            Could not parse the settings file.
-        
-        """
-        if not isinstance(initiator, IConsole):
-            raise TypeError("initiator can only be an instance of type IConsole")
-        if not isinstance(name, basestring):
-            raise TypeError("name can only be an instance of type basestring")
-        if not isinstance(description, basestring):
-            raise TypeError("description can only be an instance of type basestring")
-        if not isinstance(console_progress, IProgress):
-            raise TypeError("console_progress can only be an instance of type IProgress")
-        if not isinstance(f_taking_snapshot_online, bool):
-            raise TypeError("f_taking_snapshot_online can only be an instance of type bool")
-        state_file_path = self._call("beginTakingSnapshot",
-                     in_p=[initiator, name, description, console_progress, f_taking_snapshot_online])
-        return state_file_path
-
-    def end_taking_snapshot(self, success):
-        """Called by the VM process to inform the server that the snapshot
-        previously requested by #beginTakingSnapshot is either
-        successfully taken or there was a failure.
-
-        in success of type bool
-            @c true to indicate success and @c false otherwise
-
-        """
-        if not isinstance(success, bool):
-            raise TypeError("success can only be an instance of type bool")
-        self._call("endTakingSnapshot",
-                     in_p=[success])
-
-    def delete_snapshot(self, initiator, start_id, end_id, delete_all_children):
-        """Gets called by :py:func:`IConsole.delete_snapshot` ,
-        :py:func:`IConsole.delete_snapshot_and_all_children`  and
-        :py:func:`IConsole.delete_snapshot_range` .
-
-        in initiator of type :class:`IConsole`
-            The console object that initiated this call.
-
-        in start_id of type str
-            UUID of the first snapshot to delete.
-
-        in end_id of type str
-            UUID of the last snapshot to delete.
-
-        in delete_all_children of type bool
-            Whether all children should be deleted.
-
-        out machine_state of type :class:`MachineState`
-            New machine state after this operation is started.
-
-        return progress of type :class:`IProgress`
-            Progress object to track the operation completion.
-
-        raises :class:`VBoxErrorInvalidObjectState`
-            Snapshot has more than one child snapshot. Only possible if the
-delete operation does not delete all children or the range does
-not meet the linearity condition.
-        
-        """
-        if not isinstance(initiator, IConsole):
-            raise TypeError("initiator can only be an instance of type IConsole")
-        if not isinstance(start_id, basestring):
-            raise TypeError("start_id can only be an instance of type basestring")
-        if not isinstance(end_id, basestring):
-            raise TypeError("end_id can only be an instance of type basestring")
-        if not isinstance(delete_all_children, bool):
-            raise TypeError("delete_all_children can only be an instance of type bool")
-        (machine_state, progress) = self._call("deleteSnapshot",
-                     in_p=[initiator, start_id, end_id, delete_all_children])
-        machine_state = MachineState(machine_state)
-        progress = IProgress(progress)
-        return (machine_state, progress)
-
     def finish_online_merge_medium(self):
         """Gets called by :py:func:`IInternalSessionControl.online_merge_medium` .
         All necessary state information is available at the called object.
 
         """
         self._call("finishOnlineMergeMedium")
-
-    def restore_snapshot(self, initiator, snapshot):
-        """Gets called by :py:func:`IConsole.restore_snapshot` .
-
-        in initiator of type :class:`IConsole`
-            The console object that initiated this call.
-
-        in snapshot of type :class:`ISnapshot`
-            The snapshot to restore the VM state from.
-
-        out machine_state of type :class:`MachineState`
-            New machine state after this operation is started.
-
-        return progress of type :class:`IProgress`
-            Progress object to track the operation completion.
-
-        """
-        if not isinstance(initiator, IConsole):
-            raise TypeError("initiator can only be an instance of type IConsole")
-        if not isinstance(snapshot, ISnapshot):
-            raise TypeError("snapshot can only be an instance of type ISnapshot")
-        (machine_state, progress) = self._call("restoreSnapshot",
-                     in_p=[initiator, snapshot])
-        machine_state = MachineState(machine_state)
-        progress = IProgress(progress)
-        return (machine_state, progress)
 
     def pull_guest_properties(self):
         """Get the list of the guest properties matching a set of patterns along
@@ -8268,6 +8598,9 @@ not meet the linearity condition.
         in flags of type str
             The flags of the property.
 
+        return notify of type bool
+            Returns if a guest property change notification event should be fired.
+
         """
         if not isinstance(name, basestring):
             raise TypeError("name can only be an instance of type basestring")
@@ -8277,8 +8610,9 @@ not meet the linearity condition.
             raise TypeError("timestamp can only be an instance of type baseinteger")
         if not isinstance(flags, basestring):
             raise TypeError("flags can only be an instance of type basestring")
-        self._call("pushGuestProperty",
+        notify = self._call("pushGuestProperty",
                      in_p=[name, value, timestamp, flags])
+        return notify
 
     def lock_media(self):
         """Locks all media attached to the machine for writing and parents of
@@ -8667,7 +9001,7 @@ class IPCIDeviceAttachment(Interface):
     @property
     def guest_address(self):
         """Get int value for 'guestAddress'
-        Address of device on the guest.
+        Address of device in the guest.
         """
         ret = self._get_attr("guestAddress")
         return ret
@@ -8709,7 +9043,7 @@ class IMachine(Interface):
     
     :py:class:`ISession` , :py:class:`IConsole` 
     """
-    __uuid__ = '96ae59d6-fecd-4a32-b051-23643eb4cd56'
+    __uuid__ = '77a44043-a68a-4ef9-ac26-e9567b1e6bbc'
     __wsmap__ = 'managed'
     
     @property
@@ -8984,6 +9318,27 @@ class IMachine(Interface):
         if not isinstance(value, baseinteger):
             raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("CPUExecutionCap", value)
+
+    @property
+    def cpuid_portability_level(self):
+        """Get or set int value for 'CPUIDPortabilityLevel'
+        Virtual CPUID portability level, the higher number the fewer newer
+        or vendor specific CPU feature is reported to the guest (via the CPUID
+        instruction).  The default level of zero (0) means that all virtualized
+        feautres supported by the host is pass thru to the guest.  While the
+        three (3) is currently the level supressing the most features.
+        
+        Exactly which of the CPUID features are left out by the VMM at which
+        level is subject to change with each major version.
+        """
+        ret = self._get_attr("CPUIDPortabilityLevel")
+        return ret
+
+    @cpuid_portability_level.setter
+    def cpuid_portability_level(self, value):
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
+        return self._set_attr("CPUIDPortabilityLevel", value)
 
     @property
     def memory_size(self):
@@ -9506,18 +9861,19 @@ class IMachine(Interface):
         return SessionState(ret)
 
     @property
-    def session_type(self):
-        """Get str value for 'sessionType'
-        Type of the session. If :py:func:`session_state`  is
+    def session_name(self):
+        """Get str value for 'sessionName'
+        Name of the session. If :py:func:`session_state`  is
         Spawning or Locked, this attribute contains the
         same value as passed to the
         :py:func:`IMachine.launch_vm_process`  method in the
-        @a type parameter. If the session was used with
-        :py:func:`IMachine.lock_machine` , or if
+        @a name parameter. If the session was established with
+        :py:func:`IMachine.lock_machine` , it is the name of the session
+        (if set, otherwise empty string). If
         :py:func:`session_state`  is SessionClosed, the value of this
         attribute is an empty string.
         """
-        ret = self._get_attr("sessionType")
+        ret = self._get_attr("sessionName")
         return ret
 
     @property
@@ -9578,10 +9934,9 @@ class IMachine(Interface):
         """Get ISnapshot value for 'currentSnapshot'
         Current snapshot of this machine. This is @c null if the machine
         currently has no snapshots. If it is not @c null, then it was
-        set by one of :py:func:`IConsole.take_snapshot` ,
-        :py:func:`IConsole.delete_snapshot` 
-        or :py:func:`IConsole.restore_snapshot` , depending on which
-        was called last. See :py:class:`ISnapshot`  for details.
+        set by one of :py:func:`take_snapshot` , :py:func:`delete_snapshot` 
+        or :py:func:`restore_snapshot` , depending on which was called last.
+        See :py:class:`ISnapshot`  for details.
         """
         ret = self._get_attr("currentSnapshot")
         return ISnapshot(ret)
@@ -9605,11 +9960,10 @@ class IMachine(Interface):
         directly after one of the following calls are made:
         
         
-        :py:func:`IConsole.restore_snapshot` 
+        :py:func:`restore_snapshot` 
         
-        :py:func:`IConsole.take_snapshot`  (issued on a
-        "powered off" or "saved" machine, for which
-        :py:func:`settings_modified`  returns @c false)
+        :py:func:`take_snapshot`  (issued on a "powered off" or "saved"
+        machine, for which :py:func:`settings_modified`  returns @c false)
         
         
         
@@ -10148,7 +10502,7 @@ class IMachine(Interface):
         self._call("lockMachine",
                      in_p=[session, lock_type])
 
-    def launch_vm_process(self, session, type_p, environment):
+    def launch_vm_process(self, session, name, environment):
         """Spawns a new process that will execute the virtual machine and obtains a shared
         lock on the machine for the calling session.
         
@@ -10191,6 +10545,11 @@ class IMachine(Interface):
         For details on the teleportation progress operation, see
         :py:func:`IConsole.power_up` .
         
+        <!-- TODO/r=bird: What about making @a environment into a smart array?  Guess
+        this predates our safe array support by a year or so... Dmitry wrote the text here, right?
+        Just rename it to @a environmentChanges and shorten the documentation to say the string
+        are applied onto the server environment putenv style, i.e. "VAR=VALUE" for setting/replacing
+        and "VAR" for unsetting. -->
         The @a environment argument is a string containing definitions of
         environment variables in the following format:
         
@@ -10214,7 +10573,7 @@ class IMachine(Interface):
             Client session object to which the VM process will be connected (this
             must be in "Unlocked" state).
 
-        in type_p of type str
+        in name of type str
             Front-end to use for the new VM process. The following are currently supported:
             
             "gui": VirtualBox Qt GUI front-end
@@ -10259,12 +10618,12 @@ class IMachine(Interface):
         """
         if not isinstance(session, ISession):
             raise TypeError("session can only be an instance of type ISession")
-        if not isinstance(type_p, basestring):
-            raise TypeError("type_p can only be an instance of type basestring")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
         if not isinstance(environment, basestring):
             raise TypeError("environment can only be an instance of type basestring")
         progress = self._call("launchVMProcess",
-                     in_p=[session, type_p, environment])
+                     in_p=[session, name, environment])
         progress = IProgress(progress)
         return progress
 
@@ -12264,15 +12623,14 @@ created differencing media, should not happen).
                      in_p=[screen_id])
         return (size, width, height)
 
-    def read_saved_thumbnail_to_array(self, screen_id, bgr):
-        """Thumbnail is retrieved to an array of bytes in uncompressed 32-bit BGRA or RGBA format.
+    def read_saved_thumbnail_to_array(self, screen_id, bitmap_format):
+        """Thumbnail is retrieved to an array of bytes in the requested format.
 
         in screen_id of type int
             Saved guest screen to read from.
 
-        in bgr of type bool
-            How to order bytes in the pixel. A pixel consists of 4 bytes. If this parameter is true, then
-            bytes order is: B, G, R, 0xFF. If this parameter is false, then bytes order is: R, G, B, 0xFF.
+        in bitmap_format of type :class:`BitmapFormat`
+            The requested format.
 
         out width of type int
             Bitmap width.
@@ -12286,32 +12644,10 @@ created differencing media, should not happen).
         """
         if not isinstance(screen_id, baseinteger):
             raise TypeError("screen_id can only be an instance of type baseinteger")
-        if not isinstance(bgr, bool):
-            raise TypeError("bgr can only be an instance of type bool")
+        if not isinstance(bitmap_format, BitmapFormat):
+            raise TypeError("bitmap_format can only be an instance of type BitmapFormat")
         (width, height, data) = self._call("readSavedThumbnailToArray",
-                     in_p=[screen_id, bgr])
-        return (width, height, data)
-
-    def read_saved_thumbnail_png_to_array(self, screen_id):
-        """Thumbnail in PNG format is retrieved to an array of bytes.
-
-        in screen_id of type int
-            Saved guest screen to read from.
-
-        out width of type int
-            Image width.
-
-        out height of type int
-            Image height.
-
-        return data of type str
-            Array with resulting PNG data.
-
-        """
-        if not isinstance(screen_id, baseinteger):
-            raise TypeError("screen_id can only be an instance of type baseinteger")
-        (width, height, data) = self._call("readSavedThumbnailPNGToArray",
-                     in_p=[screen_id])
+                     in_p=[screen_id, bitmap_format])
         return (width, height, data)
 
     def query_saved_screenshot_png_size(self, screen_id):
@@ -12498,6 +12834,361 @@ created differencing media, should not happen).
                         "array can only contain objects of type CloneOptions")
         progress = self._call("cloneTo",
                      in_p=[target, mode, options])
+        progress = IProgress(progress)
+        return progress
+
+    def save_state(self):
+        """Saves the current execution state of a running virtual machine
+        and stops its execution.
+        
+        After this operation completes, the machine will go to the
+        Saved state. Next time it is powered up, this state will
+        be restored and the machine will continue its execution from
+        the place where it was saved.
+        
+        This operation differs from taking a snapshot to the effect
+        that it doesn't create new differencing media. Also, once
+        the machine is powered up from the state saved using this method,
+        the saved state is deleted, so it will be impossible to return
+        to this state later.
+        
+        
+        On success, this method implicitly calls
+        :py:func:`save_settings`  to save all current machine
+        settings (including runtime changes to the DVD medium, etc.).
+        Together with the impossibility to change any VM settings when it is
+        in the Saved state, this guarantees adequate hardware
+        configuration of the machine when it is restored from the saved
+        state file.
+        
+        
+        
+        The machine must be in the Running or Paused state, otherwise
+        the operation will fail.
+        
+        
+        
+        :py:func:`take_snapshot` 
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        raises :class:`VBoxErrorInvalidVmState`
+            Virtual machine state neither Running nor Paused.
+        
+        raises :class:`VBoxErrorFileError`
+            Failed to create directory for saved state file.
+        
+        """
+        progress = self._call("saveState")
+        progress = IProgress(progress)
+        return progress
+
+    def adopt_saved_state(self, saved_state_file):
+        """Associates the given saved state file to the virtual machine.
+        
+        On success, the machine will go to the Saved state. Next time it is
+        powered up, it will be restored from the adopted saved state and
+        continue execution from the place where the saved state file was
+        created.
+        
+        The specified saved state file path may be absolute or relative to the
+        folder the VM normally saves the state to (usually,
+        :py:func:`snapshot_folder` ).
+        
+        
+        It's a caller's responsibility to make sure the given saved state
+        file is compatible with the settings of this virtual machine that
+        represent its virtual hardware (memory size, storage disk configuration
+        etc.). If there is a mismatch, the behavior of the virtual machine
+        is undefined.
+
+        in saved_state_file of type str
+            Path to the saved state file to adopt.
+
+        raises :class:`VBoxErrorInvalidVmState`
+            Virtual machine state neither PoweredOff nor Aborted.
+        
+        """
+        if not isinstance(saved_state_file, basestring):
+            raise TypeError("saved_state_file can only be an instance of type basestring")
+        self._call("adoptSavedState",
+                     in_p=[saved_state_file])
+
+    def discard_saved_state(self, f_remove_file):
+        """Forcibly resets the machine to "Powered Off" state if it is
+        currently in the "Saved" state (previously created by :py:func:`save_state` ).
+        Next time the machine is powered up, a clean boot will occur.
+        
+        This operation is equivalent to resetting or powering off
+        the machine without doing a proper shutdown of the guest
+        operating system; as with resetting a running phyiscal
+        computer, it can can lead to data loss.
+        
+        If @a fRemoveFile is @c true, the file in the machine directory
+        into which the machine state was saved is also deleted. If
+        this is @c false, then the state can be recovered and later
+        re-inserted into a machine using :py:func:`adopt_saved_state` .
+        The location of the file can be found in the
+        :py:func:`state_file_path`  attribute.
+
+        in f_remove_file of type bool
+            Whether to also remove the saved state file.
+
+        raises :class:`VBoxErrorInvalidVmState`
+            Virtual machine not in state Saved.
+        
+        """
+        if not isinstance(f_remove_file, bool):
+            raise TypeError("f_remove_file can only be an instance of type bool")
+        self._call("discardSavedState",
+                     in_p=[f_remove_file])
+
+    def take_snapshot(self, name, description, pause):
+        """Saves the current execution state
+        and all settings of the machine and creates differencing images
+        for all normal (non-independent) media.
+        See :py:class:`ISnapshot`  for an introduction to snapshots.
+        
+        This method can be called for a PoweredOff, Saved (see
+        :py:func:`save_state` ), Running or
+        Paused virtual machine. When the machine is PoweredOff, an
+        offline snapshot is created. When the machine is Running a live
+        snapshot is created, and an online snapshot is created when Paused.
+        
+        The taken snapshot is always based on the
+        :py:func:`current_snapshot` current snapshot
+        of the associated virtual machine and becomes a new current snapshot.
+        
+        
+        This method implicitly calls :py:func:`save_settings`  to
+        save all current machine settings before taking an offline snapshot.
+
+        in name of type str
+            Short name for the snapshot.
+
+        in description of type str
+            Optional description of the snapshot.
+
+        in pause of type bool
+            Whether the VM should be paused while taking the snapshot. Only
+            relevant when the VM is running, and distinguishes between online
+            (@c true) and live (@c false) snapshots. When the VM is not running
+            the result is always an offline snapshot.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        raises :class:`VBoxErrorInvalidVmState`
+            Virtual machine currently changing state.
+        
+        """
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(description, basestring):
+            raise TypeError("description can only be an instance of type basestring")
+        if not isinstance(pause, bool):
+            raise TypeError("pause can only be an instance of type bool")
+        progress = self._call("takeSnapshot",
+                     in_p=[name, description, pause])
+        progress = IProgress(progress)
+        return progress
+
+    def delete_snapshot(self, id_p):
+        """Starts deleting the specified snapshot asynchronously.
+        See :py:class:`ISnapshot`  for an introduction to snapshots.
+        
+        The execution state and settings of the associated machine stored in
+        the snapshot will be deleted. The contents of all differencing media of
+        this snapshot will be merged with the contents of their dependent child
+        media to keep the medium chain valid (in other words, all changes
+        represented by media being deleted will be propagated to their child
+        medium). After that, this snapshot's differencing medium will be
+        deleted. The parent of this snapshot will become a new parent for all
+        its child snapshots.
+        
+        If the deleted snapshot is the current one, its parent snapshot will
+        become a new current snapshot. The current machine state is not directly
+        affected in this case, except that currently attached differencing
+        media based on media of the deleted snapshot will be also merged as
+        described above.
+        
+        If the deleted snapshot is the first or current snapshot, then the
+        respective IMachine attributes will be adjusted. Deleting the current
+        snapshot will also implicitly call :py:func:`save_settings` 
+        to make all current machine settings permanent.
+        
+        Deleting a snapshot has the following preconditions:
+        
+        
+        Child media of all normal media of the deleted snapshot
+        must be accessible (see :py:func:`IMedium.state` ) for this
+        operation to succeed. If only one running VM refers to all images
+        which participates in merging the operation can be performed while
+        the VM is running. Otherwise all virtual machines whose media are
+        directly or indirectly based on the media of deleted snapshot must
+        be powered off. In any case, online snapshot deleting usually is
+        slower than the same operation without any running VM.
+        
+        You cannot delete the snapshot if a medium attached to it has
+        more than one child medium (differencing images) because otherwise
+        merging would be impossible. This might be the case if there is
+        more than one child snapshot or differencing images were created
+        for other reason (e.g. implicitly because of multiple machine
+        attachments).
+        
+        
+        The virtual machine's :py:func:`state` state is
+        changed to "DeletingSnapshot", "DeletingSnapshotOnline" or
+        "DeletingSnapshotPaused" while this operation is in progress.
+        
+        
+        Merging medium contents can be very time and disk space
+        consuming, if these media are big in size and have many
+        children. However, if the snapshot being deleted is the last
+        (head) snapshot on the branch, the operation will be rather
+        quick.
+
+        in id_p of type str
+            UUID of the snapshot to delete.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        raises :class:`VBoxErrorInvalidVmState`
+            The running virtual machine prevents deleting this snapshot. This
+happens only in very specific situations, usually snapshots can be
+deleted without trouble while a VM is running. The error message
+text explains the reason for the failure.
+        
+        """
+        if not isinstance(id_p, basestring):
+            raise TypeError("id_p can only be an instance of type basestring")
+        progress = self._call("deleteSnapshot",
+                     in_p=[id_p])
+        progress = IProgress(progress)
+        return progress
+
+    def delete_snapshot_and_all_children(self, id_p):
+        """Starts deleting the specified snapshot and all its children
+        asynchronously. See :py:class:`ISnapshot`  for an introduction to
+        snapshots. The conditions and many details are the same as with
+        :py:func:`delete_snapshot` .
+        
+        This operation is very fast if the snapshot subtree does not include
+        the current state. It is still significantly faster than deleting the
+        snapshots one by one if the current state is in the subtree and there
+        are more than one snapshots from current state to the snapshot which
+        marks the subtree, since it eliminates the incremental image merging.
+        
+        This API method is right now not implemented!
+
+        in id_p of type str
+            UUID of the snapshot to delete, including all its children.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        raises :class:`VBoxErrorInvalidVmState`
+            The running virtual machine prevents deleting this snapshot. This
+happens only in very specific situations, usually snapshots can be
+deleted without trouble while a VM is running. The error message
+text explains the reason for the failure.
+        
+        raises :class:`OleErrorNotimpl`
+            The method is not implemented yet.
+        
+        """
+        if not isinstance(id_p, basestring):
+            raise TypeError("id_p can only be an instance of type basestring")
+        progress = self._call("deleteSnapshotAndAllChildren",
+                     in_p=[id_p])
+        progress = IProgress(progress)
+        return progress
+
+    def delete_snapshot_range(self, start_id, end_id):
+        """Starts deleting the specified snapshot range. This is limited to
+        linear snapshot lists, which means there may not be any other child
+        snapshots other than the direct sequence between the start and end
+        snapshot. If the start and end snapshot point to the same snapshot this
+        method is completely equivalent to :py:func:`delete_snapshot` . See
+        :py:class:`ISnapshot`  for an introduction to snapshots. The
+        conditions and many details are the same as with
+        :py:func:`delete_snapshot` .
+        
+        This operation is generally faster than deleting snapshots one by one
+        and often also needs less extra disk space before freeing up disk space
+        by deleting the removed disk images corresponding to the snapshot.
+        
+        This API method is right now not implemented!
+
+        in start_id of type str
+            UUID of the first snapshot to delete.
+
+        in end_id of type str
+            UUID of the last snapshot to delete.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        raises :class:`VBoxErrorInvalidVmState`
+            The running virtual machine prevents deleting this snapshot. This
+happens only in very specific situations, usually snapshots can be
+deleted without trouble while a VM is running. The error message
+text explains the reason for the failure.
+        
+        raises :class:`OleErrorNotimpl`
+            The method is not implemented yet.
+        
+        """
+        if not isinstance(start_id, basestring):
+            raise TypeError("start_id can only be an instance of type basestring")
+        if not isinstance(end_id, basestring):
+            raise TypeError("end_id can only be an instance of type basestring")
+        progress = self._call("deleteSnapshotRange",
+                     in_p=[start_id, end_id])
+        progress = IProgress(progress)
+        return progress
+
+    def restore_snapshot(self, snapshot):
+        """Starts resetting the machine's current state to the state contained
+        in the given snapshot, asynchronously. All current settings of the
+        machine will be reset and changes stored in differencing media
+        will be lost.
+        See :py:class:`ISnapshot`  for an introduction to snapshots.
+        
+        After this operation is successfully completed, new empty differencing
+        media are created for all normal media of the machine.
+        
+        If the given snapshot is an online snapshot, the machine will go to
+        the :py:attr:`MachineState.saved` saved state, so that the
+        next time it is powered on, the execution state will be restored
+        from the state of the snapshot.
+        
+        
+        The machine must not be running, otherwise the operation will fail.
+        
+        
+        
+        If the machine state is :py:attr:`MachineState.saved` Saved
+        prior to this operation, the saved state file will be implicitly
+        deleted (as if :py:func:`IMachine.discard_saved_state`  were
+        called).
+
+        in snapshot of type :class:`ISnapshot`
+            The snapshot to restore the VM state from.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        raises :class:`VBoxErrorInvalidVmState`
+            Virtual machine is running.
+        
+        """
+        if not isinstance(snapshot, ISnapshot):
+            raise TypeError("snapshot can only be an instance of type ISnapshot")
+        progress = self._call("restoreSnapshot",
+                     in_p=[snapshot])
         progress = IProgress(progress)
         return progress
 
@@ -12699,7 +13390,7 @@ class IConsole(Interface):
     
     :py:class:`ISession` 
     """
-    __uuid__ = 'd129b03e-037a-40b1-b288-a08ae73de535'
+    __uuid__ = '650b5f05-8258-4ee9-b518-89c515ca5dd9'
     __wsmap__ = 'managed'
     
     @property
@@ -12899,7 +13590,7 @@ class IConsole(Interface):
         last three operations of the progress objected returned by
         :py:func:`IMachine.launch_vm_process`  as well.
         
-        :py:func:`save_state` 
+        :py:func:`IMachine.save_state` 
 
         return progress of type :class:`IProgress`
             Progress object to track the operation completion.
@@ -13047,113 +13738,6 @@ class IConsole(Interface):
         entered = self._call("getGuestEnteredACPIMode")
         return entered
 
-    def save_state(self):
-        """Saves the current execution state of a running virtual machine
-        and stops its execution.
-        
-        After this operation completes, the machine will go to the
-        Saved state. Next time it is powered up, this state will
-        be restored and the machine will continue its execution from
-        the place where it was saved.
-        
-        This operation differs from taking a snapshot to the effect
-        that it doesn't create new differencing media. Also, once
-        the machine is powered up from the state saved using this method,
-        the saved state is deleted, so it will be impossible to return
-        to this state later.
-        
-        
-        On success, this method implicitly calls
-        :py:func:`IMachine.save_settings`  to save all current machine
-        settings (including runtime changes to the DVD medium, etc.).
-        Together with the impossibility to change any VM settings when it is
-        in the Saved state, this guarantees adequate hardware
-        configuration of the machine when it is restored from the saved
-        state file.
-        
-        
-        
-        The machine must be in the Running or Paused state, otherwise
-        the operation will fail.
-        
-        
-        
-        :py:func:`take_snapshot` 
-
-        return progress of type :class:`IProgress`
-            Progress object to track the operation completion.
-
-        raises :class:`VBoxErrorInvalidVmState`
-            Virtual machine state neither Running nor Paused.
-        
-        raises :class:`VBoxErrorFileError`
-            Failed to create directory for saved state file.
-        
-        """
-        progress = self._call("saveState")
-        progress = IProgress(progress)
-        return progress
-
-    def adopt_saved_state(self, saved_state_file):
-        """Associates the given saved state file to the virtual machine.
-        
-        On success, the machine will go to the Saved state. Next time it is
-        powered up, it will be restored from the adopted saved state and
-        continue execution from the place where the saved state file was
-        created.
-        
-        The specified saved state file path may be absolute or relative to the
-        folder the VM normally saves the state to (usually,
-        :py:func:`IMachine.snapshot_folder` ).
-        
-        
-        It's a caller's responsibility to make sure the given saved state
-        file is compatible with the settings of this virtual machine that
-        represent its virtual hardware (memory size, storage disk configuration
-        etc.). If there is a mismatch, the behavior of the virtual machine
-        is undefined.
-
-        in saved_state_file of type str
-            Path to the saved state file to adopt.
-
-        raises :class:`VBoxErrorInvalidVmState`
-            Virtual machine state neither PoweredOff nor Aborted.
-        
-        """
-        if not isinstance(saved_state_file, basestring):
-            raise TypeError("saved_state_file can only be an instance of type basestring")
-        self._call("adoptSavedState",
-                     in_p=[saved_state_file])
-
-    def discard_saved_state(self, f_remove_file):
-        """Forcibly resets the machine to "Powered Off" state if it is
-        currently in the "Saved" state (previously created by :py:func:`save_state` ).
-        Next time the machine is powered up, a clean boot will occur.
-        
-        This operation is equivalent to resetting or powering off
-        the machine without doing a proper shutdown of the guest
-        operating system; as with resetting a running phyiscal
-        computer, it can can lead to data loss.
-        
-        If @a fRemoveFile is @c true, the file in the machine directory
-        into which the machine state was saved is also deleted. If
-        this is @c false, then the state can be recovered and later
-        re-inserted into a machine using :py:func:`adopt_saved_state` .
-        The location of the file can be found in the
-        :py:func:`IMachine.state_file_path`  attribute.
-
-        in f_remove_file of type bool
-            Whether to also remove the saved state file.
-
-        raises :class:`VBoxErrorInvalidVmState`
-            Virtual machine not in state Saved.
-        
-        """
-        if not isinstance(f_remove_file, bool):
-            raise TypeError("f_remove_file can only be an instance of type bool")
-        self._call("discardSavedState",
-                     in_p=[f_remove_file])
-
     def get_device_activity(self, type_p):
         """Gets the current activity type of given devices or device groups.
 
@@ -13176,7 +13760,7 @@ class IConsole(Interface):
         activity = [DeviceActivity(a) for a in activity]
         return activity
 
-    def attach_usb_device(self, id_p):
+    def attach_usb_device(self, id_p, capture_filename):
         """Attaches a host USB device with the given UUID to the
         USB controller of the virtual machine.
         
@@ -13196,6 +13780,9 @@ class IConsole(Interface):
         in id_p of type str
             UUID of the host USB device to attach.
 
+        in capture_filename of type str
+            Filename to capture the USB traffic to.
+
         raises :class:`VBoxErrorInvalidVmState`
             Virtual machine state neither Running nor Paused.
         
@@ -13205,8 +13792,10 @@ class IConsole(Interface):
         """
         if not isinstance(id_p, basestring):
             raise TypeError("id_p can only be an instance of type basestring")
+        if not isinstance(capture_filename, basestring):
+            raise TypeError("capture_filename can only be an instance of type basestring")
         self._call("attachUSBDevice",
-                     in_p=[id_p])
+                     in_p=[id_p, capture_filename])
 
     def detach_usb_device(self, id_p):
         """Detaches an USB device with the given UUID from the USB controller
@@ -13346,246 +13935,6 @@ class IConsole(Interface):
         self._call("removeSharedFolder",
                      in_p=[name])
 
-    def take_snapshot(self, name, description):
-        """Saves the current execution state
-        and all settings of the machine and creates differencing images
-        for all normal (non-independent) media.
-        See :py:class:`ISnapshot`  for an introduction to snapshots.
-        
-        This method can be called for a PoweredOff, Saved (see
-        :py:func:`save_state` ), Running or
-        Paused virtual machine. When the machine is PoweredOff, an
-        offline snapshot is created. When the machine is Running a live
-        snapshot is created, and an online snapshot is created when Paused.
-        
-        The taken snapshot is always based on the
-        :py:func:`IMachine.current_snapshot` current snapshot
-        of the associated virtual machine and becomes a new current snapshot.
-        
-        
-        This method implicitly calls :py:func:`IMachine.save_settings`  to
-        save all current machine settings before taking an offline snapshot.
-
-        in name of type str
-            Short name for the snapshot.
-
-        in description of type str
-            Optional description of the snapshot.
-
-        return progress of type :class:`IProgress`
-            Progress object to track the operation completion.
-
-        raises :class:`VBoxErrorInvalidVmState`
-            Virtual machine currently changing state.
-        
-        """
-        if not isinstance(name, basestring):
-            raise TypeError("name can only be an instance of type basestring")
-        if not isinstance(description, basestring):
-            raise TypeError("description can only be an instance of type basestring")
-        progress = self._call("takeSnapshot",
-                     in_p=[name, description])
-        progress = IProgress(progress)
-        return progress
-
-    def delete_snapshot(self, id_p):
-        """Starts deleting the specified snapshot asynchronously.
-        See :py:class:`ISnapshot`  for an introduction to snapshots.
-        
-        The execution state and settings of the associated machine stored in
-        the snapshot will be deleted. The contents of all differencing media of
-        this snapshot will be merged with the contents of their dependent child
-        media to keep the medium chain valid (in other words, all changes
-        represented by media being deleted will be propagated to their child
-        medium). After that, this snapshot's differencing medium will be
-        deleted. The parent of this snapshot will become a new parent for all
-        its child snapshots.
-        
-        If the deleted snapshot is the current one, its parent snapshot will
-        become a new current snapshot. The current machine state is not directly
-        affected in this case, except that currently attached differencing
-        media based on media of the deleted snapshot will be also merged as
-        described above.
-        
-        If the deleted snapshot is the first or current snapshot, then the
-        respective IMachine attributes will be adjusted. Deleting the current
-        snapshot will also implicitly call :py:func:`IMachine.save_settings` 
-        to make all current machine settings permanent.
-        
-        Deleting a snapshot has the following preconditions:
-        
-        
-        Child media of all normal media of the deleted snapshot
-        must be accessible (see :py:func:`IMedium.state` ) for this
-        operation to succeed. If only one running VM refers to all images
-        which participates in merging the operation can be performed while
-        the VM is running. Otherwise all virtual machines whose media are
-        directly or indirectly based on the media of deleted snapshot must
-        be powered off. In any case, online snapshot deleting usually is
-        slower than the same operation without any running VM.
-        
-        You cannot delete the snapshot if a medium attached to it has
-        more than one child medium (differencing images) because otherwise
-        merging would be impossible. This might be the case if there is
-        more than one child snapshot or differencing images were created
-        for other reason (e.g. implicitly because of multiple machine
-        attachments).
-        
-        
-        The virtual machine's :py:func:`IMachine.state` state is
-        changed to "DeletingSnapshot", "DeletingSnapshotOnline" or
-        "DeletingSnapshotPaused" while this operation is in progress.
-        
-        
-        Merging medium contents can be very time and disk space
-        consuming, if these media are big in size and have many
-        children. However, if the snapshot being deleted is the last
-        (head) snapshot on the branch, the operation will be rather
-        quick.
-
-        in id_p of type str
-            UUID of the snapshot to delete.
-
-        return progress of type :class:`IProgress`
-            Progress object to track the operation completion.
-
-        raises :class:`VBoxErrorInvalidVmState`
-            The running virtual machine prevents deleting this snapshot. This
-happens only in very specific situations, usually snapshots can be
-deleted without trouble while a VM is running. The error message
-text explains the reason for the failure.
-        
-        """
-        if not isinstance(id_p, basestring):
-            raise TypeError("id_p can only be an instance of type basestring")
-        progress = self._call("deleteSnapshot",
-                     in_p=[id_p])
-        progress = IProgress(progress)
-        return progress
-
-    def delete_snapshot_and_all_children(self, id_p):
-        """Starts deleting the specified snapshot and all its children
-        asynchronously. See :py:class:`ISnapshot`  for an introduction to
-        snapshots. The conditions and many details are the same as with
-        :py:func:`delete_snapshot` .
-        
-        This operation is very fast if the snapshot subtree does not include
-        the current state. It is still significantly faster than deleting the
-        snapshots one by one if the current state is in the subtree and there
-        are more than one snapshots from current state to the snapshot which
-        marks the subtree, since it eliminates the incremental image merging.
-        
-        This API method is right now not implemented!
-
-        in id_p of type str
-            UUID of the snapshot to delete, including all its children.
-
-        return progress of type :class:`IProgress`
-            Progress object to track the operation completion.
-
-        raises :class:`VBoxErrorInvalidVmState`
-            The running virtual machine prevents deleting this snapshot. This
-happens only in very specific situations, usually snapshots can be
-deleted without trouble while a VM is running. The error message
-text explains the reason for the failure.
-        
-        raises :class:`OleErrorNotimpl`
-            The method is not implemented yet.
-        
-        """
-        if not isinstance(id_p, basestring):
-            raise TypeError("id_p can only be an instance of type basestring")
-        progress = self._call("deleteSnapshotAndAllChildren",
-                     in_p=[id_p])
-        progress = IProgress(progress)
-        return progress
-
-    def delete_snapshot_range(self, start_id, end_id):
-        """Starts deleting the specified snapshot range. This is limited to
-        linear snapshot lists, which means there may not be any other child
-        snapshots other than the direct sequence between the start and end
-        snapshot. If the start and end snapshot point to the same snapshot this
-        method is completely equivalent to :py:func:`delete_snapshot` . See
-        :py:class:`ISnapshot`  for an introduction to snapshots. The
-        conditions and many details are the same as with
-        :py:func:`delete_snapshot` .
-        
-        This operation is generally faster than deleting snapshots one by one
-        and often also needs less extra disk space before freeing up disk space
-        by deleting the removed disk images corresponding to the snapshot.
-        
-        This API method is right now not implemented!
-
-        in start_id of type str
-            UUID of the first snapshot to delete.
-
-        in end_id of type str
-            UUID of the last snapshot to delete.
-
-        return progress of type :class:`IProgress`
-            Progress object to track the operation completion.
-
-        raises :class:`VBoxErrorInvalidVmState`
-            The running virtual machine prevents deleting this snapshot. This
-happens only in very specific situations, usually snapshots can be
-deleted without trouble while a VM is running. The error message
-text explains the reason for the failure.
-        
-        raises :class:`OleErrorNotimpl`
-            The method is not implemented yet.
-        
-        """
-        if not isinstance(start_id, basestring):
-            raise TypeError("start_id can only be an instance of type basestring")
-        if not isinstance(end_id, basestring):
-            raise TypeError("end_id can only be an instance of type basestring")
-        progress = self._call("deleteSnapshotRange",
-                     in_p=[start_id, end_id])
-        progress = IProgress(progress)
-        return progress
-
-    def restore_snapshot(self, snapshot):
-        """Starts resetting the machine's current state to the state contained
-        in the given snapshot, asynchronously. All current settings of the
-        machine will be reset and changes stored in differencing media
-        will be lost.
-        See :py:class:`ISnapshot`  for an introduction to snapshots.
-        
-        After this operation is successfully completed, new empty differencing
-        media are created for all normal media of the machine.
-        
-        If the given snapshot is an online snapshot, the machine will go to
-        the :py:attr:`MachineState.saved` saved state, so that the
-        next time it is powered on, the execution state will be restored
-        from the state of the snapshot.
-        
-        
-        The machine must not be running, otherwise the operation will fail.
-        
-        
-        
-        If the machine state is :py:attr:`MachineState.saved` Saved
-        prior to this operation, the saved state file will be implicitly
-        deleted (as if :py:func:`IConsole.discard_saved_state`  were
-        called).
-
-        in snapshot of type :class:`ISnapshot`
-            The snapshot to restore the VM state from.
-
-        return progress of type :class:`IProgress`
-            Progress object to track the operation completion.
-
-        raises :class:`VBoxErrorInvalidVmState`
-            Virtual machine is running.
-        
-        """
-        if not isinstance(snapshot, ISnapshot):
-            raise TypeError("snapshot can only be an instance of type ISnapshot")
-        progress = self._call("restoreSnapshot",
-                     in_p=[snapshot])
-        progress = IProgress(progress)
-        return progress
-
     def teleport(self, hostname, tcpport, password, max_downtime):
         """Teleport the VM to a different host machine or process.
         
@@ -13631,6 +13980,92 @@ text explains the reason for the failure.
                      in_p=[hostname, tcpport, password, max_downtime])
         progress = IProgress(progress)
         return progress
+
+    def add_disk_encryption_password(self, id_p, password, clear_on_suspend):
+        """Adds a password used for hard disk encryption/decryption.
+
+        in id_p of type str
+            The identifier used for the password. Must match the identifier
+            used when the encrypted medium was created.
+
+        in password of type str
+            The password.
+
+        in clear_on_suspend of type bool
+            Flag whether to clear the password on VM suspend (due to a suspending host
+            for example). The password must be supplied again before the VM can resume.
+
+        raises :class:`VBoxErrorPasswordIncorrect`
+            The password provided wasn't correct for at least one disk using the provided
+ID.
+        
+        """
+        if not isinstance(id_p, basestring):
+            raise TypeError("id_p can only be an instance of type basestring")
+        if not isinstance(password, basestring):
+            raise TypeError("password can only be an instance of type basestring")
+        if not isinstance(clear_on_suspend, bool):
+            raise TypeError("clear_on_suspend can only be an instance of type bool")
+        self._call("addDiskEncryptionPassword",
+                     in_p=[id_p, password, clear_on_suspend])
+
+    def add_disk_encryption_passwords(self, ids, passwords, clear_on_suspend):
+        """Adds a password used for hard disk encryption/decryption.
+
+        in ids of type str
+            List of identifiers for the passwords. Must match the identifier
+            used when the encrypted medium was created.
+
+        in passwords of type str
+            List of passwords.
+
+        in clear_on_suspend of type bool
+            Flag whether to clear the given passwords on VM suspend (due to a suspending host
+            for example). The passwords must be supplied again before the VM can resume.
+
+        raises :class:`VBoxErrorPasswordIncorrect`
+            The password provided wasn't correct for at least one disk using the provided
+ID.
+        
+        """
+        if not isinstance(ids, list):
+            raise TypeError("ids can only be an instance of type list")
+        for a in ids[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
+        if not isinstance(passwords, list):
+            raise TypeError("passwords can only be an instance of type list")
+        for a in passwords[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
+        if not isinstance(clear_on_suspend, bool):
+            raise TypeError("clear_on_suspend can only be an instance of type bool")
+        self._call("addDiskEncryptionPasswords",
+                     in_p=[ids, passwords, clear_on_suspend])
+
+    def remove_disk_encryption_password(self, id_p):
+        """Removes a password used for hard disk encryption/decryption from
+        the running VM. As soon as the medium requiring this password
+        is accessed the VM is paused with an error and the password must be
+        provided again.
+
+        in id_p of type str
+            The identifier used for the password. Must match the identifier
+            used when the encrypted medium was created.
+
+        """
+        if not isinstance(id_p, basestring):
+            raise TypeError("id_p can only be an instance of type basestring")
+        self._call("removeDiskEncryptionPassword",
+                     in_p=[id_p])
+
+    def clear_all_disk_encryption_passwords(self):
+        """Clears all provided supplied disk encryption passwords.
+
+        """
+        self._call("clearAllDiskEncryptionPasswords")
 
 
 class IHostNetworkInterface(Interface):
@@ -14582,7 +15017,7 @@ class ISystemProperties(Interface):
         
         Keep in mind that the medium format identifier
         (:py:func:`IMediumFormat.id_p` ) used in other API calls like
-        :py:func:`IVirtualBox.create_hard_disk`  to refer to a particular
+        :py:func:`IVirtualBox.create_medium`  to refer to a particular
         medium format is a case-insensitive string. This means that, for
         example, all of the following strings:
         
@@ -14611,7 +15046,7 @@ class ISystemProperties(Interface):
         
         The medium format set by this attribute is used by VirtualBox
         when the medium format was not specified explicitly. One example is
-        :py:func:`IVirtualBox.create_hard_disk`  with the empty
+        :py:func:`IVirtualBox.create_medium`  with the empty
         format argument. A more complex example is implicit creation of
         differencing media when taking a snapshot of a virtual machine:
         this operation will try to use a format of the parent medium first
@@ -14635,7 +15070,7 @@ class ISystemProperties(Interface):
         
         :py:func:`medium_formats` ,
         :py:func:`IMediumFormat.id_p` ,
-        :py:func:`IVirtualBox.create_hard_disk` 
+        :py:func:`IVirtualBox.create_medium` 
         """
         ret = self._get_attr("defaultHardDiskFormat")
         return ret
@@ -15355,9 +15790,26 @@ class IDnDBase(Interface):
     """
     Base abstract interface for drag'n drop.
     """
-    __uuid__ = 'b15cf9ca-4078-4786-a1be-af773a36e19f'
+    __uuid__ = 'a9630a67-7238-4b0e-9a58-364b1dd3d032'
     __wsmap__ = 'managed'
     
+    @property
+    def formats(self):
+        """Get str value for 'formats'
+        Returns all supported drag'n drop formats.
+        """
+        ret = self._get_attr("formats")
+        return ret
+
+    @property
+    def protocol_version(self):
+        """Get int value for 'protocolVersion'
+        Returns the protocol version which is used to communicate
+        with the guest.
+        """
+        ret = self._get_attr("protocolVersion")
+        return ret
+
     def is_format_supported(self, format_p):
         """Checks if a specific drag'n drop MIME / Content-type format is supported.
 
@@ -15405,14 +15857,6 @@ class IDnDBase(Interface):
                         "array can only contain objects of type basestring")
         self._call("removeFormats",
                      in_p=[formats])
-
-    @property
-    def formats(self):
-        """Get str value for 'formats'
-        Returns all supported drag'n drop formats.
-        """
-        ret = self._get_attr("formats")
-        return ret
 
 
 class IDnDSource(IDnDBase):
@@ -15495,15 +15939,21 @@ class IGuestDnDSource(IDnDSource):
     Implementation of the :py:class:`IDnDSource`  object
     for source drag'n drop operations on the guest.
     """
-    __uuid__ = '280955c0-de67-4297-8179-6274a82a2fc0'
+    __uuid__ = 'dedfb5d9-4c1b-edf7-fdf3-c1be6827dc28'
     __wsmap__ = 'managed'
     
+    @property
+    def midl_does_not_like_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikeEmptyInterfaces")
+        return ret
+
 
 class IDnDTarget(IDnDBase):
     """
     Abstract interface for handling drag'n drop targets.
     """
-    __uuid__ = '2366c45c-4633-41a1-9fa6-0ef9f244434c'
+    __uuid__ = '25ac16fa-316d-4934-9a7f-fe02f6739bef'
     __wsmap__ = 'managed'
     
     def enter(self, screen_id, y, x, default_action, allowed_actions, formats):
@@ -15684,7 +16134,7 @@ class IDnDTarget(IDnDBase):
         return (format_p, result_action)
 
     def send_data(self, screen_id, format_p, data):
-        """Sends data to the target.
+        """Initiates sending data to the target.
 
         in screen_id of type int
             The screen ID where the drag and drop event occurred.
@@ -15717,6 +16167,20 @@ class IDnDTarget(IDnDBase):
         progress = IProgress(progress)
         return progress
 
+    def cancel(self):
+        """Requests cancelling the current operation. The target can veto
+        the request in case the operation is not cancelable at the moment.
+
+        return veto of type bool
+            Whether the target has vetoed cancelling the operation.
+
+        raises :class:`VBoxErrorVmError`
+            VMM device is not available.
+        
+        """
+        veto = self._call("cancel")
+        return veto
+
 
 class IGuestDnDTarget(IDnDTarget):
     """
@@ -15726,40 +16190,64 @@ class IGuestDnDTarget(IDnDTarget):
     __uuid__ = '50ce4b51-0ff7-46b7-a138-3c6e5ac946b4'
     __wsmap__ = 'managed'
     
+    @property
+    def midl_does_not_like_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikeEmptyInterfaces")
+        return ret
+
 
 class IGuestSession(Interface):
     """
-    A guest session represents one impersonated user account on the guest, so
+    A guest session represents one impersonated user account in the guest, so
     every operation will use the same credentials specified when creating
     the session object via :py:func:`IGuest.create_session` .
     
     There can be a maximum of 32 sessions at once per VM, whereas session 0
-    is reserved for the root session. This root session is controlling all
-    other guest sessions and also is responsible for actions which require
-    system level privileges. Each guest session keeps track of its started
-    guest processes, opened guest files or guest directories.
-    To work on guest files or directories a guest session offers methods to open
-    or create such objects (see :py:func:`IGuestSession.file_open`  or
-    :py:func:`IGuestSession.directory_open`  for example).
+    is reserved for the root session.
+    <!-- r=bird: Is the root session part of the maximum of 32?? Not really clear. -->
+    This root session is controlling all other guest sessions and also is
+    responsible for actions which require system level privileges.
+    
+    Each guest session keeps track of the guest directories and files that
+    it opened as well as guest processes it has created.  To work on guest
+    files or directories a guest session offers methods to open or create
+    such objects (see :py:func:`IGuestSession.file_open`  or
+    :py:func:`IGuestSession.directory_open`  for instance).  Similarly,
+    there a methods for creating guest processes.
+    
+    There can be up to 2048 objects (guest processes, files and directories)
+    a time per guest session.  Exceeding the limit will result in an error.
+    <!-- @todo r=bird: Add specific VBOX_E_XXX error for this and document it here! -->
     
     When done with either of these objects, including the guest session itself,
     use the appropriate close() method to let the object do its cleanup work.
     
-    Every guest session has its own environment variable block which gets
-    automatically applied when starting a new guest process via
-    :py:func:`IGuestSession.process_create`  or :py:func:`IGuestSession.process_create_ex` .
-    To override (or unset) certain environment variables already set by the
-    guest session, one can specify a per-process environment block when using
-    one of the both above mentioned process creation calls.
+    Closing a session via :py:func:`IGuestSession.close`  will try to close
+    all the mentioned objects above unless these objects are still used by
+    a client.
+    
+    A set of environment variables changes is associated with each session
+    (:py:func:`IGuestSession.environment_changes` ).  These are applied to
+    the base environment of the impersonated guest user when creating a new
+    guest process.  For additional flexibility the :py:func:`IGuestSession.process_create` 
+    and :py:func:`IGuestSession.process_create_ex`  methods allows you to
+    specify individual environment changes for each process you create.
+    With newer guest addition versions, the base environment is also made
+    available via :py:func:`IGuestSession.environment_base` .  (One reason
+    for why we record changes to a base environment instead of working
+    directly on an environment block is that we need to be compatible
+    with older guest additions.  Another reason is that this way it is always
+    possible to undo all the changes you've scheduled.)
     """
-    __uuid__ = '5b28703c-07b6-4fcb-afba-ac199b309752'
+    __uuid__ = '3cbf62cf-c9cd-48c6-9623-d1dbe54ca557'
     __wsmap__ = 'managed'
     
     @property
     def user(self):
         """Get str value for 'user'
         Returns the user name used by this session to impersonate
-        users on the guest.
+        users in the guest.
         """
         ret = self._get_attr("user")
         return ret
@@ -15768,7 +16256,7 @@ class IGuestSession(Interface):
     def domain(self):
         """Get str value for 'domain'
         Returns the domain name used by this session to impersonate
-        users on the guest.
+        users in the guest.
         """
         ret = self._get_attr("domain")
         return ret
@@ -15792,6 +16280,7 @@ class IGuestSession(Interface):
     @property
     def timeout(self):
         """Get or set int value for 'timeout'
+        <!-- r=bird: Using 'Returns' for writable attributes is misleading. -->
         Returns the session timeout (in ms).
         """
         ret = self._get_attr("timeout")
@@ -15821,18 +16310,42 @@ class IGuestSession(Interface):
         return GuestSessionStatus(ret)
 
     @property
-    def environment(self):
-        """Get or set str value for 'environment'
-        Returns the current session environment.
+    def environment_changes(self):
+        """Get or set str value for 'environmentChanges'
+        The set of scheduled environment changes to the base environment of the
+        session.  They are in putenv format, i.e. "VAR=VALUE" for setting and
+        "VAR" for unsetting.  One entry per variable (change).  The changes are
+        applied when creating new guest processes.
+        
+        This is writable, so to undo all the scheduled changes, assign it an
+        empty array.
         """
-        ret = self._get_attr("environment")
+        ret = self._get_attr("environmentChanges")
         return ret
 
-    @environment.setter
-    def environment(self, value):
+    @environment_changes.setter
+    def environment_changes(self, value):
         if not isinstance(value, basestring):
             raise TypeError("value is not an instance of basestring")
-        return self._set_attr("environment", value)
+        return self._set_attr("environmentChanges", value)
+
+    @property
+    def environment_base(self):
+        """Get str value for 'environmentBase'
+        The base environment of the session.  They are on the "VAR=VALUE" form,
+        one array entry per variable.
+        <!-- @todo/TODO/FIXME: This doesn't end up in the PDF.
+        -->
+        
+        Access fails with VBOX_E_NOT_SUPPORTED if the guest additions does not
+        support the session base environment feature.  Support for this was
+        introduced with protocol version XXXX.
+        
+        Access fails with VBOX_E_INVALID_OBJECT_STATE if the guest additions
+        has yet to report the session base environment.
+        """
+        ret = self._get_attr("environmentBase")
+        return ret
 
     @property
     def processes(self):
@@ -15841,6 +16354,29 @@ class IGuestSession(Interface):
         """
         ret = self._get_attr("processes")
         return [IGuestProcess(a) for a in ret]
+
+    @property
+    def path_style(self):
+        """Get PathStyle value for 'pathStyle'
+        The style of paths used by the guest.  Handy for giving the right kind
+        of path specifications to :py:func:`IGuestSession.file_open`  and similar methods.
+        """
+        ret = self._get_attr("pathStyle")
+        return PathStyle(ret)
+
+    @property
+    def current_directory(self):
+        """Get or set str value for 'currentDirectory'
+        The current directory of the session.  Guest path style.
+        """
+        ret = self._get_attr("currentDirectory")
+        return ret
+
+    @current_directory.setter
+    def current_directory(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("currentDirectory", value)
 
     @property
     def directories(self):
@@ -15870,90 +16406,135 @@ class IGuestSession(Interface):
         """Closes this session. All opened guest directories, files and
         processes which are not referenced by clients anymore will be
         closed. Guest processes which fall into this category and still
-        are running on the guest will be terminated automatically.
+        are running in the guest will be terminated automatically.
 
         """
         self._call("close")
 
-    def copy_from(self, source, dest, flags):
-        """Copies a file from guest to the host.
+    def directory_copy(self, source, destination, flags):
+        """Recursively copies a directory from one guest location to another.
 
         in source of type str
-            Source file on the guest to copy to the host.
+            The path to the directory to copy (in the guest).  Guest path style.
 
-        in dest of type str
-            Destination file name on the host.
+        in destination of type str
+            The path to the target directory (in the guest).  Unless the
+            :py:func:`DirectoryCopyFlags.copy_into_existing`  flag is given, the
+            directory shall not already exist.  Guest path style.
 
-        in flags of type :class:`CopyFileFlag`
-            Copy flags; see :py:class:`CopyFileFlag`  for more information.
+        in flags of type :class:`DirectoryCopyFlags`
+            Zero or more :py:class:`DirectoryCopyFlags`  values.
 
         return progress of type :class:`IProgress`
-            Progress object to track the operation completion.
+            Progress object to track the operation to completion.
 
-        raises :class:`VBoxErrorIprtError`
-            Error starting the copy operation.
+        raises :class:`OleErrorNotimpl`
+            Not yet implemented.
         
         """
         if not isinstance(source, basestring):
             raise TypeError("source can only be an instance of type basestring")
-        if not isinstance(dest, basestring):
-            raise TypeError("dest can only be an instance of type basestring")
+        if not isinstance(destination, basestring):
+            raise TypeError("destination can only be an instance of type basestring")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
-            if not isinstance(a, CopyFileFlag):
+            if not isinstance(a, DirectoryCopyFlags):
                 raise TypeError(\
-                        "array can only contain objects of type CopyFileFlag")
-        progress = self._call("copyFrom",
-                     in_p=[source, dest, flags])
+                        "array can only contain objects of type DirectoryCopyFlags")
+        progress = self._call("directoryCopy",
+                     in_p=[source, destination, flags])
         progress = IProgress(progress)
         return progress
 
-    def copy_to(self, source, dest, flags):
-        """Copies a file from host to the guest.
+    def directory_copy_from_guest(self, source, destination, flags):
+        """Recursively copies a directory from the guest to the host.
 
         in source of type str
-            Source file on the host to copy to the guest.
+            Path to the directory on the guest side that should be copied to
+            the host.  Guest path style.
 
-        in dest of type str
-            Destination file name on the guest.
+        in destination of type str
+            Where to put the directory on the host.  Unless the
+            :py:func:`DirectoryCopyFlags.copy_into_existing`  flag is given, the
+            directory shall not already exist.  Host path style.
 
-        in flags of type :class:`CopyFileFlag`
-            Copy flags; see :py:class:`CopyFileFlag`  for more information.
+        in flags of type :class:`DirectoryCopyFlags`
+            Zero or more :py:class:`DirectoryCopyFlags`  values.
 
         return progress of type :class:`IProgress`
-            Progress object to track the operation completion.
+            Progress object to track the operation to completion.
 
-        raises :class:`VBoxErrorIprtError`
-            Error starting the copy operation.
+        raises :class:`OleErrorNotimpl`
+            Not yet implemented.
         
         """
         if not isinstance(source, basestring):
             raise TypeError("source can only be an instance of type basestring")
-        if not isinstance(dest, basestring):
-            raise TypeError("dest can only be an instance of type basestring")
+        if not isinstance(destination, basestring):
+            raise TypeError("destination can only be an instance of type basestring")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
-            if not isinstance(a, CopyFileFlag):
+            if not isinstance(a, DirectoryCopyFlags):
                 raise TypeError(\
-                        "array can only contain objects of type CopyFileFlag")
-        progress = self._call("copyTo",
-                     in_p=[source, dest, flags])
+                        "array can only contain objects of type DirectoryCopyFlags")
+        progress = self._call("directoryCopyFromGuest",
+                     in_p=[source, destination, flags])
+        progress = IProgress(progress)
+        return progress
+
+    def directory_copy_to_guest(self, source, destination, flags):
+        """Recursively copies a directory from the host to the guest.
+
+        in source of type str
+            Path to the directory on the host side that should be copied to
+            the guest.  Host path style.
+
+        in destination of type str
+            Where to put the file in the guest. Unless the
+            :py:func:`DirectoryCopyFlags.copy_into_existing`  flag is given, the
+            directory shall not already exist.  Guest style path.
+
+        in flags of type :class:`DirectoryCopyFlags`
+            Zero or more :py:class:`DirectoryCopyFlags`  values.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation to completion.
+
+        raises :class:`OleErrorNotimpl`
+            Not yet implemented.
+        
+        """
+        if not isinstance(source, basestring):
+            raise TypeError("source can only be an instance of type basestring")
+        if not isinstance(destination, basestring):
+            raise TypeError("destination can only be an instance of type basestring")
+        if not isinstance(flags, list):
+            raise TypeError("flags can only be an instance of type list")
+        for a in flags[:10]:
+            if not isinstance(a, DirectoryCopyFlags):
+                raise TypeError(\
+                        "array can only contain objects of type DirectoryCopyFlags")
+        progress = self._call("directoryCopyToGuest",
+                     in_p=[source, destination, flags])
         progress = IProgress(progress)
         return progress
 
     def directory_create(self, path, mode, flags):
-        """Create a directory on the guest.
+        """Creates a directory in the guest.
 
         in path of type str
-            Full path of directory to create.
+            Path to the directory directory to be created. Guest path style.
 
         in mode of type int
-            File creation mode.
+            The UNIX-style access mode mask to create the directory with.
+            Whether/how all three access groups and associated access rights are
+            realized is guest OS dependent.  The API does the best it can on each
+            OS.
 
         in flags of type :class:`DirectoryCreateFlag`
-            Creation flags; see :py:class:`DirectoryCreateFlag`  for more information.
+            Zero or more :py:class:`DirectoryCreateFlag`  flags.
 
         raises :class:`VBoxErrorIprtError`
             Error while creating the directory.
@@ -15973,7 +16554,7 @@ class IGuestSession(Interface):
                      in_p=[path, mode, flags])
 
     def directory_create_temp(self, template_name, mode, path, secure):
-        """Create a temporary directory on the guest.
+        """Creates a temporary directory in the guest.
 
         in template_name of type str
             Template for the name of the directory to create. This must
@@ -15982,11 +16563,17 @@ class IGuestSession(Interface):
             alphanumeric string to produce a unique name.
 
         in mode of type int
-            The mode of the directory to create. Use 0700 unless there are
-            reasons not to. This parameter is ignored if "secure" is specified.
+            The UNIX-style access mode mask to create the directory with.
+            Whether/how all three access groups and associated access rights are
+            realized is guest OS dependent.  The API does the best it can on each
+            OS.
+            
+            This parameter is ignore if the @a secure parameter is set to @c true.
+            It is strongly recommended to use 0700.
 
         in path of type str
-            The absolute path to create the temporary directory in.
+            The path to the directory in which the temporary directory should
+            be created. Guest path style.
 
         in secure of type bool
             Whether to fail if the directory can not be securely created.
@@ -15996,8 +16583,8 @@ class IGuestSession(Interface):
             ignored. May not be supported on all guest types.
 
         return directory of type str
-            On success this will contain the name of the directory created
-            with full path.
+            On success this will contain the full path to the created
+            directory. Guest path style.
 
         raises :class:`VBoxErrorNotSupported`
             The operation is not possible as requested on this particular
@@ -16025,11 +16612,17 @@ option was requested.
                      in_p=[template_name, mode, path, secure])
         return directory
 
-    def directory_exists(self, path):
-        """Checks whether a directory exists on the guest or not.
+    def directory_exists(self, path, follow_symlinks):
+        """Checks whether a directory exists in the guest or not.
 
         in path of type str
-            Directory to check existence for.
+            Path to the directory to check if exists. Guest path style.
+
+        in follow_symlinks of type bool
+            If @c true, symbolic links in the final component will be followed
+            and the existance of the symlink target made the question for this method.
+            If @c false, a symbolic link in the final component will make the
+            method return @c false (because a symlink isn't a directory).
 
         return exists of type bool
             Returns @c true if the directory exists, @c false if not.
@@ -16040,22 +16633,28 @@ option was requested.
         """
         if not isinstance(path, basestring):
             raise TypeError("path can only be an instance of type basestring")
+        if not isinstance(follow_symlinks, bool):
+            raise TypeError("follow_symlinks can only be an instance of type bool")
         exists = self._call("directoryExists",
-                     in_p=[path])
+                     in_p=[path, follow_symlinks])
         return exists
 
     def directory_open(self, path, filter_p, flags):
-        """Opens a directory and creates a :py:class:`IGuestDirectory`  object that
-        can be used for further operations.
+        """Opens a directory in the guest and creates a :py:class:`IGuestDirectory` 
+        object that can be used for further operations.
+        
+        This method follows symbolic links by default at the moment, this
+        may change in the future.
 
         in path of type str
-            Full path to file to open.
+            Path to the directory to open. Guest path style.
 
         in filter_p of type str
-            Open filter to apply. This can include wildcards like ? and *.
+            Optional directory listing filter to apply.  This uses the DOS/NT
+            style wildcard characters '?' and '*'.
 
         in flags of type :class:`DirectoryOpenFlag`
-            Open flags; see :py:class:`DirectoryOpenFlag`  for more information.
+            Zero or more :py:class:`DirectoryOpenFlag`  flags.
 
         return directory of type :class:`IGuestDirectory`
             :py:class:`IGuestDirectory`  object containing the opened directory.
@@ -16082,34 +16681,14 @@ option was requested.
         directory = IGuestDirectory(directory)
         return directory
 
-    def directory_query_info(self, path):
-        """Queries information of a directory on the guest.
-
-        in path of type str
-            Directory to query information for.
-
-        return info of type :class:`IGuestFsObjInfo`
-            :py:class:`IGuestFsObjInfo`  object containing the queried information.
-
-        raises :class:`VBoxErrorObjectNotFound`
-            Directory to query information for was not found.
-        
-        raises :class:`VBoxErrorIprtError`
-            Error querying information.
-        
-        """
-        if not isinstance(path, basestring):
-            raise TypeError("path can only be an instance of type basestring")
-        info = self._call("directoryQueryInfo",
-                     in_p=[path])
-        info = IGuestFsObjInfo(info)
-        return info
-
     def directory_remove(self, path):
-        """Removes a guest directory if not empty.
+        """Removes a guest directory if empty.
+        
+        Symbolic links in the final component will not be followed,
+        instead an not-a-directory error is reported.
 
         in path of type str
-            Full path of directory to remove.
+            Path to the directory that should be removed. Guest path style.
 
         """
         if not isinstance(path, basestring):
@@ -16119,12 +16698,29 @@ option was requested.
 
     def directory_remove_recursive(self, path, flags):
         """Removes a guest directory recursively.
+        
+        <!--  Add this back when the warning can be removed:
+        Unless :py:attr:`DirectoryRemoveRecFlag.content_and_dir`  or
+        :py:attr:`DirectoryRemoveRecFlag.content_only`  is given, only the
+        directory structure is removed.  Which means it will fail if there are
+        directories which are not empty in the directory tree @a path points to.
+        -->
+        
+        WARNING!! THE FLAGS ARE NOT CURRENTLY IMPLEMENTED.  THE IMPLEMENTATION
+        WORKS AS IF FLAGS WAS SET TO :py:attr:`DirectoryRemoveRecFlag.content_and_dir` .
+        
+        
+        If the final path component is a symbolic link, this method will
+        fail as it can only be applied to directories.
 
         in path of type str
-            Full path of directory to remove recursively.
+            Path of the directory that is to be removed recursively. Guest
+            path style.
 
         in flags of type :class:`DirectoryRemoveRecFlag`
-            Remove flags; see :py:class:`DirectoryRemoveRecFlag`  for more information.
+            Zero or more :py:class:`DirectoryRemoveRecFlag`  flags.
+            WARNING! SPECIFYING :py:func:`DirectoryRemoveRecFlag.content_and_dir`  IS
+            MANDATORY AT THE MOMENT!!
 
         return progress of type :class:`IProgress`
             Progress object to track the operation completion. This is not implemented
@@ -16144,118 +16740,215 @@ option was requested.
         progress = IProgress(progress)
         return progress
 
-    def directory_rename(self, source, dest, flags):
-        """Renames a directory on the guest.
-
-        in source of type str
-            Source directory to rename.
-
-        in dest of type str
-            Destination directory to rename the source to.
-
-        in flags of type :class:`PathRenameFlag`
-            Rename flags; see :py:class:`PathRenameFlag`  for more information.
-
-        """
-        if not isinstance(source, basestring):
-            raise TypeError("source can only be an instance of type basestring")
-        if not isinstance(dest, basestring):
-            raise TypeError("dest can only be an instance of type basestring")
-        if not isinstance(flags, list):
-            raise TypeError("flags can only be an instance of type list")
-        for a in flags[:10]:
-            if not isinstance(a, PathRenameFlag):
-                raise TypeError(\
-                        "array can only contain objects of type PathRenameFlag")
-        self._call("directoryRename",
-                     in_p=[source, dest, flags])
-
-    def directory_set_acl(self, path, acl):
-        """Sets the ACL (Access Control List) of a guest directory.
-
-        in path of type str
-            Full path of directory to set the ACL for.
-
-        in acl of type str
-            Actual ACL string to set. Must comply with the guest OS.
-
-        raises :class:`OleErrorNotimpl`
-            The method is not implemented yet.
-        
-        """
-        if not isinstance(path, basestring):
-            raise TypeError("path can only be an instance of type basestring")
-        if not isinstance(acl, basestring):
-            raise TypeError("acl can only be an instance of type basestring")
-        self._call("directorySetACL",
-                     in_p=[path, acl])
-
-    def environment_clear(self):
-        """Clears (deletes) all session environment variables.
-
-        raises :class:`VBoxErrorIprtError`
-            Error while clearing the session environment variables.
-        
-        """
-        self._call("environmentClear")
-
-    def environment_get(self, name):
-        """Gets the value of a session environment variable.
+    def environment_schedule_set(self, name, value):
+        """Schedules setting an environment variable when creating the next guest
+        process.  This affects the :py:func:`IGuestSession.environment_changes` 
+        attribute.
 
         in name of type str
-            Name of session environment variable to get the value for.
-
-        return value of type str
-            Value of the session environment variable specified. If this variable
-            does not exist and empty value will be returned.
-
-        raises :class:`VBoxErrorIprtError`
-            Error while getting the value of the session environment variable.
-        
-        """
-        if not isinstance(name, basestring):
-            raise TypeError("name can only be an instance of type basestring")
-        value = self._call("environmentGet",
-                     in_p=[name])
-        return value
-
-    def environment_set(self, name, value):
-        """Sets a session environment variable.
-
-        in name of type str
-            Name of session environment variable to set.
+            Name of the environment variable to set.  This cannot be empty
+            nor can it contain any equal signs.
 
         in value of type str
             Value to set the session environment variable to.
 
-        raises :class:`VBoxErrorIprtError`
-            Error while setting the session environment variable.
-        
         """
         if not isinstance(name, basestring):
             raise TypeError("name can only be an instance of type basestring")
         if not isinstance(value, basestring):
             raise TypeError("value can only be an instance of type basestring")
-        self._call("environmentSet",
+        self._call("environmentScheduleSet",
                      in_p=[name, value])
 
-    def environment_unset(self, name):
-        """Unsets a session environment variable.
+    def environment_schedule_unset(self, name):
+        """Schedules unsetting (removing) an environment variable when creating
+        the next guest process.  This affects the
+        :py:func:`IGuestSession.environment_changes`  attribute.
 
         in name of type str
-            Name of session environment variable to unset (clear).
+            Name of the environment variable to unset.  This cannot be empty
+            nor can it contain any equal signs.
 
-        raises :class:`VBoxErrorIprtError`
-            Error while unsetting the session environment variable.
+        """
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        self._call("environmentScheduleUnset",
+                     in_p=[name])
+
+    def environment_get_base_variable(self, name):
+        """Gets an environment variable from the session's base environment
+        (:py:func:`IGuestSession.environment_base` ).
+
+        in name of type str
+            Name of the environment variable to   get.This cannot be empty
+            nor can it contain any equal signs.
+
+        return value of type str
+            The value of the variable.  Empty if not found.  To deal with
+            variables that may have empty values, use
+            :py:func:`IGuestSession.environment_does_base_variable_exist` .
+
+        raises :class:`VBoxErrorNotSupported`
+            If the guest additions does not
+support the session base environment feature.  Support for this was
+introduced with protocol version XXXX.
+        
+        raises :class:`VBoxErrorInvalidObjectState`
+            If the guest additions has
+yet to report the session base environment.
         
         """
         if not isinstance(name, basestring):
             raise TypeError("name can only be an instance of type basestring")
-        self._call("environmentUnset",
+        value = self._call("environmentGetBaseVariable",
                      in_p=[name])
+        return value
+
+    def environment_does_base_variable_exist(self, name):
+        """Checks if the given environment variable exists in the session's base
+        environment (:py:func:`IGuestSession.environment_base` ).
+
+        in name of type str
+            Name of the environment variable to look for.  This cannot be
+            empty nor can it contain any equal signs.
+
+        return exists of type bool
+            TRUE if the variable exists, FALSE if not.
+
+        raises :class:`VBoxErrorNotSupported`
+            If the guest additions does not
+support the session base environment feature.  Support for this was
+introduced with protocol version XXXX.
+        
+        raises :class:`VBoxErrorInvalidObjectState`
+            If the guest additions has
+yet to report the session base environment.
+        
+        """
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        exists = self._call("environmentDoesBaseVariableExist",
+                     in_p=[name])
+        return exists
+
+    def file_copy(self, source, destination, flags):
+        """Copies a file from one guest location to another.
+        
+        Will overwrite the destination file unless
+        :py:func:`FileCopyFlag.no_replace`  is specified.
+
+        in source of type str
+            The path to the file to copy (in the guest).  Guest path style.
+
+        in destination of type str
+            The path to the target file (in the guest).  This cannot be a
+            directory.  Guest path style.
+
+        in flags of type :class:`FileCopyFlag`
+            Zero or more :py:class:`FileCopyFlag`  values.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation to completion.
+
+        raises :class:`OleErrorNotimpl`
+            Not yet implemented.
+        
+        """
+        if not isinstance(source, basestring):
+            raise TypeError("source can only be an instance of type basestring")
+        if not isinstance(destination, basestring):
+            raise TypeError("destination can only be an instance of type basestring")
+        if not isinstance(flags, list):
+            raise TypeError("flags can only be an instance of type list")
+        for a in flags[:10]:
+            if not isinstance(a, FileCopyFlag):
+                raise TypeError(\
+                        "array can only contain objects of type FileCopyFlag")
+        progress = self._call("fileCopy",
+                     in_p=[source, destination, flags])
+        progress = IProgress(progress)
+        return progress
+
+    def file_copy_from_guest(self, source, destination, flags):
+        """Copies a file from the guest to the host.
+        
+        Will overwrite the destination file unless
+        :py:func:`FileCopyFlag.no_replace`  is specified.
+
+        in source of type str
+            Path to the file on the guest side that should be copied to the
+            host.  Guest path style.
+
+        in destination of type str
+            Where to put the file on the host (file, not directory). Host
+            path style.
+
+        in flags of type :class:`FileCopyFlag`
+            Zero or more :py:class:`FileCopyFlag`  values.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation to completion.
+
+        raises :class:`VBoxErrorIprtError`
+            Error starting the copy operation.
+        
+        """
+        if not isinstance(source, basestring):
+            raise TypeError("source can only be an instance of type basestring")
+        if not isinstance(destination, basestring):
+            raise TypeError("destination can only be an instance of type basestring")
+        if not isinstance(flags, list):
+            raise TypeError("flags can only be an instance of type list")
+        for a in flags[:10]:
+            if not isinstance(a, FileCopyFlag):
+                raise TypeError(\
+                        "array can only contain objects of type FileCopyFlag")
+        progress = self._call("fileCopyFromGuest",
+                     in_p=[source, destination, flags])
+        progress = IProgress(progress)
+        return progress
+
+    def file_copy_to_guest(self, source, destination, flags):
+        """Copies a file from the host to the guest.
+        
+        Will overwrite the destination file unless
+        :py:func:`FileCopyFlag.no_replace`  is specified.
+
+        in source of type str
+            Path to the file on the host side that should be copied to the
+            guest.  Host path style.
+
+        in destination of type str
+            Where to put the file in the guest (file, not directory).  Guest
+            style path.
+
+        in flags of type :class:`FileCopyFlag`
+            Zero or more :py:class:`FileCopyFlag`  values.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation to completion.
+
+        raises :class:`VBoxErrorIprtError`
+            Error starting the copy operation.
+        
+        """
+        if not isinstance(source, basestring):
+            raise TypeError("source can only be an instance of type basestring")
+        if not isinstance(destination, basestring):
+            raise TypeError("destination can only be an instance of type basestring")
+        if not isinstance(flags, list):
+            raise TypeError("flags can only be an instance of type list")
+        for a in flags[:10]:
+            if not isinstance(a, FileCopyFlag):
+                raise TypeError(\
+                        "array can only contain objects of type FileCopyFlag")
+        progress = self._call("fileCopyToGuest",
+                     in_p=[source, destination, flags])
+        progress = IProgress(progress)
+        return progress
 
     def file_create_temp(self, template_name, mode, path, secure):
-        """Creates a temporary file on the guest.
+        """Creates a temporary file in the guest.
 
         in template_name of type str
             Template for the name of the file to create. This must contain
@@ -16264,11 +16957,17 @@ option was requested.
             alphanumeric string to produce a unique name.
 
         in mode of type int
-            The mode of the file to create. Use 0700 unless there are
-            reasons not to. This parameter is ignored if "secure" is specified.
+            The UNIX-style access mode mask to create the file with.
+            Whether/how all three access groups and associated access rights are
+            realized is guest OS dependent.  The API does the best it can on each
+            OS.
+            
+            This parameter is ignore if the @a secure parameter is set to @c true.
+            It is strongly recommended to use 0600.
 
         in path of type str
-            The absolute path to create the temporary file in.
+            The path to the directory in which the temporary file should be
+            created.
 
         in secure of type bool
             Whether to fail if the file can not be securely created.
@@ -16283,7 +16982,7 @@ option was requested.
 
         raises :class:`VBoxErrorNotSupported`
             The operation is not possible as requested on this particular
-guest type.
+guest OS.
         
         raises :class:`OleErrorInvalidarg`
             Invalid argument. This includes an incorrectly formatted template,
@@ -16308,11 +17007,182 @@ option was requested.
         file_p = IGuestFile(file_p)
         return file_p
 
-    def file_exists(self, path):
-        """Checks whether a file exists on the guest or not.
+    def file_exists(self, path, follow_symlinks):
+        """Checks whether a regular file exists in the guest or not.
 
         in path of type str
-            File to check existence for.
+            Path to the alleged regular file.  Guest path style.
+
+        in follow_symlinks of type bool
+            If @c true, symbolic links in the final component will be followed
+            and the existance of the symlink target made the question for this method.
+            If @c false, a symbolic link in the final component will make the
+            method return @c false (because a symlink isn't a regular file).
+
+        return exists of type bool
+            Returns @c true if the file exists, @c false if not.  @c false is
+            also return if this @a path does not point to a file object.
+
+        raises :class:`VBoxErrorIprtError`
+            Error while checking existence of the file specified.
+        
+        """
+        if not isinstance(path, basestring):
+            raise TypeError("path can only be an instance of type basestring")
+        if not isinstance(follow_symlinks, bool):
+            raise TypeError("follow_symlinks can only be an instance of type bool")
+        exists = self._call("fileExists",
+                     in_p=[path, follow_symlinks])
+        return exists
+
+    def file_open(self, path, access_mode, open_action, creation_mode):
+        """Opens a file and creates a :py:class:`IGuestFile`  object that
+        can be used for further operations.
+
+        in path of type str
+            Path to file to open.  Guest path style.
+
+        in access_mode of type :class:`FileAccessMode`
+            The file access mode (read, write and/or append).
+            See :py:class:`FileAccessMode`  for details.
+
+        in open_action of type :class:`FileOpenAction`
+            What action to take depending on whether the file exists or not.
+            See :py:class:`FileOpenAction`  for details.
+
+        in creation_mode of type int
+            The UNIX-style access mode mask to create the file with if @a openAction
+            requested the file to be created (otherwise ignored).  Whether/how all
+            three access groups and associated access rights are realized is guest
+            OS dependent.  The API does the best it can on each OS.
+
+        return file_p of type :class:`IGuestFile`
+            :py:class:`IGuestFile`  object representing the opened file.
+
+        raises :class:`VBoxErrorObjectNotFound`
+            File to open was not found.
+        
+        raises :class:`VBoxErrorIprtError`
+            Error while opening the file.
+        
+        """
+        if not isinstance(path, basestring):
+            raise TypeError("path can only be an instance of type basestring")
+        if not isinstance(access_mode, FileAccessMode):
+            raise TypeError("access_mode can only be an instance of type FileAccessMode")
+        if not isinstance(open_action, FileOpenAction):
+            raise TypeError("open_action can only be an instance of type FileOpenAction")
+        if not isinstance(creation_mode, baseinteger):
+            raise TypeError("creation_mode can only be an instance of type baseinteger")
+        file_p = self._call("fileOpen",
+                     in_p=[path, access_mode, open_action, creation_mode])
+        file_p = IGuestFile(file_p)
+        return file_p
+
+    def file_open_ex(self, path, access_mode, open_action, sharing_mode, creation_mode, flags):
+        """Opens a file and creates a :py:class:`IGuestFile`  object that
+        can be used for further operations, extended version.
+
+        in path of type str
+            Path to file to open.  Guest path style.
+
+        in access_mode of type :class:`FileAccessMode`
+            The file access mode (read, write and/or append).
+            See :py:class:`FileAccessMode`  for details.
+
+        in open_action of type :class:`FileOpenAction`
+            What action to take depending on whether the file exists or not.
+            See :py:class:`FileOpenAction`  for details.
+
+        in sharing_mode of type :class:`FileSharingMode`
+            The file sharing mode in the guest. This parameter is currently
+            ignore for all guest OSes.  It will in the future be implemented for
+            Windows, OS/2 and maybe Solaris guests only, the others will ignore it.
+            Use :py:func:`FileSharingMode.all_p` .
+
+        in creation_mode of type int
+            The UNIX-style access mode mask to create the file with if @a openAction
+            requested the file to be created (otherwise ignored).  Whether/how all
+            three access groups and associated access rights are realized is guest
+            OS dependent.  The API does the best it can on each OS.
+
+        in flags of type :class:`FileOpenExFlags`
+            Zero or more :py:class:`FileOpenExFlags`  values.
+
+        return file_p of type :class:`IGuestFile`
+            :py:class:`IGuestFile`  object representing the opened file.
+
+        raises :class:`VBoxErrorObjectNotFound`
+            File to open was not found.
+        
+        raises :class:`VBoxErrorIprtError`
+            Error while opening the file.
+        
+        """
+        if not isinstance(path, basestring):
+            raise TypeError("path can only be an instance of type basestring")
+        if not isinstance(access_mode, FileAccessMode):
+            raise TypeError("access_mode can only be an instance of type FileAccessMode")
+        if not isinstance(open_action, FileOpenAction):
+            raise TypeError("open_action can only be an instance of type FileOpenAction")
+        if not isinstance(sharing_mode, FileSharingMode):
+            raise TypeError("sharing_mode can only be an instance of type FileSharingMode")
+        if not isinstance(creation_mode, baseinteger):
+            raise TypeError("creation_mode can only be an instance of type baseinteger")
+        if not isinstance(flags, list):
+            raise TypeError("flags can only be an instance of type list")
+        for a in flags[:10]:
+            if not isinstance(a, FileOpenExFlags):
+                raise TypeError(\
+                        "array can only contain objects of type FileOpenExFlags")
+        file_p = self._call("fileOpenEx",
+                     in_p=[path, access_mode, open_action, sharing_mode, creation_mode, flags])
+        file_p = IGuestFile(file_p)
+        return file_p
+
+    def file_query_size(self, path, follow_symlinks):
+        """Queries the size of a regular file in the guest.
+
+        in path of type str
+            Path to the file which size is requested.  Guest path style.
+
+        in follow_symlinks of type bool
+            It @c true, symbolic links in the final path component will be
+            followed to their target, and the size of the target is returned.
+            If @c false, symbolic links in the final path component will make
+            the method call fail (symblink is not a regular file).
+
+        return size of type int
+            Queried file size.
+
+        raises :class:`VBoxErrorObjectNotFound`
+            File to was not found.
+        
+        raises :class:`VBoxErrorIprtError`
+            Error querying file size.
+        
+        """
+        if not isinstance(path, basestring):
+            raise TypeError("path can only be an instance of type basestring")
+        if not isinstance(follow_symlinks, bool):
+            raise TypeError("follow_symlinks can only be an instance of type bool")
+        size = self._call("fileQuerySize",
+                     in_p=[path, follow_symlinks])
+        return size
+
+    def fs_obj_exists(self, path, follow_symlinks):
+        """Checks whether a file system object (file, directory, etc) exists in
+        the guest or not.
+
+        in path of type str
+            Path to the file system object to check the existance of.  Guest
+            path style.
+
+        in follow_symlinks of type bool
+            If @c true, symbolic links in the final component will be followed
+            and the method will instead check if the target exists.
+            If @c false, symbolic links in the final component will satisfy the
+            method and it will return @c true in @a exists.
 
         return exists of type bool
             Returns @c true if the file exists, @c false if not.
@@ -16323,272 +17193,221 @@ option was requested.
         """
         if not isinstance(path, basestring):
             raise TypeError("path can only be an instance of type basestring")
-        exists = self._call("fileExists",
-                     in_p=[path])
+        if not isinstance(follow_symlinks, bool):
+            raise TypeError("follow_symlinks can only be an instance of type bool")
+        exists = self._call("fsObjExists",
+                     in_p=[path, follow_symlinks])
         return exists
 
-    def file_remove(self, path):
-        """Removes a single file on the guest.
+    def fs_obj_query_info(self, path, follow_symlinks):
+        """Queries information about a file system object (file, directory, etc)
+        in the guest.
 
         in path of type str
-            Path to the file to remove.
+            Path to the file system object to gather information about.
+            Guest path style.
 
-        raises :class:`VBoxErrorObjectNotFound`
-            File to remove was not found.
-        
-        raises :class:`VBoxErrorIprtError`
-            Error while removing the file.
-        
-        """
-        if not isinstance(path, basestring):
-            raise TypeError("path can only be an instance of type basestring")
-        self._call("fileRemove",
-                     in_p=[path])
-
-    def file_open(self, path, open_mode, disposition, creation_mode):
-        """Opens a file and creates a :py:class:`IGuestFile`  object that
-        can be used for further operations.
-
-        in path of type str
-            Full path to file to open.
-
-        in open_mode of type str
-            The file opening mode. This describes the wanted access to a file, whereas
-            the parameter must be one of the following:
-            
-            "r": Opens a file for reading.
-            "r+": Opens a file for reading and writing.
-            "w": Opens a file for writing.
-            "w+": Opens a file for writing and reading.
-
-        in disposition of type str
-            The file disposition. This describes the action to take in case a
-            file exists or does not exist, whereas the parameter must be one of the
-            following:
-            
-            "ca": Creates a new file, always. Overwrites an existing file.
-            "ce": Creates a new file if it does not exist. Fail if exist.
-            "oa": Opens an existing file and places the file pointer at the
-            end of the file, if opened with write access. Create the file if it does not exist.
-            "oc": Opens an existing file or create it if it does not exist.
-            "oe": Opens an existing file or fail if it does not exist.
-            "ot": Opens and truncate an existing file or fail if it does not exist.
-
-        in creation_mode of type int
-            The mode to create the file with. Must be a three-digit octal number which
-            represents the access rights for the file.
-
-        return file_p of type :class:`IGuestFile`
-            :py:class:`IGuestFile`  object representing the opened file.
-
-        raises :class:`VBoxErrorObjectNotFound`
-            File to open was not found.
-        
-        raises :class:`VBoxErrorIprtError`
-            Error while opening the file.
-        
-        """
-        if not isinstance(path, basestring):
-            raise TypeError("path can only be an instance of type basestring")
-        if not isinstance(open_mode, basestring):
-            raise TypeError("open_mode can only be an instance of type basestring")
-        if not isinstance(disposition, basestring):
-            raise TypeError("disposition can only be an instance of type basestring")
-        if not isinstance(creation_mode, baseinteger):
-            raise TypeError("creation_mode can only be an instance of type baseinteger")
-        file_p = self._call("fileOpen",
-                     in_p=[path, open_mode, disposition, creation_mode])
-        file_p = IGuestFile(file_p)
-        return file_p
-
-    def file_open_ex(self, path, open_mode, disposition, sharing_mode, creation_mode, offset):
-        """Opens a file and creates a :py:class:`IGuestFile`  object that
-        can be used for further operations, extended version.
-
-        in path of type str
-            Full path to file to open.
-
-        in open_mode of type str
-            The file opening mode. This describes the wanted access to a file, whereas
-            the parameter must be one of the following:
-            
-            "r": Opens a file for reading.
-            "r+": Opens a file for reading and writing.
-            "w": Opens a file for writing.
-            "w+": Opens a file for writing and reading.
-
-        in disposition of type str
-            The file disposition. This describes the action to take in case a
-            file exists or does not exist, whereas the parameter must be one of the
-            following:
-            
-            "ca": Creates a new file, always. Overwrites an existing file.
-            "ce": Creates a new file if it does not exist. Fail if exist.
-            "oa": Opens an existing file and places the file pointer at the
-            end of the file, if opened with write access. Create the file if it does not exist.
-            "oc": Opens an existing file or create it if it does not exist.
-            "oe": Opens an existing file or fail if it does not exist.
-            "ot": Opens and truncate an existing file or fail if it does not exist.
-
-        in sharing_mode of type str
-            The file sharing mode on the guest. This parameter
-            is not implemented yet. Pass an empty string here.
-
-        in creation_mode of type int
-            The mode to create the file with. Must be a three-digit octal number which
-            represents the access rights for the file.
-
-        in offset of type int
-            The initial read/write offset (in bytes).
-
-        return file_p of type :class:`IGuestFile`
-            :py:class:`IGuestFile`  object representing the opened file.
-
-        raises :class:`VBoxErrorObjectNotFound`
-            File to open was not found.
-        
-        raises :class:`VBoxErrorIprtError`
-            Error while opening the file.
-        
-        """
-        if not isinstance(path, basestring):
-            raise TypeError("path can only be an instance of type basestring")
-        if not isinstance(open_mode, basestring):
-            raise TypeError("open_mode can only be an instance of type basestring")
-        if not isinstance(disposition, basestring):
-            raise TypeError("disposition can only be an instance of type basestring")
-        if not isinstance(sharing_mode, basestring):
-            raise TypeError("sharing_mode can only be an instance of type basestring")
-        if not isinstance(creation_mode, baseinteger):
-            raise TypeError("creation_mode can only be an instance of type baseinteger")
-        if not isinstance(offset, baseinteger):
-            raise TypeError("offset can only be an instance of type baseinteger")
-        file_p = self._call("fileOpenEx",
-                     in_p=[path, open_mode, disposition, sharing_mode, creation_mode, offset])
-        file_p = IGuestFile(file_p)
-        return file_p
-
-    def file_query_info(self, path):
-        """Queries information of a file on the guest.
-
-        in path of type str
-            File to query information for.
+        in follow_symlinks of type bool
+            Information about symbolic links is returned if @c false.  Otherwise,
+            symbolic links are followed and the returned information concerns
+            itself with the symlink target if @c true.
 
         return info of type :class:`IGuestFsObjInfo`
-            :py:class:`IGuestFsObjInfo`  object containing the queried information.
+            :py:class:`IGuestFsObjInfo`  object containing the information.
 
         raises :class:`VBoxErrorObjectNotFound`
-            File to query information for was not found.
+            The file system object was not found.
         
         raises :class:`VBoxErrorIprtError`
-            Error querying information.
+            Error while querying information.
         
         """
         if not isinstance(path, basestring):
             raise TypeError("path can only be an instance of type basestring")
-        info = self._call("fileQueryInfo",
-                     in_p=[path])
+        if not isinstance(follow_symlinks, bool):
+            raise TypeError("follow_symlinks can only be an instance of type bool")
+        info = self._call("fsObjQueryInfo",
+                     in_p=[path, follow_symlinks])
         info = IGuestFsObjInfo(info)
         return info
 
-    def file_query_size(self, path):
-        """Queries the size of a file on the guest.
+    def fs_obj_remove(self, path):
+        """Removes a file system object (file, symlink, etc) in the guest.  Will
+        not work on directories, use :py:func:`IGuestSession.directory_remove` 
+        to remove directories.
+        
+        This method will remove symbolic links in the final path
+        component, not follow them.
 
         in path of type str
-            File to query the size for.
+            Path to the file system object to remove.  Guest style path.
 
-        return size of type int
-            Queried file size.
-
+        raises :class:`OleErrorNotimpl`
+            The method has not been implemented yet.
+        
         raises :class:`VBoxErrorObjectNotFound`
-            File to rename was not found.
+            The file system object was not found.
         
         raises :class:`VBoxErrorIprtError`
-            Error querying file size.
+            For most other errors. We know this is unhelpful, will fix shortly...
         
         """
         if not isinstance(path, basestring):
             raise TypeError("path can only be an instance of type basestring")
-        size = self._call("fileQuerySize",
+        self._call("fsObjRemove",
                      in_p=[path])
-        return size
 
-    def file_rename(self, source, dest, flags):
-        """Renames a file on the guest.
+    def fs_obj_rename(self, old_path, new_path, flags):
+        """Renames a file system object (file, directory, symlink, etc) in the
+        guest.
 
-        in source of type str
-            Source file to rename.
+        in old_path of type str
+            The current path to the object.  Guest path style.
 
-        in dest of type str
-            Destination file to rename the source to.
+        in new_path of type str
+            The new path to the object.  Guest path style.
 
-        in flags of type :class:`PathRenameFlag`
-            Rename flags; see :py:class:`PathRenameFlag`  for more information.
+        in flags of type :class:`FsObjRenameFlag`
+            Zero or more :py:class:`FsObjRenameFlag`  values.
 
+        raises :class:`VBoxErrorObjectNotFound`
+            The file system object was not found.
+        
+        raises :class:`VBoxErrorIprtError`
+            For most other errors. We know this is unhelpful, will fix shortly...
+        
         """
-        if not isinstance(source, basestring):
-            raise TypeError("source can only be an instance of type basestring")
-        if not isinstance(dest, basestring):
-            raise TypeError("dest can only be an instance of type basestring")
+        if not isinstance(old_path, basestring):
+            raise TypeError("old_path can only be an instance of type basestring")
+        if not isinstance(new_path, basestring):
+            raise TypeError("new_path can only be an instance of type basestring")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
-            if not isinstance(a, PathRenameFlag):
+            if not isinstance(a, FsObjRenameFlag):
                 raise TypeError(\
-                        "array can only contain objects of type PathRenameFlag")
-        self._call("fileRename",
-                     in_p=[source, dest, flags])
+                        "array can only contain objects of type FsObjRenameFlag")
+        self._call("fsObjRename",
+                     in_p=[old_path, new_path, flags])
 
-    def file_set_acl(self, file_p, acl):
-        """Sets the ACL (Access Control List) of a file on the guest.
+    def fs_obj_move(self, source, destination, flags):
+        """Moves a file system object (file, directory, symlink, etc) from one
+        guest location to another.
+        
+        This differs from :py:func:`IGuestSession.fs_obj_rename`  in that it
+        can move accross file system boundraries.  In that case it will
+        perform a copy and then delete the original.  For directories, this
+        can take a while and is subject to races.
 
-        in file_p of type str
-            Full path of file to set the ACL for.
+        in source of type str
+            Path to the file to move.  Guest path style.
+
+        in destination of type str
+            Where to move the file to (file, not directory).  Guest path
+            style.
+
+        in flags of type :class:`FsObjMoveFlags`
+            Zero or more :py:class:`FsObjMoveFlags`  values.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation to completion.
+
+        raises :class:`OleErrorNotimpl`
+            Not yet implemented.
+        
+        """
+        if not isinstance(source, basestring):
+            raise TypeError("source can only be an instance of type basestring")
+        if not isinstance(destination, basestring):
+            raise TypeError("destination can only be an instance of type basestring")
+        if not isinstance(flags, list):
+            raise TypeError("flags can only be an instance of type list")
+        for a in flags[:10]:
+            if not isinstance(a, FsObjMoveFlags):
+                raise TypeError(\
+                        "array can only contain objects of type FsObjMoveFlags")
+        progress = self._call("fsObjMove",
+                     in_p=[source, destination, flags])
+        progress = IProgress(progress)
+        return progress
+
+    def fs_obj_set_acl(self, path, follow_symlinks, acl, mode):
+        """Sets the access control list (ACL) of a file system object (file,
+        directory, etc) in the guest.
+
+        in path of type str
+            Full path of the file system object which ACL to set
+
+        in follow_symlinks of type bool
+            If @c true symbolic links in the final component will be followed,
+            otherwise, if @c false, the method will work directly on a symbolic
+            link in the final component.
 
         in acl of type str
-            Actual ACL string to set. Must comply with the guest OS.
+            The ACL specification string. To-be-defined.
+
+        in mode of type int
+            UNIX-style mode mask to use if @a acl is empty. As mention in
+            :py:func:`IGuestSession.directory_create`  this is realized on
+            a best effort basis and the exact behavior depends on the Guest OS.
 
         raises :class:`OleErrorNotimpl`
             The method is not implemented yet.
         
         """
-        if not isinstance(file_p, basestring):
-            raise TypeError("file_p can only be an instance of type basestring")
+        if not isinstance(path, basestring):
+            raise TypeError("path can only be an instance of type basestring")
+        if not isinstance(follow_symlinks, bool):
+            raise TypeError("follow_symlinks can only be an instance of type bool")
         if not isinstance(acl, basestring):
             raise TypeError("acl can only be an instance of type basestring")
-        self._call("fileSetACL",
-                     in_p=[file_p, acl])
+        if not isinstance(mode, baseinteger):
+            raise TypeError("mode can only be an instance of type baseinteger")
+        self._call("fsObjSetACL",
+                     in_p=[path, follow_symlinks, acl, mode])
 
-    def process_create(self, command, arguments, environment, flags, timeout_ms):
-        """Creates a new process running on the guest. The new process will be
+    def process_create(self, executable, arguments, environment_changes, flags, timeout_ms):
+        """Creates a new process running in the guest. The new process will be
         started asynchronously, meaning on return of this function it is not
-        guaranteed that the guest process is in a started state. To wait for
+        be guaranteed that the guest process is in a started state. To wait for
         successful startup, use the :py:func:`IProcess.wait_for`  call.
         
         
-        Starting at VirtualBox 4.2 guest process execution by default is limited
+        Starting at VirtualBox 4.2 guest process execution by is default limited
         to serve up to 255 guest processes at a time. If all 255 guest processes
-        are still active and running, creating a new guest process will result in an
-        appropriate error message.
+        are active and running, creating a new guest process will result in an
+        error.
         
-        If ProcessCreateFlag_WaitForStdOut and / or respectively ProcessCreateFlag_WaitForStdErr
-        is / are set, the guest process will not exit until all data from the specified
-        stream(s) is / are read out.
+        If ProcessCreateFlag_WaitForStdOut and/or ProcessCreateFlag_WaitForStdErr
+        are set, the guest process will not enter the terminated state until
+        all data from the specified streams have been read read.
 
-        in command of type str
-            Full path name of the command to execute on the guest; the
-            commands has to exists in the guest VM in order to be executed.
+        in executable of type str
+            Full path to the file to execute in the guest.  The file has to
+            exists in the guest VM with executable right to the session user in
+            order to succeed.  If empty/null, the first entry in the
+            @a arguments array will be used instead (i.e. argv[0]).
 
         in arguments of type str
-            Array of arguments passed to the execution command.
+            Array of arguments passed to the new process.
+            
+            Starting with VirtualBox 5.0 this array starts with argument 0
+            instead of argument 1 as in previous versions.  Whether the zeroth
+            argument can be passed to the guest depends on the VBoxService
+            version running there.  If you depend on this, check that the
+            :py:func:`IGuestSession.protocol_version`  is 3 or higher.
 
-        in environment of type str
-            <para>Environment variables that can be set while the command is being
-            executed, in form of "NAME=VALUE"; one pair per entry. To unset a
-            variable just set its name ("NAME") without a value.</para>
-            <para>This parameter can be used to override environment variables set by
-            the guest session, which will be applied to the newly started process
-            in any case.</para>
+        in environment_changes of type str
+            Set of environment changes to complement
+            :py:func:`IGuestSession.environment_changes` .  Takes precedence
+            over the session ones.  The changes are in putenv format, i.e.
+            "VAR=VALUE" for setting and "VAR" for unsetting.
+            
+            The changes are applied to the base environment of the impersonated
+            guest user (:py:func:`IGuestSession.environment_base` ) when
+            creating the process.  (This is done on the guest side of things in
+            order to be compatible with older guest additions.  That is one of
+            the motivations for not passing in the whole environment here.)
 
         in flags of type :class:`ProcessCreateFlag`
             Process creation flags;
@@ -16607,17 +17426,17 @@ option was requested.
             Error creating guest process.
         
         """
-        if not isinstance(command, basestring):
-            raise TypeError("command can only be an instance of type basestring")
+        if not isinstance(executable, basestring):
+            raise TypeError("executable can only be an instance of type basestring")
         if not isinstance(arguments, list):
             raise TypeError("arguments can only be an instance of type list")
         for a in arguments[:10]:
             if not isinstance(a, basestring):
                 raise TypeError(\
                         "array can only contain objects of type basestring")
-        if not isinstance(environment, list):
-            raise TypeError("environment can only be an instance of type list")
-        for a in environment[:10]:
+        if not isinstance(environment_changes, list):
+            raise TypeError("environment_changes can only be an instance of type list")
+        for a in environment_changes[:10]:
             if not isinstance(a, basestring):
                 raise TypeError(\
                         "array can only contain objects of type basestring")
@@ -16630,35 +17449,46 @@ option was requested.
         if not isinstance(timeout_ms, baseinteger):
             raise TypeError("timeout_ms can only be an instance of type baseinteger")
         guest_process = self._call("processCreate",
-                     in_p=[command, arguments, environment, flags, timeout_ms])
+                     in_p=[executable, arguments, environment_changes, flags, timeout_ms])
         guest_process = IGuestProcess(guest_process)
         return guest_process
 
-    def process_create_ex(self, command, arguments, environment, flags, timeout_ms, priority, affinity):
-        """<para>Creates a new process running on the guest. Extended version for
-        also setting the process priority and affinity.</para>
+    def process_create_ex(self, executable, arguments, environment_changes, flags, timeout_ms, priority, affinity):
+        """Creates a new process running in the guest with the extended options
+        for setting the process priority and affinity.
         
-        <para>See :py:func:`IGuestSession.process_create`  for more
-        information.</para>
+        See :py:func:`IGuestSession.process_create`  for more information.
 
-        in command of type str
-            Full path name of the command to execute on the guest; the
-            commands has to exists in the guest VM in order to be executed.
+        in executable of type str
+            Full path to the file to execute in the guest.  The file has to
+            exists in the guest VM with executable right to the session user in
+            order to succeed.  If empty/null, the first entry in the
+            @a arguments array will be used instead (i.e. argv[0]).
 
         in arguments of type str
-            Array of arguments passed to the execution command.
+            Array of arguments passed to the new process.
+            
+            Starting with VirtualBox 5.0 this array starts with argument 0
+            instead of argument 1 as in previous versions.  Whether the zeroth
+            argument can be passed to the guest depends on the VBoxService
+            version running there.  If you depend on this, check that the
+            :py:func:`IGuestSession.protocol_version`  is 3 or higher.
 
-        in environment of type str
-            <para>Environment variables that can be set while the command is being
-            executed, in form of "NAME=VALUE"; one pair per entry. To unset a
-            variable just set its name ("NAME") without a value.</para>
-            <para>This parameter can be used to override environment variables set by
-            the guest session, which will be applied to the newly started process
-            in any case.</para>
+        in environment_changes of type str
+            Set of environment changes to complement
+            :py:func:`IGuestSession.environment_changes` .  Takes precedence
+            over the session ones.  The changes are in putenv format, i.e.
+            "VAR=VALUE" for setting and "VAR" for unsetting.
+            
+            The changes are applied to the base environment of the impersonated
+            guest user (:py:func:`IGuestSession.environment_base` ) when
+            creating the process.  (This is done on the guest side of things in
+            order to be compatible with older guest additions.  That is one of
+            the motivations for not passing in the whole environment here.)
 
         in flags of type :class:`ProcessCreateFlag`
-            Process creation flags;
-            see :py:class:`ProcessCreateFlag`  for more information.
+            Process creation flags, see :py:class:`ProcessCreateFlag`  for
+            detailed description of available flags.
 
         in timeout_ms of type int
             Timeout (in ms) for limiting the guest process' running time.
@@ -16667,28 +17497,33 @@ option was requested.
             :py:class:`ProcessStatus`  for more information.
 
         in priority of type :class:`ProcessPriority`
-            Process priority to use for execution;
-            see see :py:class:`ProcessPriority`  for more information.
+            Process priority to use for execution, see :py:class:`ProcessPriority` 
+            for available priority levels.
+            This is silently ignored if not supported by guest additions.
 
         in affinity of type int
-            Process affinity to use for execution. This parameter
-            is not implemented yet.
+            Processor affinity to set for the new process.  This is a list of
+            guest CPU numbers the process is allowed to run on.
+            
+            This is silently ignored if the guest does not support setting the
+            affinity of processes, or if the guest additions does not implemet
+            this feature.
 
         return guest_process of type :class:`IGuestProcess`
             Guest process object of the newly created process.
 
         """
-        if not isinstance(command, basestring):
-            raise TypeError("command can only be an instance of type basestring")
+        if not isinstance(executable, basestring):
+            raise TypeError("executable can only be an instance of type basestring")
         if not isinstance(arguments, list):
             raise TypeError("arguments can only be an instance of type list")
         for a in arguments[:10]:
             if not isinstance(a, basestring):
                 raise TypeError(\
                         "array can only contain objects of type basestring")
-        if not isinstance(environment, list):
-            raise TypeError("environment can only be an instance of type list")
-        for a in environment[:10]:
+        if not isinstance(environment_changes, list):
+            raise TypeError("environment_changes can only be an instance of type list")
+        for a in environment_changes[:10]:
             if not isinstance(a, basestring):
                 raise TypeError(\
                         "array can only contain objects of type basestring")
@@ -16709,7 +17544,7 @@ option was requested.
                 raise TypeError(\
                         "array can only contain objects of type baseinteger")
         guest_process = self._call("processCreateEx",
-                     in_p=[command, arguments, environment, flags, timeout_ms, priority, affinity])
+                     in_p=[executable, arguments, environment_changes, flags, timeout_ms, priority, affinity])
         guest_process = IGuestProcess(guest_process)
         return guest_process
 
@@ -16730,40 +17565,46 @@ option was requested.
         guest_process = IGuestProcess(guest_process)
         return guest_process
 
-    def symlink_create(self, source, target, type_p):
-        """Creates a symbolic link on the guest.
+    def symlink_create(self, symlink, target, type_p):
+        """Creates a symbolic link in the guest.
 
-        in source of type str
-            The name of the symbolic link.
+        in symlink of type str
+            Path to the symbolic link that should be created.  Guest path
+            style.
 
         in target of type str
-            The path to the symbolic link target.
+            The path to the symbolic link target.  If not an absolute, this will
+            be relative to the @a symlink location at access time.  Guest path
+            style.
 
         in type_p of type :class:`SymlinkType`
-            The symbolic link type;
-            see :py:class:`SymlinkReadFlag`  for more information.
+            The symbolic link type (mainly for Windows). See :py:class:`SymlinkType` 
+            for more information.
 
         raises :class:`OleErrorNotimpl`
             The method is not implemented yet.
         
         """
-        if not isinstance(source, basestring):
-            raise TypeError("source can only be an instance of type basestring")
+        if not isinstance(symlink, basestring):
+            raise TypeError("symlink can only be an instance of type basestring")
         if not isinstance(target, basestring):
             raise TypeError("target can only be an instance of type basestring")
         if not isinstance(type_p, SymlinkType):
             raise TypeError("type_p can only be an instance of type SymlinkType")
         self._call("symlinkCreate",
-                     in_p=[source, target, type_p])
+                     in_p=[symlink, target, type_p])
 
     def symlink_exists(self, symlink):
-        """Checks whether a symbolic link exists on the guest or not.
+        """Checks whether a symbolic link exists in the guest.
 
         in symlink of type str
-            Symbolic link to check existence for.
+            Path to the alleged symbolic link.  Guest path style.
 
         return exists of type bool
-            Returns @c true if the symbolic link exists, @c false if not.
+            Returns @c true if the symbolic link exists.  Returns @c false if it
+            does not exist, if the file system object identified by the path is
+            not a symbolic link, or if the object type is inaccessible to the
+            user, or if the @a symlink argument is empty.
 
         raises :class:`OleErrorNotimpl`
             The method is not implemented yet.
@@ -16776,16 +17617,16 @@ option was requested.
         return exists
 
     def symlink_read(self, symlink, flags):
-        """Reads a symbolic link on the guest.
+        """Reads the target value of a symbolic link in the guest.
 
         in symlink of type str
-            Full path to symbolic link to read.
+            Path to the symbolic link to read.
 
         in flags of type :class:`SymlinkReadFlag`
-            Read flags; see :py:class:`SymlinkReadFlag`  for more information.
+            Zero or more :py:class:`SymlinkReadFlag`  values.
 
         return target of type str
-            Target of the symbolic link pointing to, if found.
+            Target value of the symbolic link.  Guest path style.
 
         raises :class:`OleErrorNotimpl`
             The method is not implemented yet.
@@ -16802,36 +17643,6 @@ option was requested.
         target = self._call("symlinkRead",
                      in_p=[symlink, flags])
         return target
-
-    def symlink_remove_directory(self, path):
-        """Removes a symbolic link on the guest if it's a directory.
-
-        in path of type str
-            Symbolic link to remove.
-
-        raises :class:`OleErrorNotimpl`
-            The method is not implemented yet.
-        
-        """
-        if not isinstance(path, basestring):
-            raise TypeError("path can only be an instance of type basestring")
-        self._call("symlinkRemoveDirectory",
-                     in_p=[path])
-
-    def symlink_remove_file(self, file_p):
-        """Removes a symbolic link on the guest if it's a file.
-
-        in file_p of type str
-            Symbolic link to remove.
-
-        raises :class:`OleErrorNotimpl`
-            The method is not implemented yet.
-        
-        """
-        if not isinstance(file_p, basestring):
-            raise TypeError("file_p can only be an instance of type basestring")
-        self._call("symlinkRemoveFile",
-                     in_p=[file_p])
 
     def wait_for(self, wait_for, timeout_ms):
         """Waits for one or more events to happen.
@@ -16893,7 +17704,7 @@ class IProcess(Interface):
     """
     Abstract parent interface for processes handled by VirtualBox.
     """
-    __uuid__ = '5a4fe06d-8cb1-40ff-ac9e-9676e32f706e'
+    __uuid__ = '064cf1ca-4c0f-50b5-8f8e-e8b4bfa76c33'
     __wsmap__ = 'managed'
     
     @property
@@ -16907,7 +17718,7 @@ class IProcess(Interface):
     @property
     def environment(self):
         """Get str value for 'environment'
-        The environment block this process is using during execution.
+        The initial process environment.  Not yet implemented.
         """
         ret = self._get_attr("environment")
         return ret
@@ -16915,7 +17726,7 @@ class IProcess(Interface):
     @property
     def event_source(self):
         """Get IEventSource value for 'eventSource'
-        Event source for VirtualBox events.
+        Event source for process events.
         """
         ret = self._get_attr("eventSource")
         return IEventSource(ret)
@@ -17136,11 +17947,17 @@ class IProcess(Interface):
 class IGuestProcess(IProcess):
     """
     Implementation of the :py:class:`IProcess`  object
-    for processes on the guest.
+    for processes the host has started in the guest.
     """
-    __uuid__ = 'dfa39a36-5d43-4840-a025-67ea956b3111'
+    __uuid__ = '35cf4b3f-4453-4f3e-c9b8-5686939c80b6'
     __wsmap__ = 'managed'
     
+    @property
+    def midl_does_not_like_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikeEmptyInterfaces")
+        return ret
+
 
 class IDirectory(Interface):
     """
@@ -17152,7 +17969,7 @@ class IDirectory(Interface):
     @property
     def directory_name(self):
         """Get str value for 'directoryName'
-        Full path of directory.
+        The path specified when opening the directory.
         """
         ret = self._get_attr("directoryName")
         return ret
@@ -17160,7 +17977,7 @@ class IDirectory(Interface):
     @property
     def filter_p(self):
         """Get str value for 'filter'
-        The open filter.
+        Directory listing filter to (specified when opening the directory).
         """
         ret = self._get_attr("filter")
         return ret
@@ -17191,55 +18008,37 @@ class IDirectory(Interface):
 class IGuestDirectory(IDirectory):
     """
     Implementation of the :py:class:`IDirectory`  object
-    for directories on the guest.
+    for directories in the guest.
     """
-    __uuid__ = 'af4a8ce0-0725-42b7-8826-46e3c7ba7357'
+    __uuid__ = 'cc830458-4974-a19c-4dc6-cc98c2269626'
     __wsmap__ = 'managed'
     
+    @property
+    def midl_does_not_like_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikeEmptyInterfaces")
+        return ret
+
 
 class IFile(Interface):
     """
     Abstract parent interface for files handled by VirtualBox.
     """
-    __uuid__ = '5ec56ea3-b55d-4bdb-8c4f-5f9fb26b894b'
+    __uuid__ = '540804bf-4ca6-dd43-800c-bfb9765f96fe'
     __wsmap__ = 'managed'
     
     @property
-    def creation_mode(self):
-        """Get int value for 'creationMode'
-        The creation mode.
-        """
-        ret = self._get_attr("creationMode")
-        return ret
-
-    @property
-    def disposition(self):
-        """Get str value for 'disposition'
-        The disposition mode.
-        """
-        ret = self._get_attr("disposition")
-        return ret
-
-    @property
     def event_source(self):
         """Get IEventSource value for 'eventSource'
-        Event source for guest session events.
+        Event source for file events.
         """
         ret = self._get_attr("eventSource")
         return IEventSource(ret)
 
     @property
-    def file_name(self):
-        """Get str value for 'fileName'
-        Full path of the actual file name of this file.
-        """
-        ret = self._get_attr("fileName")
-        return ret
-
-    @property
     def id_p(self):
         """Get int value for 'id'
-        The file's ID.
+        The ID VirtualBox internally assigned to the open file.
         """
         ret = self._get_attr("id")
         return ret
@@ -17253,17 +18052,18 @@ class IFile(Interface):
         return ret
 
     @property
-    def open_mode(self):
-        """Get str value for 'openMode'
-        The open mode.
-        """
-        ret = self._get_attr("openMode")
-        return ret
-
-    @property
     def offset(self):
         """Get int value for 'offset'
-        Current read/write offset in bytes.
+        The current file position.
+        
+        The file current position always applies to the :py:func:`IFile.read` 
+        method, which updates it upon return.  Same goes for the :py:func:`IFile.write` 
+        method except when :py:func:`IFile.access_mode`  is :py:func:`FileAccessMode.append_only` 
+        or :py:func:`FileAccessMode.append_read` , where it will always write
+        to the end of the file and will leave this attribute unchanged.
+        
+        The :py:func:`IFile.seek`  is used to change this attribute without
+        transfering any file data like read and write does.
         """
         ret = self._get_attr("offset")
         return ret
@@ -17275,6 +18075,41 @@ class IFile(Interface):
         """
         ret = self._get_attr("status")
         return FileStatus(ret)
+
+    @property
+    def file_name(self):
+        """Get str value for 'fileName'
+        Full path of the actual file name of this file.
+        <!-- r=bird: The 'actual' file name is too tough, we cannot guarentee
+        that on unix guests.  Seeing how IGuestDirectory did things,
+        I'm questioning the 'Full path' part too.   Not urgent to check. -->
+        """
+        ret = self._get_attr("fileName")
+        return ret
+
+    @property
+    def creation_mode(self):
+        """Get int value for 'creationMode'
+        The UNIX-style creation mode specified when opening the file.
+        """
+        ret = self._get_attr("creationMode")
+        return ret
+
+    @property
+    def open_action(self):
+        """Get FileOpenAction value for 'openAction'
+        The opening action specified when opening the file.
+        """
+        ret = self._get_attr("openAction")
+        return FileOpenAction(ret)
+
+    @property
+    def access_mode(self):
+        """Get FileAccessMode value for 'accessMode'
+        The file access mode.
+        """
+        ret = self._get_attr("accessMode")
+        return FileAccessMode(ret)
 
     def close(self):
         """Closes this file. After closing operations like reading data,
@@ -17297,6 +18132,19 @@ class IFile(Interface):
         obj_info = self._call("queryInfo")
         obj_info = IFsObjInfo(obj_info)
         return obj_info
+
+    def query_size(self):
+        """Queries the current file size.
+
+        return size of type int
+            Queried file size.
+
+        raises :class:`OleErrorNotimpl`
+            The method is not implemented yet.
+        
+        """
+        size = self._call("querySize")
+        return size
 
     def read(self, to_read, timeout_ms):
         """Reads data from this file.
@@ -17354,30 +18202,41 @@ class IFile(Interface):
         return data
 
     def seek(self, offset, whence):
-        """Changes the read and write position of this file.
+        """Changes the current file position of this file.
+        
+        The file current position always applies to the :py:func:`IFile.read` 
+        method.  Same for the :py:func:`IFile.write`  method it except when
+        the :py:func:`IFile.access_mode`  is :py:func:`FileAccessMode.append_only` 
+        or :py:func:`FileAccessMode.append_read` .
 
         in offset of type int
-            Offset to seek.
+            Offset to seek relative to the position specified by @a whence.
 
-        in whence of type :class:`FileSeekType`
-            Seek mode; see :py:class:`FileSeekType`  for more information.
+        in whence of type :class:`FileSeekOrigin`
+            One of the :py:class:`FileSeekOrigin`  seek starting points.
 
-        raises :class:`OleErrorNotimpl`
-            The method is not implemented yet.
-        
+        return new_offset of type int
+            The new file offset after the seek operation.
+
         """
         if not isinstance(offset, baseinteger):
             raise TypeError("offset can only be an instance of type baseinteger")
-        if not isinstance(whence, FileSeekType):
-            raise TypeError("whence can only be an instance of type FileSeekType")
-        self._call("seek",
+        if not isinstance(whence, FileSeekOrigin):
+            raise TypeError("whence can only be an instance of type FileSeekOrigin")
+        new_offset = self._call("seek",
                      in_p=[offset, whence])
+        return new_offset
 
-    def set_acl(self, acl):
+    def set_acl(self, acl, mode):
         """Sets the ACL of this file.
 
         in acl of type str
-            ACL string to set.
+            The ACL specification string. To-be-defined.
+
+        in mode of type int
+            UNIX-style mode mask to use if @a acl is empty. As mention in
+            :py:func:`IGuestSession.directory_create`  this is realized on
+            a best effort basis and the exact behavior depends on the Guest OS.
 
         raises :class:`OleErrorNotimpl`
             The method is not implemented yet.
@@ -17385,8 +18244,25 @@ class IFile(Interface):
         """
         if not isinstance(acl, basestring):
             raise TypeError("acl can only be an instance of type basestring")
+        if not isinstance(mode, baseinteger):
+            raise TypeError("mode can only be an instance of type baseinteger")
         self._call("setACL",
-                     in_p=[acl])
+                     in_p=[acl, mode])
+
+    def set_size(self, size):
+        """Changes the file size.
+
+        in size of type int
+            The new file size.
+
+        raises :class:`OleErrorNotimpl`
+            The method is not implemented yet.
+        
+        """
+        if not isinstance(size, baseinteger):
+            raise TypeError("size can only be an instance of type baseinteger")
+        self._call("setSize",
+                     in_p=[size])
 
     def write(self, data, timeout_ms):
         """Writes bytes to this file.
@@ -17454,18 +18330,24 @@ class IFile(Interface):
 class IGuestFile(IFile):
     """
     Implementation of the :py:class:`IFile`  object
-    for files on the guest.
+    for files in the guest.
     """
-    __uuid__ = '60661aec-145f-4d11-b80e-8ea151598093'
+    __uuid__ = '92f21dc0-44de-1653-b717-2ebf0ca9b664'
     __wsmap__ = 'managed'
     
+    @property
+    def midl_does_not_like_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikeEmptyInterfaces")
+        return ret
+
 
 class IFsObjInfo(Interface):
     """
     Abstract parent interface for VirtualBox file system object information.
     This can be information about a file or a directory, for example.
     """
-    __uuid__ = '4047ba30-7006-4966-ae86-94164e5e20eb'
+    __uuid__ = '37b30bc6-4506-58e4-bc43-fbbca92b4548'
     __wsmap__ = 'managed'
     
     @property
@@ -17628,9 +18510,15 @@ class IGuestFsObjInfo(IFsObjInfo):
     Represents the guest implementation of the
     :py:class:`IFsObjInfo`  object.
     """
-    __uuid__ = 'd5cf678e-3484-4e4a-ac55-329e15462e18'
+    __uuid__ = '6620db85-44e0-ca69-e9e0-d4907ceccbe5'
     __wsmap__ = 'managed'
     
+    @property
+    def midl_does_not_like_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikeEmptyInterfaces")
+        return ret
+
 
 class IGuest(Interface):
     """
@@ -17887,35 +18775,23 @@ class IGuest(Interface):
         To wait for successful startup, use the :py:func:`IGuestSession.wait_for` 
         call.
         
-        A guest session represents one impersonated user account on the guest, so
+        A guest session represents one impersonated user account in the guest, so
         every operation will use the same credentials specified when creating
         the session object via :py:func:`IGuest.create_session` . Anonymous
         sessions, that is, sessions without specifying a valid
-        user account on the guest are not allowed due to security reasons.
+        user account in the guest are not allowed reasons of security.
         
-        There can be a maximum of 32 sessions at once per VM. Each session keeps
-        track of its started guest processes, opened guest files or guest directories.
-        To work on guest files or directories a guest session offers methods to open
-        or create such objects (see :py:func:`IGuestSession.file_open`  or
-        :py:func:`IGuestSession.directory_open`  for example).
+        There can be a maximum of 32 sessions at once per VM.  An error will
+        be returned if this has been reached. <!-- This should actually read:
+        VBOX_E_IPRT_ERROR will be return if this limit has been reached.
+        However, keep in mind that VBOX_E_IPRT_ERROR can be returned for about
+        88 unrelated reasons, so you don't know what happend unless you parse
+        the error text. (bird) -->
+        <!-- @todo r=bird: Seriously, add an dedicated VBOX_E_MAX_GUEST_SESSIONS status
+        for this condition.  Do the same for all other maximums and things that could be
+        useful to the API client. -->
         
-        There can be up to 2048 objects (guest processes, files or directories)
-        a time per guest session. Exceeding the limit will result in an appropriate
-        error message.
-        
-        When done with either of these objects, including the guest session itself,
-        use the appropriate close() method to let the object do its cleanup work.
-        
-        Every guest session has its own environment variable block which gets
-        automatically applied when starting a new guest process via
-        :py:func:`IGuestSession.process_create`  or :py:func:`IGuestSession.process_create_ex` .
-        To override (or unset) certain environment variables already set by the
-        guest session, one can specify a per-process environment block when using
-        one of the both above mentioned process creation calls.
-        
-        Closing a session via :py:func:`IGuestSession.close`  will try to close
-        all the mentioned objects above unless these objects are still used by
-        a client.
+        For more information please consult :py:class:`IGuestSession` 
 
         in user of type str
             User name this session will be using to control the guest; has to exist
@@ -17988,7 +18864,7 @@ class IGuest(Interface):
         in arguments of type str
             Optional command line arguments to use for the Guest Additions
             installer. Useful for retrofitting features which weren't installed
-            before on the guest.
+            before in the guest.
 
         in flags of type :class:`AdditionsUpdateFlag`
             :py:class:`AdditionsUpdateFlag`  flags.
@@ -18032,7 +18908,7 @@ class IProgress(Interface):
     An instance of this is returned every time VirtualBox starts
     an asynchronous task (in other words, a separate thread) which
     continues to run after a method call returns. For example,
-    :py:func:`IConsole.save_state` , which saves the state of
+    :py:func:`IMachine.save_state` , which saves the state of
     a running virtual machine, can take a long time to complete.
     To be able to display a progress bar, a user interface such as
     the VirtualBox graphical user interface can use the IProgress
@@ -18340,12 +19216,12 @@ class ISnapshot(Interface):
     the exact state it was in when the snapshot was taken.
     
     The ISnapshot interface has no methods, only attributes; snapshots
-    are controlled through methods of the :py:class:`IConsole`  interface
+    are controlled through methods of the :py:class:`IMachine`  interface
     which also manage the media associated with the snapshot.
     The following operations exist:
     
     
-    :py:func:`IConsole.take_snapshot`  creates a new snapshot
+    :py:func:`IMachine.take_snapshot`  creates a new snapshot
     by creating new, empty differencing images for the machine's
     media and saving the VM settings and (if the VM is running)
     the current VM state in the snapshot.
@@ -18363,7 +19239,7 @@ class ISnapshot(Interface):
     snapshots tree.
     
     
-    :py:func:`IConsole.restore_snapshot`  resets a machine to
+    :py:func:`IMachine.restore_snapshot`  resets a machine to
     the state of a previous snapshot by deleting the differencing
     image of each of the machine's media and setting the machine's
     settings and state to the state that was saved in the snapshot (if any).
@@ -18373,7 +19249,7 @@ class ISnapshot(Interface):
     that was restored.
     
     
-    :py:func:`IConsole.delete_snapshot`  deletes a snapshot
+    :py:func:`IMachine.delete_snapshot`  deletes a snapshot
     without affecting the current machine state.
     
     This does not change the current machine state, but instead frees the
@@ -18843,7 +19719,7 @@ class IMedium(Interface):
     
     Existing media are opened using :py:func:`IVirtualBox.open_medium` ;
     new hard disk media can be created with the VirtualBox API using the
-    :py:func:`IVirtualBox.create_hard_disk`  method. Differencing hard
+    :py:func:`IVirtualBox.create_medium`  method. Differencing hard
     disks (see below) are usually implicitly created by VirtualBox as
     needed, but may also be created explicitly using :py:func:`create_diff_storage` .
     VirtualBox cannot create CD/DVD or floppy images (ISO and RAW files); these
@@ -18962,7 +19838,7 @@ class IMedium(Interface):
     that, you may call any of the methods that create a new hard disk storage
     unit and they will use the generated UUID and file name.
     """
-    __uuid__ = '05f2bbb6-a3a6-4fb9-9b49-6d0dda7142ac'
+    __uuid__ = '9680d99b-3550-4e14-8fc4-82ad1426cbde'
     __wsmap__ = 'managed'
     
     @property
@@ -20162,6 +21038,87 @@ needs it).
         progress = IProgress(progress)
         return progress
 
+    def change_encryption(self, current_password, cipher, new_password, new_password_id):
+        """Starts encryption of this medium. This means that the stored data in the
+        medium is encrypted.
+        
+        This medium will be placed to :py:attr:`MediumState.locked_write` 
+        state.
+        
+        Please note that the results can be either returned straight away,
+        or later as the result of the background operation via the object
+        returned via the @a progress parameter.
+
+        in current_password of type str
+            The current password the medium is protected with. Use an empty string to indicate
+            that the medium isn't encrypted.
+
+        in cipher of type str
+            The cipher to use for encryption. An empty string indicates no encryption for the
+            result.
+
+        in new_password of type str
+            The new password the medium should be protected with. An empty password and password ID
+            will result in the medium being encrypted with the current password.
+
+        in new_password_id of type str
+            The ID of the new password when unlocking the medium.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        raises :class:`VBoxErrorNotSupported`
+            Encryption is not supported for this medium because it is attached to more than one VM
+or has children.
+        
+        """
+        if not isinstance(current_password, basestring):
+            raise TypeError("current_password can only be an instance of type basestring")
+        if not isinstance(cipher, basestring):
+            raise TypeError("cipher can only be an instance of type basestring")
+        if not isinstance(new_password, basestring):
+            raise TypeError("new_password can only be an instance of type basestring")
+        if not isinstance(new_password_id, basestring):
+            raise TypeError("new_password_id can only be an instance of type basestring")
+        progress = self._call("changeEncryption",
+                     in_p=[current_password, cipher, new_password, new_password_id])
+        progress = IProgress(progress)
+        return progress
+
+    def get_encryption_settings(self):
+        """Returns the encryption settings for this medium.
+
+        out cipher of type str
+            The cipher used for encryption.
+
+        return password_id of type str
+            The ID of the password when unlocking the medium.
+
+        raises :class:`VBoxErrorNotSupported`
+            Encryption is not configured for this medium.
+        
+        """
+        (cipher, password_id) = self._call("getEncryptionSettings")
+        return (cipher, password_id)
+
+    def check_encryption_password(self, password):
+        """Checks whether the supplied password is correct for the medium.
+
+        in password of type str
+            The password to check.
+
+        raises :class:`VBoxErrorNotSupported`
+            Encryption is not configured for this medium.
+        
+        raises :class:`VBoxErrorPasswordIncorrect`
+            The given password is incorrect.
+        
+        """
+        if not isinstance(password, basestring):
+            raise TypeError("password can only be an instance of type basestring")
+        self._call("checkEncryptionPassword",
+                     in_p=[password])
+
 
 class IMediumFormat(Interface):
     """
@@ -20173,7 +21130,7 @@ class IMediumFormat(Interface):
     
     Each medium format is identified by a string represented by the
     :py:func:`id_p`  attribute. This string is used in calls like
-    :py:func:`IVirtualBox.create_hard_disk`  to specify the desired
+    :py:func:`IVirtualBox.create_medium`  to specify the desired
     format.
     
     The list of all supported medium formats can be obtained using
@@ -20204,7 +21161,7 @@ class IMediumFormat(Interface):
         
         This string is used in methods of other interfaces where it is necessary
         to specify a medium format, such as
-        :py:func:`IVirtualBox.create_hard_disk` .
+        :py:func:`IVirtualBox.create_medium` .
         """
         ret = self._get_attr("id")
         return ret
@@ -20328,9 +21285,17 @@ class IKeyboard(Interface):
     Use this interface to send keystrokes or the Ctrl-Alt-Del sequence
     to the virtual machine.
     """
-    __uuid__ = '71aa2898-28bd-43fe-8c98-e53321451db7'
+    __uuid__ = '585cc5e8-349c-41c6-899d-d9a38e3f4126'
     __wsmap__ = 'managed'
     
+    @property
+    def keyboard_le_ds(self):
+        """Get KeyboardLED value for 'keyboardLEDs'
+        Current status of the guest keyboard LEDs.
+        """
+        ret = self._get_attr("keyboardLEDs")
+        return [KeyboardLED(a) for a in ret]
+
     def put_scancode(self, scancode):
         """Sends a scancode to the keyboard.
 
@@ -20397,6 +21362,96 @@ class IKeyboard(Interface):
         return IEventSource(ret)
 
 
+class IMousePointerShape(Interface):
+    """
+    The guest mouse pointer description.
+    """
+    __uuid__ = '4609f3e1-839a-4edd-b57f-cc4584b39173'
+    __wsmap__ = 'managed'
+    
+    @property
+    def visible(self):
+        """Get bool value for 'visible'
+        Flag whether the pointer is visible.
+        """
+        ret = self._get_attr("visible")
+        return ret
+
+    @property
+    def alpha(self):
+        """Get bool value for 'alpha'
+        Flag whether the pointer has an alpha channel.
+        """
+        ret = self._get_attr("alpha")
+        return ret
+
+    @property
+    def hot_x(self):
+        """Get int value for 'hotX'
+        The pointer hot spot X coordinate.
+        """
+        ret = self._get_attr("hotX")
+        return ret
+
+    @property
+    def hot_y(self):
+        """Get int value for 'hotY'
+        The pointer hot spot Y coordinate.
+        """
+        ret = self._get_attr("hotY")
+        return ret
+
+    @property
+    def width(self):
+        """Get int value for 'width'
+        Width of the pointer shape in pixels.
+        """
+        ret = self._get_attr("width")
+        return ret
+
+    @property
+    def height(self):
+        """Get int value for 'height'
+        Height of the pointer shape in pixels.
+        """
+        ret = self._get_attr("height")
+        return ret
+
+    @property
+    def shape(self):
+        """Get str value for 'shape'
+        Shape bitmaps.
+        
+        The @a shape buffer contains a 1bpp (bits per pixel) AND mask
+        followed by a 32bpp XOR (color) mask.
+        
+        For pointers without alpha channel the XOR mask pixels are
+        32 bit values: (lsb)BGR0(msb). For pointers with alpha channel
+        the XOR mask consists of (lsb)BGRA(msb) 32 bit values.
+        
+        An AND mask is provided for pointers with alpha channel, so if the
+        client does not support alpha, the pointer could be
+        displayed as a normal color pointer.
+        
+        The AND mask is a 1bpp bitmap with byte aligned scanlines. The
+        size of the AND mask therefore is cbAnd = (width + 7) / 8 *
+        height. The padding bits at the end of each scanline are
+        undefined.
+        
+        The XOR mask follows the AND mask on the next 4-byte aligned
+        offset: uint8_t *pu8Xor = pu8And + (cbAnd + 3) & ~3.
+        Bytes in the gap between the AND and the XOR mask are undefined.
+        The XOR mask scanlines have no gap between them and the size of
+        the XOR mask is: cbXor = width * 4 * height.
+        
+        
+        If @a shape size is 0, then the shape is not known or did not change.
+        This can happen if only the pointer visibility is changed.
+        """
+        ret = self._get_attr("shape")
+        return ret
+
+
 class IMouse(Interface):
     """
     The IMouse interface represents the virtual machine's mouse. Used in
@@ -20405,7 +21460,7 @@ class IMouse(Interface):
     Through this interface, the virtual machine's virtual mouse can be
     controlled.
     """
-    __uuid__ = 'ee770393-415f-4421-b2d5-28b73cacf86a'
+    __uuid__ = '4c3fa51c-7b9a-4ecf-97f0-d75a945bd26c'
     __wsmap__ = 'managed'
     
     @property
@@ -20466,6 +21521,14 @@ class IMouse(Interface):
         """
         ret = self._get_attr("needsHostCursor")
         return ret
+
+    @property
+    def pointer_shape(self):
+        """Get IMousePointerShape value for 'pointerShape'
+        The current mouse pointer used by the guest.
+        """
+        ret = self._get_attr("pointerShape")
+        return IMousePointerShape(ret)
 
     def put_mouse_event(self, dx, dy, dz, dw, button_state):
         """Initiates a mouse event using relative pointer movements
@@ -20667,7 +21730,7 @@ class IDisplaySourceBitmap(Interface):
     """
     Information about the screen bitmap.
     """
-    __uuid__ = 'b00907f7-d85e-4dce-b1a6-16a2d91b0269'
+    __uuid__ = '0b78daeb-f52f-43b9-99e8-4a3c226cbe2d'
     __wsmap__ = 'suppress'
     
     @property
@@ -20689,18 +21752,19 @@ class IDisplaySourceBitmap(Interface):
 
         out bytes_per_line of type int
 
-        out pixel_format of type int
+        out bitmap_format of type :class:`BitmapFormat`
 
         """
-        (address, width, height, bits_per_pixel, bytes_per_line, pixel_format) = self._call("queryBitmapInfo")
-        return (address, width, height, bits_per_pixel, bytes_per_line, pixel_format)
+        (address, width, height, bits_per_pixel, bytes_per_line, bitmap_format) = self._call("queryBitmapInfo")
+        bitmap_format = BitmapFormat(bitmap_format)
+        return (address, width, height, bits_per_pixel, bytes_per_line, bitmap_format)
 
 
 class IFramebuffer(Interface):
     """
     Frame buffer width, in pixels.
     """
-    __uuid__ = '16d73cd3-da84-4a11-a607-ebab57d050d0'
+    __uuid__ = 'dd07f843-be2e-4cae-83fe-8bf5d33c80e9'
     __wsmap__ = 'managed'
     
     @property
@@ -20737,14 +21801,14 @@ class IFramebuffer(Interface):
 
     @property
     def pixel_format(self):
-        """Get int value for 'pixelFormat'
+        """Get BitmapFormat value for 'pixelFormat'
         Frame buffer pixel format. It's one of the values defined by :py:class:`BitmapFormat` .
         
         This attribute must never (and will never) return :py:attr:`BitmapFormat.opaque`  -- the format of the frame
         buffer must be always known.
         """
         ret = self._get_attr("pixelFormat")
-        return ret
+        return BitmapFormat(ret)
 
     @property
     def height_reduction(self):
@@ -21011,6 +22075,17 @@ class IFramebuffer(Interface):
         self._call("notify3DEvent",
                      in_p=[type_p, data])
 
+    @property
+    def capabilities(self):
+        """Get FramebufferCapabilities value for 'capabilities'
+        Capabilities of the framebuffer instance.
+        
+        For the meaning of individual capability flags see
+        :py:class:`FramebufferCapabilities` .
+        """
+        ret = self._get_attr("capabilities")
+        return [FramebufferCapabilities(a) for a in ret]
+
 
 class IFramebufferOverlay(IFramebuffer):
     """
@@ -21099,7 +22174,7 @@ class IDisplay(Interface):
     IFramebuffer interface. Examples of the output target are a window on
     the host computer or an RDP session's display on a remote computer.
     """
-    __uuid__ = '1659de81-24f0-41a9-afd4-abd03dcfbcbc'
+    __uuid__ = '94a7faa2-7792-42a3-8535-00770eca1f53'
     __wsmap__ = 'managed'
     
     def get_screen_resolution(self, screen_id):
@@ -21123,12 +22198,15 @@ class IDisplay(Interface):
 
         out y_origin of type int
 
+        out guest_monitor_status of type :class:`GuestMonitorStatus`
+
         """
         if not isinstance(screen_id, baseinteger):
             raise TypeError("screen_id can only be an instance of type baseinteger")
-        (width, height, bits_per_pixel, x_origin, y_origin) = self._call("getScreenResolution",
+        (width, height, bits_per_pixel, x_origin, y_origin, guest_monitor_status) = self._call("getScreenResolution",
                      in_p=[screen_id])
-        return (width, height, bits_per_pixel, x_origin, y_origin)
+        guest_monitor_status = GuestMonitorStatus(guest_monitor_status)
+        return (width, height, bits_per_pixel, x_origin, y_origin, guest_monitor_status)
 
     def attach_framebuffer(self, screen_id, framebuffer):
         """Sets the graphics update target for a screen.
@@ -21137,24 +22215,31 @@ class IDisplay(Interface):
 
         in framebuffer of type :class:`IFramebuffer`
 
+        return id_p of type str
+
         """
         if not isinstance(screen_id, baseinteger):
             raise TypeError("screen_id can only be an instance of type baseinteger")
         if not isinstance(framebuffer, IFramebuffer):
             raise TypeError("framebuffer can only be an instance of type IFramebuffer")
-        self._call("attachFramebuffer",
+        id_p = self._call("attachFramebuffer",
                      in_p=[screen_id, framebuffer])
+        return id_p
 
-    def detach_framebuffer(self, screen_id):
+    def detach_framebuffer(self, screen_id, id_p):
         """Removes the graphics updates target for a screen.
 
         in screen_id of type int
 
+        in id_p of type str
+
         """
         if not isinstance(screen_id, baseinteger):
             raise TypeError("screen_id can only be an instance of type baseinteger")
+        if not isinstance(id_p, basestring):
+            raise TypeError("id_p can only be an instance of type basestring")
         self._call("detachFramebuffer",
-                     in_p=[screen_id])
+                     in_p=[screen_id, id_p])
 
     def query_framebuffer(self, screen_id):
         """Queries the graphics updates targets for a screen.
@@ -21446,20 +22531,35 @@ class IDisplay(Interface):
         display_source_bitmap = IDisplaySourceBitmap(display_source_bitmap)
         return display_source_bitmap
 
-    def set_framebuffer_update_mode(self, screen_id, framebuffer_update_mode):
-        """Select how the framebuffer is informed about screen updates.
+    def notify_scale_factor_change(self, screen_id, u32_scale_factor_w_multiplied, u32_scale_factor_h_multiplied):
+        """Notify OpenGL HGCM host service about graphics content scaling factor change.
 
         in screen_id of type int
 
-        in framebuffer_update_mode of type :class:`FramebufferUpdateMode`
+        in u32_scale_factor_w_multiplied of type int
+
+        in u32_scale_factor_h_multiplied of type int
 
         """
         if not isinstance(screen_id, baseinteger):
             raise TypeError("screen_id can only be an instance of type baseinteger")
-        if not isinstance(framebuffer_update_mode, FramebufferUpdateMode):
-            raise TypeError("framebuffer_update_mode can only be an instance of type FramebufferUpdateMode")
-        self._call("setFramebufferUpdateMode",
-                     in_p=[screen_id, framebuffer_update_mode])
+        if not isinstance(u32_scale_factor_w_multiplied, baseinteger):
+            raise TypeError("u32_scale_factor_w_multiplied can only be an instance of type baseinteger")
+        if not isinstance(u32_scale_factor_h_multiplied, baseinteger):
+            raise TypeError("u32_scale_factor_h_multiplied can only be an instance of type baseinteger")
+        self._call("notifyScaleFactorChange",
+                     in_p=[screen_id, u32_scale_factor_w_multiplied, u32_scale_factor_h_multiplied])
+
+    def notify_hi_dpi_output_policy_change(self, f_unscaled_hi_dpi):
+        """Notify OpenGL HGCM host service about HiDPI monitor scaling policy change.
+
+        in f_unscaled_hi_dpi of type bool
+
+        """
+        if not isinstance(f_unscaled_hi_dpi, bool):
+            raise TypeError("f_unscaled_hi_dpi can only be an instance of type bool")
+        self._call("notifyHiDPIOutputPolicyChange",
+                     in_p=[f_unscaled_hi_dpi])
 
 
 class INetworkAdapter(Interface):
@@ -21911,7 +23011,7 @@ class ISerialPort(Interface):
         """Get or set bool value for 'server'
         Flag whether this serial port acts as a server (creates a new pipe on
         the host) or as a client (uses the existing pipe). This attribute is
-        used only when :py:func:`host_mode`  is PortMode_HostPipe.
+        used only when :py:func:`host_mode`  is PortMode_HostPipe or PortMode_TCP.
         """
         ret = self._get_attr("server")
         return ret
@@ -21926,10 +23026,12 @@ class ISerialPort(Interface):
     def path(self):
         """Get or set str value for 'path'
         Path to the serial port's pipe on the host when :py:func:`ISerialPort.host_mode`  is
-        PortMode_HostPipe, or the host serial device name when
-        :py:func:`ISerialPort.host_mode`  is PortMode_HostDevice. For both
-        cases, setting a @c null or empty string as the attribute's value
-        is an error. Otherwise, the value of this property is ignored.
+        PortMode_HostPipe, the host serial device name when
+        :py:func:`ISerialPort.host_mode`  is PortMode_HostDevice or the TCP
+        **port** (server) or **hostname:port** (client) when
+        :py:func:`ISerialPort.host_mode`  is PortMode_TCP.
+        For those cases, setting a @c null or empty string as the attribute's
+        value is an error. Otherwise, the value of this property is ignored.
         """
         ret = self._get_attr("path")
         return ret
@@ -22888,7 +23990,7 @@ class IUSBDevice(Interface):
     :py:func:`IConsole.usb_devices`  attribute which lists all USB devices
     attached to a running virtual machine's USB controller.
     """
-    __uuid__ = 'f8967b0b-4483-400f-92b5-8b675d98a85b'
+    __uuid__ = '8d826296-e04f-4e86-9310-cb85b19becde'
     __wsmap__ = 'managed'
     
     @property
@@ -22970,7 +24072,7 @@ class IUSBDevice(Interface):
     @property
     def version(self):
         """Get int value for 'version'
-        The major USB version of the device - 1 or 2.
+        The major USB version of the device - 1, 2 or 3.
         """
         ret = self._get_attr("version")
         return ret
@@ -22979,11 +24081,19 @@ class IUSBDevice(Interface):
     def port_version(self):
         """Get int value for 'portVersion'
         The major USB version of the host USB port the device is
-        physically connected to - 1 or 2. For devices not connected to
+        physically connected to - 1, 2 or 3. For devices not connected to
         anything this will have the same value as the version attribute.
         """
         ret = self._get_attr("portVersion")
         return ret
+
+    @property
+    def speed(self):
+        """Get USBConnectionSpeed value for 'speed'
+        The speed at which the device is currently communicating.
+        """
+        ret = self._get_attr("speed")
+        return USBConnectionSpeed(ret)
 
     @property
     def remote(self):
@@ -23312,7 +24422,7 @@ class IAudioAdapter(Interface):
     The IAudioAdapter interface represents the virtual audio adapter of
     the virtual machine. Used in :py:func:`IMachine.audio_adapter` .
     """
-    __uuid__ = '921873db-5f3f-4b69-91f9-7be9e535a2cb'
+    __uuid__ = '280cc7f7-eddc-48b6-9bbb-5b1e8d761c0e'
     __wsmap__ = 'managed'
     
     @property
@@ -23331,6 +24441,36 @@ class IAudioAdapter(Interface):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
         return self._set_attr("enabled", value)
+
+    @property
+    def enabled_in(self):
+        """Get or set bool value for 'enabledIn'
+        Flag whether the audio adapter is enabled for audio
+        input. Only relevant if the adapter is enabled.
+        """
+        ret = self._get_attr("enabledIn")
+        return ret
+
+    @enabled_in.setter
+    def enabled_in(self, value):
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
+        return self._set_attr("enabledIn", value)
+
+    @property
+    def enabled_out(self):
+        """Get or set bool value for 'enabledOut'
+        Flag whether the audio adapter is enabled for audio
+        output. Only relevant if the adapter is enabled.
+        """
+        ret = self._get_attr("enabledOut")
+        return ret
+
+    @enabled_out.setter
+    def enabled_out(self, value):
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
+        return self._set_attr("enabledOut", value)
 
     @property
     def audio_controller(self):
@@ -23637,33 +24777,34 @@ class IInternalSessionControl(Interface):
     """
     PID of the process that has created this Session object.
     """
-    __uuid__ = 'b7c71040-2761-42c4-a44a-4e2c2d7e2820'
+    __uuid__ = '747e397e-69c8-45a0-88d9-f7f070960718'
     __wsmap__ = 'suppress'
     
-    def get_pid(self):
-        """PID of the process that has created this Session object.
-
-        return pid of type int
-
+    @property
+    def pid(self):
+        """Get int value for 'PID'
+        PID of the process that has created this Session object.
         """
-        pid = self._call("getPID")
-        return pid
+        ret = self._get_attr("PID")
+        return ret
 
-    def get_remote_console(self):
-        """Returns the console object suitable for remote control.
-
-        return console of type :class:`IConsole`
-
-        raises :class:`VBoxErrorInvalidVmState`
-            Session state prevents operation.
-        
-        raises :class:`VBoxErrorInvalidObjectState`
-            Session type prevents operation.
-        
+    @property
+    def remote_console(self):
+        """Get IConsole value for 'remoteConsole'
+        Returns the console object suitable for remote control.
         """
-        console = self._call("getRemoteConsole")
-        console = IConsole(console)
-        return console
+        ret = self._get_attr("remoteConsole")
+        return IConsole(ret)
+
+    @property
+    def nominal_state(self):
+        """Get MachineState value for 'nominalState'
+        Returns suitable machine state for the VM execution state. Useful
+        for choosing a sensible machine state after a complex operation which
+        failed or otherwise resulted in an unclear situation.
+        """
+        ret = self._get_attr("nominalState")
+        return MachineState(ret)
 
     def assign_machine(self, machine, lock_type, token):
         """Assigns the machine object associated with this direct-type
@@ -23980,7 +25121,7 @@ class IInternalSessionControl(Interface):
         self._call("onSharedFolderChange",
                      in_p=[global_p])
 
-    def on_usb_device_attach(self, device, error, masked_interfaces):
+    def on_usb_device_attach(self, device, error, masked_interfaces, capture_filename):
         """Triggered when a request to capture a USB device (as a result
         of matched USB filters or direct call to
         :py:func:`IConsole.attach_usb_device` ) has completed.
@@ -23992,6 +25133,8 @@ class IInternalSessionControl(Interface):
         in error of type :class:`IVirtualBoxErrorInfo`
 
         in masked_interfaces of type int
+
+        in capture_filename of type str
 
         raises :class:`VBoxErrorInvalidVmState`
             Session state prevents operation.
@@ -24006,8 +25149,10 @@ class IInternalSessionControl(Interface):
             raise TypeError("error can only be an instance of type IVirtualBoxErrorInfo")
         if not isinstance(masked_interfaces, baseinteger):
             raise TypeError("masked_interfaces can only be an instance of type baseinteger")
+        if not isinstance(capture_filename, basestring):
+            raise TypeError("capture_filename can only be an instance of type basestring")
         self._call("onUSBDeviceAttach",
-                     in_p=[device, error, masked_interfaces])
+                     in_p=[device, error, masked_interfaces, capture_filename])
 
     def on_usb_device_detach(self, id_p, error):
         """Triggered when a request to release the USB device (as a result
@@ -24181,6 +25326,30 @@ class IInternalSessionControl(Interface):
         self._call("onlineMergeMedium",
                      in_p=[medium_attachment, source_idx, target_idx, progress])
 
+    def reconfigure_medium_attachments(self, attachments):
+        """Reconfigure all specified medium attachments in one go, making sure
+        the current state corresponds to the specified medium.
+
+        in attachments of type :class:`IMediumAttachment`
+            Array containing the medium attachments which need to be
+            reconfigured.
+
+        raises :class:`VBoxErrorInvalidVmState`
+            Machine session is not open.
+        
+        raises :class:`VBoxErrorInvalidObjectState`
+            Session type is not direct.
+        
+        """
+        if not isinstance(attachments, list):
+            raise TypeError("attachments can only be an instance of type list")
+        for a in attachments[:10]:
+            if not isinstance(a, IMediumAttachment):
+                raise TypeError(\
+                        "array can only contain objects of type IMediumAttachment")
+        self._call("reconfigureMediumAttachments",
+                     in_p=[attachments])
+
     def enable_vmm_statistics(self, enable):
         """Enables or disables collection of VMM RAM statistics.
 
@@ -24245,22 +25414,37 @@ class IInternalSessionControl(Interface):
         self._call("resumeWithReason",
                      in_p=[reason])
 
-    def save_state_with_reason(self, reason):
+    def save_state_with_reason(self, reason, progress, state_file_path, pause_vm):
         """Internal method for triggering a VM save state with a specified reason
         code. The reason code can be interpreted by device/drivers and thus it
         might behave slightly differently than a normal VM save state.
         
+        This call is fully synchronous, and the caller is expected to have set
+        the machine state appropriately (and has to set the follow-up machine
+        state if this call failed).
         
-        :py:func:`IConsole.save_state` 
+        
+        :py:func:`IMachine.save_state` 
 
         in reason of type :class:`Reason`
             Specify the best matching reason code please.
 
-        return progress of type :class:`IProgress`
+        in progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
+        in state_file_path of type str
+            File path the VM process must save the execution state to.
+
+        in pause_vm of type bool
+            The VM should be paused before saving state. It is automatically
+            unpaused on error in the "vanilla save state" case.
+
+        return left_paused of type bool
+            Returns if the VM was left in paused state, which is necessary
+            in many situations (snapshots, teleportation).
+
         raises :class:`VBoxErrorInvalidVmState`
-            Virtual machine state neither Running nor Paused.
+            Virtual machine state is not one of the expected values.
         
         raises :class:`VBoxErrorFileError`
             Failed to create directory for saved state file.
@@ -24268,10 +25452,22 @@ class IInternalSessionControl(Interface):
         """
         if not isinstance(reason, Reason):
             raise TypeError("reason can only be an instance of type Reason")
-        progress = self._call("saveStateWithReason",
-                     in_p=[reason])
-        progress = IProgress(progress)
-        return progress
+        if not isinstance(progress, IProgress):
+            raise TypeError("progress can only be an instance of type IProgress")
+        if not isinstance(state_file_path, basestring):
+            raise TypeError("state_file_path can only be an instance of type basestring")
+        if not isinstance(pause_vm, bool):
+            raise TypeError("pause_vm can only be an instance of type bool")
+        left_paused = self._call("saveStateWithReason",
+                     in_p=[reason, progress, state_file_path, pause_vm])
+        return left_paused
+
+    def cancel_save_state_with_reason(self):
+        """Internal method for cancelling a VM save state.
+        :py:func:`IInternalSessionControl.save_state_with_reason` 
+
+        """
+        self._call("cancelSaveStateWithReason")
 
 
 class ISession(Interface):
@@ -24329,7 +25525,7 @@ class ISession(Interface):
     is called. A managed object reference to that session object can be retrieved by
     calling :py:func:`IWebsessionManager.get_session_object` .
     """
-    __uuid__ = '12F4DCDB-12B2-4EC1-B7CD-DDD9F6C5BF4D'
+    __uuid__ = '3d4f472c-aac8-4387-94be-54042bcd8901'
     __wsmap__ = 'managed'
     
     @property
@@ -24351,6 +25547,25 @@ class ISession(Interface):
         return SessionType(ret)
 
     @property
+    def name(self):
+        """Get or set str value for 'name'
+        Name of this session. Important only for VM sessions, otherwise it
+        it will be remembered, but not used for anything significant (and can
+        be left at the empty string which is the default). The value can only
+        be changed when the session state is SessionState_Unlocked. Make sure
+        that you use a descriptive name which does not conflict with the VM
+        process session names: "GUI/Qt", "GUI/SDL" and "headless".
+        """
+        ret = self._get_attr("name")
+        return ret
+
+    @name.setter
+    def name(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("name", value)
+
+    @property
     def machine(self):
         """Get IMachine value for 'machine'
         Machine object associated with this session.
@@ -24361,7 +25576,8 @@ class ISession(Interface):
     @property
     def console(self):
         """Get IConsole value for 'console'
-        Console object associated with this session.
+        Console object associated with this session. Only sessions
+        which locked the machine for a VM process have a non-null console.
         """
         ret = self._get_attr("console")
         return IConsole(ret)
@@ -26338,9 +27554,9 @@ class ISnapshotTakenEvent(ISnapshotEvent):
     __wsmap__ = 'managed'
     id = VBoxEventType.on_snapshot_taken
     @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+    def midl_does_not_like_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikeEmptyInterfaces")
         return ret
 
 
@@ -26360,9 +27576,24 @@ class ISnapshotDeletedEvent(ISnapshotEvent):
     __wsmap__ = 'managed'
     id = VBoxEventType.on_snapshot_deleted
     @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+    def midl_does_not_like_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikeEmptyInterfaces")
+        return ret
+
+
+class ISnapshotRestoredEvent(ISnapshotEvent):
+    """
+    Snapshot of the given machine has been restored.
+    :py:class:`ISnapshot` 
+    """
+    __uuid__ = 'f4d803b4-9b2d-4377-bfe6-9702e881516b'
+    __wsmap__ = 'managed'
+    id = VBoxEventType.on_snapshot_restored
+    @property
+    def midl_does_not_like_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikeEmptyInterfaces")
         return ret
 
 
@@ -26375,9 +27606,9 @@ class ISnapshotChangedEvent(ISnapshotEvent):
     __wsmap__ = 'managed'
     id = VBoxEventType.on_snapshot_changed
     @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+    def midl_does_not_like_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikeEmptyInterfaces")
         return ret
 
 
@@ -26572,9 +27803,9 @@ class IAdditionsStateChangedEvent(IEvent):
     __wsmap__ = 'managed'
     id = VBoxEventType.on_additions_state_changed
     @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+    def midl_does_not_like_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikeEmptyInterfaces")
         return ret
 
 
@@ -26645,9 +27876,9 @@ class IStorageControllerChangedEvent(IEvent):
     __wsmap__ = 'managed'
     id = VBoxEventType.on_storage_controller_changed
     @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+    def midl_does_not_like_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikeEmptyInterfaces")
         return ret
 
 
@@ -27160,9 +28391,9 @@ class IGuestFileOffsetChangedEvent(IGuestFileIOEvent):
     __wsmap__ = 'managed'
     id = VBoxEventType.on_guest_file_offset_changed
     @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+    def midl_does_not_like_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikeEmptyInterfaces")
         return ret
 
 
@@ -27190,9 +28421,9 @@ class IGuestFileWriteEvent(IGuestFileIOEvent):
     __wsmap__ = 'managed'
     id = VBoxEventType.on_guest_file_write
     @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+    def midl_does_not_like_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikeEmptyInterfaces")
         return ret
 
 
@@ -27207,9 +28438,9 @@ class IVRDEServerChangedEvent(IEvent):
     __wsmap__ = 'managed'
     id = VBoxEventType.on_vrde_server_changed
     @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+    def midl_does_not_like_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikeEmptyInterfaces")
         return ret
 
 
@@ -27223,9 +28454,9 @@ class IVRDEServerInfoChangedEvent(IEvent):
     __wsmap__ = 'managed'
     id = VBoxEventType.on_vrde_server_info_changed
     @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+    def midl_does_not_like_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikeEmptyInterfaces")
         return ret
 
 
@@ -27237,9 +28468,9 @@ class IVideoCaptureChangedEvent(IEvent):
     __wsmap__ = 'managed'
     id = VBoxEventType.on_video_capture_changed
     @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+    def midl_does_not_like_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikeEmptyInterfaces")
         return ret
 
 
@@ -27254,9 +28485,9 @@ class IUSBControllerChangedEvent(IEvent):
     __wsmap__ = 'managed'
     id = VBoxEventType.on_usb_controller_changed
     @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+    def midl_does_not_like_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikeEmptyInterfaces")
         return ret
 
 
@@ -27348,7 +28579,7 @@ class IRuntimeErrorEvent(IEvent):
     to @c true. In case of fatal errors, the virtual machine
     execution is always paused before calling this notification, and
     the notification handler is supposed either to immediately save
-    the virtual machine state using :py:func:`IConsole.save_state` 
+    the virtual machine state using :py:func:`IMachine.save_state` 
     or power it off using :py:func:`IConsole.power_down` .
     Resuming the execution can lead to unpredictable results.
     
@@ -27472,7 +28703,7 @@ class IVetoEvent(IEvent):
     """
     Base abstract interface for veto events.
     """
-    __uuid__ = '9a1a4130-69fe-472f-ac10-c6fa25d75007'
+    __uuid__ = '7c5e945f-2354-4267-883f-2f417d216519'
     __wsmap__ = 'managed'
     
     def add_veto(self, reason):
@@ -27505,6 +28736,37 @@ class IVetoEvent(IEvent):
 
         """
         result = self._call("getVetos")
+        return result
+
+    def add_approval(self, reason):
+        """Adds an approval on this event.
+
+        in reason of type str
+            Reason for approval, could be null or empty string.
+
+        """
+        if not isinstance(reason, basestring):
+            raise TypeError("reason can only be an instance of type basestring")
+        self._call("addApproval",
+                     in_p=[reason])
+
+    def is_approved(self):
+        """If this event was approved.
+
+        return result of type bool
+
+        """
+        result = self._call("isApproved")
+        return result
+
+    def get_approvals(self):
+        """Current approval reason list, if size is 0 - no approvals.
+
+        return result of type str
+            Array of reasons for approval provided by different event handlers.
+
+        """
+        result = self._call("getApprovals")
         return result
 
 
@@ -27559,9 +28821,9 @@ class ICanShowWindowEvent(IVetoEvent):
     __wsmap__ = 'managed'
     id = VBoxEventType.on_can_show_window
     @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+    def midl_does_not_like_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikeEmptyInterfaces")
         return ret
 
 
@@ -27930,9 +29192,15 @@ class INATNetworkStartStopEvent(INATNetworkChangedEvent):
 
 class INATNetworkAlterEvent(INATNetworkChangedEvent):
     """"""
-    __uuid__ = '3f5a0822-163a-43b1-ad16-8d58b0ef6e75'
+    __uuid__ = 'd947adf5-4022-dc80-5535-6fb116815604'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_nat_network_alter
+    @property
+    def midl_does_not_like_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikeEmptyInterfaces")
+        return ret
+
 
 class INATNetworkCreationDeletionEvent(INATNetworkAlterEvent):
     """"""
@@ -28042,8 +29310,8 @@ class IHostNameResolutionConfigurationChangeEvent(IEvent):
     __wsmap__ = 'managed'
     id = VBoxEventType.on_host_name_resolution_configuration_change
     @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
+    def midl_does_not_like_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikeEmptyInterfaces")
         return ret
 

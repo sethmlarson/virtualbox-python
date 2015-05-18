@@ -15,5 +15,10 @@ Version 0.2 - *Stabilise, enhance and refine*
   
 * Add a set of base test libraries
 * Thorough test for library_ext modules 
-* ...
 
+
+Version 1.0 - Update to 5.0.x changes in vbox api
+-------------------------------------------------
+
+* Deprecate obsolete extensions
+* Investigate odd platform issues (check if attributable to pyvbox).

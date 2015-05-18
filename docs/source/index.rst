@@ -1,5 +1,5 @@
 pyvbox
-******
+======
 
 .. toctree:: 
    readme.rst
