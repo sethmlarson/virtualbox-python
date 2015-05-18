@@ -82,7 +82,7 @@ class IGuestSession(library.IGuestSession):
         return process, "".join(stdout), "".join(stderr)
 
     def makedirs(self, path, mode=0x777):
-        """Super-mkdir: create a leaf directory and all intermediate ones."""
+        "Super-mkdir: create a leaf directory and all intermediate ones."
         self.directory_create(path, mode, [library.DirectoryCreateFlag.parents])
 
     # Simplify calling directory_remove_recursive.  Set default flags to
@@ -94,32 +94,33 @@ class IGuestSession(library.IGuestSession):
     directory_remove_recursive.__doc__ = \
             library.IGuestSession.directory_remove_recursive.__doc__
 
-    # Simplify copy to.  Expand host path to abspath.
-    def copy_to(self, host_path, guest_path, flags=[]):
-        if not os.path.exists(host_path):
-            raise OSError("Failed to find %s on host" % host_path)
-        copy_to = super(IGuestSession, self).copy_to
-        p = copy_to(os.path.abspath(host_path), guest_path, flags)
-        p.wait_for_completion()
-        return p
-    copy_to.__doc__ = library.IGuestSession.copy_to.__doc__
+    # Simplify file_exists with default follow_symlink == False
+    def file_exists(self, path, follow_symlinks=True):
+        file_exists = super(IGuestSession, self).file_exists
+        return file_exists(path, follow_symlinks)
+    file_exists.__doc__ = library.IGuestSession.file_exists.__doc__
 
-    # Simplify copy from.  Expand host path to abspath. 
-    def copy_from(self, guest_path, host_path, flags=[]):
-        # Dodgy exists check...
-        for x in range(10):
-            try:
-                self.file_exists(guest_path)
-                break
-            except:
-                time.sleep(0.1)
+    # Simplify symlink_exists with default follow_symlink == False
+    def symlink_exists(self, path, follow_symlinks=True):
+        symlink_exists = super(IGuestSession, self).symlink_exists
+        return symlink_exists(path, follow_symlinks)
+    symlink_exists.__doc__ = library.IGuestSession.symlink_exists.__doc__
+
+    # Simplify directory_exists with default follow_symlink == False
+    def directory_exists(self, path, follow_symlinks=True):
+        directory_exists = super(IGuestSession, self).directory_exists
+        return directory_exists(path, follow_symlinks)
+    directory_exists.__doc__ = library.IGuestSession.directory_exists.__doc__
+
+    def path_exists(self, path, follow_symlinks=True):
+        "test if path exists"
+        if self.file_exists(path, follow_symlink) or \
+           self.symlink_exists(path, follow_symlink) or \
+           self.directory_exists(path, follow_symlink):
+            return True
         else:
-            raise OSError("Failed to find %s on guest" % guest_path)    
-        copy_from = super(IGuestSession, self).copy_from
-        p = copy_from(guest_path, os.path.abspath(host_path), flags)
-        p.wait_for_completion()
-        return p
-    copy_from.__doc__ = library.IGuestSession.copy_from.__doc__
+            return False
 
+    # TODO: re-introduce copy_to and copy_from. Inspect the source to figure out if its a
+    # directory or file...  Use new apis as required.
 
-    
