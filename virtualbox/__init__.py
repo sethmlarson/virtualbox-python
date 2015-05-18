@@ -98,7 +98,7 @@ class Manager(object):
     def __init__(self, mtype=None, mparams=None):
         pid = current_process().ident
         if _managers is None:
-            raise RuntimeError("Can create a new manager following a system exit.")
+            raise RuntimeError("Can not create a new manager following a system exit.")
         if pid not in _managers:
             with import_vboxapi() as vboxapi:
                 self.manager = vboxapi.VirtualBoxManager(mtype, mparams)
