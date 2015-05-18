@@ -172,9 +172,10 @@ def _cleanup_managers():
     _managers = None 
     for manager in managers.values():
         try:
-            manager.deinit()
+            del manager
         except:
             pass
+    managers.clear()
 
 
 atexit.register(_cleanup_managers)
