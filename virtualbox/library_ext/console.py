@@ -10,16 +10,6 @@ Add helper code to the default IConsole class.
 class IConsole(library.IConsole):
     __doc__ = library.IConsole.__doc__
 
-    #if no snapshot has been supplied, try using the current_snapshot
-    def restore_snapshot(self, snapshot=None):
-        if snapshot is None:
-            if self.machine.current_snapshot:
-                snapshot = self.machine.current_snapshot
-            else:
-                raise Exception("Machine has no snapshots")
-        return super(IConsole, self).restore_snapshot(snapshot)
-    restore_snapshot.__doc__ = library.IConsole.restore_snapshot.__doc__
-
     def register_on_network_adapter_changed(self, callback):
         """Set the callback function to consume on network adapter changed
         events.
