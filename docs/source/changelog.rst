@@ -6,6 +6,7 @@ version 0.2.1
 * Cleanup managers at exiti (reported by @jiml521).
 * Add three time check for attribute in xpcom interface object before failing (reported
   by @shohamp). 
+* Update library.py to 4.3.28/src/VBox/Main/idl/VirtualBox.xidl
 
 version 0.2.0
 
