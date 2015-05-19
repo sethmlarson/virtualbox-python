@@ -37,10 +37,15 @@ setup(
     install_requires = install_requires,
     platforms=['cygwin', 'win', 'linux'],
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
-        'Intended Audience :: Other Audience',
+        'Development Status :: 5 - Production/Stable',
+        'Intended Audience :: Developers',
+        'Intended Audience :: Information Technology',
+        'Intended Audience :: System Administrators',
+        'Natural Language :: English',
         'License :: OSI Approved :: Apache Software License',
-        'Operating System :: OS Independent',
+        'Operating System :: Microsoft',
+        'Operating System :: POSIX',
+        'Operating System :: MacOS',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
@@ -49,7 +54,11 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: Implementation :: CPython',
         'Topic :: Security',
-        'Topic :: Scientific/Engineering :: Visualization'
+        'Topic :: Scientific/Engineering :: Visualization',
+        'Topic :: System :: Clustering',
+        'Topic :: System :: Distributed Computing',
+        'Topic :: System :: Emulators',
+        'Topic :: Software Development :: Testing'
     ],
     test_suite="tests",
     tests_require=tests_require
