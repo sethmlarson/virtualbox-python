@@ -87,7 +87,7 @@ about how to call a method or attribute from a specific programming language.
 lib_version = 1.3
 lib_app_uuid = '819B4D85-9CEE-493C-B6FC-64FFE759B3C9'
 lib_uuid = 'd7569351-1750-46f0-936e-bd127d5bc264'
-xidl_hash = '288681452330d2c461c240e50b9787f3'
+xidl_hash = 'ae229886cd9f4f3853fdeb3669f05de8'
 
 
 
@@ -274,13 +274,9 @@ class SettingsVersion(Enum):
 
             Settings version "1.14", written by VirtualBox 4.3.x.
 
-    .. describe:: v1_15(17)
-
-            Settings version "1.15", written by VirtualBox 4.4.x.
-
     .. describe:: future(99999)
 
-            Settings version greater than "1.15", written by a future VirtualBox version.
+            Settings version greater than "1.13", written by a future VirtualBox version.
 
     """
     __uuid__ = 'd5b15ca7-3de7-46b2-a63a-ddcce42bfa3f'
@@ -319,10 +315,8 @@ class SettingsVersion(Enum):
          '''Settings version "1.13", written by VirtualBox 4.2.x.'''),
         ('v1_14', 16, 
          '''Settings version "1.14", written by VirtualBox 4.3.x.'''),
-        ('v1_15', 17, 
-         '''Settings version "1.15", written by VirtualBox 4.4.x.'''),
         ('Future', 99999, 
-         '''Settings version greater than "1.15", written by a future VirtualBox version.'''),
+         '''Settings version greater than "1.13", written by a future VirtualBox version.'''),
         ] 
 
 
@@ -517,8 +511,7 @@ class MachineState(Enum):
             For whoever decides to touch this enum: In order to keep the
             comparisons in the old source code valid, this state must immediately
             precede the Paused state.
-            
-            @todo Lift this spectacularly wonderful restriction.
+            TODO: Lift this spectacularly wonderful restriction.
 
     .. describe:: paused(6)
 
@@ -527,8 +520,7 @@ class MachineState(Enum):
             For whoever decides to touch this enum: In order to keep the
             comparisons in the old source code valid, this state must immediately
             follow the Running state.
-            
-            @todo Lift this spectacularly wonderful restriction.
+            TODO: Lift this spectacularly wonderful restriction.
 
     .. describe:: stuck(7)
 
@@ -654,16 +646,14 @@ class MachineState(Enum):
             For whoever decides to touch this enum: In order to keep the
             comparisons in the old source code valid, this state must immediately
             precede the Paused state.
-            
-            @todo Lift this spectacularly wonderful restriction.'''),
+            TODO: Lift this spectacularly wonderful restriction.'''),
         ('Paused', 6, 
          '''Execution of the machine has been paused.
             
             For whoever decides to touch this enum: In order to keep the
             comparisons in the old source code valid, this state must immediately
             follow the Running state.
-            
-            @todo Lift this spectacularly wonderful restriction.'''),
+            TODO: Lift this spectacularly wonderful restriction.'''),
         ('Stuck', 7, 
          '''Execution of the machine has reached the "Guru Meditation"
             condition. This indicates a severe error in the hypervisor itself.
@@ -906,49 +896,6 @@ class HWVirtExPropertyType(Enum):
         ] 
 
 
-class ParavirtProvider(Enum):
-    """The paravirtualized guest interface provider. This enumeration represents possible
-    values for the :py:func:`IMachine.paravirt_provider`  attribute.
-
-
-    .. describe:: none(0)
-
-            No provider is used.
-
-    .. describe:: default(1)
-
-            A default provider is automatically chosen according to the guest OS type.
-
-    .. describe:: legacy(2)
-
-            Used for VMs which didn't used to have any provider settings. Usually
-            interpreted as @c None for most VMs.
-
-    .. describe:: minimal(3)
-
-            A minimal set of features to expose to the paravirtualized guest.
-
-    .. describe:: hyper_v(4)
-
-            Microsoft Hyper-V.
-
-    """
-    __uuid__ = 'f9448c17-7caa-4ca7-9349-edafe369fcb5'
-    _enums = [\
-        ('None', 0, 
-         '''No provider is used.'''),
-        ('Default', 1, 
-         '''A default provider is automatically chosen according to the guest OS type.'''),
-        ('Legacy', 2, 
-         '''Used for VMs which didn't used to have any provider settings. Usually
-            interpreted as @c None for most VMs.'''),
-        ('Minimal', 3, 
-         '''A minimal set of features to expose to the paravirtualized guest.'''),
-        ('HyperV', 4, 
-         '''Microsoft Hyper-V.'''),
-        ] 
-
-
 class FaultToleranceState(Enum):
     """Used with :py:func:`IMachine.fault_tolerance_state` .
 
@@ -1093,12 +1040,8 @@ class DeviceType(Enum):
 
             Shared folder device.
 
-    .. describe:: graphics3_d(7)
-
-            Graphics device 3D activity.
-
     """
-    __uuid__ = 'cb977be1-d1fb-41f8-ad7e-951736c6cb3e'
+    __uuid__ = '6d9420f7-0b56-4636-99f9-7346f1b01e57'
     _enums = [\
         ('Null', 0, 
          '''Null value, may also mean "no device" (not allowed for
@@ -1115,8 +1058,6 @@ class DeviceType(Enum):
          '''USB device.'''),
         ('SharedFolder', 6, 
          '''Shared folder device.'''),
-        ('Graphics3D', 7, 
-         '''Graphics device 3D activity.'''),
         ] 
 
 
@@ -1188,8 +1129,8 @@ class ClipboardMode(Enum):
         ] 
 
 
-class DnDMode(Enum):
-    """Drag and drop interchange mode.
+class DragAndDropMode(Enum):
+    """Drag'n'Drop interchange mode.
 
 
     .. describe:: disabled(0)
@@ -1209,7 +1150,7 @@ class DnDMode(Enum):
             
 
     """
-    __uuid__ = '07af8800-f936-4b33-9172-cd400e83c148'
+    __uuid__ = 'b618ea0e-b6fb-4f8d-97f7-5e237e49b547'
     _enums = [\
         ('Disabled', 0, 
          ''''''),
@@ -1438,55 +1379,6 @@ class KeyboardHIDType(Enum):
         ('ComboKeyboard', 4, 
          '''Combined device, working as PS/2 or USB keyboard, depending on guest behavior.
             Using of such device can have negative performance implications.'''),
-        ] 
-
-
-class BitmapFormat(Enum):
-    """Format of a bitmap. Generic values for formats used by
-    the source bitmap, the screen shot or image update APIs.
-
-
-    .. describe:: opaque(0)
-
-            Unknown buffer format (the user may not assume any particular format of
-            the buffer).
-
-    .. describe:: bgr(542263106)
-
-            Generic BGR format. Pixel layout depends on the number of bits per pixel.
-
-    .. describe:: bgr0(810698562)
-
-            4 bytes per pixel: B, G, R, 0.
-
-    .. describe:: bgra(1095911234)
-
-            4 bytes per pixel: B, G, R, A.
-
-    .. describe:: rgba(1094862674)
-
-            4 bytes per pixel: R, G, B, A.
-
-    .. describe:: png(541544016)
-
-            PNG image.
-
-    """
-    __uuid__ = '2526302a-cd88-4491-8637-ae50b9804fbc'
-    _enums = [\
-        ('Opaque', 0, 
-         '''Unknown buffer format (the user may not assume any particular format of
-            the buffer).'''),
-        ('BGR', 542263106, 
-         '''Generic BGR format. Pixel layout depends on the number of bits per pixel.'''),
-        ('BGR0', 810698562, 
-         '''4 bytes per pixel: B, G, R, 0.'''),
-        ('BGRA', 1095911234, 
-         '''4 bytes per pixel: B, G, R, A.'''),
-        ('RGBA', 1094862674, 
-         '''4 bytes per pixel: R, G, B, A.'''),
-        ('PNG', 541544016, 
-         '''PNG image.'''),
         ] 
 
 
@@ -3396,6 +3288,9 @@ class PathRenameFlag(Enum):
 
 class ProcessCreateFlag(Enum):
     """Guest process execution flags.
+    The values are passed to the guest additions, so its not possible
+    to change (move) or reuse values.here.  See EXECUTEPROCESSFLAG_XXX
+    in GuestControlSvc.h.
 
 
     .. describe:: none(0)
@@ -3431,6 +3326,13 @@ class ProcessCreateFlag(Enum):
 
             Expands environment variables in process arguments.
 
+    .. describe:: unquoted_arguments(128)
+
+            Work around for Windows and OS/2 applications not following normal
+            argument quoting and escaping rules. The arguments are passed to the
+            application without any extra quoting, just a single space between each.
+            Present since VirtualBox 4.3.28 and 5.0 beta 3.
+
     """
     __uuid__ = '35192799-bfde-405d-9bea-c735ab9998e4'
     _enums = [\
@@ -3451,6 +3353,11 @@ class ProcessCreateFlag(Enum):
          '''The guest process waits until all data from stderr is read out.'''),
         ('ExpandArguments', 64, 
          '''Expands environment variables in process arguments.'''),
+        ('UnquotedArguments', 128, 
+         '''Work around for Windows and OS/2 applications not following normal
+            argument quoting and escaping rules. The arguments are passed to the
+            application without any extra quoting, just a single space between each.
+            Present since VirtualBox 4.3.28 and 5.0 beta 3.'''),
         ] 
 
 
@@ -3764,8 +3671,8 @@ class FsObjType(Enum):
         ] 
 
 
-class DnDAction(Enum):
-    """Possible actions of a drag'n drop operation.
+class DragAndDropAction(Enum):
+    """Possible actions within an Drag and Drop operation.
 
 
     .. describe:: ignore(0)
@@ -3785,7 +3692,7 @@ class DnDAction(Enum):
             Link the item from within the target.
 
     """
-    __uuid__ = '17609e74-778e-4d0e-8827-35f5230f287b'
+    __uuid__ = '47f3b162-c107-4fcd-bfa7-54b8135c441e'
     _enums = [\
         ('Ignore', 0, 
          '''Do nothing.'''),
@@ -4267,25 +4174,32 @@ class TouchContactState(Enum):
         ] 
 
 
-class FramebufferUpdateMode(Enum):
-    """How a framebuffer is notified about screen updates.
+class FramebufferPixelFormat(Enum):
+    """Format of the video memory buffer. Constants represented by this enum can
+    be used to test for particular values of :py:func:`IFramebuffer.pixel_format` .
+    
+    See also www.fourcc.org for more information about FOURCC pixel formats.
 
 
-    .. describe:: notify_update(0)
+    .. describe:: opaque(0)
 
-            IFramebuffer::NotifyUpdate is called.
+            Unknown buffer format (the user may not assume any particular format of
+            the buffer).
 
-    .. describe:: notify_update_image(1)
+    .. describe:: fourcc_rgb(843204434)
 
-            IFramebuffer::NotifyUpdateImage is called.
+            Basic RGB format (:py:func:`IFramebuffer.bits_per_pixel`  determines the
+            bit layout).
 
     """
-    __uuid__ = '1268d8ab-dd2f-443c-bc56-d93d3ced5cde'
+    __uuid__ = '7acfd5ed-29e3-45e3-8136-73c9224f3d2d'
     _enums = [\
-        ('NotifyUpdate', 0, 
-         '''IFramebuffer::NotifyUpdate is called.'''),
-        ('NotifyUpdateImage', 1, 
-         '''IFramebuffer::NotifyUpdateImage is called.'''),
+        ('Opaque', 0, 
+         '''Unknown buffer format (the user may not assume any particular format of
+            the buffer).'''),
+        ('FOURCC_RGB', 843204434, 
+         '''Basic RGB format (:py:func:`IFramebuffer.bits_per_pixel`  determines the
+            bit layout).'''),
         ] 
 
 
@@ -4476,11 +4390,7 @@ class USBControllerType(Enum):
 
             
 
-    .. describe:: xhci(3)
-
-            
-
-    .. describe:: last(4)
+    .. describe:: last(3)
 
             Last element (invalid). Used for parameter checks.
 
@@ -4493,9 +4403,7 @@ class USBControllerType(Enum):
          ''''''),
         ('EHCI', 2, 
          ''''''),
-        ('XHCI', 3, 
-         ''''''),
-        ('Last', 4, 
+        ('Last', 3, 
          '''Last element (invalid). Used for parameter checks.'''),
         ] 
 
@@ -4796,12 +4704,8 @@ class StorageBus(Enum):
 
             
 
-    .. describe:: usb(6)
-
-            
-
     """
-    __uuid__ = '2dab9df1-9683-48fd-8c11-caada236fcb0'
+    __uuid__ = 'eee67ab3-668d-4ef5-91e0-7025fe4a0d7a'
     _enums = [\
         ('Null', 0, 
          '''@c null value. Never used by the API.'''),
@@ -4814,8 +4718,6 @@ class StorageBus(Enum):
         ('Floppy', 4, 
          ''''''),
         ('SAS', 5, 
-         ''''''),
-        ('USB', 6, 
          ''''''),
         ] 
 
@@ -4861,12 +4763,8 @@ class StorageControllerType(Enum):
 
             A variant of the LsiLogic controller using SAS.
 
-    .. describe:: usb(9)
-
-            Special USB based storage controller.
-
     """
-    __uuid__ = '02e190af-b546-4109-b036-6deaa4ef6e69'
+    __uuid__ = '8a412b8a-f43e-4456-bd37-b474f0879a58'
     _enums = [\
         ('Null', 0, 
          '''@c null value. Never used by the API.'''),
@@ -4886,8 +4784,6 @@ class StorageControllerType(Enum):
          '''A floppy disk controller; this is the only variant for floppy drives.'''),
         ('LsiLogicSas', 8, 
          '''A variant of the LsiLogic controller using SAS.'''),
-        ('USB', 9, 
-         '''Special USB based storage controller.'''),
         ] 
 
 
@@ -5201,9 +5097,9 @@ class VBoxEventType(Enum):
 
             See :py:class:`IClipboardModeChangedEvent` IClipboardModeChangedEvent.
 
-    .. describe:: on_dn_d_mode_changed(73)
+    .. describe:: on_drag_and_drop_mode_changed(73)
 
-            See :py:class:`IDnDModeChangedEvent` IDnDModeChangedEvent.
+            See :py:class:`IDragAndDropModeChangedEvent` IDragAndDropModeChangedEvent.
 
     .. describe:: on_nat_network_changed(74)
 
@@ -5300,7 +5196,7 @@ class VBoxEventType(Enum):
             Must be last event, used for iterations and structures relying on numerical event values.
 
     """
-    __uuid__ = '1622f8d2-6c76-4410-9e78-86e083046efc'
+    __uuid__ = '5248e377-e578-47d7-b07b-84b1db6db8a8'
     _enums = [\
         ('Invalid', 0, 
          '''Invalid event, must be first.'''),
@@ -5405,8 +5301,8 @@ class VBoxEventType(Enum):
          '''See :py:class:`IStorageDeviceChangedEvent` IStorageDeviceChangedEvent.'''),
         ('OnClipboardModeChanged', 72, 
          '''See :py:class:`IClipboardModeChangedEvent` IClipboardModeChangedEvent.'''),
-        ('OnDnDModeChanged', 73, 
-         '''See :py:class:`IDnDModeChangedEvent` IDnDModeChangedEvent.'''),
+        ('OnDragAndDropModeChanged', 73, 
+         '''See :py:class:`IDragAndDropModeChangedEvent` IDragAndDropModeChangedEvent.'''),
         ('OnNATNetworkChanged', 74, 
          '''See :py:class:`INATNetworkChangedEvent` INATNetworkChangedEvent.'''),
         ('OnNATNetworkStartStop', 75, 
@@ -5462,8 +5358,7 @@ class VBoxEventType(Enum):
 
 class GuestMouseEventMode(Enum):
     """The mode (relative, absolute, multi-touch) of a pointer event.
-    
-    @todo A clear pattern seems to be emerging that we should usually have
+    TODO: a clear pattern seems to be emerging that we should usually have
     multiple input devices active for different types of reporting, so we
     should really have different event types for relative (including wheel),
     absolute (not including wheel) and multi-touch events.
@@ -8709,7 +8604,7 @@ class IMachine(Interface):
     
     :py:class:`ISession` , :py:class:`IConsole` 
     """
-    __uuid__ = '96ae59d6-fecd-4a32-b051-23643eb4cd56'
+    __uuid__ = '480cf695-2d8d-4256-9c7c-cce4184fa048'
     __wsmap__ = 'managed'
     
     @property
@@ -9221,57 +9116,6 @@ class IMachine(Interface):
         return self._set_attr("videoCaptureFPS", value)
 
     @property
-    def video_capture_max_time(self):
-        """Get or set int value for 'videoCaptureMaxTime'
-        This setting determines the maximal number of time video capture
-        will work for. The capture stops as the defined time interval
-        has elapsed. If this value is zero the capturing will not be limited
-        by time. This setting cannot be changed while video capturing is enabled.
-        """
-        ret = self._get_attr("videoCaptureMaxTime")
-        return ret
-
-    @video_capture_max_time.setter
-    def video_capture_max_time(self, value):
-        if not isinstance(value, baseinteger):
-            raise TypeError("value is not an instance of baseinteger")
-        return self._set_attr("videoCaptureMaxTime", value)
-
-    @property
-    def video_capture_max_file_size(self):
-        """Get or set int value for 'videoCaptureMaxFileSize'
-        This setting determines the maximal number of captured video file
-        size in MB. The capture stops as the captured video file size
-        has reached the defined. If this value is zero the capturing
-        will not be limited by file size. This setting cannot be changed
-        while video capturing is enabled.
-        """
-        ret = self._get_attr("videoCaptureMaxFileSize")
-        return ret
-
-    @video_capture_max_file_size.setter
-    def video_capture_max_file_size(self, value):
-        if not isinstance(value, baseinteger):
-            raise TypeError("value is not an instance of baseinteger")
-        return self._set_attr("videoCaptureMaxFileSize", value)
-
-    @property
-    def video_capture_options(self):
-        """Get or set str value for 'videoCaptureOptions'
-        This setting contains any additional video capture options
-        required in comma-separated key=value format. This setting
-        cannot be changed while video capturing is enabled.
-        """
-        ret = self._get_attr("videoCaptureOptions")
-        return ret
-
-    @video_capture_options.setter
-    def video_capture_options(self, value):
-        if not isinstance(value, basestring):
-            raise TypeError("value is not an instance of basestring")
-        return self._set_attr("videoCaptureOptions", value)
-
-    @property
     def bios_settings(self):
         """Get IBIOSSettings value for 'BIOSSettings'
         Object containing all BIOS settings.
@@ -9659,18 +9503,18 @@ class IMachine(Interface):
         return self._set_attr("clipboardMode", value)
 
     @property
-    def dn_d_mode(self):
-        """Get or set DnDMode value for 'dnDMode'
-        Sets or retrieves the current drag'n drop mode.
+    def drag_and_drop_mode(self):
+        """Get or set DragAndDropMode value for 'dragAndDropMode'
+        Which mode is allowed for drag'n'drop.
         """
-        ret = self._get_attr("dnDMode")
-        return DnDMode(ret)
+        ret = self._get_attr("dragAndDropMode")
+        return DragAndDropMode(ret)
 
-    @dn_d_mode.setter
-    def dn_d_mode(self, value):
-        if not isinstance(value, DnDMode):
-            raise TypeError("value is not an instance of DnDMode")
-        return self._set_attr("dnDMode", value)
+    @drag_and_drop_mode.setter
+    def drag_and_drop_mode(self, value):
+        if not isinstance(value, DragAndDropMode):
+            raise TypeError("value is not an instance of DragAndDropMode")
+        return self._set_attr("dragAndDropMode", value)
 
     @property
     def guest_property_notification_patterns(self):
@@ -9759,20 +9603,6 @@ class IMachine(Interface):
         if not isinstance(value, basestring):
             raise TypeError("value is not an instance of basestring")
         return self._set_attr("teleporterPassword", value)
-
-    @property
-    def paravirt_provider(self):
-        """Get or set ParavirtProvider value for 'paravirtProvider'
-        The paravirtualized guest interface provider.
-        """
-        ret = self._get_attr("paravirtProvider")
-        return ParavirtProvider(ret)
-
-    @paravirt_provider.setter
-    def paravirt_provider(self, value):
-        if not isinstance(value, ParavirtProvider):
-            raise TypeError("value is not an instance of ParavirtProvider")
-        return self._set_attr("paravirtProvider", value)
 
     @property
     def fault_tolerance_state(self):
@@ -12398,17 +12228,6 @@ created differencing media, should not happen).
                      in_p=[cpu])
         return attached
 
-    def get_effective_paravirt_provider(self):
-        """Returns the effective paravirtualization provider for this VM.
-
-        return paravirt_provider of type :class:`ParavirtProvider`
-            The effective paravirtualization provider for this VM.
-
-        """
-        paravirt_provider = self._call("getEffectiveParavirtProvider")
-        paravirt_provider = ParavirtProvider(paravirt_provider)
-        return paravirt_provider
-
     def query_log_filename(self, idx):
         """Queries for the VM log file name of an given index. Returns an empty
         string if a log file with that index doesn't exists.
@@ -12699,7 +12518,7 @@ class IConsole(Interface):
     
     :py:class:`ISession` 
     """
-    __uuid__ = 'd129b03e-037a-40b1-b288-a08ae73de535'
+    __uuid__ = '8ab7c520-2442-4b66-8d74-4ff1e195d2b6'
     __wsmap__ = 'managed'
     
     @property
@@ -13155,7 +12974,7 @@ class IConsole(Interface):
                      in_p=[f_remove_file])
 
     def get_device_activity(self, type_p):
-        """Gets the current activity type of given devices or device groups.
+        """Gets the current activity type of a given device or device group.
 
         in type_p of type :class:`DeviceType`
 
@@ -13165,15 +12984,11 @@ class IConsole(Interface):
             Invalid device type.
         
         """
-        if not isinstance(type_p, list):
-            raise TypeError("type_p can only be an instance of type list")
-        for a in type_p[:10]:
-            if not isinstance(a, DeviceType):
-                raise TypeError(\
-                        "array can only contain objects of type DeviceType")
+        if not isinstance(type_p, DeviceType):
+            raise TypeError("type_p can only be an instance of type DeviceType")
         activity = self._call("getDeviceActivity",
                      in_p=[type_p])
-        activity = [DeviceActivity(a) for a in activity]
+        activity = DeviceActivity(activity)
         return activity
 
     def attach_usb_device(self, id_p):
@@ -13589,7 +13404,7 @@ text explains the reason for the failure.
     def teleport(self, hostname, tcpport, password, max_downtime):
         """Teleport the VM to a different host machine or process.
         
-        @todo Explain the details.
+        TODO explain the details.
 
         in hostname of type str
             The name or IP of the host to teleport to.
@@ -14414,7 +14229,7 @@ class ISystemProperties(Interface):
     and parameters. Most of the properties are read-only, but some can be
     changed by a user.
     """
-    __uuid__ = '2dc77d62-27e7-4e6e-87eb-b41ae0d555da'
+    __uuid__ = '1254a96a-ae57-4484-946a-22d86c1f98af'
     __wsmap__ = 'managed'
     
     @property
@@ -14871,15 +14686,6 @@ class ISystemProperties(Interface):
             raise TypeError("value is not an instance of basestring")
         return self._set_attr("defaultFrontend", value)
 
-    @property
-    def screen_shot_formats(self):
-        """Get BitmapFormat value for 'screenShotFormats'
-        Supported bitmap formats which can be used with takeScreenShot
-        and takeScreenShotToArray methods.
-        """
-        ret = self._get_attr("screenShotFormats")
-        return [BitmapFormat(a) for a in ret]
-
     def get_max_network_adapters(self, chipset):
         """Maximum total number of network adapters associated with every
         :py:class:`IMachine`  instance.
@@ -15030,23 +14836,6 @@ class ISystemProperties(Interface):
                      in_p=[controller_type])
         return enabled
 
-    def get_storage_controller_hotplug_capable(self, controller_type):
-        """Returns whether the given storage controller supports
-        hot-plugging devices.
-
-        in controller_type of type :class:`StorageControllerType`
-            The storage controller to check for.
-
-        return hotplug_capable of type bool
-            Returned flag indicating whether the controller is hotplug capable
-
-        """
-        if not isinstance(controller_type, StorageControllerType):
-            raise TypeError("controller_type can only be an instance of type StorageControllerType")
-        hotplug_capable = self._call("getStorageControllerHotplugCapable",
-                     in_p=[controller_type])
-        return hotplug_capable
-
     def get_max_instances_of_usb_controller_type(self, chipset, type_p):
         """Returns the maximum number of USB controller instances which
         can be configured for each VM. This corresponds to the number of
@@ -15074,7 +14863,7 @@ class ISystemProperties(Interface):
 
 class IGuestOSType(Interface):
     """"""
-    __uuid__ = 'ced74f7e-4c08-4d19-883a-017496ada2e1'
+    __uuid__ = '6d968f9a-858b-4c50-bf17-241f069e94c2'
     __wsmap__ = 'struct'
     
     @property
@@ -15293,14 +15082,6 @@ class IGuestOSType(Interface):
         ret = self._get_attr("recommendedUSB")
         return ret
 
-    @property
-    def recommended_tf_reset(self):
-        """Get bool value for 'recommendedTFReset'
-        Returns @c true if using VCPU reset on triple fault is recommended for this OS type.
-        """
-        ret = self._get_attr("recommendedTFReset")
-        return ret
-
 
 class IAdditionsFacility(Interface):
     """
@@ -15350,382 +15131,6 @@ class IAdditionsFacility(Interface):
         ret = self._get_attr("type")
         return AdditionsFacilityType(ret)
 
-
-class IDnDBase(Interface):
-    """
-    Base abstract interface for drag'n drop.
-    """
-    __uuid__ = 'b15cf9ca-4078-4786-a1be-af773a36e19f'
-    __wsmap__ = 'managed'
-    
-    def is_format_supported(self, format_p):
-        """Checks if a specific drag'n drop MIME / Content-type format is supported.
-
-        in format_p of type str
-            Format to check for.
-
-        return supported of type bool
-            Returns @c true if the specified format is supported, @c false if not.
-
-        """
-        if not isinstance(format_p, basestring):
-            raise TypeError("format_p can only be an instance of type basestring")
-        supported = self._call("isFormatSupported",
-                     in_p=[format_p])
-        return supported
-
-    def add_formats(self, formats):
-        """Adds MIME / Content-type formats to the supported formats.
-
-        in formats of type str
-            Collection of formats to add.
-
-        """
-        if not isinstance(formats, list):
-            raise TypeError("formats can only be an instance of type list")
-        for a in formats[:10]:
-            if not isinstance(a, basestring):
-                raise TypeError(\
-                        "array can only contain objects of type basestring")
-        self._call("addFormats",
-                     in_p=[formats])
-
-    def remove_formats(self, formats):
-        """Removes MIME / Content-type formats from the supported formats.
-
-        in formats of type str
-            Collection of formats to remove.
-
-        """
-        if not isinstance(formats, list):
-            raise TypeError("formats can only be an instance of type list")
-        for a in formats[:10]:
-            if not isinstance(a, basestring):
-                raise TypeError(\
-                        "array can only contain objects of type basestring")
-        self._call("removeFormats",
-                     in_p=[formats])
-
-    @property
-    def formats(self):
-        """Get str value for 'formats'
-        Returns all supported drag'n drop formats.
-        """
-        ret = self._get_attr("formats")
-        return ret
-
-
-class IDnDSource(IDnDBase):
-    """
-    Abstract interface for handling drag'n drop sources.
-    """
-    __uuid__ = 'b69c400d-be63-4255-898a-e706d66b1637'
-    __wsmap__ = 'managed'
-    
-    def drag_is_pending(self, screen_id):
-        """Ask the source if there is any drag and drop operation pending.
-        If no drag and drop operation is pending currently, DnDAction_Ignore is returned.
-
-        in screen_id of type int
-            The screen ID where the drag and drop event occurred.
-
-        out formats of type str
-            On return the supported mime types.
-
-        out allowed_actions of type :class:`DnDAction`
-            On return the actions which are allowed.
-
-        return default_action of type :class:`DnDAction`
-            On return the default action to use.
-
-        raises :class:`VBoxErrorVmError`
-            VMM device is not available.
-        
-        """
-        if not isinstance(screen_id, baseinteger):
-            raise TypeError("screen_id can only be an instance of type baseinteger")
-        (formats, allowed_actions, default_action) = self._call("dragIsPending",
-                     in_p=[screen_id])
-        allowed_actions = [DnDAction(a) for a in allowed_actions]
-        default_action = DnDAction(default_action)
-        return (formats, allowed_actions, default_action)
-
-    def drop(self, format_p, action):
-        """Informs the source that a drop event occurred for a pending
-        drag and drop operation.
-
-        in format_p of type str
-            The mime type the data must be in.
-
-        in action of type :class:`DnDAction`
-            The action to use.
-
-        return progress of type :class:`IProgress`
-            Progress object to track the operation completion.
-
-        raises :class:`VBoxErrorVmError`
-            VMM device is not available.
-        
-        """
-        if not isinstance(format_p, basestring):
-            raise TypeError("format_p can only be an instance of type basestring")
-        if not isinstance(action, DnDAction):
-            raise TypeError("action can only be an instance of type DnDAction")
-        progress = self._call("drop",
-                     in_p=[format_p, action])
-        progress = IProgress(progress)
-        return progress
-
-    def receive_data(self):
-        """Receive the data of a previously drag and drop event from the source.
-
-        return data of type str
-            The actual data.
-
-        raises :class:`VBoxErrorVmError`
-            VMM device is not available.
-        
-        """
-        data = self._call("receiveData")
-        return data
-
-
-class IGuestDnDSource(IDnDSource):
-    """
-    Implementation of the :py:class:`IDnDSource`  object
-    for source drag'n drop operations on the guest.
-    """
-    __uuid__ = '280955c0-de67-4297-8179-6274a82a2fc0'
-    __wsmap__ = 'managed'
-    
-
-class IDnDTarget(IDnDBase):
-    """
-    Abstract interface for handling drag'n drop targets.
-    """
-    __uuid__ = '2366c45c-4633-41a1-9fa6-0ef9f244434c'
-    __wsmap__ = 'managed'
-    
-    def enter(self, screen_id, y, x, default_action, allowed_actions, formats):
-        """Informs the target about a drag and drop enter event.
-
-        in screen_id of type int
-            The screen ID where the drag and drop event occurred.
-
-        in y of type int
-            Y-position of the event.
-
-        in x of type int
-            X-position of the event.
-
-        in default_action of type :class:`DnDAction`
-            The default action to use.
-
-        in allowed_actions of type :class:`DnDAction`
-            The actions which are allowed.
-
-        in formats of type str
-            The supported MIME types.
-
-        return result_action of type :class:`DnDAction`
-            The resulting action of this event.
-
-        raises :class:`VBoxErrorVmError`
-            VMM device is not available.
-        
-        """
-        if not isinstance(screen_id, baseinteger):
-            raise TypeError("screen_id can only be an instance of type baseinteger")
-        if not isinstance(y, baseinteger):
-            raise TypeError("y can only be an instance of type baseinteger")
-        if not isinstance(x, baseinteger):
-            raise TypeError("x can only be an instance of type baseinteger")
-        if not isinstance(default_action, DnDAction):
-            raise TypeError("default_action can only be an instance of type DnDAction")
-        if not isinstance(allowed_actions, list):
-            raise TypeError("allowed_actions can only be an instance of type list")
-        for a in allowed_actions[:10]:
-            if not isinstance(a, DnDAction):
-                raise TypeError(\
-                        "array can only contain objects of type DnDAction")
-        if not isinstance(formats, list):
-            raise TypeError("formats can only be an instance of type list")
-        for a in formats[:10]:
-            if not isinstance(a, basestring):
-                raise TypeError(\
-                        "array can only contain objects of type basestring")
-        result_action = self._call("enter",
-                     in_p=[screen_id, y, x, default_action, allowed_actions, formats])
-        result_action = DnDAction(result_action)
-        return result_action
-
-    def move(self, screen_id, x, y, default_action, allowed_actions, formats):
-        """Informs the target about a drag and drop move event.
-
-        in screen_id of type int
-            The screen ID where the drag and drop event occurred.
-
-        in x of type int
-            X-position of the event.
-
-        in y of type int
-            Y-position of the event.
-
-        in default_action of type :class:`DnDAction`
-            The default action to use.
-
-        in allowed_actions of type :class:`DnDAction`
-            The actions which are allowed.
-
-        in formats of type str
-            The supported MIME types.
-
-        return result_action of type :class:`DnDAction`
-            The resulting action of this event.
-
-        raises :class:`VBoxErrorVmError`
-            VMM device is not available.
-        
-        """
-        if not isinstance(screen_id, baseinteger):
-            raise TypeError("screen_id can only be an instance of type baseinteger")
-        if not isinstance(x, baseinteger):
-            raise TypeError("x can only be an instance of type baseinteger")
-        if not isinstance(y, baseinteger):
-            raise TypeError("y can only be an instance of type baseinteger")
-        if not isinstance(default_action, DnDAction):
-            raise TypeError("default_action can only be an instance of type DnDAction")
-        if not isinstance(allowed_actions, list):
-            raise TypeError("allowed_actions can only be an instance of type list")
-        for a in allowed_actions[:10]:
-            if not isinstance(a, DnDAction):
-                raise TypeError(\
-                        "array can only contain objects of type DnDAction")
-        if not isinstance(formats, list):
-            raise TypeError("formats can only be an instance of type list")
-        for a in formats[:10]:
-            if not isinstance(a, basestring):
-                raise TypeError(\
-                        "array can only contain objects of type basestring")
-        result_action = self._call("move",
-                     in_p=[screen_id, x, y, default_action, allowed_actions, formats])
-        result_action = DnDAction(result_action)
-        return result_action
-
-    def leave(self, screen_id):
-        """Informs the target about a drag and drop leave event.
-
-        in screen_id of type int
-            The screen ID where the drag and drop event occurred.
-
-        raises :class:`VBoxErrorVmError`
-            VMM device is not available.
-        
-        """
-        if not isinstance(screen_id, baseinteger):
-            raise TypeError("screen_id can only be an instance of type baseinteger")
-        self._call("leave",
-                     in_p=[screen_id])
-
-    def drop(self, screen_id, x, y, default_action, allowed_actions, formats):
-        """Informs the target about a drop event.
-
-        in screen_id of type int
-            The screen ID where the Drag and Drop event occurred.
-
-        in x of type int
-            X-position of the event.
-
-        in y of type int
-            Y-position of the event.
-
-        in default_action of type :class:`DnDAction`
-            The default action to use.
-
-        in allowed_actions of type :class:`DnDAction`
-            The actions which are allowed.
-
-        in formats of type str
-            The supported MIME types.
-
-        out format_p of type str
-            The resulting format of this event.
-
-        return result_action of type :class:`DnDAction`
-            The resulting action of this event.
-
-        raises :class:`VBoxErrorVmError`
-            VMM device is not available.
-        
-        """
-        if not isinstance(screen_id, baseinteger):
-            raise TypeError("screen_id can only be an instance of type baseinteger")
-        if not isinstance(x, baseinteger):
-            raise TypeError("x can only be an instance of type baseinteger")
-        if not isinstance(y, baseinteger):
-            raise TypeError("y can only be an instance of type baseinteger")
-        if not isinstance(default_action, DnDAction):
-            raise TypeError("default_action can only be an instance of type DnDAction")
-        if not isinstance(allowed_actions, list):
-            raise TypeError("allowed_actions can only be an instance of type list")
-        for a in allowed_actions[:10]:
-            if not isinstance(a, DnDAction):
-                raise TypeError(\
-                        "array can only contain objects of type DnDAction")
-        if not isinstance(formats, list):
-            raise TypeError("formats can only be an instance of type list")
-        for a in formats[:10]:
-            if not isinstance(a, basestring):
-                raise TypeError(\
-                        "array can only contain objects of type basestring")
-        (format_p, result_action) = self._call("drop",
-                     in_p=[screen_id, x, y, default_action, allowed_actions, formats])
-        result_action = DnDAction(result_action)
-        return (format_p, result_action)
-
-    def send_data(self, screen_id, format_p, data):
-        """Sends data to the target.
-
-        in screen_id of type int
-            The screen ID where the drag and drop event occurred.
-
-        in format_p of type str
-            The MIME type the data is in.
-
-        in data of type str
-            The actual data.
-
-        return progress of type :class:`IProgress`
-            Progress object to track the operation completion.
-
-        raises :class:`VBoxErrorVmError`
-            VMM device is not available.
-        
-        """
-        if not isinstance(screen_id, baseinteger):
-            raise TypeError("screen_id can only be an instance of type baseinteger")
-        if not isinstance(format_p, basestring):
-            raise TypeError("format_p can only be an instance of type basestring")
-        if not isinstance(data, list):
-            raise TypeError("data can only be an instance of type list")
-        for a in data[:10]:
-            if not isinstance(a, basestring):
-                raise TypeError(\
-                        "array can only contain objects of type basestring")
-        progress = self._call("sendData",
-                     in_p=[screen_id, format_p, data])
-        progress = IProgress(progress)
-        return progress
-
-
-class IGuestDnDTarget(IDnDTarget):
-    """
-    Implementation of the :py:class:`IDnDTarget`  object
-    for target drag'n drop operations on the guest.
-    """
-    __uuid__ = '50ce4b51-0ff7-46b7-a138-3c6e5ac946b4'
-    __wsmap__ = 'managed'
-    
 
 class IGuestSession(Interface):
     """
@@ -16834,7 +16239,7 @@ option was requested.
                      in_p=[file_p])
 
     def wait_for(self, wait_for, timeout_ms):
-        """Waits for one or more events to happen.
+        """Waits for one more events to happen.
 
         in wait_for of type int
             Specifies what to wait for;
@@ -16859,7 +16264,7 @@ option was requested.
         return reason
 
     def wait_for_array(self, wait_for, timeout_ms):
-        """Waits for one or more events to happen.
+        """Waits for one more events to happen.
         Scriptable version of :py:func:`wait_for` .
 
         in wait_for of type :class:`GuestSessionWaitForFlag`
@@ -16963,7 +16368,7 @@ class IProcess(Interface):
         return ProcessStatus(ret)
 
     def wait_for(self, wait_for, timeout_ms):
-        """Waits for one or more events to happen.
+        """Waits for one more events to happen.
 
         in wait_for of type int
             Specifies what to wait for;
@@ -16988,7 +16393,7 @@ class IProcess(Interface):
         return reason
 
     def wait_for_array(self, wait_for, timeout_ms):
-        """Waits for one or more events to happen.
+        """Waits for one more events to happen.
         Scriptable version of :py:func:`wait_for` .
 
         in wait_for of type :class:`ProcessWaitForFlag`
@@ -17642,7 +17047,7 @@ class IGuest(Interface):
     Guest Additions are installed and other OS-specific virtual machine
     properties.
     """
-    __uuid__ = '97927199-7e1f-4094-97ab-92333e727843'
+    __uuid__ = '8011a1b1-6adb-4ffb-a37e-20abdaee4650'
     __wsmap__ = 'managed'
     
     @property
@@ -17663,7 +17068,7 @@ class IGuest(Interface):
     @property
     def additions_run_level(self):
         """Get AdditionsRunLevelType value for 'additionsRunLevel'
-        Current run level of the installed Guest Additions.
+        Current run level of the Guest Additions.
         """
         ret = self._get_attr("additionsRunLevel")
         return AdditionsRunLevelType(ret)
@@ -17671,7 +17076,7 @@ class IGuest(Interface):
     @property
     def additions_version(self):
         """Get str value for 'additionsVersion'
-        Version of the installed Guest Additions in the same format as
+        Version of the Guest Additions in the same format as
         :py:func:`IVirtualBox.version` .
         """
         ret = self._get_attr("additionsVersion")
@@ -17680,31 +17085,12 @@ class IGuest(Interface):
     @property
     def additions_revision(self):
         """Get int value for 'additionsRevision'
-        The internal build revision number of the installed Guest Additions.
+        The internal build revision number of the additions.
         
         See also :py:func:`IVirtualBox.revision` .
         """
         ret = self._get_attr("additionsRevision")
         return ret
-
-    @property
-    def dn_d_source(self):
-        """Get IGuestDnDSource value for 'dnDSource'
-        Retrieves the drag'n drop source implementation for the guest side, that
-        is, handling and retrieving drag'n drop data from the guest.
-        """
-        ret = self._get_attr("dnDSource")
-        return IGuestDnDSource(ret)
-
-    @property
-    def dn_d_target(self):
-        """Get IGuestDnDTarget value for 'dnDTarget'
-        Retrieves the drag'n drop source implementation for the host side. This
-        will allow the host to handle and initiate a drag'n drop operation to copy
-        data from the host to the guest.
-        """
-        ret = self._get_attr("dnDTarget")
-        return IGuestDnDTarget(ret)
 
     @property
     def event_source(self):
@@ -17717,8 +17103,8 @@ class IGuest(Interface):
     @property
     def facilities(self):
         """Get IAdditionsFacility value for 'facilities'
-        Returns a collection of current known facilities. Only returns facilities where
-        a status is known, e.g. facilities with an unknown status will not be returned.
+        Array of current known facilities. Only returns facilities where a status is known,
+        e.g. facilities with an unknown status will not be returned.
         """
         ret = self._get_attr("facilities")
         return [IAdditionsFacility(a) for a in ret]
@@ -17879,6 +17265,300 @@ class IGuest(Interface):
             raise TypeError("allow_interactive_logon can only be an instance of type bool")
         self._call("setCredentials",
                      in_p=[user_name, password, domain, allow_interactive_logon])
+
+    def drag_hg_enter(self, screen_id, y, x, default_action, allowed_actions, formats):
+        """Informs the guest about a Drag and Drop enter event.
+        
+        This is used in Host - Guest direction.
+
+        in screen_id of type int
+            The screen id where the Drag and Drop event occurred.
+
+        in y of type int
+            y-position of the event.
+
+        in x of type int
+            x-position of the event.
+
+        in default_action of type :class:`DragAndDropAction`
+            The default action to use.
+
+        in allowed_actions of type :class:`DragAndDropAction`
+            The actions which are allowed.
+
+        in formats of type str
+            The supported mime types.
+
+        return result_action of type :class:`DragAndDropAction`
+            The resulting action of this event.
+
+        raises :class:`VBoxErrorVmError`
+            VMM device is not available.
+        
+        """
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
+        if not isinstance(y, baseinteger):
+            raise TypeError("y can only be an instance of type baseinteger")
+        if not isinstance(x, baseinteger):
+            raise TypeError("x can only be an instance of type baseinteger")
+        if not isinstance(default_action, DragAndDropAction):
+            raise TypeError("default_action can only be an instance of type DragAndDropAction")
+        if not isinstance(allowed_actions, list):
+            raise TypeError("allowed_actions can only be an instance of type list")
+        for a in allowed_actions[:10]:
+            if not isinstance(a, DragAndDropAction):
+                raise TypeError(\
+                        "array can only contain objects of type DragAndDropAction")
+        if not isinstance(formats, list):
+            raise TypeError("formats can only be an instance of type list")
+        for a in formats[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
+        result_action = self._call("dragHGEnter",
+                     in_p=[screen_id, y, x, default_action, allowed_actions, formats])
+        result_action = DragAndDropAction(result_action)
+        return result_action
+
+    def drag_hg_move(self, screen_id, x, y, default_action, allowed_actions, formats):
+        """Informs the guest about a Drag and Drop move event.
+        
+        This is used in Host - Guest direction.
+
+        in screen_id of type int
+            The screen id where the Drag and Drop event occurred.
+
+        in x of type int
+            x-position of the event.
+
+        in y of type int
+            y-position of the event.
+
+        in default_action of type :class:`DragAndDropAction`
+            The default action to use.
+
+        in allowed_actions of type :class:`DragAndDropAction`
+            The actions which are allowed.
+
+        in formats of type str
+            The supported mime types.
+
+        return result_action of type :class:`DragAndDropAction`
+            The resulting action of this event.
+
+        raises :class:`VBoxErrorVmError`
+            VMM device is not available.
+        
+        """
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
+        if not isinstance(x, baseinteger):
+            raise TypeError("x can only be an instance of type baseinteger")
+        if not isinstance(y, baseinteger):
+            raise TypeError("y can only be an instance of type baseinteger")
+        if not isinstance(default_action, DragAndDropAction):
+            raise TypeError("default_action can only be an instance of type DragAndDropAction")
+        if not isinstance(allowed_actions, list):
+            raise TypeError("allowed_actions can only be an instance of type list")
+        for a in allowed_actions[:10]:
+            if not isinstance(a, DragAndDropAction):
+                raise TypeError(\
+                        "array can only contain objects of type DragAndDropAction")
+        if not isinstance(formats, list):
+            raise TypeError("formats can only be an instance of type list")
+        for a in formats[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
+        result_action = self._call("dragHGMove",
+                     in_p=[screen_id, x, y, default_action, allowed_actions, formats])
+        result_action = DragAndDropAction(result_action)
+        return result_action
+
+    def drag_hg_leave(self, screen_id):
+        """Informs the guest about a Drag and Drop leave event.
+        
+        This is used in Host - Guest direction.
+
+        in screen_id of type int
+            The screen id where the Drag and Drop event occurred.
+
+        raises :class:`VBoxErrorVmError`
+            VMM device is not available.
+        
+        """
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
+        self._call("dragHGLeave",
+                     in_p=[screen_id])
+
+    def drag_hg_drop(self, screen_id, x, y, default_action, allowed_actions, formats):
+        """Informs the guest about a drop event.
+        
+        This is used in Host - Guest direction.
+
+        in screen_id of type int
+            The screen id where the Drag and Drop event occurred.
+
+        in x of type int
+            x-position of the event.
+
+        in y of type int
+            y-position of the event.
+
+        in default_action of type :class:`DragAndDropAction`
+            The default action to use.
+
+        in allowed_actions of type :class:`DragAndDropAction`
+            The actions which are allowed.
+
+        in formats of type str
+            The supported mime types.
+
+        out format_p of type str
+            The resulting format of this event.
+
+        return result_action of type :class:`DragAndDropAction`
+            The resulting action of this event.
+
+        raises :class:`VBoxErrorVmError`
+            VMM device is not available.
+        
+        """
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
+        if not isinstance(x, baseinteger):
+            raise TypeError("x can only be an instance of type baseinteger")
+        if not isinstance(y, baseinteger):
+            raise TypeError("y can only be an instance of type baseinteger")
+        if not isinstance(default_action, DragAndDropAction):
+            raise TypeError("default_action can only be an instance of type DragAndDropAction")
+        if not isinstance(allowed_actions, list):
+            raise TypeError("allowed_actions can only be an instance of type list")
+        for a in allowed_actions[:10]:
+            if not isinstance(a, DragAndDropAction):
+                raise TypeError(\
+                        "array can only contain objects of type DragAndDropAction")
+        if not isinstance(formats, list):
+            raise TypeError("formats can only be an instance of type list")
+        for a in formats[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
+        (format_p, result_action) = self._call("dragHGDrop",
+                     in_p=[screen_id, x, y, default_action, allowed_actions, formats])
+        result_action = DragAndDropAction(result_action)
+        return (format_p, result_action)
+
+    def drag_hg_put_data(self, screen_id, format_p, data):
+        """Informs the guest about a drop data event.
+        
+        This is used in Host - Guest direction.
+
+        in screen_id of type int
+            The screen id where the Drag and Drop event occurred.
+
+        in format_p of type str
+            The mime type the data is in.
+
+        in data of type str
+            The actual data.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        raises :class:`VBoxErrorVmError`
+            VMM device is not available.
+        
+        """
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
+        if not isinstance(format_p, basestring):
+            raise TypeError("format_p can only be an instance of type basestring")
+        if not isinstance(data, list):
+            raise TypeError("data can only be an instance of type list")
+        for a in data[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
+        progress = self._call("dragHGPutData",
+                     in_p=[screen_id, format_p, data])
+        progress = IProgress(progress)
+        return progress
+
+    def drag_gh_pending(self, screen_id):
+        """Ask the guest if there is any Drag and Drop operation pending in the guest.
+        
+        If no Drag and Drop operation is pending currently, Ignore is returned.
+        
+        This is used in Guest - Host direction.
+
+        in screen_id of type int
+            The screen id where the Drag and Drop event occurred.
+
+        out formats of type str
+            On return the supported mime types.
+
+        out allowed_actions of type :class:`DragAndDropAction`
+            On return the actions which are allowed.
+
+        return default_action of type :class:`DragAndDropAction`
+            On return the default action to use.
+
+        raises :class:`VBoxErrorVmError`
+            VMM device is not available.
+        
+        """
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
+        (formats, allowed_actions, default_action) = self._call("dragGHPending",
+                     in_p=[screen_id])
+        allowed_actions = [DragAndDropAction(a) for a in allowed_actions]
+        default_action = DragAndDropAction(default_action)
+        return (formats, allowed_actions, default_action)
+
+    def drag_gh_dropped(self, format_p, action):
+        """Informs the guest that a drop event occurred for a pending Drag and Drop event.
+        
+        This is used in Guest - Host direction.
+
+        in format_p of type str
+            The mime type the data must be in.
+
+        in action of type :class:`DragAndDropAction`
+            The action to use.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        raises :class:`VBoxErrorVmError`
+            VMM device is not available.
+        
+        """
+        if not isinstance(format_p, basestring):
+            raise TypeError("format_p can only be an instance of type basestring")
+        if not isinstance(action, DragAndDropAction):
+            raise TypeError("action can only be an instance of type DragAndDropAction")
+        progress = self._call("dragGHDropped",
+                     in_p=[format_p, action])
+        progress = IProgress(progress)
+        return progress
+
+    def drag_gh_get_data(self):
+        """Fetch the data of a previously Drag and Drop event from the guest.
+        
+        This is used in Guest - Host direction.
+
+        return data of type str
+            The actual data.
+
+        raises :class:`VBoxErrorVmError`
+            VMM device is not available.
+        
+        """
+        data = self._call("dragGHGetData")
+        return data
 
     def create_session(self, user, password, domain, session_name):
         """Creates a new guest session for controlling the guest. The new session
@@ -20328,7 +20008,7 @@ class IKeyboard(Interface):
     Use this interface to send keystrokes or the Ctrl-Alt-Del sequence
     to the virtual machine.
     """
-    __uuid__ = '71aa2898-28bd-43fe-8c98-e53321451db7'
+    __uuid__ = 'f6916ec5-a881-4237-898f-7de58cf88672'
     __wsmap__ = 'managed'
     
     def put_scancode(self, scancode):
@@ -20376,17 +20056,6 @@ class IKeyboard(Interface):
         
         """
         self._call("putCAD")
-
-    def release_keys(self):
-        """Causes the virtual keyboard to release any keys which are
-        currently pressed. Useful when host and guest keyboard may be out
-        of sync.
-
-        raises :class:`VBoxErrorIprtError`
-            Could not release some or all keys.
-        
-        """
-        self._call("releaseKeys")
 
     @property
     def event_source(self):
@@ -20663,46 +20332,21 @@ class IMouse(Interface):
         return IEventSource(ret)
 
 
-class IDisplaySourceBitmap(Interface):
-    """
-    Information about the screen bitmap.
-    """
-    __uuid__ = 'b00907f7-d85e-4dce-b1a6-16a2d91b0269'
-    __wsmap__ = 'suppress'
-    
-    @property
-    def screen_id(self):
-        """Get int value for 'screenId'"""
-        ret = self._get_attr("screenId")
-        return ret
-
-    def query_bitmap_info(self):
-        """Information about the screen bitmap.
-
-        out address of type str
-
-        out width of type int
-
-        out height of type int
-
-        out bits_per_pixel of type int
-
-        out bytes_per_line of type int
-
-        out pixel_format of type int
-
-        """
-        (address, width, height, bits_per_pixel, bytes_per_line, pixel_format) = self._call("queryBitmapInfo")
-        return (address, width, height, bits_per_pixel, bytes_per_line, pixel_format)
-
-
 class IFramebuffer(Interface):
     """
-    Frame buffer width, in pixels.
+    Address of the start byte of the frame buffer.
     """
-    __uuid__ = '16d73cd3-da84-4a11-a607-ebab57d050d0'
+    __uuid__ = 'e3f122c0-adab-4fc9-a8dc-da112fb48428'
     __wsmap__ = 'managed'
     
+    @property
+    def address(self):
+        """Get str value for 'address'
+        Address of the start byte of the frame buffer.
+        """
+        ret = self._get_attr("address")
+        return ret
+
     @property
     def width(self):
         """Get int value for 'width'
@@ -20722,7 +20366,8 @@ class IFramebuffer(Interface):
     @property
     def bits_per_pixel(self):
         """Get int value for 'bitsPerPixel'
-        Color depth, in bits per pixel.
+        Color depth, in bits per pixel. When :py:func:`pixel_format`  is :py:attr:`FramebufferPixelFormat.fourcc_rgb` FOURCC_RGB, valid values
+        are: 8, 15, 16, 24 and 32.
         """
         ret = self._get_attr("bitsPerPixel")
         return ret
@@ -20730,7 +20375,8 @@ class IFramebuffer(Interface):
     @property
     def bytes_per_line(self):
         """Get int value for 'bytesPerLine'
-        Scan line size, in bytes.
+        Scan line size, in bytes. When :py:func:`pixel_format`  is :py:attr:`FramebufferPixelFormat.fourcc_rgb` FOURCC_RGB, the
+        size of the scan line must be aligned to 32 bits.
         """
         ret = self._get_attr("bytesPerLine")
         return ret
@@ -20738,12 +20384,21 @@ class IFramebuffer(Interface):
     @property
     def pixel_format(self):
         """Get int value for 'pixelFormat'
-        Frame buffer pixel format. It's one of the values defined by :py:class:`BitmapFormat` .
+        Frame buffer pixel format. It's either one of the values defined by :py:class:`FramebufferPixelFormat`  or a raw FOURCC code.
         
-        This attribute must never (and will never) return :py:attr:`BitmapFormat.opaque`  -- the format of the frame
+        This attribute must never (and will never) return :py:attr:`FramebufferPixelFormat.opaque`  -- the format of the frame
         buffer must be always known.
         """
         ret = self._get_attr("pixelFormat")
+        return ret
+
+    @property
+    def uses_guest_vram(self):
+        """Get bool value for 'usesGuestVRAM'
+        Defines whether this frame buffer uses the virtual video card's memory
+        buffer (guest VRAM) directly or not.
+        """
+        ret = self._get_attr("usesGuestVRAM")
         return ret
 
     @property
@@ -20784,6 +20439,22 @@ class IFramebuffer(Interface):
         ret = self._get_attr("winId")
         return ret
 
+    def lock(self):
+        """Locks the frame buffer.
+        Gets called by the IDisplay object where this frame buffer is
+        bound to.
+
+        """
+        self._call("lock")
+
+    def unlock(self):
+        """Unlocks the frame buffer.
+        Gets called by the IDisplay object where this frame buffer is
+        bound to.
+
+        """
+        self._call("unlock")
+
     def notify_update(self, x, y, width, height):
         """Informs about an update.
         Gets called by the display object where this buffer is
@@ -20809,49 +20480,99 @@ class IFramebuffer(Interface):
         self._call("notifyUpdate",
                      in_p=[x, y, width, height])
 
-    def notify_update_image(self, x, y, width, height, image):
-        """Informs about an update and provides 32bpp bitmap.
-
-        in x of type int
-
-        in y of type int
-
-        in width of type int
-
-        in height of type int
-
-        in image of type str
-            Array with 32BPP image data.
-
-        """
-        if not isinstance(x, baseinteger):
-            raise TypeError("x can only be an instance of type baseinteger")
-        if not isinstance(y, baseinteger):
-            raise TypeError("y can only be an instance of type baseinteger")
-        if not isinstance(width, baseinteger):
-            raise TypeError("width can only be an instance of type baseinteger")
-        if not isinstance(height, baseinteger):
-            raise TypeError("height can only be an instance of type baseinteger")
-        if not isinstance(image, list):
-            raise TypeError("image can only be an instance of type list")
-        for a in image[:10]:
-            if not isinstance(a, basestring):
-                raise TypeError(\
-                        "array can only contain objects of type basestring")
-        self._call("notifyUpdateImage",
-                     in_p=[x, y, width, height, image])
-
-    def notify_change(self, screen_id, x_origin, y_origin, width, height):
-        """Requests a size change.
+    def request_resize(self, screen_id, pixel_format, vram, bits_per_pixel, bytes_per_line, width, height):
+        """Requests a size and pixel format change.
+        
+        There are two modes of working with the video buffer of the virtual
+        machine. The *indirect* mode implies that the IFramebuffer
+        implementation allocates a memory buffer for the requested display mode
+        and provides it to the virtual machine. In *direct* mode, the
+        IFramebuffer implementation uses the memory buffer allocated and owned
+        by the virtual machine. This buffer represents the video memory of the
+        emulated video adapter (so called *guest VRAM*). The direct mode is
+        usually faster because the implementation gets a raw pointer to the
+        guest VRAM buffer which it can directly use for visualizing the contents
+        of the virtual display, as opposed to the indirect mode where the
+        contents of guest VRAM are copied to the memory buffer provided by
+        the implementation every time a display update occurs.
+        
+        It is important to note that the direct mode is really fast only when
+        the implementation uses the given guest VRAM buffer directly, for
+        example, by blitting it to the window representing the virtual machine's
+        display, which saves at least one copy operation comparing to the
+        indirect mode. However, using the guest VRAM buffer directly is not
+        always possible: the format and the color depth of this buffer may be
+        not supported by the target window, or it may be unknown (opaque) as in
+        case of text or non-linear multi-plane VGA video modes. In this case,
+        the indirect mode (that is always available) should be used as a
+        fallback: when the guest VRAM contents are copied to the
+        implementation-provided memory buffer, color and format conversion is
+        done automatically by the underlying code.
+        
+        The @a pixelFormat parameter defines whether the direct mode is
+        available or not. If @a pixelFormat is :py:attr:`FramebufferPixelFormat.opaque`  then direct access to the guest
+        VRAM buffer is not available -- the @a VRAM, @a bitsPerPixel and
+        @a bytesPerLine parameters must be ignored and the implementation must use
+        the indirect mode (where it provides its own buffer in one of the
+        supported formats). In all other cases, @a pixelFormat together with
+        @a bitsPerPixel and @a bytesPerLine define the format of the video memory
+        buffer pointed to by the @a VRAM parameter and the implementation is
+        free to choose which mode to use. To indicate that this frame buffer uses
+        the direct mode, the implementation of the :py:func:`uses_guest_vram` 
+        attribute must return @c true and :py:func:`address`  must
+        return exactly the same address that is passed in the @a VRAM parameter
+        of this method; otherwise it is assumed that the indirect strategy is
+        chosen.
+        
+        The @a width and @a height parameters represent the size of the
+        requested display mode in both modes. In case of indirect mode, the
+        provided memory buffer should be big enough to store data of the given
+        display mode. In case of direct mode, it is guaranteed that the given
+        @a VRAM buffer contains enough space to represent the display mode of the
+        given size. Note that this frame buffer's :py:func:`width`  and :py:func:`height`  attributes must return exactly the same values as
+        passed to this method after the resize is completed (see below).
+        
+        The @a finished output parameter determines if the implementation has
+        finished resizing the frame buffer or not. If, for some reason, the
+        resize cannot be finished immediately during this call, @a finished
+        must be set to @c false, and the implementation must call
+        :py:func:`IDisplay.resize_completed`  after it has returned from
+        this method as soon as possible. If @a finished is @c false, the
+        machine will not call any frame buffer methods until
+        :py:func:`IDisplay.resize_completed`  is called.
+        
+        Note that if the direct mode is chosen, the :py:func:`bits_per_pixel` ,
+        :py:func:`bytes_per_line`  and :py:func:`pixel_format`  attributes of
+        this frame buffer must return exactly the same values as specified in the
+        parameters of this method, after the resize is completed. If the
+        indirect mode is chosen, these attributes must return values describing
+        the format of the implementation's own memory buffer :py:func:`address`  points to. Note also that the :py:func:`bits_per_pixel` 
+        value must always correlate with :py:func:`pixel_format` . Note that
+        the :py:func:`pixel_format`  attribute must never return :py:attr:`FramebufferPixelFormat.opaque`  regardless of the selected mode.
+        
+        
+        This method is called by the IDisplay object under the
+        :py:func:`lock`  provided by this IFramebuffer
+        implementation. If this method returns @c false in @a finished, then
+        this lock is not released until
+        :py:func:`IDisplay.resize_completed`  is called.
 
         in screen_id of type int
-            Logical guest screen number.
+            Logical screen number. Must be used in the corresponding call to
+            :py:func:`IDisplay.resize_completed`  if this call is made.
 
-        in x_origin of type int
-            Location of the screen in the guest.
+        in pixel_format of type int
+            Pixel format of the memory buffer pointed to by @a VRAM.
+            See also :py:class:`FramebufferPixelFormat` .
 
-        in y_origin of type int
-            Location of the screen in the guest.
+        in vram of type str
+            Pointer to the virtual video card's VRAM (may be @c null).
+
+        in bits_per_pixel of type int
+            Color depth, bits per pixel.
+
+        in bytes_per_line of type int
+            Size of one scan line, in bytes.
 
         in width of type int
             Width of the guest display, in pixels.
@@ -20859,19 +20580,29 @@ class IFramebuffer(Interface):
         in height of type int
             Height of the guest display, in pixels.
 
+        return finished of type bool
+            Can the VM start using the new frame buffer immediately
+            after this method returns or it should wait for
+            :py:func:`IDisplay.resize_completed` .
+
         """
         if not isinstance(screen_id, baseinteger):
             raise TypeError("screen_id can only be an instance of type baseinteger")
-        if not isinstance(x_origin, baseinteger):
-            raise TypeError("x_origin can only be an instance of type baseinteger")
-        if not isinstance(y_origin, baseinteger):
-            raise TypeError("y_origin can only be an instance of type baseinteger")
+        if not isinstance(pixel_format, baseinteger):
+            raise TypeError("pixel_format can only be an instance of type baseinteger")
+        if not isinstance(vram, basestring):
+            raise TypeError("vram can only be an instance of type basestring")
+        if not isinstance(bits_per_pixel, baseinteger):
+            raise TypeError("bits_per_pixel can only be an instance of type baseinteger")
+        if not isinstance(bytes_per_line, baseinteger):
+            raise TypeError("bytes_per_line can only be an instance of type baseinteger")
         if not isinstance(width, baseinteger):
             raise TypeError("width can only be an instance of type baseinteger")
         if not isinstance(height, baseinteger):
             raise TypeError("height can only be an instance of type baseinteger")
-        self._call("notifyChange",
-                     in_p=[screen_id, x_origin, y_origin, width, height])
+        finished = self._call("requestResize",
+                     in_p=[screen_id, pixel_format, vram, bits_per_pixel, bytes_per_line, width, height])
+        return finished
 
     def video_mode_supported(self, width, height, bpp):
         """Returns whether the frame buffer implementation is willing to
@@ -21002,12 +20733,8 @@ class IFramebuffer(Interface):
         """
         if not isinstance(type_p, baseinteger):
             raise TypeError("type_p can only be an instance of type baseinteger")
-        if not isinstance(data, list):
-            raise TypeError("data can only be an instance of type list")
-        for a in data[:10]:
-            if not isinstance(a, basestring):
-                raise TypeError(\
-                        "array can only contain objects of type basestring")
+        if not isinstance(data, basestring):
+            raise TypeError("data can only be an instance of type basestring")
         self._call("notify3DEvent",
                      in_p=[type_p, data])
 
@@ -21099,17 +20826,11 @@ class IDisplay(Interface):
     IFramebuffer interface. Examples of the output target are a window on
     the host computer or an RDP session's display on a remote computer.
     """
-    __uuid__ = '1659de81-24f0-41a9-afd4-abd03dcfbcbc'
+    __uuid__ = '480b372c-c0b5-4c23-9bd7-dcbb85b1594c'
     __wsmap__ = 'managed'
     
     def get_screen_resolution(self, screen_id):
-        """Queries certain attributes such as display width, height, color depth
-        and the X and Y origin for a given guest screen.
-        
-        The parameters @a xOrigin and @a yOrigin return the X and Y
-        coordinates of the framebuffer's origin.
-        
-        All return parameters are optional.
+        """Queries display width, height and color depth for given screen.
 
         in screen_id of type int
 
@@ -21130,8 +20851,8 @@ class IDisplay(Interface):
                      in_p=[screen_id])
         return (width, height, bits_per_pixel, x_origin, y_origin)
 
-    def attach_framebuffer(self, screen_id, framebuffer):
-        """Sets the graphics update target for a screen.
+    def set_framebuffer(self, screen_id, framebuffer):
+        """Sets the framebuffer for given screen.
 
         in screen_id of type int
 
@@ -21142,34 +20863,27 @@ class IDisplay(Interface):
             raise TypeError("screen_id can only be an instance of type baseinteger")
         if not isinstance(framebuffer, IFramebuffer):
             raise TypeError("framebuffer can only be an instance of type IFramebuffer")
-        self._call("attachFramebuffer",
+        self._call("setFramebuffer",
                      in_p=[screen_id, framebuffer])
 
-    def detach_framebuffer(self, screen_id):
-        """Removes the graphics updates target for a screen.
+    def get_framebuffer(self, screen_id):
+        """Queries the framebuffer for given screen.
 
         in screen_id of type int
+
+        out framebuffer of type :class:`IFramebuffer`
+
+        out x_origin of type int
+
+        out y_origin of type int
 
         """
         if not isinstance(screen_id, baseinteger):
             raise TypeError("screen_id can only be an instance of type baseinteger")
-        self._call("detachFramebuffer",
-                     in_p=[screen_id])
-
-    def query_framebuffer(self, screen_id):
-        """Queries the graphics updates targets for a screen.
-
-        in screen_id of type int
-
-        return framebuffer of type :class:`IFramebuffer`
-
-        """
-        if not isinstance(screen_id, baseinteger):
-            raise TypeError("screen_id can only be an instance of type baseinteger")
-        framebuffer = self._call("queryFramebuffer",
+        (framebuffer, x_origin, y_origin) = self._call("getFramebuffer",
                      in_p=[screen_id])
         framebuffer = IFramebuffer(framebuffer)
-        return framebuffer
+        return (framebuffer, x_origin, y_origin)
 
     def set_video_mode_hint(self, display, enabled, change_origin, origin_x, origin_y, width, height, bits_per_pixel):
         """Asks VirtualBox to request the given video mode from
@@ -21250,11 +20964,10 @@ class IDisplay(Interface):
         self._call("setSeamlessMode",
                      in_p=[enabled])
 
-    def take_screen_shot(self, screen_id, address, width, height, bitmap_format):
-        """Takes a screen shot of the requested size and format and copies it to the
-        buffer allocated by the caller and pointed to by @a address.
-        The buffer size must be enough for a 32 bits per pixel bitmap,
-        i.e. width * height * 4 bytes.
+    def take_screen_shot(self, screen_id, address, width, height):
+        """Takes a screen shot of the requested size and copies it to the
+        32-bpp buffer allocated by the caller and pointed to by @a address.
+        A pixel consists of 4 bytes in order: B, G, R, 0.
         
         This API can be used only locally by a VM process through the
         COM/XPCOM C++ API as it requires pointer support. It is not
@@ -21270,8 +20983,12 @@ class IDisplay(Interface):
 
         in height of type int
 
-        in bitmap_format of type :class:`BitmapFormat`
-
+        raises :class:`OleErrorNotimpl`
+            Feature not implemented.
+        
+        raises :class:`VBoxErrorIprtError`
+            Could not take a screenshot.
+        
         """
         if not isinstance(screen_id, baseinteger):
             raise TypeError("screen_id can only be an instance of type baseinteger")
@@ -21281,17 +20998,20 @@ class IDisplay(Interface):
             raise TypeError("width can only be an instance of type baseinteger")
         if not isinstance(height, baseinteger):
             raise TypeError("height can only be an instance of type baseinteger")
-        if not isinstance(bitmap_format, BitmapFormat):
-            raise TypeError("bitmap_format can only be an instance of type BitmapFormat")
         self._call("takeScreenShot",
-                     in_p=[screen_id, address, width, height, bitmap_format])
+                     in_p=[screen_id, address, width, height])
 
-    def take_screen_shot_to_array(self, screen_id, width, height, bitmap_format):
-        """Takes a guest screen shot of the requested size and format
-        and returns it as an array of bytes.
+    def take_screen_shot_to_array(self, screen_id, width, height):
+        """Takes a guest screen shot of the requested size and returns it as
+        an array of bytes in uncompressed 32-bpp RGBA format.
+        A pixel consists of 4 bytes in order: R, G, B, 0xFF.
+        
+        This API is slow, but could be the only option to get guest screenshot
+        for scriptable languages not allowed to manipulate with addresses
+        directly.
 
         in screen_id of type int
-            The guest monitor to take screenshot from.
+            Monitor to take screenshot from.
 
         in width of type int
             Desired image width.
@@ -21299,12 +21019,15 @@ class IDisplay(Interface):
         in height of type int
             Desired image height.
 
-        in bitmap_format of type :class:`BitmapFormat`
-            The requested format.
-
         return screen_data of type str
             Array with resulting screen data.
 
+        raises :class:`OleErrorNotimpl`
+            Feature not implemented.
+        
+        raises :class:`VBoxErrorIprtError`
+            Could not take a screenshot.
+        
         """
         if not isinstance(screen_id, baseinteger):
             raise TypeError("screen_id can only be an instance of type baseinteger")
@@ -21312,10 +21035,41 @@ class IDisplay(Interface):
             raise TypeError("width can only be an instance of type baseinteger")
         if not isinstance(height, baseinteger):
             raise TypeError("height can only be an instance of type baseinteger")
-        if not isinstance(bitmap_format, BitmapFormat):
-            raise TypeError("bitmap_format can only be an instance of type BitmapFormat")
         screen_data = self._call("takeScreenShotToArray",
-                     in_p=[screen_id, width, height, bitmap_format])
+                     in_p=[screen_id, width, height])
+        return screen_data
+
+    def take_screen_shot_png_to_array(self, screen_id, width, height):
+        """Takes a guest screen shot of the requested size and returns it as
+        PNG image in array.
+
+        in screen_id of type int
+            Monitor to take the screenshot from.
+
+        in width of type int
+            Desired image width.
+
+        in height of type int
+            Desired image height.
+
+        return screen_data of type str
+            Array with resulting screen data.
+
+        raises :class:`OleErrorNotimpl`
+            Feature not implemented.
+        
+        raises :class:`VBoxErrorIprtError`
+            Could not take a screenshot.
+        
+        """
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
+        if not isinstance(width, baseinteger):
+            raise TypeError("width can only be an instance of type baseinteger")
+        if not isinstance(height, baseinteger):
+            raise TypeError("height can only be an instance of type baseinteger")
+        screen_data = self._call("takeScreenShotPNGToArray",
+                     in_p=[screen_id, width, height])
         return screen_data
 
     def draw_to_screen(self, screen_id, address, x, y, width, height):
@@ -21372,16 +21126,18 @@ class IDisplay(Interface):
         """
         self._call("invalidateAndUpdate")
 
-    def invalidate_and_update_screen(self, screen_id):
-        """Redraw the specified VM screen.
+    def resize_completed(self, screen_id):
+        """Signals that a framebuffer has completed the resize operation.
 
         in screen_id of type int
-            The guest screen to redraw.
 
+        raises :class:`VBoxErrorNotSupported`
+            Operation only valid for external frame buffers.
+        
         """
         if not isinstance(screen_id, baseinteger):
             raise TypeError("screen_id can only be an instance of type baseinteger")
-        self._call("invalidateAndUpdateScreen",
+        self._call("resizeCompleted",
                      in_p=[screen_id])
 
     def complete_vhwa_command(self, command):
@@ -21430,36 +21186,6 @@ class IDisplay(Interface):
             raise TypeError("height can only be an instance of type baseinteger")
         self._call("viewportChanged",
                      in_p=[screen_id, x, y, width, height])
-
-    def query_source_bitmap(self, screen_id):
-        """Obtains the guest screen bitmap parameters.
-
-        in screen_id of type int
-
-        out display_source_bitmap of type :class:`IDisplaySourceBitmap`
-
-        """
-        if not isinstance(screen_id, baseinteger):
-            raise TypeError("screen_id can only be an instance of type baseinteger")
-        display_source_bitmap = self._call("querySourceBitmap",
-                     in_p=[screen_id])
-        display_source_bitmap = IDisplaySourceBitmap(display_source_bitmap)
-        return display_source_bitmap
-
-    def set_framebuffer_update_mode(self, screen_id, framebuffer_update_mode):
-        """Select how the framebuffer is informed about screen updates.
-
-        in screen_id of type int
-
-        in framebuffer_update_mode of type :class:`FramebufferUpdateMode`
-
-        """
-        if not isinstance(screen_id, baseinteger):
-            raise TypeError("screen_id can only be an instance of type baseinteger")
-        if not isinstance(framebuffer_update_mode, FramebufferUpdateMode):
-            raise TypeError("framebuffer_update_mode can only be an instance of type FramebufferUpdateMode")
-        self._call("setFramebufferUpdateMode",
-                     in_p=[screen_id, framebuffer_update_mode])
 
 
 class INetworkAdapter(Interface):
@@ -23637,7 +23363,7 @@ class IInternalSessionControl(Interface):
     """
     PID of the process that has created this Session object.
     """
-    __uuid__ = 'b7c71040-2761-42c4-a44a-4e2c2d7e2820'
+    __uuid__ = '2d2124a7-0f62-4907-ae21-eee5a559bdde'
     __wsmap__ = 'suppress'
     
     def get_pid(self):
@@ -23878,17 +23604,17 @@ class IInternalSessionControl(Interface):
         self._call("onClipboardModeChange",
                      in_p=[clipboard_mode])
 
-    def on_dn_d_mode_change(self, dnd_mode):
-        """Notification when the drag'n drop mode changes.
+    def on_drag_and_drop_mode_change(self, drag_and_drop_mode):
+        """Notification when the drag'n'drop mode changes.
 
-        in dnd_mode of type :class:`DnDMode`
-            The new mode for drag'n drop.
+        in drag_and_drop_mode of type :class:`DragAndDropMode`
+            The new mode for drag'n'drop.
 
         """
-        if not isinstance(dnd_mode, DnDMode):
-            raise TypeError("dnd_mode can only be an instance of type DnDMode")
-        self._call("onDnDModeChange",
-                     in_p=[dnd_mode])
+        if not isinstance(drag_and_drop_mode, DragAndDropMode):
+            raise TypeError("drag_and_drop_mode can only be an instance of type DragAndDropMode")
+        self._call("onDragAndDropModeChange",
+                     in_p=[drag_and_drop_mode])
 
     def on_cpu_change(self, cpu, add):
         """Notification when a CPU changes.
@@ -24069,7 +23795,7 @@ class IInternalSessionControl(Interface):
         self._call("onBandwidthGroupChange",
                      in_p=[bandwidth_group])
 
-    def access_guest_property(self, name, value, flags, access_mode):
+    def access_guest_property(self, name, value, flags, is_setter):
         """Called by :py:func:`IMachine.get_guest_property`  and by
         :py:func:`IMachine.set_guest_property`  in order to read and
         modify guest properties.
@@ -24080,8 +23806,7 @@ class IInternalSessionControl(Interface):
 
         in flags of type str
 
-        in access_mode of type int
-            0 = get, 1 = set, 2 = delete.
+        in is_setter of type bool
 
         out ret_value of type str
 
@@ -24102,10 +23827,10 @@ class IInternalSessionControl(Interface):
             raise TypeError("value can only be an instance of type basestring")
         if not isinstance(flags, basestring):
             raise TypeError("flags can only be an instance of type basestring")
-        if not isinstance(access_mode, baseinteger):
-            raise TypeError("access_mode can only be an instance of type baseinteger")
+        if not isinstance(is_setter, bool):
+            raise TypeError("is_setter can only be an instance of type bool")
         (ret_value, ret_timestamp, ret_flags) = self._call("accessGuestProperty",
-                     in_p=[name, value, flags, access_mode])
+                     in_p=[name, value, flags, is_setter])
         return (ret_value, ret_timestamp, ret_flags)
 
     def enumerate_guest_properties(self, patterns):
@@ -25508,7 +25233,8 @@ class IExtPackManager(Interface):
     """
     Interface for managing VirtualBox Extension Packs.
     
-    @todo Describe extension packs, how they are managed and how to create one.
+    TODO: Describe extension packs, how they are managed and how to create
+    one.
     """
     __uuid__ = '3295e6ce-b051-47b2-9514-2c588bfe7554'
     __wsmap__ = 'suppress'
@@ -26337,12 +26063,6 @@ class ISnapshotTakenEvent(ISnapshotEvent):
     __uuid__ = 'd27c0b3d-6038-422c-b45e-6d4a0503d9f1'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_snapshot_taken
-    @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
-        return ret
-
 
 class ISnapshotDeletedEvent(ISnapshotEvent):
     """
@@ -26359,12 +26079,6 @@ class ISnapshotDeletedEvent(ISnapshotEvent):
     __uuid__ = 'c48f3401-4a9e-43f4-b7a7-54bd285e22f4'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_snapshot_deleted
-    @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
-        return ret
-
 
 class ISnapshotChangedEvent(ISnapshotEvent):
     """
@@ -26374,12 +26088,6 @@ class ISnapshotChangedEvent(ISnapshotEvent):
     __uuid__ = '07541941-8079-447a-a33e-47a69c7980db'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_snapshot_changed
-    @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
-        return ret
-
 
 class IMousePointerShapeChangedEvent(IEvent):
     """
@@ -26571,12 +26279,6 @@ class IAdditionsStateChangedEvent(IEvent):
     __uuid__ = 'D70F7915-DA7C-44C8-A7AC-9F173490446A'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_additions_state_changed
-    @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
-        return ret
-
 
 class INetworkAdapterChangedEvent(IEvent):
     """
@@ -26644,12 +26346,6 @@ class IStorageControllerChangedEvent(IEvent):
     __uuid__ = '715212BF-DA59-426E-8230-3831FAA52C56'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_storage_controller_changed
-    @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
-        return ret
-
 
 class IMediumChangedEvent(IEvent):
     """
@@ -26685,20 +26381,20 @@ class IClipboardModeChangedEvent(IEvent):
         return ClipboardMode(ret)
 
 
-class IDnDModeChangedEvent(IEvent):
+class IDragAndDropModeChangedEvent(IEvent):
     """
-    Notification when the drag'n drop mode changes.
+    Notification when the drag'n'drop mode changes.
     """
-    __uuid__ = 'b55cf856-1f8b-4692-abb4-462429fae5e9'
+    __uuid__ = 'e90b8850-ac8e-4dff-8059-4100ae2c3c3d'
     __wsmap__ = 'managed'
-    id = VBoxEventType.on_dn_d_mode_changed
+    id = VBoxEventType.on_drag_and_drop_mode_changed
     @property
-    def dnd_mode(self):
-        """Get DnDMode value for 'dndMode'
-        The new drag'n drop mode.
+    def drag_and_drop_mode(self):
+        """Get DragAndDropMode value for 'dragAndDropMode'
+        The new drag'n'drop mode.
         """
-        ret = self._get_attr("dndMode")
-        return DnDMode(ret)
+        ret = self._get_attr("dragAndDropMode")
+        return DragAndDropMode(ret)
 
 
 class ICPUChangedEvent(IEvent):
@@ -27159,12 +26855,6 @@ class IGuestFileOffsetChangedEvent(IGuestFileIOEvent):
     __uuid__ = 'e8f79a21-1207-4179-94cf-ca250036308f'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_guest_file_offset_changed
-    @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
-        return ret
-
 
 class IGuestFileReadEvent(IGuestFileIOEvent):
     """
@@ -27189,12 +26879,6 @@ class IGuestFileWriteEvent(IGuestFileIOEvent):
     __uuid__ = 'e062a915-3cf5-4c0a-bc90-9b8d4cc94d89'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_guest_file_write
-    @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
-        return ret
-
 
 class IVRDEServerChangedEvent(IEvent):
     """
@@ -27206,12 +26890,6 @@ class IVRDEServerChangedEvent(IEvent):
     __uuid__ = 'a06fd66a-3188-4c8c-8756-1395e8cb691c'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_vrde_server_changed
-    @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
-        return ret
-
 
 class IVRDEServerInfoChangedEvent(IEvent):
     """
@@ -27222,12 +26900,6 @@ class IVRDEServerInfoChangedEvent(IEvent):
     __uuid__ = 'dd6a1080-e1b7-4339-a549-f0878115596e'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_vrde_server_info_changed
-    @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
-        return ret
-
 
 class IVideoCaptureChangedEvent(IEvent):
     """
@@ -27236,12 +26908,6 @@ class IVideoCaptureChangedEvent(IEvent):
     __uuid__ = '6215d169-25dd-4719-ab34-c908701efb58'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_video_capture_changed
-    @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
-        return ret
-
 
 class IUSBControllerChangedEvent(IEvent):
     """
@@ -27253,12 +26919,6 @@ class IUSBControllerChangedEvent(IEvent):
     __uuid__ = '93BADC0C-61D9-4940-A084-E6BB29AF3D83'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_usb_controller_changed
-    @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
-        return ret
-
 
 class IUSBDeviceStateChangedEvent(IEvent):
     """
@@ -27558,12 +27218,6 @@ class ICanShowWindowEvent(IVetoEvent):
     __uuid__ = 'adf292b0-92c9-4a77-9d35-e058b39fe0b9'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_can_show_window
-    @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
-        return ret
-
 
 class IShowWindowEvent(IEvent):
     """
@@ -28041,9 +27695,3 @@ class IHostNameResolutionConfigurationChangeEvent(IEvent):
     __uuid__ = 'f9b9e1cf-cb63-47a1-84fb-02c4894b89a9'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_host_name_resolution_configuration_change
-    @property
-    def midl_does_not_lik_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikEmptyInterfaces")
-        return ret
-
