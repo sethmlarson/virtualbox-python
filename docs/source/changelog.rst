@@ -1,11 +1,17 @@
 Change log
 ==========
 
+version 0.2.1
+
+* Cleanup managers at exiti (reported by @jiml521).
+* Add three time check for attribute in xpcom interface object before failing (reported
+  by @shohamp). 
+
 version 0.2.0
 
 * This change introduces some significant (potential compatability breaking) 
   updates from the latest VirtualBox.xidl.
-* Bug fixes in IMachine (highlighted by @danikdanik).
+* Bug fixes in IMachine (reported by @danikdanik).
 * IHost API issue workaround by @wndhydrnt.
 
 version 0.1.6
