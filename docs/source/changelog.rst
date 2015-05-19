@@ -1,7 +1,7 @@
 Change log
 ==========
 
-version 0.2.1
+version 0.2.2
 
 * Cleanup managers at exiti (reported by @jiml521).
 * Add three time check for attribute in xpcom interface object before failing (reported
