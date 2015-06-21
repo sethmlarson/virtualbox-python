@@ -3,3 +3,6 @@
 *.egg
 *.zip
 *.swp
+
+# PyCharm / IntelliJ projects
+.idea/**

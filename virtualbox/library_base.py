@@ -12,6 +12,8 @@ try:
     import __builtin__ as builtin 
 except:
     import builtins as builtin
+    def cmp(a,b):
+        return (a > b) - (a < b)
 
 
 def pythonic_name(name):
