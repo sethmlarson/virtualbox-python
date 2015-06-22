@@ -12,9 +12,6 @@ try:
     import __builtin__ as builtin 
 except:
     import builtins as builtin
-    def cmp(a,b):
-        return (a > b) - (a < b)
-
 
 def pythonic_name(name):
     s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
@@ -82,7 +79,7 @@ class Enum(object):
         return self.__cmp__(k) == 0
 
     def __cmp__(self, k):
-        return cmp(int(self), int(k))
+        return (int(self) > int(k)) - (int(self) < int(k))
 
     def __getitem__(self, k):
         return self.__class__[k]
