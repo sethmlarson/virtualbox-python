@@ -132,21 +132,21 @@ class Interface(object):
             return cast_to_valuetype(value)
 
     def _search_attr(self, name, prefix=None):
-        attr_name = name
-        # Dodgy hack to triple check the xpcom interface object has the attribute before
-        # raising what is going to be an unrecoverable attr error.
+        attr_names = [name]
+        if prefix is not None:
+            attr_names.append(prefix + name[0].upper() + name[1:])
+        # Sometimes xpcom interface fails to return the attribute.  Check a few
+        # times before giving up.
         for i in range(3):
-            attr = getattr(self._i, attr_name, None)
-            # If a prefix is defined, try to get that prefixed name and use that
-            # attribute instead, else, stick with the attr value pulled out above.
-            if prefix is not None:
-                prefix_name = prefix + name[0].upper() + name[1:]
-                attr = getattr(self._i, prefix_name, attr)
-            if attr:
-                break
+            for attr_name in attr_names:
+                attr = getattr(self._i, attr_name, self)
+                if attr is not self:
+                    break 
             else:
-                # Give the interface a chance to be "sane"
+                # Failed to get attribute, do a quick sleep and try again.
                 time.sleep(0.1)
+                continue
+            break
         else:
             raise AttributeError("Failed to find attribute %s in %s" % (name, self))
         return attr
