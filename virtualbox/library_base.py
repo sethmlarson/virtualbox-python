@@ -13,7 +13,6 @@ try:
 except:
     import builtins as builtin
 
-
 def pythonic_name(name):
     s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
     name = re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
@@ -80,7 +79,7 @@ class Enum(object):
         return self.__cmp__(k) == 0
 
     def __cmp__(self, k):
-        return cmp(int(self), int(k))
+        return (int(self) > int(k)) - (int(self) < int(k))
 
     def __getitem__(self, k):
         return self.__class__[k]

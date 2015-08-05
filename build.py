@@ -11,6 +11,9 @@ import sys
 import os
 import re
 import hashlib
+import urllib2
+import shutil
+import begin
 
 try:
     import __builtin__ as builtin 
@@ -636,16 +639,52 @@ def preprocess(xidl, target):
 #  Where it all begins... 
 #
 ###########################################################
-XIDL = """\
-http://www.virtualbox.org/svn/vbox/trunk/src/VBox/Main/idl/VirtualBox.xidl"""
 
-def main(virtualbox_xidl):
+def download_master(output_path):
+    "Download the master xidl"
+    xidl = "http://www.virtualbox.org/svn/vbox/trunk/src/VBox/Main/idl/VirtualBox.xidl"
+    if 0 != os.system('wget -O %s %s' % (output_path, xidl)):
+        assert 0 == os.system('curl %s > %s' % (xidl, output_path) ) 
+
+def download_stable(output_path):
+    "Download latest tarball for stable release then unpack xidl"
+    url = urllib2.urlopen('https://www.virtualbox.org/wiki/Downloads')
+    page = url.read()
+    match = re.search("http://download.virtualbox.org/virtualbox/"
+                      "([0-9\.]+)/VirtualBox-([0-9\.]+).tar.bz2"
+                      , page)
+    if not match:
+        raise Exception("Failed to find source tarball url")
+    sourceurl = page[match.start():match.end()]
+    bzname = sourceurl.split('/')[-1]
+    tarname = os.path.splitext(bzname)[0]
+    print("Download stable code %s > %s" % (sourceurl, bzname) )
+    if 0 != os.system('wget -O %s %s' % (bzname, sourceurl)):
+        assert 0 == os.system('curl -L %s > %s' % (sourceurl, bzname) )
+    assert os.path.exists(bzname), "failed to download %s" % sourceurl
+    assert 0 == os.system('bunzip2 -f %s' % bzname), "failed to bunzip2 %s" % bzname
+    assert os.path.exists(tarname), "failed bunzip %s" % tarname
+    assert 0 == os.system('tar xf %s' % tarname), "failed to tar xf %s" % tarname
+    source_dir = os.path.splitext(tarname)[0]
+    path = './%s/src/VBox/Main/idl/VirtualBox.xidl' % source_dir
+    assert os.path.exists(path), "VirtualBox.xidl was not at %s" % path
+    shutil.copy(path, output_path)    
+
+@begin.start
+def main(virtualbox_xidl='VirtualBox.xidl', 
+         build_against_master=False,
+         force_download=False):
+    """Build the virtualbox/library.py file.
+    """
+    if force_download and os.path.exists(virtualbox_xidl):
+        os.remove(virtualbox_xidl)
+
     if not os.path.exists(virtualbox_xidl):
-        if 0 != os.system('wget %s' % XIDL):
-            assert 0 == os.system('curl %s > VirtualBox.xidl' % XIDL) 
-        virtualbox_xidl = 'VirtualBox.xidl'
-        assert os.path.exists(virtualbox_xidl), "failed to download %s" % XIDL
-            
+        if build_against_master:
+            download_master(virtualbox_xidl)
+        else:
+            download_stable(virtualbox_xidl)
+        assert os.path.exists(virtualbox_xidl)
 
     print("Create new virtualbox/library.py")
     xidl = open(virtualbox_xidl, 'rb').read()
@@ -702,11 +741,4 @@ def main(virtualbox_xidl):
     print("   line count : %s" % code.count("\n"))
     with open('virtualbox/library.py', 'wb') as f:
         f.write(code)
-
-
-if __name__ == '__main__':
-    path = 'VirtualBox.xidl'
-    if sys.argv[1:]:
-        path = sys.argv[1]
-    main(path)
 

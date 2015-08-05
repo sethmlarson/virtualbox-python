@@ -87,7 +87,7 @@ about how to call a method or attribute from a specific programming language.
 lib_version = 1.3
 lib_app_uuid = '819B4D85-9CEE-493C-B6FC-64FFE759B3C9'
 lib_uuid = 'd7569351-1750-46f0-936e-bd127d5bc264'
-xidl_hash = '77ce51e615d4c4f47eddc93474390509'
+xidl_hash = '5843fbc2cebf4fe8eda67063654432c6'
 
 
 
@@ -3857,7 +3857,7 @@ class FileOpenAction(Enum):
             write access. (Was "oa".)
             
             <!-- @todo r=bird: See iprt/file.h, RTFILE_O_APPEND - not an action/disposition!
-            Moving the file pointer to the end, is almost fine, but impliying 'write' access
+            Moving the file pointer to the end, is almost fine, but implying 'write' access
             isn't. That is something that is exclusively reserved for the opening mode. -->
             Deprecated. Only here for historical reasons. Do not use!
 
@@ -3883,7 +3883,7 @@ class FileOpenAction(Enum):
             write access. (Was "oa".)
             
             <!-- @todo r=bird: See iprt/file.h, RTFILE_O_APPEND - not an action/disposition!
-            Moving the file pointer to the end, is almost fine, but impliying 'write' access
+            Moving the file pointer to the end, is almost fine, but implying 'write' access
             isn't. That is something that is exclusively reserved for the opening mode. -->
             Deprecated. Only here for historical reasons. Do not use!'''),
         ] 
@@ -5143,6 +5143,47 @@ class AudioControllerType(Enum):
         ] 
 
 
+class AudioCodecType(Enum):
+    """The exact variant of audio codec hardware presented
+    to the guest; see :py:func:`IAudioAdapter.audio_codec` .
+
+
+    .. describe:: null(0)
+
+            @c null value. Never used by the API.
+
+    .. describe:: sb16(1)
+
+            SB16; this is the only option for the SB16 device.
+
+    .. describe:: stac9700(2)
+
+            A STAC9700 AC'97 codec.
+
+    .. describe:: ad1980(3)
+
+            An AD1980 AC'97 codec. Recommended for Linux guests.
+
+    .. describe:: stac9221(4)
+
+            A STAC9221 HDA codec.
+
+    """
+    __uuid__ = '7b406301-f520-420c-9805-8ce11c086370'
+    _enums = [\
+        ('Null', 0, 
+         '''@c null value. Never used by the API.'''),
+        ('SB16', 1, 
+         '''SB16; this is the only option for the SB16 device.'''),
+        ('STAC9700', 2, 
+         '''A STAC9700 AC'97 codec.'''),
+        ('AD1980', 3, 
+         '''An AD1980 AC'97 codec. Recommended for Linux guests.'''),
+        ('STAC9221', 4, 
+         '''A STAC9221 HDA codec.'''),
+        ] 
+
+
 class AuthType(Enum):
     """VirtualBox authentication type.
 
@@ -5743,7 +5784,11 @@ class VBoxEventType(Enum):
 
             See :py:class:`ISnapshotRestoredEvent` ISnapshotRestoredEvent.
 
-    .. describe:: last(96)
+    .. describe:: on_medium_config_changed(96)
+
+            See :py:class:`IMediumConfigChangedEvent` IMediumConfigChangedEvent.
+
+    .. describe:: last(97)
 
             Must be last event, used for iterations and structures relying on numerical event values.
 
@@ -5905,7 +5950,9 @@ class VBoxEventType(Enum):
          '''See :py:class:`IHostNameResolutionConfigurationChangeEvent` IHostNameResolutionConfigurationChangeEvent.'''),
         ('OnSnapshotRestored', 95, 
          '''See :py:class:`ISnapshotRestoredEvent` ISnapshotRestoredEvent.'''),
-        ('Last', 96, 
+        ('OnMediumConfigChanged', 96, 
+         '''See :py:class:`IMediumConfigChangedEvent` IMediumConfigChangedEvent.'''),
+        ('Last', 97, 
          '''Must be last event, used for iterations and structures relying on numerical event values.'''),
         ] 
 
@@ -6077,7 +6124,7 @@ class INATNetwork(Interface):
     port-forwanding rules. so perhaps we should support only single instance of NAT
     network.
     """
-    __uuid__ = 'a63c75da-4c99-4e9d-8351-eb73651c18cc'
+    __uuid__ = '4bbc405d-f268-4483-9a52-f43ffdbf67f8'
     __wsmap__ = 'managed'
     
     @property
@@ -6335,7 +6382,7 @@ class IDHCPServer(Interface):
     To enumerate all the DHCP servers on the host, use the
     :py:func:`IVirtualBox.dhcp_servers`  attribute.
     """
-    __uuid__ = 'ff0774c5-1f62-4bc3-919c-7fc942bf1d25'
+    __uuid__ = '00c8f974-92c5-44a1-8f3f-702469fdd04b'
     __wsmap__ = 'managed'
     
     @property
@@ -6575,7 +6622,7 @@ class IVirtualBox(Interface):
     To enumerate all the virtual machines on the host, use the
     :py:func:`IVirtualBox.machines`  attribute.
     """
-    __uuid__ = '3afa096e-2cad-4cb0-aba2-47fe3fc62bd8'
+    __uuid__ = '0169423f-46b4-cde9-91af-1e9d5b6cd945'
     __wsmap__ = 'managed'
     
     @property
@@ -6635,6 +6682,16 @@ class IVirtualBox(Interface):
         numbers of the package version.
         """
         ret = self._get_attr("APIVersion")
+        return ret
+
+    @property
+    def api_revision(self):
+        """Get int value for 'APIRevision'
+        To be defined exactly, but we need something that the Validation Kit
+        can use to figure which methods and attributes can safely be used on a
+        continuously changing trunk (and occasional branch).
+        """
+        ret = self._get_attr("APIRevision")
         return ret
 
     @property
@@ -7823,7 +7880,7 @@ class IAppliance(Interface):
     Finally, call :py:func:`write`  with a path specification to have the OVF
     file written.
     """
-    __uuid__ = 'a529d52c-cf23-4936-9150-e8a6ce77fdad'
+    __uuid__ = '8398f026-4add-4474-5bc3-2f9f2140b23e'
     __wsmap__ = 'managed'
     
     @property
@@ -8041,6 +8098,7 @@ class IAppliance(Interface):
         encrypted virtual machines.
 
         return identifiers of type str
+            The list of password identifiers required for export on success.
 
         """
         identifiers = self._call("getPasswordIds")
@@ -8050,8 +8108,10 @@ class IAppliance(Interface):
         """Returns a list of medium identifiers which use the given password identifier.
 
         in password_id of type str
+            The password identifier to get the medium identifiers for.
 
         return identifiers of type str
+            The list of medium identifiers returned on success.
 
         """
         if not isinstance(password_id, basestring):
@@ -8096,7 +8156,7 @@ class IVirtualSystemDescription(Interface):
     VirtualBox virtual machines. See :py:class:`IAppliance`  for the steps required to
     import an OVF into VirtualBox.
     """
-    __uuid__ = 'd7525e6c-531a-4c51-8e04-41235083a3d8'
+    __uuid__ = '316c99a2-405d-41af-8508-46889144d067'
     __wsmap__ = 'managed'
     
     @property
@@ -8353,7 +8413,7 @@ class IInternalMachineControl(Interface):
     information about the saved state file and delete this file from disk
     when appropriate.
     """
-    __uuid__ = '2cfec73b-4447-4ff8-bae5-e4306e6197e8'
+    __uuid__ = 'ec36f437-ad4d-4512-94dd-f4c568143aa7'
     __wsmap__ = 'suppress'
     
     def update_state(self, state):
@@ -8598,9 +8658,6 @@ class IInternalMachineControl(Interface):
         in flags of type str
             The flags of the property.
 
-        return notify of type bool
-            Returns if a guest property change notification event should be fired.
-
         """
         if not isinstance(name, basestring):
             raise TypeError("name can only be an instance of type basestring")
@@ -8610,9 +8667,8 @@ class IInternalMachineControl(Interface):
             raise TypeError("timestamp can only be an instance of type baseinteger")
         if not isinstance(flags, basestring):
             raise TypeError("flags can only be an instance of type basestring")
-        notify = self._call("pushGuestProperty",
+        self._call("pushGuestProperty",
                      in_p=[name, value, timestamp, flags])
-        return notify
 
     def lock_media(self):
         """Locks all media attached to the machine for writing and parents of
@@ -8749,7 +8805,7 @@ class IBIOSSettings(Interface):
     The IBIOSSettings interface represents BIOS settings of the virtual
     machine. This is used only in the :py:func:`IMachine.bios_settings`  attribute.
     """
-    __uuid__ = '38b54279-dc35-4f5e-a431-835b867c6b5e'
+    __uuid__ = 'c5b5afe3-4a6f-05eb-c9b6-4dbf98538b67'
     __wsmap__ = 'managed'
     
     @property
@@ -9043,7 +9099,7 @@ class IMachine(Interface):
     
     :py:class:`ISession` , :py:class:`IConsole` 
     """
-    __uuid__ = '77a44043-a68a-4ef9-ac26-e9567b1e6bbc'
+    __uuid__ = 'f30138d4-e5ea-4b3a-8858-a059de4c93fd'
     __wsmap__ = 'managed'
     
     @property
@@ -9578,10 +9634,11 @@ class IMachine(Interface):
     @property
     def video_capture_max_time(self):
         """Get or set int value for 'videoCaptureMaxTime'
-        This setting determines the maximal number of time video capture
-        will work for. The capture stops as the defined time interval
-        has elapsed. If this value is zero the capturing will not be limited
-        by time. This setting cannot be changed while video capturing is enabled.
+        This setting determines the maximum amount of time in milliseconds
+        the video capture will work for. The capture stops as the defined time
+        interval  has elapsed. If this value is zero the capturing will not be
+        limited by time. This setting cannot be changed while video capturing is
+        enabled.
         """
         ret = self._get_attr("videoCaptureMaxTime")
         return ret
@@ -10027,22 +10084,6 @@ class IMachine(Interface):
         return self._set_attr("dnDMode", value)
 
     @property
-    def guest_property_notification_patterns(self):
-        """Get or set str value for 'guestPropertyNotificationPatterns'
-        A comma-separated list of simple glob patterns. Changes to guest
-        properties whose name matches one of the patterns will generate an
-        :py:class:`IGuestPropertyChangedEvent`  signal.
-        """
-        ret = self._get_attr("guestPropertyNotificationPatterns")
-        return ret
-
-    @guest_property_notification_patterns.setter
-    def guest_property_notification_patterns(self, value):
-        if not isinstance(value, basestring):
-            raise TypeError("value is not an instance of basestring")
-        return self._set_attr("guestPropertyNotificationPatterns", value)
-
-    @property
     def teleporter_enabled(self):
         """Get or set bool value for 'teleporterEnabled'
         When set to @a true, the virtual machine becomes a target teleporter
@@ -10403,6 +10444,27 @@ class IMachine(Interface):
         """
         ret = self._get_attr("USBProxyAvailable")
         return ret
+
+    @property
+    def vm_process_priority(self):
+        """Get or set str value for 'VMProcessPriority'
+        Sets the priority of the VM process. It is a VM setting which can
+        be changed both before starting the VM and at runtime. The valid
+        values are system specific, and if a value is specified which does
+        not get recognized, then it will be remembered (useful for preparing
+        VM configs for other host OSes), with a successful result.
+        
+        The default value is the empty string, which selects the default
+        process priority.
+        """
+        ret = self._get_attr("VMProcessPriority")
+        return ret
+
+    @vm_process_priority.setter
+    def vm_process_priority(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("VMProcessPriority", value)
 
     def lock_machine(self, session, lock_type):
         """Locks the machine for the given session to enable the caller
@@ -11582,8 +11644,11 @@ created differencing media, should not happen).
         storage_controller = IStorageController(storage_controller)
         return storage_controller
 
-    def get_storage_controller_by_instance(self, instance):
-        """Returns a storage controller with the given instance number.
+    def get_storage_controller_by_instance(self, connection_type, instance):
+        """Returns a storage controller of a specific storage bus
+        with the given instance number.
+
+        in connection_type of type :class:`StorageBus`
 
         in instance of type int
 
@@ -11593,10 +11658,12 @@ created differencing media, should not happen).
             A storage controller with given instance number doesn't exist.
         
         """
+        if not isinstance(connection_type, StorageBus):
+            raise TypeError("connection_type can only be an instance of type StorageBus")
         if not isinstance(instance, baseinteger):
             raise TypeError("instance can only be an instance of type baseinteger")
         storage_controller = self._call("getStorageControllerByInstance",
-                     in_p=[instance])
+                     in_p=[connection_type, instance])
         storage_controller = IStorageController(storage_controller)
         return storage_controller
 
@@ -12601,28 +12668,6 @@ created differencing media, should not happen).
                      in_p=[screen_id])
         return (origin_x, origin_y, width, height, enabled)
 
-    def query_saved_thumbnail_size(self, screen_id):
-        """Returns size in bytes and dimensions in pixels of a saved thumbnail bitmap from saved state.
-
-        in screen_id of type int
-            Saved guest screen to query info from.
-
-        out size of type int
-            Size of buffer required to store the bitmap.
-
-        out width of type int
-            Bitmap width.
-
-        out height of type int
-            Bitmap height.
-
-        """
-        if not isinstance(screen_id, baseinteger):
-            raise TypeError("screen_id can only be an instance of type baseinteger")
-        (size, width, height) = self._call("querySavedThumbnailSize",
-                     in_p=[screen_id])
-        return (size, width, height)
-
     def read_saved_thumbnail_to_array(self, screen_id, bitmap_format):
         """Thumbnail is retrieved to an array of bytes in the requested format.
 
@@ -12650,14 +12695,11 @@ created differencing media, should not happen).
                      in_p=[screen_id, bitmap_format])
         return (width, height, data)
 
-    def query_saved_screenshot_png_size(self, screen_id):
-        """Returns size in bytes and dimensions of a saved PNG image of screenshot from saved state.
+    def query_saved_screenshot_info(self, screen_id):
+        """Returns available formats and size of the screenshot from saved state.
 
         in screen_id of type int
             Saved guest screen to query info from.
-
-        out size of type int
-            Size of buffer required to store the PNG binary data.
 
         out width of type int
             Image width.
@@ -12665,18 +12707,25 @@ created differencing media, should not happen).
         out height of type int
             Image height.
 
+        return bitmap_formats of type :class:`BitmapFormat`
+            Formats supported by readSavedScreenshotToArray.
+
         """
         if not isinstance(screen_id, baseinteger):
             raise TypeError("screen_id can only be an instance of type baseinteger")
-        (size, width, height) = self._call("querySavedScreenshotPNGSize",
+        (width, height, bitmap_formats) = self._call("querySavedScreenshotInfo",
                      in_p=[screen_id])
-        return (size, width, height)
+        bitmap_formats = [BitmapFormat(a) for a in bitmap_formats]
+        return (width, height, bitmap_formats)
 
-    def read_saved_screenshot_png_to_array(self, screen_id):
-        """Screenshot in PNG format is retrieved to an array of bytes.
+    def read_saved_screenshot_to_array(self, screen_id, bitmap_format):
+        """Screenshot in requested format is retrieved to an array of bytes.
 
         in screen_id of type int
             Saved guest screen to read from.
+
+        in bitmap_format of type :class:`BitmapFormat`
+            The requested format.
 
         out width of type int
             Image width.
@@ -12685,13 +12734,15 @@ created differencing media, should not happen).
             Image height.
 
         return data of type str
-            Array with resulting PNG data.
+            Array with resulting image data.
 
         """
         if not isinstance(screen_id, baseinteger):
             raise TypeError("screen_id can only be an instance of type baseinteger")
-        (width, height, data) = self._call("readSavedScreenshotPNGToArray",
-                     in_p=[screen_id])
+        if not isinstance(bitmap_format, BitmapFormat):
+            raise TypeError("bitmap_format can only be an instance of type BitmapFormat")
+        (width, height, data) = self._call("readSavedScreenshotToArray",
+                     in_p=[screen_id, bitmap_format])
         return (width, height, data)
 
     def hot_plug_cpu(self, cpu):
@@ -12976,6 +13027,10 @@ created differencing media, should not happen).
             (@c true) and live (@c false) snapshots. When the VM is not running
             the result is always an offline snapshot.
 
+        out id_p of type str
+            UUID of the snapshot which will be created. Useful for follow-up
+            operations after the snapshot has been created.
+
         return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
@@ -12989,10 +13044,10 @@ created differencing media, should not happen).
             raise TypeError("description can only be an instance of type basestring")
         if not isinstance(pause, bool):
             raise TypeError("pause can only be an instance of type bool")
-        progress = self._call("takeSnapshot",
+        (id_p, progress) = self._call("takeSnapshot",
                      in_p=[name, description, pause])
         progress = IProgress(progress)
-        return progress
+        return (id_p, progress)
 
     def delete_snapshot(self, id_p):
         """Starts deleting the specified snapshot asynchronously.
@@ -13192,12 +13247,35 @@ text explains the reason for the failure.
         progress = IProgress(progress)
         return progress
 
+    def apply_defaults(self, flags):
+        """Applies the defaults for the configured guest OS type. This is
+        primarily for getting sane settings straight after creating a
+        new VM, but it can also be applied later.
+        
+        
+        This is primarily a shortcut, centralizing the tedious job of
+        getting the recommended settings and translating them into
+        settings updates. The settings are made at the end of the call,
+        but not saved.
+
+        in flags of type str
+            Additional flags, to be defined later.
+
+        raises :class:`OleErrorNotimpl`
+            This method is not implemented yet.
+        
+        """
+        if not isinstance(flags, basestring):
+            raise TypeError("flags can only be an instance of type basestring")
+        self._call("applyDefaults",
+                     in_p=[flags])
+
 
 class IEmulatedUSB(Interface):
     """
     Manages emulated USB devices.
     """
-    __uuid__ = '38cc4dfd-8bb2-4d40-aebe-699eead8c2dd'
+    __uuid__ = '6e253ee8-477a-2497-6759-88b8292a5af0'
     __wsmap__ = 'managed'
     
     def webcam_attach(self, path, settings):
@@ -13243,7 +13321,7 @@ class IVRDEServerInfo(Interface):
     Contains information about the remote desktop (VRDE) server capabilities and status.
     This is used in the :py:func:`IConsole.vrde_server_info`  attribute.
     """
-    __uuid__ = '714434a1-58c3-4aab-9049-7652c5df113b'
+    __uuid__ = 'c39ef4d6-7532-45e8-96da-eb5986ae76e4'
     __wsmap__ = 'struct'
     
     @property
@@ -13390,7 +13468,7 @@ class IConsole(Interface):
     
     :py:class:`ISession` 
     """
-    __uuid__ = '650b5f05-8258-4ee9-b518-89c515ca5dd9'
+    __uuid__ = '872da645-4a9b-1727-bee2-5585105b9eed'
     __wsmap__ = 'managed'
     
     @property
@@ -14075,7 +14153,7 @@ class IHostNetworkInterface(Interface):
     separated by colons.
     For example, fe80:0000:0000:0000:021e:c2ff:fed2:b030.
     """
-    __uuid__ = 'f6e556f9-d598-409b-898c-8ba99d9b05ae'
+    __uuid__ = '455f8c45-44a0-a470-ba20-27890b96dba9'
     __wsmap__ = 'managed'
     
     @property
@@ -14241,7 +14319,7 @@ class IHostVideoInputDevice(Interface):
     """
     Represents one of host's video capture devices, for example a webcam.
     """
-    __uuid__ = 'a1ceae44-d65e-4156-9359-d390f93ee9a0'
+    __uuid__ = 'e8c25d4d-ac97-4c16-b3e2-81bd8a57cc27'
     __wsmap__ = 'managed'
     
     @property
@@ -14281,7 +14359,7 @@ class IHost(Interface):
     and so on) and also allows for manipulating some of the host's hardware,
     such as global USB device filters and host interface networking.
     """
-    __uuid__ = '93269330-48ca-4096-b4a2-1189df336267'
+    __uuid__ = 'afca788c-4477-787d-60b2-3fa70e56fbbc'
     __wsmap__ = 'managed'
     
     @property
@@ -14849,7 +14927,7 @@ class ISystemProperties(Interface):
     and parameters. Most of the properties are read-only, but some can be
     changed by a user.
     """
-    __uuid__ = '2dc77d62-27e7-4e6e-87eb-b41ae0d555da'
+    __uuid__ = '0eb668d2-495e-5a36-8890-29999b5f030c'
     __wsmap__ = 'managed'
     
     @property
@@ -14947,12 +15025,26 @@ class ISystemProperties(Interface):
         return ret
 
     @property
+    def raw_mode_supported(self):
+        """Get bool value for 'rawModeSupported'
+        Indicates whether VirtualBox was built with raw-mode support.
+        
+        When this reads as False, the :py:func:`HWVirtExPropertyType.enabled` 
+        setting will be ignored and assumed to be True.
+        """
+        ret = self._get_attr("rawModeSupported")
+        return ret
+
+    @property
     def exclusive_hw_virt(self):
         """Get or set bool value for 'exclusiveHwVirt'
         Exclusive use of hardware virtualization by VirtualBox. When enabled,
         VirtualBox assumes it can obtain full and exclusive access to the VT-x
         or AMD-V feature of the host. To share hardware virtualization with
         other hypervisors, this property must be disabled.
+        
+        This is ignored on OS X, the kernel mediates hardware
+        access there.
         """
         ret = self._get_attr("exclusiveHwVirt")
         return ret
@@ -15453,7 +15545,7 @@ class ISystemProperties(Interface):
         given storage controller
 
         in controller_type of type :class:`StorageControllerType`
-            The storage controller to the setting for.
+            The storage controller type to get the setting for.
 
         return enabled of type bool
             Returned flag indicating the default value
@@ -15470,7 +15562,7 @@ class ISystemProperties(Interface):
         hot-plugging devices.
 
         in controller_type of type :class:`StorageControllerType`
-            The storage controller to check for.
+            The storage controller to check the setting for.
 
         return hotplug_capable of type bool
             Returned flag indicating whether the controller is hotplug capable
@@ -15509,7 +15601,7 @@ class ISystemProperties(Interface):
 
 class IGuestOSType(Interface):
     """"""
-    __uuid__ = 'ced74f7e-4c08-4d19-883a-017496ada2e1'
+    __uuid__ = '03cd409d-20f5-43f9-8de1-4a129620990b'
     __wsmap__ = 'struct'
     
     @property
@@ -15707,10 +15799,18 @@ class IGuestOSType(Interface):
     @property
     def recommended_audio_controller(self):
         """Get AudioControllerType value for 'recommendedAudioController'
-        Recommended audio type.
+        Recommended audio controller type.
         """
         ret = self._get_attr("recommendedAudioController")
         return AudioControllerType(ret)
+
+    @property
+    def recommended_audio_codec(self):
+        """Get AudioCodecType value for 'recommendedAudioCodec'
+        Recommended audio codec type.
+        """
+        ret = self._get_attr("recommendedAudioCodec")
+        return AudioCodecType(ret)
 
     @property
     def recommended_floppy(self):
@@ -15741,7 +15841,7 @@ class IAdditionsFacility(Interface):
     """
     Structure representing a Guest Additions facility.
     """
-    __uuid__ = '54992946-6af1-4e49-98ec-58b558b7291e'
+    __uuid__ = 'f2f7fae4-4a06-81fc-a916-78b2da1fa0e5'
     __wsmap__ = 'struct'
     
     @property
@@ -15790,7 +15890,7 @@ class IDnDBase(Interface):
     """
     Base abstract interface for drag'n drop.
     """
-    __uuid__ = 'a9630a67-7238-4b0e-9a58-364b1dd3d032'
+    __uuid__ = '4132147b-42f8-cd96-7570-6a8800e3342c'
     __wsmap__ = 'managed'
     
     @property
@@ -15863,7 +15963,7 @@ class IDnDSource(IDnDBase):
     """
     Abstract interface for handling drag'n drop sources.
     """
-    __uuid__ = 'b69c400d-be63-4255-898a-e706d66b1637'
+    __uuid__ = 'd23a9ca3-42da-c94b-8aec-21968e08355d'
     __wsmap__ = 'managed'
     
     def drag_is_pending(self, screen_id):
@@ -15953,7 +16053,7 @@ class IDnDTarget(IDnDBase):
     """
     Abstract interface for handling drag'n drop targets.
     """
-    __uuid__ = '25ac16fa-316d-4934-9a7f-fe02f6739bef'
+    __uuid__ = 'ff5befc3-4ba3-7903-2aa4-43988ba11554'
     __wsmap__ = 'managed'
     
     def enter(self, screen_id, y, x, default_action, allowed_actions, formats):
@@ -16240,7 +16340,7 @@ class IGuestSession(Interface):
     with older guest additions.  Another reason is that this way it is always
     possible to undo all the changes you've scheduled.)
     """
-    __uuid__ = '3cbf62cf-c9cd-48c6-9623-d1dbe54ca557'
+    __uuid__ = '486fd828-4c6b-239b-a846-c4bb69e41038'
     __wsmap__ = 'managed'
     
     @property
@@ -17704,7 +17804,7 @@ class IProcess(Interface):
     """
     Abstract parent interface for processes handled by VirtualBox.
     """
-    __uuid__ = '064cf1ca-4c0f-50b5-8f8e-e8b4bfa76c33'
+    __uuid__ = '2e20707d-4325-9a83-83cf-3faf5b97457c'
     __wsmap__ = 'managed'
     
     @property
@@ -17963,7 +18063,7 @@ class IDirectory(Interface):
     """
     Abstract parent interface for directories handled by VirtualBox.
     """
-    __uuid__ = '1b70dd03-26d7-483a-8877-89bbb0f87b70'
+    __uuid__ = 'f73650f4-4506-50ca-045a-23a0e32ea508'
     __wsmap__ = 'managed'
     
     @property
@@ -18024,7 +18124,7 @@ class IFile(Interface):
     """
     Abstract parent interface for files handled by VirtualBox.
     """
-    __uuid__ = '540804bf-4ca6-dd43-800c-bfb9765f96fe'
+    __uuid__ = '14c66b23-404c-f24a-3cc1-ee9501d44f2a'
     __wsmap__ = 'managed'
     
     @property
@@ -18347,7 +18447,7 @@ class IFsObjInfo(Interface):
     Abstract parent interface for VirtualBox file system object information.
     This can be information about a file or a directory, for example.
     """
-    __uuid__ = '37b30bc6-4506-58e4-bc43-fbbca92b4548'
+    __uuid__ = 'd344626e-4b0a-10bc-9c2b-68973052de16'
     __wsmap__ = 'managed'
     
     @property
@@ -18530,7 +18630,7 @@ class IGuest(Interface):
     Guest Additions are installed and other OS-specific virtual machine
     properties.
     """
-    __uuid__ = '97927199-7e1f-4094-97ab-92333e727843'
+    __uuid__ = '13a11514-402e-022e-6180-c3944de3f9c8'
     __wsmap__ = 'managed'
     
     @property
@@ -18937,7 +19037,7 @@ class IProgress(Interface):
     for the completion of the whole task via
     :py:func:`wait_for_completion` .
     """
-    __uuid__ = 'c20238e4-3221-4d3f-8891-81ce92d9f913'
+    __uuid__ = '77faf1c0-489d-b123-274c-5a95e77ab286'
     __wsmap__ = 'managed'
     
     @property
@@ -19288,7 +19388,7 @@ class ISnapshot(Interface):
     it then contains a so-called "zero execution state", representing a
     machine that is powered off.
     """
-    __uuid__ = '0472823b-c6e7-472a-8e9f-d732e86b8463'
+    __uuid__ = '5732f030-4194-ec8b-c761-e1a99327e9f0'
     __wsmap__ = 'managed'
     
     @property
@@ -19575,7 +19675,7 @@ class IMediumAttachment(Interface):
     without losing the contents of the differencing hard disk actually
     attached to the machine in place of it.
     """
-    __uuid__ = '4b252567-5d4e-4db8-b3c8-569ec1c9236c'
+    __uuid__ = '3785b3f7-7b5f-4000-8842-ad0cc6ab30b7'
     __wsmap__ = 'struct'
     
     @property
@@ -19838,7 +19938,7 @@ class IMedium(Interface):
     that, you may call any of the methods that create a new hard disk storage
     unit and they will use the generated UUID and file name.
     """
-    __uuid__ = '9680d99b-3550-4e14-8fc4-82ad1426cbde'
+    __uuid__ = '4afe423b-43e0-e9d0-82e8-ceb307940dda'
     __wsmap__ = 'managed'
     
     @property
@@ -21138,7 +21238,7 @@ class IMediumFormat(Interface):
     
     :py:class:`IMedium` 
     """
-    __uuid__ = '6238e1cf-a17d-4ec1-8172-418bfb22b93a'
+    __uuid__ = '10f337fb-422e-e57e-661b-0998ac309175'
     __wsmap__ = 'managed'
     
     @property
@@ -21255,7 +21355,7 @@ class IToken(Interface):
     depending on the platform (COM needs 6 minutes). So better don't rely
     on the crash behavior too much.
     """
-    __uuid__ = '3b1c4797-e289-4d4c-b74c-50c9b86a36f8'
+    __uuid__ = '20479eaf-d8ed-44cf-85ac-c83a26c95a4d'
     __wsmap__ = 'managed'
     
     def abandon(self):
@@ -21285,7 +21385,7 @@ class IKeyboard(Interface):
     Use this interface to send keystrokes or the Ctrl-Alt-Del sequence
     to the virtual machine.
     """
-    __uuid__ = '585cc5e8-349c-41c6-899d-d9a38e3f4126'
+    __uuid__ = 'da91d4c9-4c02-fdb1-c5ac-d89e22e81302'
     __wsmap__ = 'managed'
     
     @property
@@ -21366,7 +21466,7 @@ class IMousePointerShape(Interface):
     """
     The guest mouse pointer description.
     """
-    __uuid__ = '4609f3e1-839a-4edd-b57f-cc4584b39173'
+    __uuid__ = 'e04e5545-4a0f-f9d2-5bef-f9b25b6557ed'
     __wsmap__ = 'managed'
     
     @property
@@ -21460,7 +21560,7 @@ class IMouse(Interface):
     Through this interface, the virtual machine's virtual mouse can be
     controlled.
     """
-    __uuid__ = '4c3fa51c-7b9a-4ecf-97f0-d75a945bd26c'
+    __uuid__ = 'ee35adb0-4748-3e12-e7fd-5aad957bba0f'
     __wsmap__ = 'managed'
     
     @property
@@ -21764,7 +21864,7 @@ class IFramebuffer(Interface):
     """
     Frame buffer width, in pixels.
     """
-    __uuid__ = 'dd07f843-be2e-4cae-83fe-8bf5d33c80e9'
+    __uuid__ = '8b82295f-415f-1aa1-17fd-9fbbac8edf44'
     __wsmap__ = 'managed'
     
     @property
@@ -21847,6 +21947,17 @@ class IFramebuffer(Interface):
         """
         ret = self._get_attr("winId")
         return ret
+
+    @property
+    def capabilities(self):
+        """Get FramebufferCapabilities value for 'capabilities'
+        Capabilities of the framebuffer instance.
+        
+        For the meaning of individual capability flags see
+        :py:class:`FramebufferCapabilities` .
+        """
+        ret = self._get_attr("capabilities")
+        return [FramebufferCapabilities(a) for a in ret]
 
     def notify_update(self, x, y, width, height):
         """Informs about an update.
@@ -22075,17 +22186,6 @@ class IFramebuffer(Interface):
         self._call("notify3DEvent",
                      in_p=[type_p, data])
 
-    @property
-    def capabilities(self):
-        """Get FramebufferCapabilities value for 'capabilities'
-        Capabilities of the framebuffer instance.
-        
-        For the meaning of individual capability flags see
-        :py:class:`FramebufferCapabilities` .
-        """
-        ret = self._get_attr("capabilities")
-        return [FramebufferCapabilities(a) for a in ret]
-
 
 class IFramebufferOverlay(IFramebuffer):
     """
@@ -22098,7 +22198,7 @@ class IFramebufferOverlay(IFramebuffer):
     width though, after setting it, as it may be adjusted (increased) to
     make it more suitable for the front end.
     """
-    __uuid__ = '0bcc1c7e-e415-47d2-bfdb-e4c705fb0f47'
+    __uuid__ = 'af398a9a-6b76-4805-8fab-00a9dcf4732b'
     __wsmap__ = 'managed'
     
     @property
@@ -22174,7 +22274,7 @@ class IDisplay(Interface):
     IFramebuffer interface. Examples of the output target are a window on
     the host computer or an RDP session's display on a remote computer.
     """
-    __uuid__ = '94a7faa2-7792-42a3-8535-00770eca1f53'
+    __uuid__ = '7303a66d-433b-25a4-f9a8-fcadf87e0c2a'
     __wsmap__ = 'managed'
     
     def get_screen_resolution(self, screen_id):
@@ -22574,7 +22674,7 @@ class INetworkAdapter(Interface):
     represented by the :py:class:`NetworkAttachmentType`  enumeration;
     see the :py:func:`attachment_type`  attribute.
     """
-    __uuid__ = 'efa0f965-63c7-4c60-afdf-b1cc9943b9c0'
+    __uuid__ = 'e925c2aa-4fe4-aaf6-91c5-e9b8ea4151ee'
     __wsmap__ = 'managed'
     
     @property
@@ -22933,7 +23033,7 @@ class ISerialPort(Interface):
     
     :py:func:`IMachine.get_serial_port` 
     """
-    __uuid__ = '937f6970-5103-4745-b78e-d28dcf1479a8'
+    __uuid__ = 'cb0a4a29-43a3-9040-0c25-34845db7b042'
     __wsmap__ = 'managed'
     
     @property
@@ -23058,7 +23158,7 @@ class IParallelPort(Interface):
     
     :py:func:`IMachine.get_parallel_port` 
     """
-    __uuid__ = '0c925f06-dd10-4b77-8de8-294d738c3214'
+    __uuid__ = '788b87df-7708-444b-9eef-c116ce423d39'
     __wsmap__ = 'managed'
     
     @property
@@ -23137,7 +23237,7 @@ class IMachineDebugger(Interface):
     
     See include/VBox/dbgfcorefmt.h for details on the file format.
     """
-    __uuid__ = '5e4534dc-21b8-4f6b-8a08-eef50e1a0aa1'
+    __uuid__ = '9c0f5269-47ae-ee34-c2fe-53a16e388925'
     __wsmap__ = 'managed'
     
     def dump_guest_core(self, filename, compression):
@@ -23364,6 +23464,34 @@ class IMachineDebugger(Interface):
         self._call("writeVirtualMemory",
                      in_p=[cpu_id, address, size, bytes_p])
 
+    def load_plug_in(self, name):
+        """Loads a DBGF plug-in.
+
+        in name of type str
+            The plug-in name or DLL. Special name 'all' loads all installed plug-ins.
+
+        return plug_in_name of type str
+            The name of the loaded plug-in.
+
+        """
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        plug_in_name = self._call("loadPlugIn",
+                     in_p=[name])
+        return plug_in_name
+
+    def unload_plug_in(self, name):
+        """Unloads a DBGF plug-in.
+
+        in name of type str
+            The plug-in name or DLL. Special name 'all' unloads all plug-ins.
+
+        """
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        self._call("unloadPlugIn",
+                     in_p=[name])
+
     def detect_os(self):
         """Tries to (re-)detect the guest OS kernel.
         
@@ -23377,11 +23505,25 @@ class IMachineDebugger(Interface):
         os = self._call("detectOS")
         return os
 
+    def query_os_kernel_log(self, max_messages):
+        """Tries to get the kernel log (dmesg) of the guest OS.
+
+        in max_messages of type int
+            Max number of messages to return, counting from the end of the
+            log.  If 0, there is no limit.
+
+        return dmesg of type str
+            The kernel log.
+
+        """
+        if not isinstance(max_messages, baseinteger):
+            raise TypeError("max_messages can only be an instance of type baseinteger")
+        dmesg = self._call("queryOSKernelLog",
+                     in_p=[max_messages])
+        return dmesg
+
     def get_register(self, cpu_id, name):
         """Gets one register.
-        
-        This feature is not implemented in the 4.0.0 release but may show up
-        in a dot release.
 
         in cpu_id of type int
             The identifier of the Virtual CPU.
@@ -23404,9 +23546,6 @@ class IMachineDebugger(Interface):
 
     def get_registers(self, cpu_id):
         """Gets all the registers for the given CPU.
-        
-        This feature is not implemented in the 4.0.0 release but may show up
-        in a dot release.
 
         in cpu_id of type int
             The identifier of the Virtual CPU.
@@ -23815,7 +23954,7 @@ class IUSBDeviceFilters(Interface):
     
     :py:class:`IUSBDeviceFilter` , :py:class:`IUSBController` 
     """
-    __uuid__ = '2ab550b2-53cc-4c2e-ae07-0adf4114e75c'
+    __uuid__ = '9709db9b-3346-49d6-8f1c-41b0c4784ff2'
     __wsmap__ = 'managed'
     
     @property
@@ -23951,24 +24090,36 @@ class IUSBController(Interface):
     """
     The USB Controller name.
     """
-    __uuid__ = 'd2745291-65f7-4d75-9556-38047d802319'
+    __uuid__ = '0c293c51-4810-e174-4f78-199376c63bbe'
     __wsmap__ = 'managed'
     
     @property
     def name(self):
-        """Get str value for 'name'
+        """Get or set str value for 'name'
         The USB Controller name.
         """
         ret = self._get_attr("name")
         return ret
 
+    @name.setter
+    def name(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("name", value)
+
     @property
     def type_p(self):
-        """Get USBControllerType value for 'type'
+        """Get or set USBControllerType value for 'type'
         The USB Controller type.
         """
         ret = self._get_attr("type")
         return USBControllerType(ret)
+
+    @type_p.setter
+    def type_p(self, value):
+        if not isinstance(value, USBControllerType):
+            raise TypeError("value is not an instance of USBControllerType")
+        return self._set_attr("type", value)
 
     @property
     def usb_standard(self):
@@ -23990,7 +24141,7 @@ class IUSBDevice(Interface):
     :py:func:`IConsole.usb_devices`  attribute which lists all USB devices
     attached to a running virtual machine's USB controller.
     """
-    __uuid__ = '8d826296-e04f-4e86-9310-cb85b19becde'
+    __uuid__ = '5915d179-83c7-4f2b-a323-9a97f46f4e29'
     __wsmap__ = 'managed'
     
     @property
@@ -24174,7 +24325,7 @@ class IUSBDeviceFilter(Interface):
     :py:func:`IUSBDeviceFilters.device_filters` ,
     :py:class:`IHostUSBDeviceFilter` 
     """
-    __uuid__ = 'd6831fb4-1a94-4c2c-96ef-8d0d6192066d'
+    __uuid__ = '45587218-4289-ef4e-8e6a-e5b07816b631'
     __wsmap__ = 'managed'
     
     @property
@@ -24368,7 +24519,7 @@ class IHostUSBDevice(IUSBDevice):
     :py:func:`IHost.usb_devices` ,
     :py:func:`IHost.usb_device_filters` 
     """
-    __uuid__ = '173b4b44-d268-4334-a00d-b6521c9a740a'
+    __uuid__ = 'c19073dd-cc7b-431b-98b2-951fda8eab89'
     __wsmap__ = 'managed'
     
     @property
@@ -24398,7 +24549,7 @@ class IHostUSBDeviceFilter(IUSBDeviceFilter):
     
     :py:func:`IHost.usb_device_filters` 
     """
-    __uuid__ = '4cc70246-d74a-400f-8222-3900489c0374'
+    __uuid__ = '01adb2d6-aedf-461c-be2c-99e91bdad8a1'
     __wsmap__ = 'managed'
     
     @property
@@ -24422,7 +24573,7 @@ class IAudioAdapter(Interface):
     The IAudioAdapter interface represents the virtual audio adapter of
     the virtual machine. Used in :py:func:`IMachine.audio_adapter` .
     """
-    __uuid__ = '280cc7f7-eddc-48b6-9bbb-5b1e8d761c0e'
+    __uuid__ = 'aeccc0a8-e0a0-427f-b946-c42063f54d81'
     __wsmap__ = 'managed'
     
     @property
@@ -24475,7 +24626,7 @@ class IAudioAdapter(Interface):
     @property
     def audio_controller(self):
         """Get or set AudioControllerType value for 'audioController'
-        The audio hardware we emulate.
+        The emulated audio controller.
         """
         ret = self._get_attr("audioController")
         return AudioControllerType(ret)
@@ -24485,6 +24636,23 @@ class IAudioAdapter(Interface):
         if not isinstance(value, AudioControllerType):
             raise TypeError("value is not an instance of AudioControllerType")
         return self._set_attr("audioController", value)
+
+    @property
+    def audio_codec(self):
+        """Get or set AudioCodecType value for 'audioCodec'
+        The exact variant of audio codec hardware presented
+        to the guest.
+        For HDA and SB16, only one variant is available, but for AC'97,
+        there are several.
+        """
+        ret = self._get_attr("audioCodec")
+        return AudioCodecType(ret)
+
+    @audio_codec.setter
+    def audio_codec(self, value):
+        if not isinstance(value, AudioCodecType):
+            raise TypeError("value is not an instance of AudioCodecType")
+        return self._set_attr("audioCodec", value)
 
     @property
     def audio_driver(self):
@@ -24501,12 +24669,59 @@ class IAudioAdapter(Interface):
             raise TypeError("value is not an instance of AudioDriverType")
         return self._set_attr("audioDriver", value)
 
+    @property
+    def properties_list(self):
+        """Get str value for 'propertiesList'
+        Array of names of tunable properties, which can be supported by audio driver.
+        """
+        ret = self._get_attr("propertiesList")
+        return ret
+
+    def set_property(self, key, value):
+        """Sets an audio specific property string.
+        
+        If you pass @c null or empty string as a key @a value, the given @a key
+        will be deleted.
+
+        in key of type str
+            Name of the key to set.
+
+        in value of type str
+            Value to assign to the key.
+
+        """
+        if not isinstance(key, basestring):
+            raise TypeError("key can only be an instance of type basestring")
+        if not isinstance(value, basestring):
+            raise TypeError("value can only be an instance of type basestring")
+        self._call("setProperty",
+                     in_p=[key, value])
+
+    def get_property(self, key):
+        """Returns an audio specific property string.
+        
+        If the requested data @a key does not exist, this function will
+        succeed and return an empty string in the @a value argument.
+
+        in key of type str
+            Name of the key to get.
+
+        return value of type str
+            Value of the requested key.
+
+        """
+        if not isinstance(key, basestring):
+            raise TypeError("key can only be an instance of type basestring")
+        value = self._call("getProperty",
+                     in_p=[key])
+        return value
+
 
 class IVRDEServer(Interface):
     """
     Flag if VRDE server is enabled.
     """
-    __uuid__ = 'd38de40a-c2c1-4e95-b5a4-167b05f5694c'
+    __uuid__ = '6e758489-453a-6f98-9cb9-2da2cb8eabb5'
     __wsmap__ = 'managed'
     
     @property
@@ -24709,7 +24924,7 @@ class ISharedFolder(Interface):
     Global shared folders are not implemented in the current version of the
     product.
     """
-    __uuid__ = '8388da11-b559-4574-a5b7-2bd7acd5cef8'
+    __uuid__ = '15aabe95-e594-4e18-9222-b5e83a23f1da'
     __wsmap__ = 'struct'
     
     @property
@@ -25525,7 +25740,7 @@ class ISession(Interface):
     is called. A managed object reference to that session object can be retrieved by
     calling :py:func:`IWebsessionManager.get_session_object` .
     """
-    __uuid__ = '3d4f472c-aac8-4387-94be-54042bcd8901'
+    __uuid__ = '7844aa05-b02e-4cdd-a04f-ade4a762e6b7'
     __wsmap__ = 'managed'
     
     @property
@@ -25628,12 +25843,12 @@ class IStorageController(Interface):
     Depending on these settings, the guest operating system might see
     significantly different virtual hardware.
     """
-    __uuid__ = 'a1556333-09b6-46d9-bfb7-fc239b7fbe1e'
+    __uuid__ = '49b19d41-4a75-7bd5-c124-259acba3c41d'
     __wsmap__ = 'managed'
     
     @property
     def name(self):
-        """Get str value for 'name'
+        """Get or set str value for 'name'
         Name of the storage controller, as originally specified with
         :py:func:`IMachine.add_storage_controller` . This then uniquely
         identifies this controller with other method calls such as
@@ -25641,6 +25856,12 @@ class IStorageController(Interface):
         """
         ret = self._get_attr("name")
         return ret
+
+    @name.setter
+    def name(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("name", value)
 
     @property
     def max_devices_per_port_count(self):
@@ -25763,7 +25984,7 @@ class IPerformanceMetric(Interface):
     The IPerformanceMetric interface represents parameters of the given
     performance metric.
     """
-    __uuid__ = '2a1a60ae-9345-4019-ad53-d34ba41cbfe9'
+    __uuid__ = '81314d14-fd1c-411a-95c5-e9bb1414e632'
     __wsmap__ = 'managed'
     
     @property
@@ -25937,7 +26158,7 @@ class IPerformanceCollector(Interface):
     
     Python: bindings/xpcom/python/sample/shellcommon.py
     """
-    __uuid__ = 'e22e1acb-ac4a-43bb-a31c-17321659b0c6'
+    __uuid__ = 'b14290ad-cd54-400c-b858-797bcb82570e'
     __wsmap__ = 'managed'
     
     @property
@@ -26215,7 +26436,7 @@ class INATEngine(Interface):
     allows for changing NAT behavior such as port-forwarding rules. This interface is
     used in the :py:func:`INetworkAdapter.nat_engine`  attribute.
     """
-    __uuid__ = '26451b99-3b2d-4dcb-8e4b-d63654218175'
+    __uuid__ = 'c1cdb6bf-44cb-e334-66fa-469a17fd09df'
     __wsmap__ = 'managed'
     
     @property
@@ -26470,7 +26691,7 @@ class IExtPackPlugIn(Interface):
     Interface for keeping information about a plug-in that ships with an
     extension pack.
     """
-    __uuid__ = '58000040-e718-4746-bbce-4b86d96da461'
+    __uuid__ = 'c8e667b2-4234-1f9c-6508-afa9cea4efa1'
     __wsmap__ = 'suppress'
     
     @property
@@ -26511,7 +26732,7 @@ class IExtPackBase(Interface):
     Interface for querying information about an extension pack as well as
     accessing COM objects within it.
     """
-    __uuid__ = 'f79b75d8-2890-4f34-ffff-ffffa144e82c'
+    __uuid__ = '4bd17415-4438-8657-e78e-80a40713a23c'
     __wsmap__ = 'suppress'
     
     @property
@@ -26685,7 +26906,7 @@ class IExtPackFile(IExtPackBase):
     by :py:func:`IExtPackManager.open_ext_pack_file` . This provides the base
     extension pack information with the addition of the file name.
     """
-    __uuid__ = 'b6b49f55-efcc-4f08-b486-56e8d8afb10b'
+    __uuid__ = '4c7f4bf6-4671-2f75-0fbb-a99f6218cdfc'
     __wsmap__ = 'suppress'
     
     @property
@@ -26726,7 +26947,7 @@ class IExtPackManager(Interface):
     
     @todo Describe extension packs, how they are managed and how to create one.
     """
-    __uuid__ = '3295e6ce-b051-47b2-9514-2c588bfe7554'
+    __uuid__ = 'edba9d10-45d8-b440-1712-46ac0c9bc4c5'
     __wsmap__ = 'suppress'
     
     @property
@@ -26850,7 +27071,7 @@ class IBandwidthGroup(Interface):
     """
     Represents one bandwidth group.
     """
-    __uuid__ = 'badea2d7-0261-4146-89f0-6a57cc34833d'
+    __uuid__ = '31587f93-2d12-4d7c-ba6d-ce51d0d5b265'
     __wsmap__ = 'managed'
     
     @property
@@ -26898,7 +27119,7 @@ class IBandwidthControl(Interface):
     Controls the bandwidth groups of one machine used to cap I/O done by a VM.
     This includes network and disk I/O.
     """
-    __uuid__ = 'e2eb3930-d2f4-4f87-be17-0707e30f019f'
+    __uuid__ = '48c7f4c0-c9d6-4742-957c-a6fd52e8c4ae'
     __wsmap__ = 'managed'
     
     @property
@@ -26982,7 +27203,7 @@ class IVirtualBoxClient(Interface):
     via the webservice). Once the session logic is redesigned this might
     change.
     """
-    __uuid__ = 'd191281f-b0cb-4d83-a8fa-0d9fd6ba234c'
+    __uuid__ = 'd2937a8e-cb8d-4382-90ba-b7da78a74573'
     __wsmap__ = 'suppress'
     
     @property
@@ -27432,6 +27653,7 @@ class IMediumRegisteredEvent(IEvent):
     """
     The given medium was registered or unregistered
     within this VirtualBox installation.
+    This event is not yet implemented.
     """
     __uuid__ = '53fac49a-b7f1-4a5a-a4ef-a11dd9c2a458'
     __wsmap__ = 'managed'
@@ -27460,6 +27682,24 @@ class IMediumRegisteredEvent(IEvent):
         """
         ret = self._get_attr("registered")
         return ret
+
+
+class IMediumConfigChangedEvent(IEvent):
+    """
+    The configuration of the given medium was changed (location, properties,
+    child/parent or anything else).
+    This event is not yet implemented.
+    """
+    __uuid__ = 'dd3e2654-a161-41f1-b583-4892f4a9d5d5'
+    __wsmap__ = 'managed'
+    id = VBoxEventType.on_medium_config_changed
+    @property
+    def medium(self):
+        """Get IMedium value for 'medium'
+        ID of the medium this event relates to.
+        """
+        ret = self._get_attr("medium")
+        return IMedium(ret)
 
 
 class IMachineRegisteredEvent(IMachineEvent):
@@ -27887,6 +28127,7 @@ class IMediumChangedEvent(IEvent):
     Notification when a
     :py:func:`IMachine.medium_attachments` medium attachment
     changes.
+    This event is not yet implemented.
     """
     __uuid__ = '0FE2DA40-5637-472A-9736-72019EABD7DE'
     __wsmap__ = 'managed'
