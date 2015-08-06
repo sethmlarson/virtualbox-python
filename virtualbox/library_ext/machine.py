@@ -203,5 +203,3 @@ class IMachine(library.IMachine):
                 raise Exception("Machine has no snapshots")
         return super(IMachine, self).restore_snapshot(snapshot)
     restore_snapshot.__doc__ = library.IMachine.restore_snapshot.__doc__
-
-

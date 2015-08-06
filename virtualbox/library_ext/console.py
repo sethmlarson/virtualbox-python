@@ -10,6 +10,7 @@ Add helper code to the default IConsole class.
 class IConsole(library.IConsole):
     __doc__ = library.IConsole.__doc__
 
+    # TODO: Where do these events exist in 5x ?
     def register_on_network_adapter_changed(self, callback):
         """Set the callback function to consume on network adapter changed
         events.

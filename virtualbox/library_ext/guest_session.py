@@ -123,4 +123,32 @@ class IGuestSession(library.IGuestSession):
 
     # TODO: re-introduce copy_to and copy_from. Inspect the source to figure out if its a
     # directory or file...  Use new apis as required.
+    """
+    # Simplify copy to.  Expand host path to abspath.
+    def copy_to(self, host_path, guest_path, flags=[]):
+        if not os.path.exists(host_path):
+            raise OSError("Failed to find %s on host" % host_path)
+        copy_to = super(IGuestSession, self).copy_to
+        p = copy_to(os.path.abspath(host_path), guest_path, flags)
+        p.wait_for_completion()
+        return p
+    copy_to.__doc__ = library.IGuestSession.copy_to.__doc__
+
+    # Simplify copy from.  Expand host path to abspath. 
+    def copy_from(self, guest_path, host_path, flags=[]):
+        # Dodgy exists check...
+        for x in range(10):
+            try:
+                self.file_exists(guest_path)
+                break
+            except:
+                time.sleep(0.1)
+        else:
+            raise OSError("Failed to find %s on guest" % guest_path)    
+        copy_from = super(IGuestSession, self).copy_from
+        p = copy_from(guest_path, os.path.abspath(host_path), flags)
+        p.wait_for_completion()
+        return p
+    copy_from.__doc__ = library.IGuestSession.copy_from.__doc__
+    """
 
