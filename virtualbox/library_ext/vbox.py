@@ -7,6 +7,10 @@ Add helper code to the default ISession class.
 
 # Configure IVirtualBox bootstrap to build from vboxapi getVirtualBox
 class IVirtualBox(library.IVirtualBox):
+    
+    # Global flag to assert version on object construction.
+    assert_version = True
+
     __doc__ = library.IVirtualBox.__doc__
     def __init__(self, interface=None, manager=None):
         if interface is not None:
@@ -16,6 +20,14 @@ class IVirtualBox(library.IVirtualBox):
         else:
             manager = virtualbox.Manager()
             self._i = manager.get_virtualbox()._i
+
+        if IVirtualBox.assert_version and self.version != library.vbox_version:
+            msg = ( "pyvbox built against version %s != "
+                    "installed VirtualBox version %s.\n"
+                    "Set vbox.VirtualBox.assert_version = False to "
+                    "disable the version check assertion" ) % (library.vbox_version, 
+                                                               self.version)
+            raise EnvironmentError(msg)
 
     def register_on_machine_state_changed(self, callback):
         """Set the callback function to consume on machine state changed events.
