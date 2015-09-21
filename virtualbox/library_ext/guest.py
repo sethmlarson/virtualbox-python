@@ -30,7 +30,7 @@ class IGuest(library.IGuest):
                 test_file = '/bin/sh'
             while True:
                 try:
-                    session.file_query_info(test_file)
+                    session.file_exists(test_file)
                 except library.VBoxError as err:
                     time.sleep(0.5)
                     timeout_ms -= 500

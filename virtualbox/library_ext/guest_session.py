@@ -52,8 +52,13 @@ class IGuestSession(library.IGuestSession):
                 o = str(process.read(1, 65000, 0))
                 stdout.append(o)
 
-        process = self.process_create_ex(command, arguments, environment,
-                            flags, timeout_ms, priority, affinity)
+        process = self.process_create_ex(command, 
+                                         [command] + arguments, environment,
+                                         flags, 
+                                         timeout_ms, 
+                                         priority, 
+                                         affinity)
+
         process.wait_for(int(library.ProcessWaitResult.start), 0)
 
         # write stdin to the process 
@@ -79,6 +84,7 @@ class IGuestSession(library.IGuestSession):
             time.sleep(0.2)
         # make sure we have read the remainder of the out
         read_out(process, flags, stdout, stderr)
+
         return process, "".join(stdout), "".join(stderr)
 
     def makedirs(self, path, mode=0x777):
