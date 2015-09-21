@@ -84,10 +84,11 @@ about how to call a method or attribute from a specific programming language.
 """
 
 
-lib_version = 1.3
+vbox_version = '5.0.4'
+lib_version  = 1.3
 lib_app_uuid = '819B4D85-9CEE-493C-B6FC-64FFE759B3C9'
-lib_uuid = 'd7569351-1750-46f0-936e-bd127d5bc264'
-xidl_hash = '5843fbc2cebf4fe8eda67063654432c6'
+lib_uuid     = 'd7569351-1750-46f0-936e-bd127d5bc264'
+xidl_hash    = 'b84d3eaa1fcb5e64eb0b3f839e6950ee'
 
 
 
@@ -10640,7 +10641,13 @@ class IMachine(Interface):
             
             "gui": VirtualBox Qt GUI front-end
             "headless": VBoxHeadless (VRDE Server) front-end
+            "capture": VBoxHeadless (VRDE Server) front-end with
+            video capturing enabled
             "sdl": VirtualBox SDL front-end
+            "gui/separate": VirtualBox Qt GUI front-end together with
+            a separate headless process
+            "sdl/separate": VirtualBox SDL front-end together with
+            a separate headless process
             "emergencystop": reserved value, used for aborting
             the currently running VM or session owner. In this case the
             @a session parameter may be @c null (if it is non-null it isn't
