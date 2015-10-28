@@ -188,7 +188,8 @@ class IMachine(library.IMachine):
             raise TypeError(msg)
         if not isinstance(location, basestring):
             raise TypeError("value is not an instance of basestring")
-        description = self._call("export",
+        # see https://github.com/mjdorma/pyvbox/issues/40
+        description = self._call("exportTo",
                      in_p=[appliance, location])
         description = library.IVirtualSystemDescription(description)
         return description
