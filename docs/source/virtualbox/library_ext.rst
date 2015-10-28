@@ -1,7 +1,7 @@
 :mod:`virtualbox.library_ext` -- extensions to *virtualbox.library*
 ===================================================================
 
-.. module:: virualbox.library_ext
+.. module:: virtualbox.library_ext
     :synopsis: pyvbox
 .. moduleauthor:: Michael Dorman <mjdorma+pyvbox@gmail.com>
 .. sectionauthor:: Michael Dorman <mjdorma+pyvbox@gmail.com>
