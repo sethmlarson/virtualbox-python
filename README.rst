@@ -77,9 +77,9 @@ Launch machine, take a screen shot, stop machine::
 
     In [5]: progress = vm.launch_vm_process(session, 'gui', '')
 
-    In [6]: h, w, _, _, _ = session.console.display.get_screen_resolution(0)
+    In [6]: h, w, _, _, _, _ = session.console.display.get_screen_resolution(0)
 
-    In [7]: png = session.console.display.take_screen_shot_png_to_array(0, h, w)
+    In [7]: png = session.console.display.take_screen_shot_to_array(0, h, w, virtualbox.library.BitmapFormat.png)
 
     In [8]: with open('screenshot.png', 'wb') as f:
       ....:     f.write(png)
