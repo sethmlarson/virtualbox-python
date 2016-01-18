@@ -1,6 +1,13 @@
 Change log
 ==========
 
+version 1.0.0
+
+* Support for 5.0.x VirtualBox.
+* Introduce Major.Minor virtualbox build version assertion when creating a VirtualBox
+  instance.
+* Fix to iMachine.export_to (contribution from @z00m1n).
+
 version 0.2.2
 
 * Cleanup managers at exiti (reported by @jiml521).
