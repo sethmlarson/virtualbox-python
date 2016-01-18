@@ -21,12 +21,14 @@ class IVirtualBox(library.IVirtualBox):
             manager = virtualbox.Manager()
             self._i = manager.get_virtualbox()._i
 
-        if IVirtualBox.assert_version and self.version != library.vbox_version:
+        this_version = ".".join(self.version.split('.')[0:2])
+        build_version = ".".join(self.version.split(library.vbox_version)[0:2])
+        if IVirtualBox.assert_version and this_version == build_version:
             msg = ( "pyvbox built against version %s != "
                     "installed VirtualBox version %s.\n"
                     "Set vbox.VirtualBox.assert_version = False to "
-                    "disable the version check assertion" ) % (library.vbox_version, 
-                                                               self.version)
+                    "disable the version check assertion" ) % (this_version, 
+                                                               build_version)
             raise EnvironmentError(msg)
 
     def register_on_machine_state_changed(self, callback):
