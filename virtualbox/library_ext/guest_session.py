@@ -52,8 +52,13 @@ class IGuestSession(library.IGuestSession):
                 o = str(process.read(1, 65000, 0))
                 stdout.append(o)
 
-        process = self.process_create_ex(command, arguments, environment,
-                            flags, timeout_ms, priority, affinity)
+        process = self.process_create_ex(command, 
+                                         [command] + arguments, environment,
+                                         flags, 
+                                         timeout_ms, 
+                                         priority, 
+                                         affinity)
+
         process.wait_for(int(library.ProcessWaitResult.start), 0)
 
         # write stdin to the process 
@@ -79,10 +84,11 @@ class IGuestSession(library.IGuestSession):
             time.sleep(0.2)
         # make sure we have read the remainder of the out
         read_out(process, flags, stdout, stderr)
+
         return process, "".join(stdout), "".join(stderr)
 
     def makedirs(self, path, mode=0x777):
-        """Super-mkdir: create a leaf directory and all intermediate ones."""
+        "Super-mkdir: create a leaf directory and all intermediate ones."
         self.directory_create(path, mode, [library.DirectoryCreateFlag.parents])
 
     # Simplify calling directory_remove_recursive.  Set default flags to
@@ -94,6 +100,36 @@ class IGuestSession(library.IGuestSession):
     directory_remove_recursive.__doc__ = \
             library.IGuestSession.directory_remove_recursive.__doc__
 
+    # Simplify file_exists with default follow_symlink == False
+    def file_exists(self, path, follow_symlinks=True):
+        file_exists = super(IGuestSession, self).file_exists
+        return file_exists(path, follow_symlinks)
+    file_exists.__doc__ = library.IGuestSession.file_exists.__doc__
+
+    # Simplify symlink_exists with default follow_symlink == False
+    def symlink_exists(self, path, follow_symlinks=True):
+        symlink_exists = super(IGuestSession, self).symlink_exists
+        return symlink_exists(path, follow_symlinks)
+    symlink_exists.__doc__ = library.IGuestSession.symlink_exists.__doc__
+
+    # Simplify directory_exists with default follow_symlink == False
+    def directory_exists(self, path, follow_symlinks=True):
+        directory_exists = super(IGuestSession, self).directory_exists
+        return directory_exists(path, follow_symlinks)
+    directory_exists.__doc__ = library.IGuestSession.directory_exists.__doc__
+
+    def path_exists(self, path, follow_symlinks=True):
+        "test if path exists"
+        if self.file_exists(path, follow_symlink) or \
+           self.symlink_exists(path, follow_symlink) or \
+           self.directory_exists(path, follow_symlink):
+            return True
+        else:
+            return False
+
+    # TODO: re-introduce copy_to and copy_from. Inspect the source to figure out if its a
+    # directory or file...  Use new apis as required.
+    """
     # Simplify copy to.  Expand host path to abspath.
     def copy_to(self, host_path, guest_path, flags=[]):
         if not os.path.exists(host_path):
@@ -120,6 +156,5 @@ class IGuestSession(library.IGuestSession):
         p.wait_for_completion()
         return p
     copy_from.__doc__ = library.IGuestSession.copy_from.__doc__
+    """
 
-
-    

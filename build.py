@@ -60,10 +60,11 @@ except:
 """
 
 LIB_META = """\
-lib_version = %(version)s
+vbox_version = '%(vbox_version)s'
+lib_version  = %(version)s
 lib_app_uuid = '%(app_uuid)s'
-lib_uuid = '%(uuid)s'
-xidl_hash = '%(xidl_hash)s'
+lib_uuid     = '%(uuid)s'
+xidl_hash    = '%(xidl_hash)s'
 """
 
 LIB_DEFINES = r'''
@@ -466,7 +467,6 @@ METHOD_RETURN = '''\
         %(retcmd)s'''
 
 
-
 def process_interface_method(node):
     def process_result(c):
         name = c.getAttribute('name')
@@ -640,13 +640,27 @@ def preprocess(xidl, target):
 #
 ###########################################################
 
-def download_master(output_path):
-    "Download the master xidl"
-    xidl = "http://www.virtualbox.org/svn/vbox/trunk/src/VBox/Main/idl/VirtualBox.xidl"
-    if 0 != os.system('wget -O %s %s' % (output_path, xidl)):
-        assert 0 == os.system('curl %s > %s' % (xidl, output_path) ) 
+def get_vbox_version(config_kmk):
+    "Return the vbox config major, minor, build"
+    with open(config_kmk, 'rb') as f:
+        config = f.read()
+    major = re.search("VBOX_VERSION_MAJOR = (?P<major>[\d])", 
+                      config).groupdict()['major']
+    minor = re.search("VBOX_VERSION_MINOR = (?P<minor>[\d])", 
+                      config).groupdict()['minor']
+    build = re.search("VBOX_VERSION_BUILD = (?P<build>[\d])", 
+                      config).groupdict()['build']
+    return ".".join([major, minor, build])
 
-def download_stable(output_path):
+def download_master(downloads):
+    "Download the master xidl"
+    for dest, code in downloads:
+        url = "http://www.virtualbox.org/svn/vbox/trunk/%s" % code 
+        if 0 != os.system('wget -O %s %s' % (dest, url)):
+            assert 0 == os.system('curl %s > %s' % (url, dest) ) 
+        assert os.path.exists(dest), "Failed to download %s" % url
+
+def download_stable(downloads):
     "Download latest tarball for stable release then unpack xidl"
     url = urllib2.urlopen('https://www.virtualbox.org/wiki/Downloads')
     page = url.read()
@@ -666,25 +680,31 @@ def download_stable(output_path):
     assert os.path.exists(tarname), "failed bunzip %s" % tarname
     assert 0 == os.system('tar xf %s' % tarname), "failed to tar xf %s" % tarname
     source_dir = os.path.splitext(tarname)[0]
-    path = './%s/src/VBox/Main/idl/VirtualBox.xidl' % source_dir
-    assert os.path.exists(path), "VirtualBox.xidl was not at %s" % path
-    shutil.copy(path, output_path)    
+    for dest, code in downloads:
+        path = './%s/%s' % (source_dir, code)
+        assert os.path.exists(path), "Source file not found at %s" % path
+        shutil.copy(path, dest)    
 
 @begin.start
 def main(virtualbox_xidl='VirtualBox.xidl', 
+         config_kmk='Config.kmk',
          build_against_master=False,
          force_download=False):
     """Build the virtualbox/library.py file.
     """
-    if force_download and os.path.exists(virtualbox_xidl):
-        os.remove(virtualbox_xidl)
+    if force_download:
+        if os.path.exists(virtualbox_xidl):
+            os.remove(virtualbox_xidl)
+        if os.path.exists(config_kmk):
+            os.remove(config_kmk)
 
-    if not os.path.exists(virtualbox_xidl):
+    downloads = [(virtualbox_xidl, "src/VBox/Main/idl/VirtualBox.xidl"),
+                 (config_kmk, "Config.kmk")]
+    if not os.path.exists(virtualbox_xidl) or not os.path.exists(config_kmk):
         if build_against_master:
-            download_master(virtualbox_xidl)
+            download_master(downloads)
         else:
-            download_stable(virtualbox_xidl)
-        assert os.path.exists(virtualbox_xidl)
+            download_stable(downloads)
 
     print("Create new virtualbox/library.py")
     xidl = open(virtualbox_xidl, 'rb').read()
@@ -720,12 +740,16 @@ def main(virtualbox_xidl='VirtualBox.xidl',
         source['result'].append(build_error_result(*args))
 
     #get lib meta
+    vbox_version = get_vbox_version(config_kmk)
     uuid = library.getAttribute('uuid')
     version = library.getAttribute('version')
     app_uuid = library.getAttribute('appUuid')
     xidl_hash = hashlib.md5(xidl).hexdigest()
-    lib_meta = LIB_META % dict(uuid=uuid, version=version, app_uuid=app_uuid,
-                xidl_hash=xidl_hash)
+    lib_meta = LIB_META % dict(vbox_version=vbox_version,
+                               uuid=uuid,
+                               version=version, 
+                               app_uuid=app_uuid,
+                               xidl_hash=xidl_hash)
 
     code = []
     code.append(LIB_IMPORTS)
@@ -736,9 +760,10 @@ def main(virtualbox_xidl='VirtualBox.xidl',
     code.extend(source['enum'])
     code.extend(source['interface'])
     code = "\n".join(code)
-    print("   xidl hash  : %s" % xidl_hash)
-    print("   version    : %s" % version) 
-    print("   line count : %s" % code.count("\n"))
+    print("   vbox version : %s" % vbox_version)
+    print("   xidl hash    : %s" % xidl_hash)
+    print("   version      : %s" % version) 
+    print("   line count   : %s" % code.count("\n"))
     with open('virtualbox/library.py', 'wb') as f:
         f.write(code)
 
