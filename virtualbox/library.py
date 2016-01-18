@@ -84,11 +84,11 @@ about how to call a method or attribute from a specific programming language.
 """
 
 
-vbox_version = '5.0.4'
+vbox_version = '5.0.5'
 lib_version  = 1.3
 lib_app_uuid = '819B4D85-9CEE-493C-B6FC-64FFE759B3C9'
 lib_uuid     = 'd7569351-1750-46f0-936e-bd127d5bc264'
-xidl_hash    = 'b84d3eaa1fcb5e64eb0b3f839e6950ee'
+xidl_hash    = '7cc12567547747a5e42fb5b0c515f467'
 
 
 
@@ -285,12 +285,16 @@ class SettingsVersion(Enum):
 
             Settings version "1.15", written by VirtualBox 5.0.x.
 
+    .. describe:: v1_16(18)
+
+            Settings version "1.16", written by VirtualBox 5.1.x.
+
     .. describe:: future(99999)
 
             Settings version greater than "1.15", written by a future VirtualBox version.
 
     """
-    __uuid__ = 'd5b15ca7-3de7-46b2-a63a-ddcce42bfa3f'
+    __uuid__ = 'b4cc23c2-96f2-419d-830b-bd13c1135dfb'
     _enums = [\
         ('Null', 0, 
          '''Null value, indicates invalid version.'''),
@@ -328,6 +332,8 @@ class SettingsVersion(Enum):
          '''Settings version "1.14", written by VirtualBox 4.3.x.'''),
         ('v1_15', 17, 
          '''Settings version "1.15", written by VirtualBox 5.0.x.'''),
+        ('v1_16', 18, 
+         '''Settings version "1.16", written by VirtualBox 5.1.x.'''),
         ('Future', 99999, 
          '''Settings version greater than "1.15", written by a future VirtualBox version.'''),
         ] 
@@ -5286,8 +5292,12 @@ class StorageBus(Enum):
 
             
 
+    .. describe:: pc_ie(7)
+
+            
+
     """
-    __uuid__ = '2dab9df1-9683-48fd-8c11-caada236fcb0'
+    __uuid__ = '21371490-8542-4b5a-a74d-ee9ac2d45a90'
     _enums = [\
         ('Null', 0, 
          '''@c null value. Never used by the API.'''),
@@ -5302,6 +5312,8 @@ class StorageBus(Enum):
         ('SAS', 5, 
          ''''''),
         ('USB', 6, 
+         ''''''),
+        ('PCIe', 7, 
          ''''''),
         ] 
 
@@ -5351,8 +5363,12 @@ class StorageControllerType(Enum):
 
             Special USB based storage controller.
 
+    .. describe:: nv_me(10)
+
+            An NVMe storage controller.
+
     """
-    __uuid__ = '02e190af-b546-4109-b036-6deaa4ef6e69'
+    __uuid__ = '9427f309-82e7-468f-9964-abfefc4d3058'
     _enums = [\
         ('Null', 0, 
          '''@c null value. Never used by the API.'''),
@@ -5374,6 +5390,8 @@ class StorageControllerType(Enum):
          '''A variant of the LsiLogic controller using SAS.'''),
         ('USB', 9, 
          '''Special USB based storage controller.'''),
+        ('NVMe', 10, 
+         '''An NVMe storage controller.'''),
         ] 
 
 
@@ -8414,7 +8432,7 @@ class IInternalMachineControl(Interface):
     information about the saved state file and delete this file from disk
     when appropriate.
     """
-    __uuid__ = 'ec36f437-ad4d-4512-94dd-f4c568143aa7'
+    __uuid__ = 'cdbc59df-4f4d-4cf2-809c-917601355afc'
     __wsmap__ = 'suppress'
     
     def update_state(self, state):
@@ -8799,6 +8817,26 @@ class IInternalMachineControl(Interface):
             raise TypeError("vm_net_tx can only be an instance of type baseinteger")
         self._call("reportVmStatistics",
                      in_p=[valid_stats, cpu_user, cpu_kernel, cpu_idle, mem_total, mem_free, mem_balloon, mem_shared, mem_cache, paged_total, mem_alloc_total, mem_free_total, mem_balloon_total, mem_shared_total, vm_net_rx, vm_net_tx])
+
+    def authenticate_external(self, auth_params):
+        """Verify credentials using the external auth library.
+
+        in auth_params of type str
+            The auth parameters, credentials, etc.
+
+        out result of type str
+            The authentification result.
+
+        """
+        if not isinstance(auth_params, list):
+            raise TypeError("auth_params can only be an instance of type list")
+        for a in auth_params[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
+        result = self._call("authenticateExternal",
+                     in_p=[auth_params])
+        return result
 
 
 class IBIOSSettings(Interface):
@@ -10467,6 +10505,20 @@ class IMachine(Interface):
             raise TypeError("value is not an instance of basestring")
         return self._set_attr("VMProcessPriority", value)
 
+    @property
+    def paravirt_debug(self):
+        """Get or set str value for 'paravirtDebug'
+        Debug parameters for the paravirtualized guest interface provider.
+        """
+        ret = self._get_attr("paravirtDebug")
+        return ret
+
+    @paravirt_debug.setter
+    def paravirt_debug(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("paravirtDebug", value)
+
     def lock_machine(self, session, lock_type):
         """Locks the machine for the given session to enable the caller
         to make changes to the machine or start the VM or control
@@ -10641,13 +10693,7 @@ class IMachine(Interface):
             
             "gui": VirtualBox Qt GUI front-end
             "headless": VBoxHeadless (VRDE Server) front-end
-            "capture": VBoxHeadless (VRDE Server) front-end with
-            video capturing enabled
             "sdl": VirtualBox SDL front-end
-            "gui/separate": VirtualBox Qt GUI front-end together with
-            a separate headless process
-            "sdl/separate": VirtualBox SDL front-end together with
-            a separate headless process
             "emergencystop": reserved value, used for aborting
             the currently running VM or session owner. In this case the
             @a session parameter may be @c null (if it is non-null it isn't
@@ -15833,6 +15879,14 @@ class IGuestOSType(Interface):
         Returns @c true a USB controller is recommended for this OS type.
         """
         ret = self._get_attr("recommendedUSB")
+        return ret
+
+    @property
+    def recommended_usb3(self):
+        """Get bool value for 'recommendedUSB3'
+        Returns @c true an xHCI (USB 3) controller is recommended for this OS type.
+        """
+        ret = self._get_attr("recommendedUSB3")
         return ret
 
     @property
@@ -23226,7 +23280,7 @@ class IParallelPort(Interface):
         """Get or set str value for 'path'
         Host parallel device name. If this parallel port is enabled, setting a
         @c null or an empty string as this attribute's value will result in
-        an error.
+        the parallel port behaving as if not connected to any device.
         """
         ret = self._get_attr("path")
         return ret
@@ -24260,6 +24314,14 @@ class IUSBDevice(Interface):
         client or to a local host machine.
         """
         ret = self._get_attr("remote")
+        return ret
+
+    @property
+    def backend(self):
+        """Get str value for 'backend'
+        The backend which will be used to communicate with this device.
+        """
+        ret = self._get_attr("backend")
         return ret
 
 
