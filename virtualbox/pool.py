@@ -122,7 +122,8 @@ class MachinePool(object):
             session.unlock_machine()
             session = clone.create_session()
             console = session.console
-            p = console.restore_snapshot()
+            console.machine.restore_snapshot()
+            time.sleep(1)
             p.wait_for_completion(60*1000)
             return clone
         finally:
@@ -170,7 +171,8 @@ class MachinePool(object):
                     guest_session.close()
                     console.pause()
                     id_p, p = console.machine.take_snapshot('initialised', 'machine pool', True)
-                    p.wait_for_completion(60*1000)
+                    #p.wait_for_completion(60*1000)
+                    time.sleep(10)
                     self._power_down(session)
                 finally:
                     if session.state == SessionState.locked:
