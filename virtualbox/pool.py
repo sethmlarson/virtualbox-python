@@ -122,7 +122,8 @@ class MachinePool(object):
             session.unlock_machine()
             session = clone.create_session()
             console = session.console
-            p = console.restore_snapshot()
+            console.machine.restore_snapshot()
+            time.sleep(1)
             p.wait_for_completion(60*1000)
             return clone
         finally:
@@ -162,15 +163,15 @@ class MachinePool(object):
                     idle_count = 0
                     timeout = 60
                     while idle_count < 5 and timeout > 0:
-                        act = console.get_device_activity(DeviceType.hard_disk)
-                        if act == DeviceActivity.idle:
+                        act = console.get_device_activity([DeviceType.hard_disk])
+                        if act[0] == DeviceActivity.idle:
                             idle_count += 1
                         time.sleep(0.5)
                         timeout -= 0.5
                     guest_session.close()
                     console.pause()
-                    p = console.take_snapshot('initialised', 'machine pool')
-                    p.wait_for_completion(60*1000)
+                    id_p, p = console.machine.take_snapshot('initialised', 'machine pool', True)
+                    time.sleep(10)
                     self._power_down(session)
                 finally:
                     if session.state == SessionState.locked:
