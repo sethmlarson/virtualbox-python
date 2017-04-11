@@ -61,6 +61,8 @@ from virtualbox.library import SessionState
 from virtualbox.library import MachineState 
 from virtualbox.library import DeviceType 
 from virtualbox.library import DeviceActivity 
+from virtualbox.library import OleErrorUnexpected
+
 
 class MachinePool(object):
     """MachinePool manages a pool of resources and enable cross process 
@@ -74,9 +76,11 @@ class MachinePool(object):
         """
         self.machine_name = machine_name
         with self._lock() as session:
-            if not session.machine.current_snapshot:
-                console = session.console
-                p = console.take_snapshot('initialised', 'root machine')
+            machine = session.machine
+            if not machine.current_snapshot:
+                p, id_p = machine.take_snapshot('initialised',
+                                                'root machine',
+                                                False)
                 p.wait_for_completion(60*1000)
 
     @contextmanager
@@ -119,11 +123,14 @@ class MachinePool(object):
         try:
             p = session.console.power_down()
             p.wait_for_completion(60*1000)
-            session.unlock_machine()
+            try:
+                session.unlock_machine()
+            except OleErrorUnexpected:
+                # session seems to become unlocked automatically after
+                # wait_for_completion is called after the power_down?
+                pass
             session = clone.create_session()
-            console = session.console
-            console.machine.restore_snapshot()
-            time.sleep(1)
+            p = session.machine.restore_snapshot()
             p.wait_for_completion(60*1000)
             return clone
         finally:
@@ -142,7 +149,7 @@ class MachinePool(object):
                     continue
                 else:
                     try:
-                        p = session.console.restore_snapshot()
+                        p = session.machine.restore_snapshot()
                         p.wait_for_completion(60*1000)
                     except:
                         pass
@@ -170,8 +177,10 @@ class MachinePool(object):
                         timeout -= 0.5
                     guest_session.close()
                     console.pause()
-                    id_p, p = console.machine.take_snapshot('initialised', 'machine pool', True)
-                    time.sleep(10)
+                    p, id_p = console.machine.take_snapshot('initialised',
+                                                            'machine pool',
+                                                            True)
+                    p.wait_for_completion(60*1000)
                     self._power_down(session)
                 finally:
                     if session.state == SessionState.locked:
@@ -189,6 +198,4 @@ class MachinePool(object):
             return 
         with self._lock():
             return self._power_down(session)
-
-
 

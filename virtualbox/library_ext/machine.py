@@ -198,8 +198,8 @@ class IMachine(library.IMachine):
     #if no snapshot has been supplied, try using the current_snapshot
     def restore_snapshot(self, snapshot=None):
         if snapshot is None:
-            if self.machine.current_snapshot:
-                snapshot = self.machine.current_snapshot
+            if self.current_snapshot:
+                snapshot = self.current_snapshot
             else:
                 raise Exception("Machine has no snapshots")
         return super(IMachine, self).restore_snapshot(snapshot)

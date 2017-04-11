@@ -84,11 +84,11 @@ about how to call a method or attribute from a specific programming language.
 """
 
 
-vbox_version = '5.0.5'
+vbox_version = '5.1.1'
 lib_version  = 1.3
 lib_app_uuid = '819B4D85-9CEE-493C-B6FC-64FFE759B3C9'
 lib_uuid     = 'd7569351-1750-46f0-936e-bd127d5bc264'
-xidl_hash    = '7cc12567547747a5e42fb5b0c515f467'
+xidl_hash    = '4c722fe37602c6217134f1c9f75a2bb3'
 
 
 
@@ -837,11 +837,23 @@ class CPUPropertyType(Enum):
 
     .. describe:: triple_fault_reset(3)
 
-            This setting determines whether a triple fault within a guest will trigger an internal
-            error condition and stop the VM (default) or reset the virtual CPU and continue execution.
+            This setting determines whether a triple fault within a guest will
+            trigger an internal error condition and stop the VM (default) or reset
+            the virtual CPU/VM and continue execution.
+
+    .. describe:: apic(4)
+
+            This setting determines whether an APIC is part of the virtual CPU.
+            This feature can only be turned off when the X2APIC feature is off.
+
+    .. describe:: x2_apic(5)
+
+            This setting determines whether an x2APIC is part of the virtual CPU.
+            Since this feature implies that the APIC feature is present, it
+            automatically enables the APIC feature when set.
 
     """
-    __uuid__ = 'ed4094c1-d00e-483a-93e9-7163549ebd6e'
+    __uuid__ = 'cc6ecdad-a07c-4e81-9c0e-d767e0678d5a'
     _enums = [\
         ('Null', 0, 
          '''Null value (never used by the API).'''),
@@ -853,8 +865,16 @@ class CPUPropertyType(Enum):
          '''This setting determines whether VirtualBox will advertise long mode
             (i.e. 64-bit guest support) and let the guest enter it.'''),
         ('TripleFaultReset', 3, 
-         '''This setting determines whether a triple fault within a guest will trigger an internal
-            error condition and stop the VM (default) or reset the virtual CPU and continue execution.'''),
+         '''This setting determines whether a triple fault within a guest will
+            trigger an internal error condition and stop the VM (default) or reset
+            the virtual CPU/VM and continue execution.'''),
+        ('APIC', 4, 
+         '''This setting determines whether an APIC is part of the virtual CPU.
+            This feature can only be turned off when the X2APIC feature is off.'''),
+        ('X2APIC', 5, 
+         '''This setting determines whether an x2APIC is part of the virtual CPU.
+            Since this feature implies that the APIC feature is present, it
+            automatically enables the APIC feature when set.'''),
         ] 
 
 
@@ -1299,6 +1319,35 @@ class BIOSBootMenuMode(Enum):
         ('MenuOnly', 1, 
          ''''''),
         ('MessageAndMenu', 2, 
+         ''''''),
+        ] 
+
+
+class APICMode(Enum):
+    """BIOS APIC initialization mode. If the hardware does not support the
+    mode then the code falls back to a lower mode.
+
+
+    .. describe:: disabled(0)
+
+            
+
+    .. describe:: apic(1)
+
+            
+
+    .. describe:: x2_apic(2)
+
+            
+
+    """
+    __uuid__ = 'c6884ba5-3cc4-4a92-a7f6-4410f9fd894e'
+    _enums = [\
+        ('Disabled', 0, 
+         ''''''),
+        ('APIC', 1, 
+         ''''''),
+        ('X2APIC', 2, 
          ''''''),
         ] 
 
@@ -2053,6 +2102,40 @@ class ExportOptions(Enum):
             using NAT. Default is to keep them to avoid losing information which can
             cause trouble after import, at the price of risking duplicate MAC
             addresses, if the import options are used to keep them.'''),
+        ] 
+
+
+class CertificateVersion(Enum):
+    """X.509 certificate version numbers.
+
+
+    .. describe:: v1(1)
+
+            
+
+    .. describe:: v2(2)
+
+            
+
+    .. describe:: v3(3)
+
+            
+
+    .. describe:: unknown(99)
+
+            
+
+    """
+    __uuid__ = '9e232a99-51d0-4dbd-96a0-ffac4bc3e2a8'
+    _enums = [\
+        ('V1', 1, 
+         ''''''),
+        ('V2', 2, 
+         ''''''),
+        ('V3', 3, 
+         ''''''),
+        ('Unknown', 99, 
+         ''''''),
         ] 
 
 
@@ -3472,7 +3555,7 @@ class FsObjRenameFlag(Enum):
 class ProcessCreateFlag(Enum):
     """Guest process execution flags.
     The values are passed to the guest additions, so its not possible
-    to change (move) or reuse values.here.  See EXECUTEPROCESSFLAG_XXX
+    to change (move) or reuse values.here. See EXECUTEPROCESSFLAG_XXX
     in GuestControlSvc.h.
 
 
@@ -3493,9 +3576,9 @@ class ProcessCreateFlag(Enum):
 
             Do not show the started process according to the guest OS guidelines.
 
-    .. describe:: no_profile(8)
+    .. describe:: profile(8)
 
-            Do not use the user's profile data when exeuting a process. Only available for Windows guests.
+            Utilize the user's profile data when exeuting a process. Only available for Windows guests at the moment.
 
     .. describe:: wait_for_std_out(16)
 
@@ -3521,7 +3604,7 @@ class ProcessCreateFlag(Enum):
             Present since VirtualBox 4.3.28 and 5.0 beta 3.
 
     """
-    __uuid__ = 'be8c8dbd-4a76-e9ac-20df-468e86edf383'
+    __uuid__ = 'C544CD2B-F02D-4886-9901-71C523DB8DC5'
     _enums = [\
         ('None', 0, 
          '''No flag set.'''),
@@ -3532,8 +3615,8 @@ class ProcessCreateFlag(Enum):
          '''Do not report an error when executed processes are still alive when VBoxService or the guest OS is shutting down.'''),
         ('Hidden', 4, 
          '''Do not show the started process according to the guest OS guidelines.'''),
-        ('NoProfile', 8, 
-         '''Do not use the user's profile data when exeuting a process. Only available for Windows guests.'''),
+        ('Profile', 8, 
+         '''Utilize the user's profile data when exeuting a process. Only available for Windows guests at the moment.'''),
         ('WaitForStdOut', 16, 
          '''The guest process waits until all data from stdout is read out.'''),
         ('WaitForStdErr', 32, 
@@ -4463,7 +4546,15 @@ class MediumFormatCapabilities(Enum):
 
             The format backend supports virtual filesystem functionality.
 
-    .. describe:: capability_mask(1023)
+    .. describe:: discard(1024)
+
+            The format backend supports discarding blocks.
+
+    .. describe:: preferred(2048)
+
+            Indicates that this is a frequently used format backend.
+
+    .. describe:: capability_mask(4095)
 
             
 
@@ -4496,7 +4587,11 @@ class MediumFormatCapabilities(Enum):
          '''The format backend uses the TCP networking interface for network access.'''),
         ('VFS', 512, 
          '''The format backend supports virtual filesystem functionality.'''),
-        ('CapabilityMask', 1023, 
+        ('Discard', 1024, 
+         '''The format backend supports discarding blocks.'''),
+        ('Preferred', 2048, 
+         '''Indicates that this is a frequently used format backend.'''),
+        ('CapabilityMask', 4095, 
          ''''''),
         ] 
 
@@ -4661,13 +4756,41 @@ class GuestMonitorStatus(Enum):
 
             The guest monitor is enabled in the guest.
 
+    .. describe:: blank(2)
+
+            The guest monitor is enabled in the guest but should display nothing.
+
     """
-    __uuid__ = 'a0001cb1-97c9-496d-82bc-616c19a9e212'
+    __uuid__ = '6b8d3f71-39cb-459e-a916-48917ed43e19'
     _enums = [\
         ('Disabled', 0, 
          '''The guest monitor is disabled in the guest.'''),
         ('Enabled', 1, 
          '''The guest monitor is enabled in the guest.'''),
+        ('Blank', 2, 
+         '''The guest monitor is enabled in the guest but should display nothing.'''),
+        ] 
+
+
+class ScreenLayoutMode(Enum):
+    """How IDisplay::setScreenLayout method should work.
+
+
+    .. describe:: apply_p(0)
+
+            If the guest is already at desired mode then the API might avoid setting the mode.
+
+    .. describe:: reset(1)
+
+            Always set the new mode even if the guest is already at desired mode.
+
+    """
+    __uuid__ = '9a982f4f-b815-4802-8539-d0b46435a7b7'
+    _enums = [\
+        ('Apply', 0, 
+         '''If the guest is already at desired mode then the API might avoid setting the mode.'''),
+        ('Reset', 1, 
+         '''Always set the new mode even if the guest is already at desired mode.'''),
         ] 
 
 
@@ -5068,11 +5191,11 @@ class AudioDriverType(Enum):
 
     .. describe:: win_mm(1)
 
-            Windows multimedia (Windows hosts only).
+            Windows multimedia (Windows hosts only, not supported at the moment).
 
     .. describe:: oss(2)
 
-            Open Sound System (Linux hosts only).
+            Open Sound System (Linux / Unix hosts only).
 
     .. describe:: alsa(3)
 
@@ -5096,7 +5219,7 @@ class AudioDriverType(Enum):
 
     .. describe:: sol_audio(8)
 
-            Solaris audio (Solaris hosts only).
+            Solaris audio (Solaris hosts only, not supported at the moment).
 
     """
     __uuid__ = '4bcc3d73-c2fe-40db-b72f-0c2ca9d68496'
@@ -5104,9 +5227,9 @@ class AudioDriverType(Enum):
         ('Null', 0, 
          '''Null value, also means "dummy audio driver".'''),
         ('WinMM', 1, 
-         '''Windows multimedia (Windows hosts only).'''),
+         '''Windows multimedia (Windows hosts only, not supported at the moment).'''),
         ('OSS', 2, 
-         '''Open Sound System (Linux hosts only).'''),
+         '''Open Sound System (Linux / Unix hosts only).'''),
         ('ALSA', 3, 
          '''Advanced Linux Sound Architecture (Linux hosts only).'''),
         ('DirectSound', 4, 
@@ -5118,7 +5241,7 @@ class AudioDriverType(Enum):
         ('Pulse', 7, 
          '''PulseAudio (Linux hosts only).'''),
         ('SolAudio', 8, 
-         '''Solaris audio (Solaris hosts only).'''),
+         '''Solaris audio (Solaris hosts only, not supported at the moment).'''),
         ] 
 
 
@@ -6640,6 +6763,12 @@ class IVirtualBox(Interface):
     
     To enumerate all the virtual machines on the host, use the
     :py:func:`IVirtualBox.machines`  attribute.
+    
+    Error information handling is a bit special with IVirtualBox: creating
+    an instance will always succeed. The return of the actual error
+    code/information is postponed to any attribute or method call. The
+    reason for this is that COM likes to mutilate the error code and lose
+    the detailed error information returned by instance creation.
     """
     __uuid__ = '0169423f-46b4-cde9-91af-1e9d5b6cd945'
     __wsmap__ = 'managed'
@@ -7690,9 +7819,9 @@ at the specified location.
             raise TypeError("firmware_type can only be an instance of type FirmwareType")
         if not isinstance(version, basestring):
             raise TypeError("version can only be an instance of type basestring")
-        (url, file_p, result) = self._call("checkFirmwarePresent",
+        (result, url, file_p) = self._call("checkFirmwarePresent",
                      in_p=[firmware_type, version])
-        return (url, file_p, result)
+        return (result, url, file_p)
 
 
 class IVFSExplorer(Interface):
@@ -7823,6 +7952,209 @@ class IVFSExplorer(Interface):
                      in_p=[names])
         progress = IProgress(progress)
         return progress
+
+
+class ICertificate(Interface):
+    """
+    X.509 certificate details.
+    """
+    __uuid__ = '392f1de4-80e1-4a8a-93a1-67c5f92a838a'
+    __wsmap__ = 'managed'
+    
+    @property
+    def version_number(self):
+        """Get CertificateVersion value for 'versionNumber'
+        Certificate version number.
+        """
+        ret = self._get_attr("versionNumber")
+        return CertificateVersion(ret)
+
+    @property
+    def serial_number(self):
+        """Get str value for 'serialNumber'
+        Certificate serial number.
+        """
+        ret = self._get_attr("serialNumber")
+        return ret
+
+    @property
+    def signature_algorithm_oid(self):
+        """Get str value for 'signatureAlgorithmOID'
+        The dotted OID of the signature algorithm.
+        """
+        ret = self._get_attr("signatureAlgorithmOID")
+        return ret
+
+    @property
+    def signature_algorithm_name(self):
+        """Get str value for 'signatureAlgorithmName'
+        The signature algorithm name if known (if known).
+        """
+        ret = self._get_attr("signatureAlgorithmName")
+        return ret
+
+    @property
+    def issuer_name(self):
+        """Get str value for 'issuerName'
+        Issuer name.  Each member of the array is on the format
+        COMPONENT=NAME, e.g. "C=DE", "ST=Example", "L=For Instance", "O=Beispiel GmbH",
+        "CN=beispiel.example.org".
+        """
+        ret = self._get_attr("issuerName")
+        return ret
+
+    @property
+    def subject_name(self):
+        """Get str value for 'subjectName'
+        Subject name.  Same format as issuerName.
+        """
+        ret = self._get_attr("subjectName")
+        return ret
+
+    @property
+    def friendly_name(self):
+        """Get str value for 'friendlyName'
+        Friendly subject name or similar.
+        """
+        ret = self._get_attr("friendlyName")
+        return ret
+
+    @property
+    def validity_period_not_before(self):
+        """Get str value for 'validityPeriodNotBefore'
+        Certificate not valid before ISO time stamp.
+        """
+        ret = self._get_attr("validityPeriodNotBefore")
+        return ret
+
+    @property
+    def validity_period_not_after(self):
+        """Get str value for 'validityPeriodNotAfter'
+        Certificate not valid after ISO time stamp.
+        """
+        ret = self._get_attr("validityPeriodNotAfter")
+        return ret
+
+    @property
+    def public_key_algorithm_oid(self):
+        """Get str value for 'publicKeyAlgorithmOID'
+        The dotted OID of the public key algorithm.
+        """
+        ret = self._get_attr("publicKeyAlgorithmOID")
+        return ret
+
+    @property
+    def public_key_algorithm(self):
+        """Get str value for 'publicKeyAlgorithm'
+        The public key algorithm name (if known).
+        """
+        ret = self._get_attr("publicKeyAlgorithm")
+        return ret
+
+    @property
+    def subject_public_key(self):
+        """Get str value for 'subjectPublicKey'
+        The raw public key bytes.
+        """
+        ret = self._get_attr("subjectPublicKey")
+        return ret
+
+    @property
+    def issuer_unique_identifier(self):
+        """Get str value for 'issuerUniqueIdentifier'
+        Unique identifier of the issuer (empty string if not present).
+        """
+        ret = self._get_attr("issuerUniqueIdentifier")
+        return ret
+
+    @property
+    def subject_unique_identifier(self):
+        """Get str value for 'subjectUniqueIdentifier'
+        Unique identifier of this certificate (empty string if not present).
+        """
+        ret = self._get_attr("subjectUniqueIdentifier")
+        return ret
+
+    @property
+    def certificate_authority(self):
+        """Get bool value for 'certificateAuthority'
+        Whether this certificate is a certificate authority.  Will return E_FAIL
+        if this attribute is not present.
+        """
+        ret = self._get_attr("certificateAuthority")
+        return ret
+
+    @property
+    def key_usage(self):
+        """Get int value for 'keyUsage'
+        Key usage mask.  Will return 0 if not present.
+        """
+        ret = self._get_attr("keyUsage")
+        return ret
+
+    @property
+    def extended_key_usage(self):
+        """Get str value for 'extendedKeyUsage'
+        Array of dotted extended key usage OIDs.  Empty array if not present.
+        """
+        ret = self._get_attr("extendedKeyUsage")
+        return ret
+
+    @property
+    def raw_cert_data(self):
+        """Get str value for 'rawCertData'
+        The raw certificate bytes.
+        """
+        ret = self._get_attr("rawCertData")
+        return ret
+
+    @property
+    def self_signed(self):
+        """Get bool value for 'selfSigned'
+        Set if self signed certificate.
+        """
+        ret = self._get_attr("selfSigned")
+        return ret
+
+    @property
+    def trusted(self):
+        """Get bool value for 'trusted'
+        Set if the certificate is trusted (by the parent object).
+        """
+        ret = self._get_attr("trusted")
+        return ret
+
+    @property
+    def expired(self):
+        """Get bool value for 'expired'
+        Set if the certificate has expired (relevant to the parent object)/
+        """
+        ret = self._get_attr("expired")
+        return ret
+
+    def is_currently_expired(self):
+        """Tests if the certificate has expired at the present time according to
+        the X.509 validity of the certificate.
+
+        return result of type bool
+
+        """
+        result = self._call("isCurrentlyExpired")
+        return result
+
+    def query_info(self, what):
+        """Way to extend the interface.
+
+        in what of type int
+
+        return result of type str
+
+        """
+        if not isinstance(what, baseinteger):
+            raise TypeError("what can only be an instance of type baseinteger")
+        result = self._call("queryInfo",
+                     in_p=[what])
+        return result
 
 
 class IAppliance(Interface):
@@ -7973,6 +8305,15 @@ class IAppliance(Interface):
         """
         ret = self._get_attr("machines")
         return ret
+
+    @property
+    def certificate(self):
+        """Get ICertificate value for 'certificate'
+        The X.509 signing certificate, if the imported OVF was signed, @c null
+        if not signed.  This is available after calling :py:func:`read` .
+        """
+        ret = self._get_attr("certificate")
+        return ICertificate(ret)
 
     def read(self, file_p):
         """Reads an OVF file into the appliance object.
@@ -8844,7 +9185,7 @@ class IBIOSSettings(Interface):
     The IBIOSSettings interface represents BIOS settings of the virtual
     machine. This is used only in the :py:func:`IMachine.bios_settings`  attribute.
     """
-    __uuid__ = 'c5b5afe3-4a6f-05eb-c9b6-4dbf98538b67'
+    __uuid__ = 'f13f667d-3624-4ac5-99c1-3d982ebd8d98'
     __wsmap__ = 'managed'
     
     @property
@@ -8935,7 +9276,7 @@ class IBIOSSettings(Interface):
     @property
     def ioapic_enabled(self):
         """Get or set bool value for 'IOAPICEnabled'
-        IO APIC support flag. If set, VirtualBox will provide an IO APIC
+        I/O-APIC support flag. If set, VirtualBox will provide an I/O-APIC
         and support IRQs above 15.
         """
         ret = self._get_attr("IOAPICEnabled")
@@ -8946,6 +9287,20 @@ class IBIOSSettings(Interface):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
         return self._set_attr("IOAPICEnabled", value)
+
+    @property
+    def apic_mode(self):
+        """Get or set APICMode value for 'APICMode'
+        APIC mode to set up by the firmware.
+        """
+        ret = self._get_attr("APICMode")
+        return APICMode(ret)
+
+    @apic_mode.setter
+    def apic_mode(self, value):
+        if not isinstance(value, APICMode):
+            raise TypeError("value is not an instance of APICMode")
+        return self._set_attr("APICMode", value)
 
     @property
     def time_offset(self):
@@ -9138,7 +9493,7 @@ class IMachine(Interface):
     
     :py:class:`ISession` , :py:class:`IConsole` 
     """
-    __uuid__ = 'f30138d4-e5ea-4b3a-8858-a059de4c93fd'
+    __uuid__ = 'b2547866-a0a1-4391-8b86-6952d82efaa0'
     __wsmap__ = 'managed'
     
     @property
@@ -9925,6 +10280,14 @@ class IMachine(Interface):
         return ret
 
     @property
+    def settings_aux_file_path(self):
+        """Get str value for 'settingsAuxFilePath'
+        Full name of the file containing auxiliary machine settings data.
+        """
+        ret = self._get_attr("settingsAuxFilePath")
+        return ret
+
+    @property
     def settings_modified(self):
         """Get bool value for 'settingsModified'
         Whether the settings of this machine have been modified
@@ -10519,6 +10882,24 @@ class IMachine(Interface):
             raise TypeError("value is not an instance of basestring")
         return self._set_attr("paravirtDebug", value)
 
+    @property
+    def cpu_profile(self):
+        """Get or set str value for 'CPUProfile'
+        Experimental feature to select the guest CPU profile.  The default
+        is "host", which indicates the host CPU.  All other names are subject
+        to change.
+        
+        The profiles are found in src/VBox/VMM/VMMR3/cpus/.
+        """
+        ret = self._get_attr("CPUProfile")
+        return ret
+
+    @cpu_profile.setter
+    def cpu_profile(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("CPUProfile", value)
+
     def lock_machine(self, session, lock_type):
         """Locks the machine for the given session to enable the caller
         to make changes to the machine or start the VM or control
@@ -10601,7 +10982,7 @@ class IMachine(Interface):
             Virtual machine not registered.
         
         raises :class:`OleErrorAccessdenied`
-            Process not started by OpenRemoteSession.
+            Process not started by
         
         raises :class:`VBoxErrorInvalidObjectState`
             Session already open or being opened.
@@ -12744,9 +13125,9 @@ created differencing media, should not happen).
             raise TypeError("screen_id can only be an instance of type baseinteger")
         if not isinstance(bitmap_format, BitmapFormat):
             raise TypeError("bitmap_format can only be an instance of type BitmapFormat")
-        (width, height, data) = self._call("readSavedThumbnailToArray",
+        (data, width, height) = self._call("readSavedThumbnailToArray",
                      in_p=[screen_id, bitmap_format])
-        return (width, height, data)
+        return (data, width, height)
 
     def query_saved_screenshot_info(self, screen_id):
         """Returns available formats and size of the screenshot from saved state.
@@ -12766,10 +13147,10 @@ created differencing media, should not happen).
         """
         if not isinstance(screen_id, baseinteger):
             raise TypeError("screen_id can only be an instance of type baseinteger")
-        (width, height, bitmap_formats) = self._call("querySavedScreenshotInfo",
+        (bitmap_formats, width, height) = self._call("querySavedScreenshotInfo",
                      in_p=[screen_id])
         bitmap_formats = [BitmapFormat(a) for a in bitmap_formats]
-        return (width, height, bitmap_formats)
+        return (bitmap_formats, width, height)
 
     def read_saved_screenshot_to_array(self, screen_id, bitmap_format):
         """Screenshot in requested format is retrieved to an array of bytes.
@@ -12794,9 +13175,9 @@ created differencing media, should not happen).
             raise TypeError("screen_id can only be an instance of type baseinteger")
         if not isinstance(bitmap_format, BitmapFormat):
             raise TypeError("bitmap_format can only be an instance of type BitmapFormat")
-        (width, height, data) = self._call("readSavedScreenshotToArray",
+        (data, width, height) = self._call("readSavedScreenshotToArray",
                      in_p=[screen_id, bitmap_format])
-        return (width, height, data)
+        return (data, width, height)
 
     def hot_plug_cpu(self, cpu):
         """Plugs a CPU into the machine.
@@ -12905,10 +13286,10 @@ created differencing media, should not happen).
         The target machine object must have been created previously with :py:func:`IVirtualBox.create_machine` , and all the settings will be
         transferred except the VM name and the hardware UUID. You can set the
         VM name and the new hardware UUID when creating the target machine. The
-        network MAC addresses are newly created for all network adapters. You
-        can change that behaviour with the options parameter. The operation is
-        performed asynchronously, so the machine object will be not be usable
-        until the @a progress object signals completion.
+        network MAC addresses are newly created for all enabled network
+        adapters. You can change that behaviour with the options parameter.
+        The operation is performed asynchronously, so the machine object will
+        be not be usable until the @a progress object signals completion.
 
         in target of type :class:`IMachine`
             Target machine object.
@@ -13097,10 +13478,10 @@ created differencing media, should not happen).
             raise TypeError("description can only be an instance of type basestring")
         if not isinstance(pause, bool):
             raise TypeError("pause can only be an instance of type bool")
-        (id_p, progress) = self._call("takeSnapshot",
+        (progress, id_p) = self._call("takeSnapshot",
                      in_p=[name, description, pause])
         progress = IProgress(progress)
-        return (id_p, progress)
+        return (progress, id_p)
 
     def delete_snapshot(self, id_p):
         """Starts deleting the specified snapshot asynchronously.
@@ -14689,10 +15070,10 @@ class IHost(Interface):
             Host network interface @a name already exists.
         
         """
-        (host_interface, progress) = self._call("createHostOnlyNetworkInterface")
-        host_interface = IHostNetworkInterface(host_interface)
+        (progress, host_interface) = self._call("createHostOnlyNetworkInterface")
         progress = IProgress(progress)
-        return (host_interface, progress)
+        host_interface = IHostNetworkInterface(host_interface)
+        return (progress, host_interface)
 
     def remove_host_only_network_interface(self, id_p):
         """Removes the given Host Only Networking interface.
@@ -14970,6 +15351,59 @@ class IHost(Interface):
         ret = self._get_attr("videoInputDevices")
         return [IHostVideoInputDevice(a) for a in ret]
 
+    def add_usb_device_source(self, backend, id_p, address, property_names, property_values):
+        """Adds a new USB device source.
+
+        in backend of type str
+            The backend to use as the new device source.
+
+        in id_p of type str
+            Unique ID to identify the source.
+
+        in address of type str
+            Address to use, the format is dependent on the backend.
+            For USB/IP backends for example the notation is host[:port].
+
+        in property_names of type str
+            Array of property names for more detailed configuration. Not used at the moment.
+
+        in property_values of type str
+            Array of property values for more detailed configuration. Not used at the moment.
+
+        """
+        if not isinstance(backend, basestring):
+            raise TypeError("backend can only be an instance of type basestring")
+        if not isinstance(id_p, basestring):
+            raise TypeError("id_p can only be an instance of type basestring")
+        if not isinstance(address, basestring):
+            raise TypeError("address can only be an instance of type basestring")
+        if not isinstance(property_names, list):
+            raise TypeError("property_names can only be an instance of type list")
+        for a in property_names[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
+        if not isinstance(property_values, list):
+            raise TypeError("property_values can only be an instance of type list")
+        for a in property_values[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(\
+                        "array can only contain objects of type basestring")
+        self._call("addUSBDeviceSource",
+                     in_p=[backend, id_p, address, property_names, property_values])
+
+    def remove_usb_device_source(self, id_p):
+        """Removes a previously added USB device source.
+
+        in id_p of type str
+            The identifier used when the source was added.
+
+        """
+        if not isinstance(id_p, basestring):
+            raise TypeError("id_p can only be an instance of type basestring")
+        self._call("removeUSBDeviceSource",
+                     in_p=[id_p])
+
 
 class ISystemProperties(Interface):
     """
@@ -15082,7 +15516,7 @@ class ISystemProperties(Interface):
         """Get bool value for 'rawModeSupported'
         Indicates whether VirtualBox was built with raw-mode support.
         
-        When this reads as False, the :py:func:`HWVirtExPropertyType.enabled` 
+        When this reads as False, the :py:attr:`HWVirtExPropertyType.enabled` 
         setting will be ignored and assumed to be True.
         """
         ret = self._get_attr("rawModeSupported")
@@ -15654,7 +16088,7 @@ class ISystemProperties(Interface):
 
 class IGuestOSType(Interface):
     """"""
-    __uuid__ = '03cd409d-20f5-43f9-8de1-4a129620990b'
+    __uuid__ = 'b1336a0a-2546-4d99-8cff-8efb130cfa9d'
     __wsmap__ = 'struct'
     
     @property
@@ -15700,7 +16134,7 @@ class IGuestOSType(Interface):
     @property
     def recommended_ioapic(self):
         """Get bool value for 'recommendedIOAPIC'
-        Returns @c true if IO APIC recommended for this OS type.
+        Returns @c true if I/O-APIC recommended for this OS type.
         """
         ret = self._get_attr("recommendedIOAPIC")
         return ret
@@ -15897,6 +16331,14 @@ class IGuestOSType(Interface):
         ret = self._get_attr("recommendedTFReset")
         return ret
 
+    @property
+    def recommended_x2_apic(self):
+        """Get bool value for 'recommendedX2APIC'
+        Returns @c true if X2APIC is recommended for this OS type.
+        """
+        ret = self._get_attr("recommendedX2APIC")
+        return ret
+
 
 class IAdditionsFacility(Interface):
     """
@@ -16049,11 +16491,11 @@ class IDnDSource(IDnDBase):
         """
         if not isinstance(screen_id, baseinteger):
             raise TypeError("screen_id can only be an instance of type baseinteger")
-        (formats, allowed_actions, default_action) = self._call("dragIsPending",
+        (default_action, formats, allowed_actions) = self._call("dragIsPending",
                      in_p=[screen_id])
-        allowed_actions = [DnDAction(a) for a in allowed_actions]
         default_action = DnDAction(default_action)
-        return (formats, allowed_actions, default_action)
+        allowed_actions = [DnDAction(a) for a in allowed_actions]
+        return (default_action, formats, allowed_actions)
 
     def drop(self, format_p, action):
         """Informs the source that a drop event occurred for a pending
@@ -16289,10 +16731,10 @@ class IDnDTarget(IDnDBase):
             if not isinstance(a, basestring):
                 raise TypeError(\
                         "array can only contain objects of type basestring")
-        (format_p, result_action) = self._call("drop",
+        (result_action, format_p) = self._call("drop",
                      in_p=[screen_id, x, y, default_action, allowed_actions, formats])
         result_action = DnDAction(result_action)
-        return (format_p, result_action)
+        return (result_action, format_p)
 
     def send_data(self, screen_id, format_p, data):
         """Initiates sending data to the target.
@@ -16580,7 +17022,7 @@ class IGuestSession(Interface):
 
         in destination of type str
             The path to the target directory (in the guest).  Unless the
-            :py:func:`DirectoryCopyFlags.copy_into_existing`  flag is given, the
+            :py:attr:`DirectoryCopyFlags.copy_into_existing`  flag is given, the
             directory shall not already exist.  Guest path style.
 
         in flags of type :class:`DirectoryCopyFlags`
@@ -16617,7 +17059,7 @@ class IGuestSession(Interface):
 
         in destination of type str
             Where to put the directory on the host.  Unless the
-            :py:func:`DirectoryCopyFlags.copy_into_existing`  flag is given, the
+            :py:attr:`DirectoryCopyFlags.copy_into_existing`  flag is given, the
             directory shall not already exist.  Host path style.
 
         in flags of type :class:`DirectoryCopyFlags`
@@ -16654,7 +17096,7 @@ class IGuestSession(Interface):
 
         in destination of type str
             Where to put the file in the guest. Unless the
-            :py:func:`DirectoryCopyFlags.copy_into_existing`  flag is given, the
+            :py:attr:`DirectoryCopyFlags.copy_into_existing`  flag is given, the
             directory shall not already exist.  Guest style path.
 
         in flags of type :class:`DirectoryCopyFlags`
@@ -16880,7 +17322,7 @@ option was requested.
 
         in flags of type :class:`DirectoryRemoveRecFlag`
             Zero or more :py:class:`DirectoryRemoveRecFlag`  flags.
-            WARNING! SPECIFYING :py:func:`DirectoryRemoveRecFlag.content_and_dir`  IS
+            WARNING! SPECIFYING :py:attr:`DirectoryRemoveRecFlag.content_and_dir`  IS
             MANDATORY AT THE MOMENT!!
 
         return progress of type :class:`IProgress`
@@ -16996,7 +17438,7 @@ yet to report the session base environment.
         """Copies a file from one guest location to another.
         
         Will overwrite the destination file unless
-        :py:func:`FileCopyFlag.no_replace`  is specified.
+        :py:attr:`FileCopyFlag.no_replace`  is specified.
 
         in source of type str
             The path to the file to copy (in the guest).  Guest path style.
@@ -17034,7 +17476,7 @@ yet to report the session base environment.
         """Copies a file from the guest to the host.
         
         Will overwrite the destination file unless
-        :py:func:`FileCopyFlag.no_replace`  is specified.
+        :py:attr:`FileCopyFlag.no_replace`  is specified.
 
         in source of type str
             Path to the file on the guest side that should be copied to the
@@ -17073,7 +17515,7 @@ yet to report the session base environment.
         """Copies a file from the host to the guest.
         
         Will overwrite the destination file unless
-        :py:func:`FileCopyFlag.no_replace`  is specified.
+        :py:attr:`FileCopyFlag.no_replace`  is specified.
 
         in source of type str
             Path to the file on the host side that should be copied to the
@@ -17259,7 +17701,7 @@ option was requested.
             The file sharing mode in the guest. This parameter is currently
             ignore for all guest OSes.  It will in the future be implemented for
             Windows, OS/2 and maybe Solaris guests only, the others will ignore it.
-            Use :py:func:`FileSharingMode.all_p` .
+            Use :py:attr:`FileSharingMode.all_p` .
 
         in creation_mode of type int
             The UNIX-style access mode mask to create the file with if @a openAction
@@ -18219,8 +18661,8 @@ class IFile(Interface):
         
         The file current position always applies to the :py:func:`IFile.read` 
         method, which updates it upon return.  Same goes for the :py:func:`IFile.write` 
-        method except when :py:func:`IFile.access_mode`  is :py:func:`FileAccessMode.append_only` 
-        or :py:func:`FileAccessMode.append_read` , where it will always write
+        method except when :py:func:`IFile.access_mode`  is :py:attr:`FileAccessMode.append_only` 
+        or :py:attr:`FileAccessMode.append_read` , where it will always write
         to the end of the file and will leave this attribute unchanged.
         
         The :py:func:`IFile.seek`  is used to change this attribute without
@@ -18367,8 +18809,8 @@ class IFile(Interface):
         
         The file current position always applies to the :py:func:`IFile.read` 
         method.  Same for the :py:func:`IFile.write`  method it except when
-        the :py:func:`IFile.access_mode`  is :py:func:`FileAccessMode.append_only` 
-        or :py:func:`FileAccessMode.append_read` .
+        the :py:func:`IFile.access_mode`  is :py:attr:`FileAccessMode.append_only` 
+        or :py:attr:`FileAccessMode.append_read` .
 
         in offset of type int
             Offset to seek relative to the position specified by @a whence.
@@ -18869,10 +19311,10 @@ class IGuest(Interface):
         """
         if not isinstance(facility, AdditionsFacilityType):
             raise TypeError("facility can only be an instance of type AdditionsFacilityType")
-        (timestamp, status) = self._call("getFacilityStatus",
+        (status, timestamp) = self._call("getFacilityStatus",
                      in_p=[facility])
         status = AdditionsFacilityStatus(status)
-        return (timestamp, status)
+        return (status, timestamp)
 
     def get_additions_status(self, level):
         """Retrieve the current status of a certain Guest Additions run level.
@@ -20465,7 +20907,7 @@ class IMedium(Interface):
         the properties of this medium or contents of the storage unit
         will return an error (unless explicitly stated otherwise). That
         includes an attempt to start a virtual machine that wants to
-        write to the the medium.
+        write to the medium.
         
         When the virtual machine is started up, it locks for reading all
         media it uses in read-only mode. If some medium cannot be locked
@@ -20689,9 +21131,9 @@ inaccessible).
         """
         if not isinstance(names, basestring):
             raise TypeError("names can only be an instance of type basestring")
-        (return_names, return_values) = self._call("getProperties",
+        (return_values, return_names) = self._call("getProperties",
                      in_p=[names])
-        return (return_names, return_values)
+        return (return_values, return_names)
 
     def set_properties(self, names, values):
         """Sets values for a group of properties in one call.
@@ -21259,8 +21701,8 @@ or has children.
             Encryption is not configured for this medium.
         
         """
-        (cipher, password_id) = self._call("getEncryptionSettings")
-        return (cipher, password_id)
+        (password_id, cipher) = self._call("getEncryptionSettings")
+        return (password_id, cipher)
 
     def check_encryption_password(self, password):
         """Checks whether the supplied password is correct for the medium.
@@ -22323,6 +22765,66 @@ class IFramebufferOverlay(IFramebuffer):
                      in_p=[x, y])
 
 
+class IGuestScreenInfo(Interface):
+    """"""
+    __uuid__ = '5f99cd4d-bbd2-49ba-b24d-4b5b42fb4c3a'
+    __wsmap__ = 'managed'
+    
+    @property
+    def screen_id(self):
+        """Get int value for 'screenId'"""
+        ret = self._get_attr("screenId")
+        return ret
+
+    @property
+    def guest_monitor_status(self):
+        """Get GuestMonitorStatus value for 'guestMonitorStatus'"""
+        ret = self._get_attr("guestMonitorStatus")
+        return GuestMonitorStatus(ret)
+
+    @property
+    def primary(self):
+        """Get bool value for 'primary'"""
+        ret = self._get_attr("primary")
+        return ret
+
+    @property
+    def origin(self):
+        """Get bool value for 'origin'"""
+        ret = self._get_attr("origin")
+        return ret
+
+    @property
+    def origin_x(self):
+        """Get int value for 'originX'"""
+        ret = self._get_attr("originX")
+        return ret
+
+    @property
+    def origin_y(self):
+        """Get int value for 'originY'"""
+        ret = self._get_attr("originY")
+        return ret
+
+    @property
+    def width(self):
+        """Get int value for 'width'"""
+        ret = self._get_attr("width")
+        return ret
+
+    @property
+    def height(self):
+        """Get int value for 'height'"""
+        ret = self._get_attr("height")
+        return ret
+
+    @property
+    def bits_per_pixel(self):
+        """Get int value for 'bitsPerPixel'"""
+        ret = self._get_attr("bitsPerPixel")
+        return ret
+
+
 class IDisplay(Interface):
     """
     The IDisplay interface represents the virtual machine's display.
@@ -22335,9 +22837,17 @@ class IDisplay(Interface):
     IFramebuffer interface. Examples of the output target are a window on
     the host computer or an RDP session's display on a remote computer.
     """
-    __uuid__ = '7303a66d-433b-25a4-f9a8-fcadf87e0c2a'
+    __uuid__ = '02326f63-bcb3-4481-96e0-30d1c2ee97f6'
     __wsmap__ = 'managed'
     
+    @property
+    def guest_screen_layout(self):
+        """Get IGuestScreenInfo value for 'guestScreenLayout'
+        Layout of the guest screens.
+        """
+        ret = self._get_attr("guestScreenLayout")
+        return [IGuestScreenInfo(a) for a in ret]
+
     def get_screen_resolution(self, screen_id):
         """Queries certain attributes such as display width, height, color depth
         and the X and Y origin for a given guest screen.
@@ -22453,10 +22963,13 @@ class IDisplay(Interface):
             The Y origin of the guest screen.
 
         in width of type int
+            The width of the guest screen.
 
         in height of type int
+            The height of the guest screen.
 
         in bits_per_pixel of type int
+            The number of bits per pixel of the guest screen.
 
         raises :class:`OleErrorInvalidarg`
             The @a display is not associated with any monitor.
@@ -22722,6 +23235,25 @@ class IDisplay(Interface):
         self._call("notifyHiDPIOutputPolicyChange",
                      in_p=[f_unscaled_hi_dpi])
 
+    def set_screen_layout(self, screen_layout_mode, guest_screen_info):
+        """Set video modes for the guest screens.
+
+        in screen_layout_mode of type :class:`ScreenLayoutMode`
+
+        in guest_screen_info of type :class:`IGuestScreenInfo`
+
+        """
+        if not isinstance(screen_layout_mode, ScreenLayoutMode):
+            raise TypeError("screen_layout_mode can only be an instance of type ScreenLayoutMode")
+        if not isinstance(guest_screen_info, list):
+            raise TypeError("guest_screen_info can only be an instance of type list")
+        for a in guest_screen_info[:10]:
+            if not isinstance(a, IGuestScreenInfo):
+                raise TypeError(\
+                        "array can only contain objects of type IGuestScreenInfo")
+        self._call("setScreenLayout",
+                     in_p=[screen_layout_mode, guest_screen_info])
+
 
 class INetworkAdapter(Interface):
     """
@@ -22784,8 +23316,10 @@ class INetworkAdapter(Interface):
     @property
     def mac_address(self):
         """Get or set str value for 'MACAddress'
-        Ethernet MAC address of the adapter, 12 hexadecimal characters. When setting
-        it to @c null or an empty string, VirtualBox will generate a unique MAC address.
+        Ethernet MAC address of the adapter, 12 hexadecimal characters. When
+        setting it to @c null or an empty string for an enabled adapter,
+        VirtualBox will generate a unique MAC address. Disabled adapters can
+        have an empty MAC address.
         """
         ret = self._get_attr("MACAddress")
         return ret
@@ -23065,9 +23599,9 @@ class INetworkAdapter(Interface):
         """
         if not isinstance(names, basestring):
             raise TypeError("names can only be an instance of type basestring")
-        (return_names, return_values) = self._call("getProperties",
+        (return_values, return_names) = self._call("getProperties",
                      in_p=[names])
-        return (return_names, return_values)
+        return (return_values, return_names)
 
 
 class ISerialPort(Interface):
@@ -23991,6 +24525,15 @@ class IMachineDebugger(Interface):
         ret = self._get_attr("VM")
         return ret
 
+    @property
+    def uptime(self):
+        """Get int value for 'uptime'
+        VM uptime in milliseconds, i.e. time in which it could have been
+        executing guest code. Excludes the time when the VM was paused.
+        """
+        ret = self._get_attr("uptime")
+        return ret
+
 
 class IUSBDeviceFilters(Interface):
     """
@@ -24317,6 +24860,20 @@ class IUSBDevice(Interface):
         return ret
 
     @property
+    def device_info(self):
+        """Get str value for 'deviceInfo'
+        Array of device attributes as single strings.
+        
+        So far the following are used:
+        0: The manufacturer string, if the device doesn't expose the ID one is taken
+        from an internal database or an empty string if none is found.
+        1: The product string, if the device doesn't expose the ID one is taken
+        from an internal database or an empty string if none is found.
+        """
+        ret = self._get_attr("deviceInfo")
+        return ret
+
+    @property
     def backend(self):
         """Get str value for 'backend'
         The backend which will be used to communicate with this device.
@@ -24635,6 +25192,31 @@ class IHostUSBDeviceFilter(IUSBDeviceFilter):
         if not isinstance(value, USBDeviceFilterAction):
             raise TypeError("value is not an instance of USBDeviceFilterAction")
         return self._set_attr("action", value)
+
+
+class IUSBProxyBackend(Interface):
+    """
+    The USBProxyBackend interface represents a source for USB devices available
+    to the host for attaching to the VM.
+    """
+    __uuid__ = 'dfe56449-6989-4002-80cf-3607f377d40c'
+    __wsmap__ = 'managed'
+    
+    @property
+    def name(self):
+        """Get str value for 'name'
+        The unique name of the proxy backend.
+        """
+        ret = self._get_attr("name")
+        return ret
+
+    @property
+    def type_p(self):
+        """Get str value for 'type'
+        The type of the backend.
+        """
+        ret = self._get_attr("type")
+        return ret
 
 
 class IAudioAdapter(Interface):
@@ -26493,10 +27075,10 @@ class IPerformanceCollector(Interface):
             if not isinstance(a, Interface):
                 raise TypeError(\
                         "array can only contain objects of type Interface")
-        (return_metric_names, return_objects, return_units, return_scales, return_sequence_numbers, return_data_indices, return_data_lengths, return_data) = self._call("queryMetricsData",
+        (return_data, return_metric_names, return_objects, return_units, return_scales, return_sequence_numbers, return_data_indices, return_data_lengths) = self._call("queryMetricsData",
                      in_p=[metric_names, objects])
         return_objects = [Interface(a) for a in return_objects]
-        return (return_metric_names, return_objects, return_units, return_scales, return_sequence_numbers, return_data_indices, return_data_lengths, return_data)
+        return (return_data, return_metric_names, return_objects, return_units, return_scales, return_sequence_numbers, return_data_indices, return_data_lengths)
 
 
 class INATEngine(Interface):
@@ -27271,6 +27853,12 @@ class IVirtualBoxClient(Interface):
     At the moment only available for clients of the local API (not usable
     via the webservice). Once the session logic is redesigned this might
     change.
+    
+    Error information handling is a bit special with IVirtualBoxClient:
+    creating an instance will always succeed. The return of the actual error
+    code/information is postponed to any attribute or method call. The
+    reason for this is that COM likes to mutilate the error code and lose
+    the detailed error information returned by instance creation.
     """
     __uuid__ = 'd2937a8e-cb8d-4382-90ba-b7da78a74573'
     __wsmap__ = 'suppress'
