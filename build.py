@@ -576,8 +576,9 @@ def process_interface_method(node):
         n, _, t, a = ret_param
         name = pythonic_name(n)
         atype = type_to_name(t)
-        outvars.append(name)
-        out_p.append((name, atype, array))
+        # xpcom returns retval before out vars
+        outvars.insert(0, name)
+        out_p.insert(0, (name, atype, array))
 
     if inparams_raw:
         in_p = ",\n%sin_p=[%s]" % (" " * 21, inparams_raw)
