@@ -189,7 +189,6 @@ class Interface(object):
             errobj.msg = None
             if platform.system() == 'Windows':
                 if hasattr(exc, 'args'):
-                    print(exc.args)
                     errobj.msg = exc.args[2][2]
 	    # TODO: get the Linux/Darwin specific args struct
 
