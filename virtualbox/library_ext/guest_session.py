@@ -45,11 +45,15 @@ class IGuestSession(library.IGuestSession):
         def read_out(process, flags, stdout, stderr):
             if library.ProcessCreateFlag.wait_for_std_err in flags:
                 process.wait_for(int(library.ProcessWaitResult.std_err))
-                e = str(process.read(2, 65000, 0))
+                e = process.read(2, 65000, 0)
+                if isinstance(e, memoryview):
+                    e = bytes(e)
                 stderr.append(e)
             if library.ProcessCreateFlag.wait_for_std_out in flags:
                 process.wait_for(int(library.ProcessWaitResult.std_out))
-                o = str(process.read(1, 65000, 0))
+                o = process.read(1, 65000, 0)
+                if isinstance(o, memoryview):
+                    o = bytes(o)
                 stdout.append(o)
 
         process = self.process_create_ex(command, 
@@ -85,7 +89,7 @@ class IGuestSession(library.IGuestSession):
         # make sure we have read the remainder of the out
         read_out(process, flags, stdout, stderr)
 
-        return process, "".join(stdout), "".join(stderr)
+        return process, b"".join(stdout), b"".join(stderr)
 
     def makedirs(self, path, mode=0x777):
         "Super-mkdir: create a leaf directory and all intermediate ones."
