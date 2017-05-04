@@ -45,15 +45,11 @@ class IGuestSession(library.IGuestSession):
         def read_out(process, flags, stdout, stderr):
             if library.ProcessCreateFlag.wait_for_std_err in flags:
                 process.wait_for(int(library.ProcessWaitResult.std_err))
-                e = process.read(2, 65000, 0)
-                if isinstance(e, memoryview):
-                    e = bytes(e)
+                e = bytes(process.read(2, 65000, 0))
                 stderr.append(e)
             if library.ProcessCreateFlag.wait_for_std_out in flags:
                 process.wait_for(int(library.ProcessWaitResult.std_out))
-                o = process.read(1, 65000, 0)
-                if isinstance(o, memoryview):
-                    o = bytes(o)
+                o = bytes(process.read(1, 65000, 0))
                 stdout.append(o)
 
         process = self.process_create_ex(command, 
