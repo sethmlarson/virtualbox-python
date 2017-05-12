@@ -32,7 +32,7 @@ setup(
     url="https://github.com/mjdorma/pyvbox",
     description="A complete VirtualBox Main API implementation",
     long_description=open('README.rst').read(),
-    license="Apache Software Licence",
+    license="Apache-2.0",
     zip_safe=False,
     install_requires = install_requires,
     platforms=['cygwin', 'win', 'linux'],
