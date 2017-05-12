@@ -5,16 +5,17 @@ By Michael Dorman
 """
 from __future__ import print_function
 import sys
-import atexit 
-import inspect 
+import atexit
+import inspect
 import traceback
 import threading
 
-import virtualbox
 from virtualbox import library
 
 
-_lookup = {} 
+_lookup = {}
+
+
 def type_to_interface(event_type):
     """Return the event interface object that corresponds to the event type
     enumeration"""
@@ -38,6 +39,8 @@ def type_to_interface(event_type):
 
 
 _callbacks = {}
+
+
 def _event_monitor(callback, event_source, listener, event_interface, quit):
     global _callbacks
     try:
@@ -46,27 +49,27 @@ def _event_monitor(callback, event_source, listener, event_interface, quit):
                 event = event_source.get_event(listener, 1000)
             except library.VBoxError:
                 print("Unregistering %s due to VBoxError on get_event" %
-                        listener, file=sys.stderr)
+                      listener, file=sys.stderr)
                 break
             if event:
                 try:
                     callback(event_interface(event))
                 except:
-                    print("Unhanded exception in callback: \n%s" % \
-                            traceback.format_exc(), file=sys.stderr)
+                    print("Unhanded exception in callback: \n%s" %
+                          traceback.format_exc(), file=sys.stderr)
                 event_source.event_processed(listener, event)
     finally:
         _callbacks.pop(threading.current_thread().ident, None)
         try:
             event_source.unregister_listener(listener)
-        except Exception as exc:
+        except Exception:
             print("Failed to unregister listener %s" % listener,
-                    file=sys.stderr)
+                  file=sys.stderr)
 
 
 def register_callback(callback, event_source, event_type):
     """register a callback function against an event_source for a given
-    event_type.  
+    event_type.
 
     Arguments:
         callback - function to call when the event occurs
@@ -77,11 +80,11 @@ def register_callback(callback, event_source, event_type):
     """
     global _callbacks
     event_interface = type_to_interface(event_type)
-    listener = event_source.create_listener() 
+    listener = event_source.create_listener()
     event_source.register_listener(listener, [event_type], False)
     quit = threading.Event()
-    t = threading.Thread(target=_event_monitor, args=(callback, 
-                                                      event_source, 
+    t = threading.Thread(target=_event_monitor, args=(callback,
+                                                      event_source,
                                                       listener,
                                                       event_interface,
                                                       quit))
@@ -113,7 +116,3 @@ def _remove_all_callbacks():
 
 
 atexit.register(_remove_all_callbacks)
-
-
-
-
