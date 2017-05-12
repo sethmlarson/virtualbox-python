@@ -1,17 +1,16 @@
-"""This module provides the base types used by :mod:`virtualbox.library`.
-"""
+"""This module provides the base types used by :mod:`virtualbox.library`."""
 
 import re
 import inspect
-import sys
 import platform
 import time
 
-# Py2 and Py3 compatibility  
+# Py2 and Py3 compatibility
 try:
-    import __builtin__ as builtin 
+    import __builtin__ as builtin
 except:
     import builtins as builtin
+
 
 def pythonic_name(name):
     s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
@@ -54,10 +53,11 @@ def add_metaclass(metaclass):
     return wrapper
 
 
-@add_metaclass(EnumType)   
+@add_metaclass(EnumType)
 class Enum(object):
     """Enum objects provide a container for VirtualBox enumerations"""
     _enums = {}
+
     def __init__(self, value):
         if value not in self._lookup_label:
             raise ValueError("Can not find enumeration where value=%s" % value)
@@ -96,11 +96,12 @@ class VBoxErrorMeta(type):
 
 
 @add_metaclass(VBoxErrorMeta)
-class VBoxError(Exception): 
+class VBoxError(Exception):
     """Generic VBoxError"""
     name = "undef"
     value = -1
     msg = ""
+
     def __str__(self):
         return "0x%x (%s)" % (self.value, self.msg)
 
@@ -109,7 +110,7 @@ class Interface(object):
     """Interface objects provide a wrapper for the VirtualBox COM objects"""
     def __init__(self, interface=None):
         if isinstance(interface, Interface):
-            import virtualbox 
+            import virtualbox
             manager = virtualbox.Manager()
             self._i = manager.cast_object(interface, self.__class__)._i
         else:
@@ -141,7 +142,7 @@ class Interface(object):
             for attr_name in attr_names:
                 attr = getattr(self._i, attr_name, self)
                 if attr is not self:
-                    break 
+                    break
             else:
                 # Failed to get attribute, do a quick sleep and try again.
                 time.sleep(0.1)
@@ -165,7 +166,9 @@ class Interface(object):
         else:
             return setattr(self._i, name, value)
 
-    def _call(self, name, in_p=[]):
+    def _call(self, name, in_p=None):
+        if in_p is None:
+            in_p = []
         global vbox_error
         method = self._search_attr(name)
         if inspect.isfunction(method) or inspect.ismethod(method):
@@ -173,29 +176,28 @@ class Interface(object):
         else:
             return method
 
-    def _call_method(self, method, in_p=[]):
+    def _call_method(self, method, in_p=None):
+        if in_p is None:
+            in_p = []
         in_params = [self._cast_to_valuetype(p) for p in in_p]
         try:
             ret = method(*in_params)
         except Exception as exc:
             errno = getattr(exc, 'errno', getattr(exc, 'hresult', -1))
-            errno = errno & 0xFFFFFFFF
+            errno &= 0xFFFFFFFF
             errclass = vbox_error.get(errno, VBoxError)
             errobj = errclass()
             errobj.exc = exc
             errobj.value = errno
-            # TODO: Is this the only way to get a message from exc... 
+            # TODO: Is this the only way to get a message from exc...
             #       does this also vary between nix vs windows.
             errobj.msg = None
             if platform.system() == 'Windows':
                 if hasattr(exc, 'args'):
                     errobj.msg = exc.args[2][2]
-	    # TODO: get the Linux/Darwin specific args struct
+            # TODO: get the Linux/Darwin specific args struct
 
             if errobj.msg is None:
                 errobj.msg = getattr(exc, 'msg', getattr(exc, 'message'))
             raise errobj
         return ret
-
-
-
