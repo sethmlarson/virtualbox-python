@@ -1,19 +1,3 @@
-"""Virtualbox API wrapper and Reference
-
-Copyright (c) 2013 Michael Dorman (mjdorma@gmail.com). All rights reserved.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-"""
 from __future__ import absolute_import
 from contextlib import contextmanager
 import os
@@ -22,7 +6,6 @@ import platform
 import copy
 import atexit
 from multiprocessing import current_process
-from threading import current_thread
 
 from virtualbox.library_ext import library
 
@@ -33,6 +16,7 @@ __doc__ = library.__doc__
 
 VirtualBox = library.IVirtualBox
 Session = library.ISession
+
 
 @contextmanager
 def import_vboxapi():
@@ -47,28 +31,26 @@ def import_vboxapi():
         system = platform.system()
         py_mm_ver = sys.version_info[:2]
         packages = ['vboxapi']
+
         if system == 'Windows':
             packages.extend(['win32com', 'win32', 'win32api', 'pywintypes', 'win32comext'])
-            search = [
-                        'C:\\Python%s%s\\Lib\\site-packages' % py_mm_ver,
-                        'C:\\Python%s%s\\Lib\\site-packages\\win32' % py_mm_ver,
-                        'C:\\Python%s%s\\Lib\\site-packages\\win32\\lib' % py_mm_ver,
-                        'C:\\Program Files\\Oracle\\VirtualBox\\sdk\\install',
-                        'C:\\Program Files (x86)\\Oracle\\VirtualBox\\sdk\\install',
-                     ]
+            search = ['C:\\Python%s%s\\Lib\\site-packages' % py_mm_ver,
+                      'C:\\Python%s%s\\Lib\\site-packages\\win32' % py_mm_ver,
+                      'C:\\Python%s%s\\Lib\\site-packages\\win32\\lib' % py_mm_ver,
+                      'C:\\Program Files\\Oracle\\VirtualBox\\sdk\\install',
+                      'C:\\Program Files (x86)\\Oracle\\VirtualBox\\sdk\\install']
+
         elif system == 'Linux':
-            search = [
-                        '/usr/lib/python%s.%s/dist-packages' % py_mm_ver,
-                        '/usr/lib/python%s.%s/site-packages' % py_mm_ver,
-                        '/usr/share/pyshared',
-                     ]
+            search = ['/usr/lib/python%s.%s/dist-packages' % py_mm_ver,
+                      '/usr/lib/python%s.%s/site-packages' % py_mm_ver,
+                      '/usr/share/pyshared']
+
         elif system == 'Darwin':
-            search = [
-                        '/Library/Python/%s.%s/site-packages' % py_mm_ver,
-                     ]
+            search = ['/Library/Python/%s.%s/site-packages' % py_mm_ver]
         else:
             # No idea where to look...
             raise
+
         packages = set(packages)
         original_path = copy.copy(sys.path)
         for path in search:
@@ -81,7 +63,7 @@ def import_vboxapi():
             if not packages:
                 break
         else:
-            # After search each path we still failed to find 
+            # After search each path we still failed to find
             # the required set of packages.
             raise
         import vboxapi
@@ -93,13 +75,15 @@ def import_vboxapi():
         yield vboxapi
 
 
-_managers = {} 
+_managers = {}
+
+
 class Manager(object):
     """The Manager maintains a single point of entry into vboxapi.
-    
+
     This object is responsible for the construction of
     :py:class:`virtualbox.library_ext.ISession` and
-    :py:class:`virtualbox.library_ext.IVirtualBox`.  
+    :py:class:`virtualbox.library_ext.IVirtualBox`.
 
     :param mtype: Type of manager i.e. WEBSERVICE.
     :type mtype: str (Default None)
@@ -117,12 +101,12 @@ class Manager(object):
     @property
     def manager(self):
         """Create a default Manager object
-        
+
         Builds a singleton VirtualBoxManager object.
 
         Note: It is not necessary to build this object when defining a
         Session or VirtualBox object as both of these classes will default
-        to this object's global singleton during construction. 
+        to this object's global singleton during construction.
         """
         if _managers is None:
             raise RuntimeError("Can not get the manager following a system exit.")
@@ -135,20 +119,20 @@ class Manager(object):
         if _managers is None:
             raise RuntimeError("Can not set the manager following a system exit.")
         if pid not in _managers:
-            _managers[pid] = value 
+            _managers[pid] = value
         else:
             raise Exception("Manager already set for pid %s" % pid)
 
     def get_virtualbox(self):
         """Return a VirtualBox interface
-        
+
         :rtype: library.IVirtualBox
         """
         return VirtualBox(interface=self.manager.getVirtualBox())
 
     def get_session(self):
         """Return a Session interface
-        
+
         :rtype: library.ISession
         """
         # The inconsistent vboxapi implementation makes this annoying...
@@ -160,7 +144,7 @@ class Manager(object):
 
     def cast_object(self, interface_object, interface_class):
         """Cast the obj to the interface class
-        
+
         :rtype: interface_class(interface_object)
         """
         name = interface_class.__name__
@@ -170,17 +154,17 @@ class Manager(object):
     @property
     def bin_path(self):
         """return the virtualbox install directory
-        
+
         :rtype: str
         """
         return self.manager.getBinDir()
 
 
-# Attempt to close left over manager objects cleanly. 
+# Attempt to close left over manager objects cleanly.
 def _cleanup_managers():
     global _managers
     managers = _managers
-    _managers = None 
+    _managers = None
     for manager in managers.values():
         try:
             del manager
@@ -198,9 +182,9 @@ class WebServiceManager(Manager):
     """
     def __init__(self, url='http://localhost/', user='', password=''):
         """Create a VirtualBoxManager WEBSERVICE manager for IVirtualBox
-        
+
         Options:
-            url - url to connect with the VirtualBox server 
+            url - url to connect with the VirtualBox server
             user - username used to auth to the VirtualBox server service
             password - password used to auth to the VirtualBox server service
 
@@ -209,11 +193,11 @@ class WebServiceManager(Manager):
             vbox = VirtualBox(manager=manager)
             ...
         """
-        params = {"url":url, "user":user, "password":password}
+        params = {"url": url, "user": user, "password": password}
         super(WebServiceManager, self).__init__("WEBSERVICE", params)
 
 
 # Lazy include...
-from virtualbox import pool
-from virtualbox import events
-from virtualbox import version
+from virtualbox import pool  # noqa: F401
+from virtualbox import events  # noqa: F401
+from virtualbox import version  # noqa: F401
