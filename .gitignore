@@ -96,3 +96,7 @@ ENV/
 
 # PyCharm
 .idea/
+
+*.swp
+*.zip
+*.xidl
