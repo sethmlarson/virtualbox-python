@@ -1,28 +1,24 @@
-import time
-import os
-
-from virtualbox import library
-
 """
 Add helper code to the default IGuestSession class.
 """
+
+import time
+from virtualbox import library
 
 
 # Add context management to IGuestSession
 class IGuestSession(library.IGuestSession):
     __doc__ = library.IGuestSession.__doc__
+
     def __enter__(self):
         return self
 
-    def __exit__(self, exception_type, exception_val, trace):
+    def __exit__(self, *_):
         self.close()
 
-    def execute(self, command, arguments=[], stdin="", environment=[],
-                 flags=[library.ProcessCreateFlag.wait_for_std_err,
-                        library.ProcessCreateFlag.wait_for_std_out,
-                        library.ProcessCreateFlag.ignore_orphaned_processes],
-                 priority=library.ProcessPriority.default,
-                 affinity=[], timeout_ms=0):
+    def execute(self, command, arguments=None, stdin="", environment=None,
+                flags=None, priority=library.ProcessPriority.default,
+                affinity=None, timeout_ms=0):
         """Execute a command in the Guest
 
             Arguments:
@@ -42,6 +38,17 @@ class IGuestSession(library.IGuestSession):
 
             Return IProcess, stdout, stderr 
         """
+        if arguments is None:
+            arguments = []
+        if environment is None:
+            environment = []
+        if flags is None:
+            flags = [library.ProcessCreateFlag.wait_for_std_err,
+                     library.ProcessCreateFlag.wait_for_std_out,
+                     library.ProcessCreateFlag.ignore_orphaned_processes]
+        if affinity is None:
+            affinity = []
+
         def read_out(process, flags, stdout, stderr):
             if library.ProcessCreateFlag.wait_for_std_err in flags:
                 process.wait_for(int(library.ProcessWaitResult.std_err))
@@ -102,14 +109,12 @@ class IGuestSession(library.IGuestSession):
 
     # Simplify file_exists with default follow_symlink == False
     def file_exists(self, path, follow_symlinks=True):
-        file_exists = super(IGuestSession, self).file_exists
-        return file_exists(path, follow_symlinks)
+        return super(IGuestSession, self).file_exists(path, follow_symlinks)
     file_exists.__doc__ = library.IGuestSession.file_exists.__doc__
 
     # Simplify symlink_exists with default follow_symlink == False
     def symlink_exists(self, path, follow_symlinks=True):
-        symlink_exists = super(IGuestSession, self).symlink_exists
-        return symlink_exists(path, follow_symlinks)
+        return super(IGuestSession, self).symlink_exists(path)
     symlink_exists.__doc__ = library.IGuestSession.symlink_exists.__doc__
 
     # Simplify directory_exists with default follow_symlink == False
@@ -120,9 +125,9 @@ class IGuestSession(library.IGuestSession):
 
     def path_exists(self, path, follow_symlinks=True):
         "test if path exists"
-        if self.file_exists(path, follow_symlink) or \
-           self.symlink_exists(path, follow_symlink) or \
-           self.directory_exists(path, follow_symlink):
+        if (self.file_exists(path, follow_symlinks) or
+                self.symlink_exists(path, follow_symlinks) or
+                self.directory_exists(path, follow_symlinks)):
             return True
         else:
             return False
@@ -157,4 +162,3 @@ class IGuestSession(library.IGuestSession):
         return p
     copy_from.__doc__ = library.IGuestSession.copy_from.__doc__
     """
-
