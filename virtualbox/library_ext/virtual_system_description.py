@@ -1,14 +1,15 @@
-import time
-import os
+"""
+Add helper code to the default IVirtualSystemDescription class.
+"""
 
-import virtualbox
 from virtualbox import library
 from virtualbox.library_base import Enum
 from virtualbox.library import VirtualSystemDescriptionType as DescType
 
-"""
-Add helper code to the default IVirtualSystemDescription class.
-"""
+try:
+    basestring
+except NameError:
+    basestring = str
 
 
 class IVirtualSystemDescription(library.IVirtualSystemDescription):
@@ -23,8 +24,7 @@ class IVirtualSystemDescription(library.IVirtualSystemDescription):
         """
         types, _, _, vbox_values, extra_config = self.get_description()
 
-        # find offset to description type 
-        offset = 0
+        # find offset to description type
         for offset, t in enumerate(types):
             if t == description_type:
                 break
