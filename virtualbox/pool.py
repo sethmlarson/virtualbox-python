@@ -34,7 +34,7 @@ A reliable version of the above code would look like this::
     try:
         for i in range(3):
             sessions.append(pool.acquire("Mick", "password"))
-        
+
         # You now have three running machines.
         for session in sessions:
             with session.guest.create_session("Mick", "password") as gs:
@@ -64,7 +64,7 @@ from virtualbox.library import OleErrorUnexpected
 
 
 class MachinePool(object):
-    """MachinePool manages a pool of resources and enable cross process 
+    """MachinePool manages a pool of resources and enable cross process
     coordination of a linked machine clone. """
     def __init__(self, machine_name):
         """Create a MachinePool instance.
