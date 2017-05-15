@@ -1,3 +1,7 @@
+"""
+Add helper code to the default IMachine class.
+"""
+
 from __future__ import print_function
 import time
 import sys
@@ -7,16 +11,13 @@ import shutil
 import virtualbox
 from virtualbox import library
 
-"""
-Add helper code to the default IMachine class.
-"""
-
 try:
-    basestring = basestring
-except:
+    basestring
+except NameError:
     basestring = (str, bytes)
 
-# Extend and fix IMachine :) 
+
+# Extend and fix IMachine :)
 class IMachine(library.IMachine):
     __doc__ = library.IMachine.__doc__
 
@@ -29,7 +30,7 @@ class IMachine(library.IMachine):
         Options:
             delete - remove all elements of this VM from the system
 
-        Return the IMedia from unregistered VM 
+        Return the IMedia from unregistered VM
         """
         if self.state >= library.MachineState.running:
             session = virtualbox.Session()
@@ -37,13 +38,10 @@ class IMachine(library.IMachine):
             try:
                 progress = session.console.power_down()
                 progress.wait_for_completion(-1)
-            except Exception as exc:
-                print("Error powering off machine %s" % progress, 
-                                            file=sys.stderr)
-                pass
+            except Exception:
+                print("Error powering off machine", file=sys.stderr)
             session.unlock_machine()
-            time.sleep(0.5) # TODO figure out how to ensure session is 
-                            # really unlocked...
+            time.sleep(0.5)  # TODO figure out how to ensure session is really unlocked...
 
         settings_dir = os.path.dirname(self.settings_file_path)
         if delete:
@@ -55,35 +53,40 @@ class IMachine(library.IMachine):
             progress = self.delete_config(media)
             progress.wait_for_completion(-1)
             media = []
-        
-        # if delete - At some point in time virtualbox didn't do a full cleanup 
+
+        # if delete - At some point in time virtualbox didn't do a full cleanup
         #             of this dir. Let's double check it has been cleaned up.
         if delete and os.path.exists(settings_dir):
             shutil.rmtree(settings_dir)
 
         return media
 
-    def clone(self, snapshot_name_or_id=None, 
-                    mode=library.CloneMode.machine_state, 
-                    options=[library.CloneOptions.link], name=None, 
-                    uuid=None, groups=[], basefolder='', register=True):
-        """Clone this Machine 
+    def clone(self, snapshot_name_or_id=None,
+              mode=library.CloneMode.machine_state,
+              options=None, name=None,
+              uuid=None, groups=None, basefolder='', register=True):
+        """Clone this Machine
 
-        Options: 
+        Options:
             snapshot_name_or_id - value can be either ISnapshot, name, or id
             mode - set the CloneMode value
-            options - define the CloneOptions options 
+            options - define the CloneOptions options
             name - define a name of the new VM
             uuid - set the uuid of the new VM
             groups - specify which groups the new VM will exist under
             basefolder - specify which folder to set the VM up under
             register - register this VM with the server
-        
+
         Note: Default values create a linked clone from the current machine
               state
 
-        Return a IMachine object for the newly cloned vm 
+        Return a IMachine object for the newly cloned vm
         """
+        if options is None:
+            options = [library.CloneOptions.link]
+        if groups is None:
+            groups = []
+
         vbox = virtualbox.VirtualBox()
 
         if snapshot_name_or_id is not None:
@@ -93,7 +96,7 @@ class IMachine(library.IMachine):
                 snapshot = snapshot_name_or_id
             vm = snapshot.machine
         else:
-            # linked clone can only be created from a snapshot... 
+            # linked clone can only be created from a snapshot...
             # try grabbing the current_snapshot
             if library.CloneOptions.link in options:
                 vm = self.current_snapshot.machine
@@ -103,27 +106,29 @@ class IMachine(library.IMachine):
         if name is None:
             name = "%s Clone" % vm.name
 
-        # Build the settings file 
+        # Build the settings file
         create_flags = ''
         if uuid is not None:
             create_flags = "UUID=%s" % uuid
         primary_group = ''
         if groups:
             primary_group = groups[0]
-        
+
         # Make sure this settings file does not already exist
         test_name = name
+        settings_file = ''
         for i in range(1, 1000):
             settings_file = vbox.compose_machine_filename(test_name,
-                                    primary_group, create_flags, basefolder)
+                                                          primary_group,
+                                                          create_flags,
+                                                          basefolder)
             if not os.path.exists(os.path.dirname(settings_file)):
                 break
             test_name = "%s (%s)" % (name, i)
         name = test_name
 
         # Create the new machine and clone it!
-        vm_clone = vbox.create_machine(settings_file, name, groups, '', 
-                                        create_flags)
+        vm_clone = vbox.create_machine(settings_file, name, groups, '', create_flags)
         progress = vm.clone_to(vm_clone, mode, options)
         progress.wait_for_completion(-1)
 
@@ -133,17 +138,17 @@ class IMachine(library.IMachine):
 
     # Add a helper to make locking and building a session simple
     def create_session(self, lock_type=library.LockType.shared,
-                   session=None):
+                       session=None):
         """Lock this machine
-        
+
         Arguments:
             lock_type - see IMachine.lock_machine for details
-            session - optionally define a session object to lock this machine 
-                      against.  If not defined, a new ISession object is 
+            session - optionally define a session object to lock this machine
+                      against.  If not defined, a new ISession object is
                       created to lock against
-        
+
         return an ISession object
-        """ 
+        """
         if session is None:
             session = library.ISession()
         # NOTE: The following hack handles the issue of unknown machine state.
@@ -153,26 +158,28 @@ class IMachine(library.IMachine):
         #          virtualbox.library.VBoxErrorVmError: 0x80bb0003 (Failed to \
         #          get a console object from the direct session (Unknown \
         #          Status 0x80BB0002))
-        for i in range(10):
+        error = None
+        for _ in range(10):
             try:
                 self.lock_machine(session, lock_type)
             except Exception as exc:
+                error = exc
                 time.sleep(1)
                 continue
             else:
                 break
         else:
-            raise Exception("Failed to create clone - %s" % exc)
+            if error is not None:
+                raise Exception("Failed to create clone - %s" % error)
         return session
 
-    # Simplify the launch_vm_process. Build a ISession if it has not been 
-    # defined... 
+    # Simplify the launch_vm_process. Build a ISession if it has not been defined...
     def launch_vm_process(self, session=None, type_p='gui', environment=''):
         if session is None:
             local_session = library.ISession()
         else:
             local_session = session
-        p = super(IMachine, self).launch_vm_process(local_session, 
+        p = super(IMachine, self).launch_vm_process(local_session,
                                                     type_p, environment)
         if session is None:
             p.wait_for_completion(-1)
@@ -181,7 +188,7 @@ class IMachine(library.IMachine):
     launch_vm_process.__doc__ = library.IMachine.launch_vm_process.__doc__
 
     # BUG: xidl describes this function as exportTo.  The interface seems
-    #      to export plain "export" instead... 
+    #      to export plain "export" instead...
     def export_to(self, appliance, location):
         if not isinstance(appliance, library.IAppliance):
             msg = "appliance can only be an instance of type IAppliance"
@@ -190,12 +197,11 @@ class IMachine(library.IMachine):
             raise TypeError("value is not an instance of basestring")
         # see https://github.com/mjdorma/pyvbox/issues/40
         description = self._call("exportTo",
-                     in_p=[appliance, location])
-        description = library.IVirtualSystemDescription(description)
-        return description
+                                 in_p=[appliance, location])
+        return library.IVirtualSystemDescription(description)
     export_to.__doc__ = library.IMachine.export_to.__doc__
 
-    #if no snapshot has been supplied, try using the current_snapshot
+    # If no snapshot has been supplied, try using the current_snapshot
     def restore_snapshot(self, snapshot=None):
         if snapshot is None:
             if self.current_snapshot:
