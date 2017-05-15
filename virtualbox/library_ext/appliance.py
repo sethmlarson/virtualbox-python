@@ -1,29 +1,25 @@
-import time
-import os
-
-import virtualbox
-from virtualbox import library
-from virtualbox.library import VirtualSystemDescriptionType as DescType
-from virtualbox.library import VirtualSystemDescriptionValueType as DescValueType
-
 """
 Add helper code to the default IAppliance class.
 """
 
+from virtualbox import library
+from virtualbox.library import VirtualSystemDescriptionType as DescType
+from virtualbox.library import VirtualSystemDescriptionValueType as DescValueType
 
-# Define some default params for create session 
+
+# Define some default params for create session
 class IAppliance(library.IAppliance):
     __doc__ = library.IAppliance.__doc__
 
     # Extend read to wait and interpret the values into Description
-    # objects.  
+    # objects.
     def read(self, ova_path):
         "Read and interpret ova file into this Appliance object."
         p = super(IAppliance, self).read(ova_path)
         p.wait_for_completion()
         self.interpret()
         warnings = self.get_warnings()
-        if warnings: 
+        if warnings:
             warning = Warning("\n".join(warnings))
             warning.warnings = warnings
             raise warning
@@ -39,8 +35,10 @@ class IAppliance(library.IAppliance):
         else:
             raise Exception("Failed to find description for %s" % name)
         return desc
- 
+
     # Simply this call by setting options to default []
-    def import_machines(self, options=[]):
+    def import_machines(self, options=None):
+        if options is None:
+            options = []
         return super(IAppliance, self).import_machines(options)
     import_machines.__doc__ = library.IAppliance.import_machines.__doc__
