@@ -65,7 +65,23 @@ def import_vboxapi():
             search = ['/Library/Python/%s.%s/site-packages' % py_mm_ver]
         else:
             # No idea where to look...
-            raise
+            search = []
+
+        # Generates a common prefix from sys.executable in the
+        # case that vboxapi is installed in a virtualenv.
+        # This will also help with when we don't know where
+        # to search because of an unknown platform.
+        # These paths also help if the system Python is installed
+        # in a non-standard location.
+        #
+        # NOTE: We don't have to worry if these directories don't
+        # exist as they're checked below.
+        prefix = os.path.dirname(os.path.dirname(sys.executable))
+        search.extend([os.path.join(prefix, 'Lib', 'site-packages'),
+                       os.path.join(prefix, 'Lib', 'site-packages', 'win32'),
+                       os.path.join(prefix, 'Lib', 'site-packages', 'win32', 'lib'),
+                       os.path.join(prefix, 'lib', 'site-packages'),
+                       os.path.join(prefix, 'lib', 'dist-packages')])
 
         packages = set(packages)
         original_path = copy.copy(sys.path)

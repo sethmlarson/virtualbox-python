@@ -1,6 +1,12 @@
 Change log
 ==========
 
+master
+
+* Add sys.executable-derived paths in list to check for vboxapi (@SethMichaelLarson PR #69)
+* Fix IGuestProcess.execute() on Python 3.x (@SethMichaelLarson PR #58)
+* Fix errors to not output on Windows platforms. (@SethMichaelLarson PR #57)
+
 version 1.0.0
 
 * Support for 5.0.x VirtualBox.
@@ -10,7 +16,7 @@ version 1.0.0
 
 version 0.2.2
 
-* Cleanup managers at exiti (reported by @jiml521).
+* Cleanup managers at exit (reported by @jiml521).
 * Add three time check for attribute in xpcom interface object before failing (reported
   by @shohamp). 
 * Update library.py to 4.3.28/src/VBox/Main/idl/VirtualBox.xidl
