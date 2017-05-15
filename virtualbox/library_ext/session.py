@@ -1,13 +1,14 @@
-import virtualbox
-from virtualbox import library
-
 """
 Add helper code to the default ISession class.
 """
+import virtualbox
+from virtualbox import library
+
 
 # Configure ISession bootstrap to build from vboxapi getSessionObject
 class ISession(library.ISession):
     __doc__ = library.ISession.__doc__
+
     def __init__(self, interface=None, manager=None):
         if interface is not None:
             super(ISession, self).__init__(interface)
@@ -20,5 +21,5 @@ class ISession(library.ISession):
     def __enter__(self):
         return self
 
-    def __exit__(self, exception_type, exception_val, trace):
+    def __exit__(self, *_):
         self.unlock_machine()
