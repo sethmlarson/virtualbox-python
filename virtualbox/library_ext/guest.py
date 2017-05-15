@@ -1,21 +1,21 @@
-import time
-import os
-
-import virtualbox
-from virtualbox import library
-
 """
 Add helper code to the default IGuest class.
 """
 
+import time
+import os
+import virtualbox
+from virtualbox import library
 
-# Define some default params for create session 
+
+# Define some default params for create session
 class IGuest(library.IGuest):
     __doc__ = library.IGuest.__doc__
+
     def create_session(self, user, password, domain='', session_name='pyvbox',
-                        timeout_ms=0):
+                       timeout_ms=0):
         session = super(IGuest, self).create_session(user, password, domain,
-                                                    session_name)
+                                                     session_name)
         for i in range(50):
             if session.status == library.GuestSessionStatus.started:
                 break
@@ -31,7 +31,7 @@ class IGuest(library.IGuest):
             while True:
                 try:
                     session.file_exists(test_file)
-                except library.VBoxError as err:
+                except library.VBoxError:
                     time.sleep(0.5)
                     timeout_ms -= 500
                     if timeout_ms <= 0:
@@ -42,17 +42,18 @@ class IGuest(library.IGuest):
     create_session.__doc__ = library.IGuest.create_session.__doc__
 
     # Update guest additions helper
-    def update_guest_additions(self, source=None, arguments=[], 
-                                     flags=[library.AdditionsUpdateFlag.none]):
+    def update_guest_additions(self, source=None, arguments=None, flags=None):
+        if arguments is None:
+            arguments = []
+        if flags is None:
+            flags = [library.AdditionsUpdateFlag.none]
         if source is None:
             manager = virtualbox.Manager()
             source = os.path.join(manager.bin_path, "VBoxGuestAdditions.iso")
         if not os.path.exists(source):
             raise IOError("ISO path '%s' not found" % source)
-        
-        return super(IGuest, self).update_guest_additions(source, 
-                                                          arguments, 
-                                                          flags)
-    update_guest_additions.__doc__ = \
-                       library.IGuest.update_guest_additions.__doc__
 
+        return super(IGuest, self).update_guest_additions(source,
+                                                          arguments,
+                                                          flags)
+    update_guest_additions.__doc__ = library.IGuest.update_guest_additions.__doc__
