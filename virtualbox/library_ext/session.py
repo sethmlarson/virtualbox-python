@@ -17,7 +17,7 @@ class ISession(library.ISession):
         else:
             manager = virtualbox.Manager()
             self._i = manager.get_session()._i
-    
+
     def __enter__(self):
         return self
 
