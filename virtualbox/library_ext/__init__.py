@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 import inspect
 
-import virtualbox
 from virtualbox import library
 
 """
@@ -36,4 +35,3 @@ for k, v in [a for a in locals().items()]:
         continue
     if issubclass(v, library.Interface):
         setattr(library, k, v)
-
