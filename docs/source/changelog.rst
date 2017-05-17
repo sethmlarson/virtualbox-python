@@ -3,6 +3,8 @@ Change log
 
 master
 
+* IGuest.create_session() now raises a more descriptive error if
+  not able to connect with a zero-length password. (@SethMichaelLarson PR #70)
 * Add sys.executable-derived paths in list to check for vboxapi (@SethMichaelLarson PR #69)
 * Fix IGuestProcess.execute() on Python 3.x (@SethMichaelLarson PR #58)
 * Fix errors to not output on Windows platforms. (@SethMichaelLarson PR #57)
