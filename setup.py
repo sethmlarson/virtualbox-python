@@ -11,6 +11,7 @@ install_requires = []
 
 tests_require = ['begins', 'funconf']
 
+
 def load_version(filename='./virtualbox/version.py'):
     """Parse a __version__ number from a source file"""
     with open(filename) as source:
@@ -18,9 +19,10 @@ def load_version(filename='./virtualbox/version.py'):
         match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]", text)
         if not match:
             msg = "Unable to find version number in {}".format(filename)
-            raise RuntimeError( msg)
+            raise RuntimeError(msg)
         version = match.group(1)
         return version
+
 
 setup(
     name="pyvbox",
@@ -34,7 +36,7 @@ setup(
     long_description=open('README.rst').read(),
     license="Apache-2.0",
     zip_safe=False,
-    install_requires = install_requires,
+    install_requires=install_requires,
     platforms=['cygwin', 'win', 'linux'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
