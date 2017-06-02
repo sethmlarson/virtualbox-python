@@ -8,6 +8,8 @@ master
 * Add sys.executable-derived paths in list to check for vboxapi (@SethMichaelLarson PR #69)
 * Fix IGuestProcess.execute() on Python 3.x (@SethMichaelLarson PR #58)
 * Fix errors to not output on Windows platforms. (@SethMichaelLarson PR #57)
+* Fix error caused by attempting to set any attribute in the COM interface
+  using setattr raising an error. (Reported by @josepegerent, patch by @SethMichaelLarson PR #74)
 
 version 1.0.0
 
