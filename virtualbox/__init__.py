@@ -233,3 +233,4 @@ class WebServiceManager(Manager):
 from virtualbox import pool  # noqa: F401
 from virtualbox import events  # noqa: F401
 from virtualbox import version  # noqa: F401
+from virtualbox.version import __version__  # noqa: F401

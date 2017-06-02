@@ -1,7 +1,7 @@
 Changelog
 =========
 
-master
+version 1.1.0 (02/06/2017)
 
 * IGuest.create_session() now raises a more descriptive error if
   not able to connect with a zero-length password. (@SethMichaelLarson PR #70)
@@ -11,14 +11,14 @@ master
 * Fix error caused by attempting to set any attribute in the COM interface
   using setattr raising an error. (Reported by @josepegerent, patch by @SethMichaelLarson PR #74)
 
-version 1.0.0
+version 1.0.0 (18/01/2017)
 
 * Support for 5.0.x VirtualBox.
 * Introduce Major.Minor virtualbox build version assertion when creating a VirtualBox
   instance.
 * Fix to IMachine.export_to (contribution from @z00m1n).
 
-version 0.2.2
+version 0.2.2 (05/08/2015)
 
 * Cleanup managers at exit (reported by @jiml521).
 * Add three time check for attribute in xpcom interface object before failing (reported
@@ -32,12 +32,12 @@ version 0.2.0
 * Bug fixes in IMachine (reported by @danikdanik).
 * IHost API issue workaround by @wndhydrnt.
 
-version 0.1.6
+version 0.1.6 (01/08/2014)
 
 * Bug fixes (compatability issue with py26 and virtual keyboard).
 * Thanks to contributions by @D4rkC4t and @Guilherme Moro.
 
-version 0.1.5
+version 0.1.5 (11/05/2014)
 
 * Improve error handling and documentation of error types.
 * Appliance extension.
