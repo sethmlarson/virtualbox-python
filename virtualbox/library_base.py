@@ -164,6 +164,8 @@ class Interface(object):
         if inspect.isfunction(attr) or inspect.ismethod(attr):
             return self._call_method(attr, value)
         else:
+            if isinstance(value, Enum):
+                value = int(value)
             return setattr(self._i, name, value)
 
     def _call(self, name, in_p=None):
