@@ -46,6 +46,7 @@ def import_vboxapi():
     except ImportError:
         system = platform.system()
         py_mm_ver = sys.version_info[:2]
+        py_major = sys.version_info[0]
         packages = ['vboxapi']
 
         if system == 'Windows':
@@ -55,6 +56,11 @@ def import_vboxapi():
                       'C:\\Python%s%s\\Lib\\site-packages\\win32\\lib' % py_mm_ver,
                       'C:\\Program Files\\Oracle\\VirtualBox\\sdk\\install',
                       'C:\\Program Files (x86)\\Oracle\\VirtualBox\\sdk\\install']
+            
+            for x in ['', py_major]:
+                search.extend(['C:\\Anaconda%s\\Lib\\site-packages' % x,
+                               'C:\\Anaconda%s\\Lib\\site-packages\win32' % x,
+                               'C:\\Anaconda%s\\Lib\\site-packages\win32\\lib' % x])
 
         elif system == 'Linux':
             search = ['/usr/lib/python%s.%s/dist-packages' % py_mm_ver,
