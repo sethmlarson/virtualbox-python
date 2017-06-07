@@ -1,6 +1,10 @@
 Changelog
 =========
 
+version master
+
+* Searches for vboxapi installed in Anaconda on Windows. (@SethMichaelLarson PR #80)
+
 version 1.1.0 (02/06/2017)
 
 * IGuest.create_session() now raises a more descriptive error if
