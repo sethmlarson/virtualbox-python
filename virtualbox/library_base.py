@@ -77,13 +77,13 @@ class Enum(object):
 
     def __eq__(self, k):
         return self.__cmp__(k) == 0
-    
+
     def __ne__(self, k):
         return self.__cmp__(k) != 0
-    
+
     def __lt__(self, k):
         return int(self) < int(k)
-    
+
     def __gt__(self, k):
         return int(self) > int(k)
 

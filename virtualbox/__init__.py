@@ -56,7 +56,7 @@ def import_vboxapi():
                       'C:\\Python%s%s\\Lib\\site-packages\\win32\\lib' % py_mm_ver,
                       'C:\\Program Files\\Oracle\\VirtualBox\\sdk\\install',
                       'C:\\Program Files (x86)\\Oracle\\VirtualBox\\sdk\\install']
-            
+
             for x in ['', py_major]:
                 search.extend(['C:\\Anaconda%s\\Lib\\site-packages' % x,
                                'C:\\Anaconda%s\\Lib\\site-packages\win32' % x,

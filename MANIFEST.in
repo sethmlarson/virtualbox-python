@@ -1,4 +1,11 @@
+include *.ini
 include *.rst
-include LICENSE 
-recursive-include tests *.py
-
+include *.txt
+include *.py
+include LICENSE
+include build_docs.py
+include docs/Makefile
+include docs/make.bat
+recursive-include docs *.rst *.py
+recursive-include tests *.py *.conf
+recursive-include tests/fixtures *.ova
