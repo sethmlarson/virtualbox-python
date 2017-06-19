@@ -1,0 +1,36 @@
+language: python
+sudo: false
+
+matrix:
+  include:
+    # Lint
+    - python: 2.7
+      env: TOXENV=lint
+    - python: 3.6
+      env: TOXENV=lint
+
+    # Docs
+    - python: 3.6
+      env: TOXENV=docs
+
+    # Packaging
+    - python: 3.6
+      env: TOXENV=packaging
+
+cache:
+  - pip
+  - directories:
+    - ${HOME}/.cache
+
+install:
+  - python -m pip install -U tox setuptools pip
+
+script:
+  - tox
+
+notifications:
+  email: false
+
+branches:
+  only:
+  - master
