@@ -14,6 +14,7 @@ help us reproduce the issue and fix the problem faster.
 - Python version: 
 - VirtualBox version: 
 - VirtualBox SDK version:
+- Location where VirtualBox SDK is installed: <!--- Path to the Python you used to run vboxapisetup.py -->
 - pyvbox version:
 - [ ] Happens in latest `master` branch?
 
@@ -27,4 +28,4 @@ help us reproduce the issue and fix the problem faster.
 <!--- What did you expect to happen when running the steps above? -->
 
 ##### ACTUAL RESULTS
-<!--- What actually happened? Post full tracebacks -->
+<!--- What actually happened? -- PLEASE POST FULL TRACEBACKS! -->
