@@ -1,7 +1,7 @@
 Changelog
 =========
 
-version master
+version 1.2.0 (28/08/2017)
 
 * Searches for vboxapi installed in Anaconda on Windows. (@SethMichaelLarson PR #80)
 * Added ``__lt__`` and ``__gt__`` methods for orderability on Python 3. (@SethMichaelLarson PR #82)
