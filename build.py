@@ -22,9 +22,15 @@ except:
 def pythonic_name(name):
     s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
     name = re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
-    if hasattr(builtin, name) is True or name in ['global']:
+    if hasattr(builtin, name) is True or name in ['global', 'file', 'apply']:
         name += "_p"
     return name
+
+
+def to_string(value):
+    if isinstance(value, str):
+        return value
+    return value.decode('utf-8')
 
 
 LIB_IMPORTS = """\
@@ -762,11 +768,11 @@ def main(virtualbox_xidl='VirtualBox.xidl',
     uuid = library.getAttribute('uuid')
     version = library.getAttribute('version')
     xidl_hash = hashlib.md5(xidl).hexdigest()
-    lib_meta = LIB_META % dict(vbox_version=vbox_version,
-                               uuid=uuid,
-                               version=version, 
-                               app_uuid=app_uuid,
-                               xidl_hash=xidl_hash)
+    lib_meta = LIB_META % dict(vbox_version=to_string(vbox_version),
+                               uuid=to_string(uuid),
+                               version=to_string(version),
+                               app_uuid=to_string(app_uuid),
+                               xidl_hash=to_string(xidl_hash))
 
     code = []
     code.append(LIB_IMPORTS)
@@ -777,7 +783,7 @@ def main(virtualbox_xidl='VirtualBox.xidl',
     code.extend(source['enum'])
     code.extend(source['interface'])
     code = b"\n".join([c.encode('utf-8') if not isinstance(c, bytes) else c for c in code])
-    print("   vbox version : %s" % vbox_version)
+    print("   vbox version : %s" % to_string(vbox_version))
     print("   xidl hash    : %s" % xidl_hash)
     print("   version      : %s" % version) 
     print("   line count   : %s" % code.count(b"\n"))
