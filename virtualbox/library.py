@@ -84,11 +84,11 @@ about how to call a method or attribute from a specific programming language.
 """
 
 
-vbox_version = '5.1.1'
+vbox_version = '5.2.0'
 lib_version  = 1.3
 lib_app_uuid = '819B4D85-9CEE-493C-B6FC-64FFE759B3C9'
 lib_uuid     = 'd7569351-1750-46f0-936e-bd127d5bc264'
-xidl_hash    = '4c722fe37602c6217134f1c9f75a2bb3'
+xidl_hash    = 'aec1b326b945a6b0f1eb98c62615ff52'
 
 
 
@@ -289,6 +289,10 @@ class SettingsVersion(Enum):
 
             Settings version "1.16", written by VirtualBox 5.1.x.
 
+    .. describe:: v1_17(19)
+
+            Settings version "1.17", written by VirtualBox 5.2.x.
+
     .. describe:: future(99999)
 
             Settings version greater than "1.15", written by a future VirtualBox version.
@@ -334,6 +338,8 @@ class SettingsVersion(Enum):
          '''Settings version "1.15", written by VirtualBox 5.0.x.'''),
         ('v1_16', 18, 
          '''Settings version "1.16", written by VirtualBox 5.1.x.'''),
+        ('v1_17', 19, 
+         '''Settings version "1.17", written by VirtualBox 5.2.x.'''),
         ('Future', 99999, 
          '''Settings version greater than "1.15", written by a future VirtualBox version.'''),
         ] 
@@ -6770,7 +6776,7 @@ class IVirtualBox(Interface):
     reason for this is that COM likes to mutilate the error code and lose
     the detailed error information returned by instance creation.
     """
-    __uuid__ = '0169423f-46b4-cde9-91af-1e9d5b6cd945'
+    __uuid__ = '9570b9d5-f1a1-448a-10c5-e12f5285adad'
     __wsmap__ = 'managed'
     
     @property
@@ -7337,6 +7343,19 @@ exists or could not be created due to an I/O error.
         appliance = self._call("createAppliance")
         appliance = IAppliance(appliance)
         return appliance
+
+    def create_unattended_installer(self):
+        """Creates a new :py:class:`IUnattended`  guest installation object.  This can be used to
+        analyze an installation ISO to create and configure a new machine for it to be installed
+        on.  It can also be used to (re)install an existing machine.
+
+        return unattended of type :class:`IUnattended`
+            New unattended object.
+
+        """
+        unattended = self._call("createUnattendedInstaller")
+        unattended = IUnattended(unattended)
+        return unattended
 
     def create_medium(self, format_p, location, access_mode, a_device_type_type):
         """Creates a new base medium object that will use the given storage
@@ -8415,15 +8434,19 @@ class IAppliance(Interface):
         returns an IProgress object to allow the caller to monitor the progress.
 
         in format_p of type str
-            Output format, as a string. Currently supported formats are "ovf-0.9", "ovf-1.0"
-            and "ovf-2.0"; future versions of VirtualBox may support additional formats.
+            Output format, as a string. Currently supported formats are "ovf-0.9", "ovf-1.0",
+            "ovf-2.0" and "opc-1.0"; future versions of VirtualBox may support additional formats.
+            The "opc-1.0" format is for creating tarballs for the Oracle Public Cloud.
 
         in options of type :class:`ExportOptions`
             Options for the exporting operation.
 
         in path of type str
-            Name of appliance file to open (either with an .ovf or .ova extension, depending
-            on whether the appliance is distributed as a set of files or as a single file, respectively).
+            Name of appliance file to create.  There are certain restrictions with regard
+            to the file name suffix.  If the format parameter is "opc-1.0" a .tar.gz
+            suffix is required.  Otherwise the suffix must either be .ovf or
+            .ova, depending on whether the appliance is distributed as a set of
+            files or as a single file, respectively.
 
         return progress of type :class:`IProgress`
             Progress object to track the operation completion.
@@ -8763,6 +8786,580 @@ class IVirtualSystemDescription(Interface):
             raise TypeError("extra_config_value can only be an instance of type basestring")
         self._call("addDescription",
                      in_p=[type_p, v_box_value, extra_config_value])
+
+
+class IUnattended(Interface):
+    """
+    The IUnattended interface represents the pipeline for preparing
+    the Guest OS for fully automated install.
+    
+    The typical workflow is:
+    
+    Call :py:func:`IVirtualBox.create_unattended_installer`  to create the object
+    Set :py:func:`IUnattended.iso_path`  and call :py:func:`IUnattended.detect_iso_os` 
+    Create, configure and register a machine according to :py:func:`IUnattended.detected_os_type_id` 
+    and the other detectedOS* attributes.
+    Set :py:func:`IUnattended.machine`  to the new IMachine instance.
+    Set the other IUnattended attributes as desired.
+    Call :py:func:`IUnattended.prepare`  for the object to check the
+    attribute values and create an internal installer instance.
+    Call :py:func:`IUnattended.construct_media`  to create additional
+    media files (ISO/floppy) needed.
+    Call :py:func:`IUnattended.reconfigure_vm`  to reconfigure the VM
+    with the installation ISO, additional media files and whatnot
+    Optionally call :py:func:`IUnattended.done`  to destroy the internal
+    installer and allow restarting from the second step.
+    
+    
+    Note! Steps one is currently not implemented.
+    """
+    __uuid__ = '6f89464f-7193-426c-a41f-522e8f537fa0'
+    __wsmap__ = 'managed'
+    
+    @property
+    def iso_path(self):
+        """Get or set str value for 'isoPath'
+        Guest operating system ISO image
+        """
+        ret = self._get_attr("isoPath")
+        return ret
+
+    @iso_path.setter
+    def iso_path(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("isoPath", value)
+
+    @property
+    def machine(self):
+        """Get or set IMachine value for 'machine'
+        The associated machine object.
+        
+        This must be set before :py:func:`IUnattended.prepare`  is called.
+        The VM must be registered.
+        """
+        ret = self._get_attr("machine")
+        return IMachine(ret)
+
+    @machine.setter
+    def machine(self, value):
+        if not isinstance(value, IMachine):
+            raise TypeError("value is not an instance of IMachine")
+        return self._set_attr("machine", value)
+
+    @property
+    def user(self):
+        """Get or set str value for 'user'
+        Assign an user login name.
+        """
+        ret = self._get_attr("user")
+        return ret
+
+    @user.setter
+    def user(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("user", value)
+
+    @property
+    def password(self):
+        """Get or set str value for 'password'
+        Assign a password to the user. The password is the same for both
+        normal user and for Administrator / 'root' accounts.
+        """
+        ret = self._get_attr("password")
+        return ret
+
+    @password.setter
+    def password(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("password", value)
+
+    @property
+    def full_user_name(self):
+        """Get or set str value for 'fullUserName'
+        The full name of the user.  This is optional and defaults to
+        :py:func:`IUnattended.user` .  Please note that not all guests picks
+        up this attribute.
+        """
+        ret = self._get_attr("fullUserName")
+        return ret
+
+    @full_user_name.setter
+    def full_user_name(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("fullUserName", value)
+
+    @property
+    def product_key(self):
+        """Get or set str value for 'productKey'
+        Any key which is used as authorization of access to install genuine OS
+        """
+        ret = self._get_attr("productKey")
+        return ret
+
+    @product_key.setter
+    def product_key(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("productKey", value)
+
+    @property
+    def additions_iso_path(self):
+        """Get or set str value for 'additionsIsoPath'
+        Guest Additions ISO image path.  This defaults to
+        :py:func:`ISystemProperties.default_additions_iso`  when the Unattended
+        object is instantiated.
+        
+        This property is ignored when :py:func:`IUnattended.install_guest_additions`  is false.
+        """
+        ret = self._get_attr("additionsIsoPath")
+        return ret
+
+    @additions_iso_path.setter
+    def additions_iso_path(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("additionsIsoPath", value)
+
+    @property
+    def install_guest_additions(self):
+        """Get or set bool value for 'installGuestAdditions'
+        Indicates whether the guest additions should be installed or not.
+        
+        Setting this to false does not affect additions shipped with the linux
+        distribution, only the installation of additions pointed to by
+        :py:func:`IUnattended.additions_iso_path` .
+        """
+        ret = self._get_attr("installGuestAdditions")
+        return ret
+
+    @install_guest_additions.setter
+    def install_guest_additions(self, value):
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
+        return self._set_attr("installGuestAdditions", value)
+
+    @property
+    def validation_kit_iso_path(self):
+        """Get or set str value for 'validationKitIsoPath'
+        VirtualBox ValidationKit ISO image path.  This is used when
+        :py:func:`IUnattended.install_test_exec_service`  is set to true.
+        """
+        ret = self._get_attr("validationKitIsoPath")
+        return ret
+
+    @validation_kit_iso_path.setter
+    def validation_kit_iso_path(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("validationKitIsoPath", value)
+
+    @property
+    def install_test_exec_service(self):
+        """Get or set bool value for 'installTestExecService'
+        Indicates whether the test execution service (TXS) from the VBox
+        ValidationKit should be installed.
+        
+        The TXS binary will be taken from the ISO indicated by
+        :py:func:`IUnattended.validation_kit_iso_path` .
+        """
+        ret = self._get_attr("installTestExecService")
+        return ret
+
+    @install_test_exec_service.setter
+    def install_test_exec_service(self, value):
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
+        return self._set_attr("installTestExecService", value)
+
+    @property
+    def time_zone(self):
+        """Get or set str value for 'timeZone'
+        The guest time zone specifier.
+        
+        This is unfortunately guest OS specific.
+        
+        Windows XP and earlier takes the index number from this table:
+        https://support.microsoft.com/en-gb/help/973627/microsoft-time-zone-index-values
+        
+        Windows Vista and later takes the time zone string from this table:
+        https://technet.microsoft.com/en-us/library/cc749073(v=ws.10).aspx
+        
+        Linux usually takes the TZ string from this table:
+        https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+        
+        The default is currently UTC/GMT, but this may change to be same as
+        the host later.
+        
+        TODO: Investigate automatic mapping between linux and the two windows
+        time zone formats.
+        TODO: Take default from host (this requires mapping).
+        """
+        ret = self._get_attr("timeZone")
+        return ret
+
+    @time_zone.setter
+    def time_zone(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("timeZone", value)
+
+    @property
+    def locale(self):
+        """Get or set str value for 'locale'
+        The 5 letter locale identifier, no codesets or such.
+        
+        The format is two lower case language letters (ISO 639-1), underscore ('_'),
+        and two upper case country letters (ISO 3166-1 alpha-2).  For instance
+        'en_US', 'de_DE', or 'ny_NO'.
+        
+        The default is taken from the host if possible, with 'en_US' as fallback.
+        """
+        ret = self._get_attr("locale")
+        return ret
+
+    @locale.setter
+    def locale(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("locale", value)
+
+    @property
+    def language(self):
+        """Get or set str value for 'language'
+        This is more or less a Windows specific setting for choosing the UI language
+        setting of the installer.
+        
+        The value should be from the list availble via :py:func:`IUnattended.detected_os_languages` .
+        The typical format is {language-code}-{COUNTRY} but windows may also use
+        {16-bit code}:{32-bit code} or insert another component between the language
+        and country codes.  We consider the format guest OS specific.
+        
+        Note that it is crucial that this is correctly specified for Windows
+        installations.  If an unsupported value is given the installer will ask
+        for an installation language and wait for user input.  Best to leave it
+        to the default value.
+        
+        The default is the first one from :py:func:`IUnattended.detected_os_languages` .
+        """
+        ret = self._get_attr("language")
+        return ret
+
+    @language.setter
+    def language(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("language", value)
+
+    @property
+    def country(self):
+        """Get or set str value for 'country'
+        The 2 upper case letter country identifier, ISO 3166-1 alpha-2.
+        
+        This is used for mirrors and such.
+        
+        The default is taken from the host when possible, falling back on
+        :py:func:`IUnattended.locale` .
+        """
+        ret = self._get_attr("country")
+        return ret
+
+    @country.setter
+    def country(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("country", value)
+
+    @property
+    def proxy(self):
+        """Get or set str value for 'proxy'
+        Proxy incantation to pass on to the guest OS installer.
+        
+        This is important to get right if the guest OS installer is of the type
+        that goes online to fetch the packages (e.g. debian-*-netinst.iso) or
+        to fetch updates during the install process.
+        
+        Format: [schema=]schema://[login@password:]proxy[:port][;...]
+        
+        The default is taken from the host proxy configuration (once implemented).
+        """
+        ret = self._get_attr("proxy")
+        return ret
+
+    @proxy.setter
+    def proxy(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("proxy", value)
+
+    @property
+    def package_selection_adjustments(self):
+        """Get or set str value for 'packageSelectionAdjustments'
+        Guest OS specific package selection adjustments.
+        
+        This is a semicolon separated list of keywords, and later maybe guest OS
+        package specifiers.  Currently the 'minimal' is the only recognized value,
+        and this only works with a selection of linux installers.
+        """
+        ret = self._get_attr("packageSelectionAdjustments")
+        return ret
+
+    @package_selection_adjustments.setter
+    def package_selection_adjustments(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("packageSelectionAdjustments", value)
+
+    @property
+    def hostname(self):
+        """Get or set str value for 'hostname'
+        The fully qualified guest hostname.
+        
+        This defaults to machine-name + ".myguest.virtualbox.org", though it may
+        change to the host domain name later.
+        """
+        ret = self._get_attr("hostname")
+        return ret
+
+    @hostname.setter
+    def hostname(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("hostname", value)
+
+    @property
+    def auxiliary_base_path(self):
+        """Get or set str value for 'auxiliaryBasePath'
+        The path + basename for auxiliary files generated by the unattended
+        installation.  This defaults to the VM folder + Unattended + VM UUID.
+        
+        The files which gets generated depends on the OS being installed.  When
+        installing Windows there is currently only a auxiliaryBasePath + "floppy.img"
+        being created.  But for linux, a "cdrom.viso" and one or more configuration
+        files are generate generated.
+        """
+        ret = self._get_attr("auxiliaryBasePath")
+        return ret
+
+    @auxiliary_base_path.setter
+    def auxiliary_base_path(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("auxiliaryBasePath", value)
+
+    @property
+    def image_index(self):
+        """Get or set int value for 'imageIndex'
+        The image index on installation CD/DVD used to install.
+        
+        Used only with Windows installation CD/DVD:
+        https://technet.microsoft.com/en-us/library/cc766022%28v=ws.10%29.aspx
+        """
+        ret = self._get_attr("imageIndex")
+        return ret
+
+    @image_index.setter
+    def image_index(self, value):
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
+        return self._set_attr("imageIndex", value)
+
+    @property
+    def script_template_path(self):
+        """Get or set str value for 'scriptTemplatePath'
+        The unattended installation script template file.
+        
+        The template default is based on the guest OS type and is determined by the
+        internal installer when when :py:func:`IUnattended.prepare`  is invoked.
+        Most users will want the defaults.
+        
+        After :py:func:`IUnattended.prepare`  is called, it can be read to see
+        which file is being used.
+        """
+        ret = self._get_attr("scriptTemplatePath")
+        return ret
+
+    @script_template_path.setter
+    def script_template_path(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("scriptTemplatePath", value)
+
+    @property
+    def post_install_script_template_path(self):
+        """Get or set str value for 'postInstallScriptTemplatePath'
+        The post installation (shell/batch) script template file.
+        
+        The template default is based on the guest OS type and is determined by the
+        internal installer when when :py:func:`IUnattended.prepare`  is invoked.
+        Most users will want the defaults.
+        
+        After :py:func:`IUnattended.prepare`  is called, it can be read to see
+        which file is being used.
+        """
+        ret = self._get_attr("postInstallScriptTemplatePath")
+        return ret
+
+    @post_install_script_template_path.setter
+    def post_install_script_template_path(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("postInstallScriptTemplatePath", value)
+
+    @property
+    def post_install_command(self):
+        """Get or set str value for 'postInstallCommand'
+        Custom post installation command.
+        
+        Exactly what is expected as input here depends on the guest OS installer
+        and the post installation script template (see
+        :py:func:`IUnattended.post_install_script_template_path` ).
+        Most users will not need to set this attribute.
+        """
+        ret = self._get_attr("postInstallCommand")
+        return ret
+
+    @post_install_command.setter
+    def post_install_command(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("postInstallCommand", value)
+
+    @property
+    def extra_install_kernel_parameters(self):
+        """Get or set str value for 'extraInstallKernelParameters'
+        Extra kernel arguments passed to the install kernel of some guests.
+        
+        This is currently only picked up by linux guests.  The exact parameters
+        are specific to the guest OS being installed of course.
+        
+        After :py:func:`IUnattended.prepare`  is called, it can be read to see
+        which parameters are being used.
+        """
+        ret = self._get_attr("extraInstallKernelParameters")
+        return ret
+
+    @extra_install_kernel_parameters.setter
+    def extra_install_kernel_parameters(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("extraInstallKernelParameters", value)
+
+    @property
+    def detected_os_type_id(self):
+        """Get str value for 'detectedOSTypeId'
+        The detected OS type ID (:py:func:`IGuestOSType.id_p` ).
+        
+        Set by :py:func:`IUnattended.detect_iso_os`  or :py:func:`IUnattended.prepare` .
+        
+        Not yet implemented.
+        """
+        ret = self._get_attr("detectedOSTypeId")
+        return ret
+
+    @property
+    def detected_os_version(self):
+        """Get str value for 'detectedOSVersion'
+        The detected OS version string.
+        
+        Set by :py:func:`IUnattended.detect_iso_os`  or :py:func:`IUnattended.prepare` .
+        
+        Not yet implemented.
+        """
+        ret = self._get_attr("detectedOSVersion")
+        return ret
+
+    @property
+    def detected_os_flavor(self):
+        """Get str value for 'detectedOSFlavor'
+        The detected OS flavor (e.g. server, desktop, etc)
+        
+        Set by :py:func:`IUnattended.detect_iso_os`  or :py:func:`IUnattended.prepare` .
+        
+        Not yet implemented.
+        """
+        ret = self._get_attr("detectedOSFlavor")
+        return ret
+
+    @property
+    def detected_os_languages(self):
+        """Get str value for 'detectedOSLanguages'
+        The space separated list of (Windows) installation UI languages we detected (lang.ini).
+        
+        The language specifier format is specific to the guest OS.  They are
+        used to set :py:func:`IUnattended.language` .
+        
+        Set by :py:func:`IUnattended.detect_iso_os`  or :py:func:`IUnattended.prepare` .
+        
+        Partially implemented.
+        """
+        ret = self._get_attr("detectedOSLanguages")
+        return ret
+
+    @property
+    def detected_os_hints(self):
+        """Get str value for 'detectedOSHints'
+        Space separated list of other stuff detected about the OS and the
+        installation ISO.
+        
+        Set by :py:func:`IUnattended.detect_iso_os`  or :py:func:`IUnattended.prepare` .
+        
+        Not yet implemented.
+        """
+        ret = self._get_attr("detectedOSHints")
+        return ret
+
+    def detect_iso_os(self):
+        """Detects the OS on the ISO given by :py:func:`IUnattended.iso_path`  and sets
+        :py:func:`IUnattended.detected_os_type_id` , :py:func:`IUnattended.detected_os_version` 
+        :py:func:`IUnattended.detected_os_flavor` , :py:func:`IUnattended.detected_os_languages` ,
+        and :py:func:`IUnattended.detected_os_hints` .
+        
+        Not really yet implemented.
+
+        """
+        self._call("detectIsoOS")
+
+    def prepare(self):
+        """Prepare for running the unattended process of installation.
+        
+        This will instantiate the installer based on the guest type associated
+        with the machine (see :py:func:`IMachine.os_type_id` ).  It will also
+        perform :py:func:`IUnattended.detect_iso_os`  if not yet called on the
+        current :py:func:`IUnattended.iso_path`  value.
+
+        """
+        self._call("prepare")
+
+    def construct_media(self):
+        """Constructors the necessary ISO/VISO/Floppy images, with unattended scripts
+        and all necessary bits on them.
+
+        """
+        self._call("constructMedia")
+
+    def reconfigure_vm(self):
+        """Reconfigures the machine to start the installation.
+        
+        This involves mounting the ISOs and floppy images created by
+        :py:func:`IUnattended.construct_media` , attaching new DVD and floppy
+        drives as necessary, and possibly modifying the boot order.
+
+        """
+        self._call("reconfigureVM")
+
+    def done(self):
+        """Done - time to start the VM.
+        
+        This deletes the internal installer instance that :py:func:`IUnattended.prepare` 
+        created.  Before done() is called, it is not possible to start over again
+        from :py:func:`IUnattended.prepare` .
+
+        """
+        self._call("done")
 
 
 class IInternalMachineControl(Interface):
@@ -9493,7 +10090,7 @@ class IMachine(Interface):
     
     :py:class:`ISession` , :py:class:`IConsole` 
     """
-    __uuid__ = 'b2547866-a0a1-4391-8b86-6952d82efaa0'
+    __uuid__ = 'f50b24f0-0956-453c-d14c-8c27c683c295'
     __wsmap__ = 'managed'
     
     @property
@@ -14701,6 +15298,14 @@ class IHostNetworkInterface(Interface):
         """
         ret = self._get_attr("interfaceType")
         return HostNetworkInterfaceType(ret)
+
+    @property
+    def wireless(self):
+        """Get bool value for 'wireless'
+        Specifies whether the interface is wireless.
+        """
+        ret = self._get_attr("wireless")
+        return ret
 
     def enable_static_ip_config(self, ip_address, network_mask):
         """sets and enables the static IP V4 configuration for the given interface.

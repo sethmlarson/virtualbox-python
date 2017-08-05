@@ -101,3 +101,4 @@ ENV/
 *.swp
 *.zip
 *.xidl
+*.kmk
