@@ -654,7 +654,7 @@ def get_vbox_version(config_kmk):
     return ".".join([major, minor, build])
 
 def download_master(downloads):
-    "Download the master xidl"
+    print("Download the master xidl")
     for dest, code in downloads:
         url = "http://www.virtualbox.org/svn/vbox/trunk/%s" % code 
         if 0 != os.system('wget -O %s %s' % (dest, url)):
@@ -662,7 +662,7 @@ def download_master(downloads):
         assert os.path.exists(dest), "Failed to download %s" % url
 
 def download_stable(downloads):
-    "Download latest tarball for stable release then unpack xidl"
+    print("Download latest tarball for stable release then unpack xidl")
     url = urllib2.urlopen('https://www.virtualbox.org/wiki/Downloads')
     page = url.read()
     match = re.search("http://download.virtualbox.org/virtualbox/"
@@ -683,6 +683,7 @@ def download_stable(downloads):
     source_dir = os.path.splitext(tarname)[0]
     for dest, code in downloads:
         path = './%s/%s' % (source_dir, code)
+        path.replace('/', os.path.sep)
         assert os.path.exists(path), "Source file not found at %s" % path
         shutil.copy(path, dest)    
 
@@ -720,12 +721,30 @@ def main(virtualbox_xidl='VirtualBox.xidl',
     lib_doc = '''__doc__ = """\\\n  %s\n"""\n\n''' %get_doc(idl, 0)
 
     # Process the library
+
     library = xml.getElementsByTagName('library')
     assert len(library) == 1
     library = library[0]
 
+    # 5.2 introduced <library><application> ... </application></library>
+    applications = xml.getElementsByTagName('application')
+    if applications:
+        for application in applications:
+            name = application.attributes.get('name', None)
+            if name is not None:
+                if "VirtualBox" == name.value:
+                    break
+        else:
+            raise ValueError("Failed to find VirtualBox application")
+        app_uuid = application.getAttribute('uuid')
+        virtualbox_application = application
+    else:
+        app_uuid = library.getAttribute('appUuid')
+        virtualbox_application = library
+
+    # Iterate each element under the virtualbox application node
     source = dict(result=[], enum=[], interface=[])
-    for node in library.childNodes:
+    for node in virtualbox_application.childNodes:
         name = getattr(node, 'tagName', None)
         if name is None:
             continue
@@ -744,7 +763,6 @@ def main(virtualbox_xidl='VirtualBox.xidl',
     vbox_version = get_vbox_version(config_kmk)
     uuid = library.getAttribute('uuid')
     version = library.getAttribute('version')
-    app_uuid = library.getAttribute('appUuid')
     xidl_hash = hashlib.md5(xidl).hexdigest()
     lib_meta = LIB_META % dict(vbox_version=vbox_version,
                                uuid=uuid,
@@ -765,6 +783,9 @@ def main(virtualbox_xidl='VirtualBox.xidl',
     print("   xidl hash    : %s" % xidl_hash)
     print("   version      : %s" % version) 
     print("   line count   : %s" % code.count("\n"))
-    with open('virtualbox/library.py', 'wb') as f:
+    library_path = os.path.join('.', 'virtualbox', 'library.py')
+    if os.path.exists(library_path):
+        os.unlink(library_path)
+    with open(library_path, 'w') as f:
         f.write(code)
 
