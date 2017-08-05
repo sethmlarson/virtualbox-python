@@ -1,6 +1,15 @@
 Changelog
 =========
 
+version 1.3.0b1
+
+* Added ``SettingsVersion.v1_17`` which is written by VirtualBox 5.2.x
+* Added ``VirtualBox.create_unattended_installer()``
+* Added ``IUnattended`` interface which can be used to create a Guest OS
+  in a fully automated way. (Doesn't work yet in 5.2 beta)
+* Added ``IHostNetworkInterface.wireless`` property which returns
+  ``True`` if the interface is wireless.
+
 version 1.2.0 (28/08/2017)
 
 * Searches for vboxapi installed in Anaconda on Windows. (@SethMichaelLarson PR #80)
