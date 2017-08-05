@@ -17,6 +17,13 @@ matrix:
     - python: 3.6
       env: TOXENV=packaging
 
+    # Building Library.py
+    - python: 2.7
+      env: TOXENV=build
+
+    - python: 3.6
+      env: TOXENV=build
+
 cache:
   - pip
   - directories:

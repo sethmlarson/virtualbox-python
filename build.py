@@ -6,12 +6,10 @@ By Michael Dorman
 
 """
 from xml.dom import minidom
-import pprint
-import sys
 import os
 import re
 import hashlib
-import urllib2
+import requests
 import shutil
 import begin
 
@@ -621,18 +619,18 @@ def preprocess(xidl, target):
     emit = True
     for line in xidl.splitlines():
         line = line.strip()
-        if line.startswith('<if target='):
+        if line.startswith(b'<if target='):
             if target in line:
                 emit = True
             else:
                 emit = False
             continue
-        elif line == '</if>':
+        elif line == b'</if>':
             emit = True
             continue
         if emit:
             lines.append(line)
-    return "\n".join(lines)
+    return b"\n".join(lines)
 
 
 ###########################################################
@@ -645,13 +643,13 @@ def get_vbox_version(config_kmk):
     "Return the vbox config major, minor, build"
     with open(config_kmk, 'rb') as f:
         config = f.read()
-    major = re.search("VBOX_VERSION_MAJOR = (?P<major>[\d])", 
+    major = re.search(b"VBOX_VERSION_MAJOR = (?P<major>[\d])",
                       config).groupdict()['major']
-    minor = re.search("VBOX_VERSION_MINOR = (?P<minor>[\d])", 
+    minor = re.search(b"VBOX_VERSION_MINOR = (?P<minor>[\d])",
                       config).groupdict()['minor']
-    build = re.search("VBOX_VERSION_BUILD = (?P<build>[\d])", 
+    build = re.search(b"VBOX_VERSION_BUILD = (?P<build>[\d])",
                       config).groupdict()['build']
-    return ".".join([major, minor, build])
+    return b".".join([major, minor, build])
 
 def download_master(downloads):
     print("Download the master xidl")
@@ -663,11 +661,11 @@ def download_master(downloads):
 
 def download_stable(downloads):
     print("Download latest tarball for stable release then unpack xidl")
-    url = urllib2.urlopen('https://www.virtualbox.org/wiki/Downloads')
-    page = url.read()
+    with requests.get('https://www.virtualbox.org/wiki/Downloads') as r:
+        page = r.content
+
     match = re.search("http://download.virtualbox.org/virtualbox/"
-                      "([0-9\.]+)/VirtualBox-([0-9\.]+).tar.bz2"
-                      , page)
+                      "([0-9\.]+)/VirtualBox-([0-9\.]+).tar.bz2", page)
     if not match:
         raise Exception("Failed to find source tarball url")
     sourceurl = page[match.start():match.end()]
@@ -710,7 +708,7 @@ def main(virtualbox_xidl='VirtualBox.xidl',
 
     print("Create new virtualbox/library.py")
     xidl = open(virtualbox_xidl, 'rb').read()
-    xidl = preprocess(xidl, target='xpidl')
+    xidl = preprocess(xidl, target=b'xpidl')
         
     xml = minidom.parseString(xidl)
     
@@ -778,14 +776,14 @@ def main(virtualbox_xidl='VirtualBox.xidl',
     code.extend(source['result'])
     code.extend(source['enum'])
     code.extend(source['interface'])
-    code = "\n".join(code)
+    code = b"\n".join([c.encode('utf-8') if not isinstance(c, bytes) else c for c in code])
     print("   vbox version : %s" % vbox_version)
     print("   xidl hash    : %s" % xidl_hash)
     print("   version      : %s" % version) 
-    print("   line count   : %s" % code.count("\n"))
+    print("   line count   : %s" % code.count(b"\n"))
     library_path = os.path.join('.', 'virtualbox', 'library.py')
     if os.path.exists(library_path):
         os.unlink(library_path)
-    with open(library_path, 'w') as f:
+    with open(library_path, 'wb') as f:
         f.write(code)
 
