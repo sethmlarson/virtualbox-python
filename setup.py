@@ -12,29 +12,23 @@ install_requires = []
 tests_require = ['begins', 'funconf']
 
 
-def load_version(filename='./virtualbox/version.py'):
-    """Parse a __version__ number from a source file"""
-    with open(filename) as source:
-        text = source.read()
-        match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]", text)
-        if not match:
-            msg = "Unable to find version number in {}".format(filename)
-            raise RuntimeError(msg)
-        version = match.group(1)
-        return version
+base_dir = os.path.dirname(os.path.abspath(__file__))
+about = {}
+with open(os.path.join(base_dir, 'virtualbox', '__about__.py')) as f:
+    exec(f.read(), about)
 
 
 setup(
-    name="pyvbox",
-    version=load_version(),
+    name=about['__name__'],
+    version=about['__version__'],
     packages=["virtualbox",
               "virtualbox.library_ext"],
-    author="Michael Dorman",
-    author_email="mjdorma+pyvbox@gmail.com",
-    url="https://github.com/mjdorma/pyvbox",
+    author=about['__author__'],
+    author_email=about['__email__'],
+    url=about['__url__'],
     description="A complete VirtualBox Main API implementation",
     long_description=open('README.rst').read(),
-    license="Apache-2.0",
+    license=about['__license__'],
     zip_safe=False,
     install_requires=install_requires,
     platforms=['cygwin', 'win', 'linux'],
