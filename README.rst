@@ -1,7 +1,8 @@
-Introduction to pyvbox 
-**********************
+pyvbox
+******
 
-What's in pyvbox:
+.. image:: https://img.shields.io/travis/mjdorma/pyvbox/master.svg
+   :target: https://travis-ci.org/mjdorma/pyvbox
 
 * A complete implementation of the VirtualBox Main API
 * Create a VirtualBox instance and seamlessly explore the potential of
@@ -13,20 +14,22 @@ Project documentation at `pythonhosted.org`_.
 
 Project hosting provided by `github.com`_.
 
-
 [mjdorma+pyvbox@gmail.com]
 
 
-Install 
+Installation
 =======
 
+To get the latest released version of pyvbox from `PyPI`_ run the following::
 Simply run the following::
 
-    > python setup.py install
+    $ pip install pyvbox
     
-or `PyPi`_:: 
+or to install the latest development version from GitHub::
 
-    > pip install pyvbox
+    $ git clone https://github.com/mjdorma/pyvbox
+    $ cd pyvbox
+    $ python setup.py install
     
 
 Getting started 
