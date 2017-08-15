@@ -18,7 +18,7 @@ Project hosting provided by `github.com`_.
 
 
 Installation
-=======
+============
 
 To get the latest released version of pyvbox from `PyPI`_ run the following::
 Simply run the following::
@@ -32,7 +32,7 @@ or to install the latest development version from GitHub::
     $ python setup.py install
     
 
-Getting started 
+Getting Started 
 ===============
 
 Exploring the library::
