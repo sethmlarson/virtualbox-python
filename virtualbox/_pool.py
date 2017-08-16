@@ -54,13 +54,8 @@ from __future__ import absolute_import
 from contextlib import contextmanager
 import time
 
-from virtualbox import VirtualBox
-from virtualbox import Session
-from virtualbox.library import LockType
-from virtualbox.library import SessionState
-from virtualbox.library import DeviceType
-from virtualbox.library import DeviceActivity
-from virtualbox.library import OleErrorUnexpected
+from ._ext import VirtualBox, Session
+from ._library import LockType, SessionState, DeviceType, DeviceActivity, OleErrorUnexpected
 
 
 class MachinePool(object):

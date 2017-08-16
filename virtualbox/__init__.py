@@ -28,6 +28,7 @@ from ._ext import (VirtualBox, Session, Keyboard,
                    Console, EventSource, Mouse, Process,
                    GuestProcess, Appliance, VirtualSystemDescription)
 from ._vboxapi import Manager, WebServiceManager
+from ._pool import MachinePool
 
-__all__ = ['VirtualBox', 'Session', 'Keyboard', 'GuestSession', 'EventSource',
+__all__ = ['VirtualBox', 'Session', 'MachinePool', 'Keyboard', 'GuestSession', 'EventSource',
            'Appliance', 'VirtualSystemDescription', 'Manager', 'WebServiceManager']
