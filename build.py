@@ -325,8 +325,8 @@ def process_interface_node(node):
     if event_id:
         event_id = pythonic_name(event_id)
         event_id = "id = VBoxEventType.%(event_id)s" % dict(event_id=event_id)
-    class_def = CLASS_DEF % dict(name=name, 
-        extends=extends, doc=doc, uuid=uuid, wsmap=wsmap,
+    class_def = CLASS_DEF % dict(name=remove_i_from_name(name), 
+        extends=remove_i_from_name(extends), doc=doc, uuid=uuid, wsmap=wsmap,
         event_id=event_id)
 
     code = []
@@ -345,6 +345,12 @@ def process_interface_node(node):
                     (name, class_def))
     code.append('')
     return "\n".join(code) 
+
+
+def remove_i_from_name(name):
+    if name.startswith('I') and name[1].lower() != name[1]:
+        name = name[1:]  # Remove the `I` from the beginning of interfaces.
+    return name
 
 
 ATTR_GET = '''\
@@ -792,7 +798,7 @@ def main(virtualbox_xidl='VirtualBox.xidl',
     print("   xidl hash    : %s" % xidl_hash)
     print("   version      : %s" % version) 
     print("   line count   : %s" % code.count(b"\n"))
-    library_path = os.path.join('.', 'virtualbox', 'library.py')
+    library_path = os.path.join('.', 'virtualbox', '_library.py')
     if os.path.exists(library_path):
         os.unlink(library_path)
     with open(library_path, 'wb') as f:

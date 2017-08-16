@@ -5,13 +5,6 @@
  file when interacting through an Interface to the Main library API.
 """
 
-from __future__ import absolute_import
-import inspect
-
-from virtualbox import library
-
-
-# Import extension modules
 from .vbox import IVirtualBox  # noqa: F401
 from .session import ISession  # noqa: F401
 from .keyboard import IKeyboard  # noqa: F401
@@ -27,11 +20,3 @@ from .process import IProcess  # noqa: F401
 from .guest_process import IGuestProcess  # noqa: F401
 from .appliance import IAppliance  # noqa: F401
 from .virtual_system_description import IVirtualSystemDescription  # noqa: F401
-
-
-# Replace original with extension
-for k, v in [a for a in locals().items()]:
-    if not inspect.isclass(v):
-        continue
-    if issubclass(v, library.Interface):
-        setattr(library, k, v)
