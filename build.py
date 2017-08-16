@@ -61,6 +61,11 @@ try:
 except:
     baseinteger = (int, )
 
+try:
+    import typing
+except ImportError:
+    typing = None
+
 """
 
 LIB_META = """\
