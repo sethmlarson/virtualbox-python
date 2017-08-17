@@ -25,6 +25,15 @@ def pythonic_name(name):
     name = re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
     if hasattr(builtin, name) is True or name in ['global', 'file', 'apply']:
         name += "_p"
+    if 'dn_d_' in name:
+        name = name.replace('dn_d_', 'drag_and_drop_')
+    for ipv in ['4', '6']:
+        if '_ip%s' % ipv in name:
+            name = name.replace('ip%s' % ipv, 'ipv%s' % ipv)
+        elif 'i_pv%s' % ipv in name:
+            name = name.replace('i_pv%s' % ipv, 'ipv%s' % ipv)
+        elif '_rules%s' % ipv in name:
+            name = name.replace('_rules%s' % ipv, '_rules_ipv%s' % ipv)
     return name
 
 
@@ -289,7 +298,7 @@ def process_enum_node(node):
     enums = "\n".join(enums)
 
     #lookup = pprint.pformat(enums, width=4, indent=8)
-    code.append(ENUM_DEFINE % dict(name=name, doc=enum_doc, 
+    code.append(ENUM_DEFINE % dict(name=normalize_class_name(name), doc=enum_doc,
                                    uuid=uuid, enums=enums))
     code.append('\n')
     return "\n".join(code)
@@ -324,9 +333,9 @@ def process_interface_node(node):
     if event_id:
         event_id = pythonic_name(event_id)
         event_id = "id = VBoxEventType.%(event_id)s" % dict(event_id=event_id)
-    class_def = CLASS_DEF % dict(name=remove_i_from_name(name), 
-        extends=remove_i_from_name(extends), doc=doc, uuid=uuid, wsmap=wsmap,
-        event_id=event_id)
+    class_def = CLASS_DEF % dict(name=normalize_class_name(name),
+                                 extends=normalize_class_name(extends), doc=doc, uuid=uuid, wsmap=wsmap,
+                                 event_id=event_id)
 
     code = []
     code.append(class_def)
@@ -346,9 +355,13 @@ def process_interface_node(node):
     return "\n".join(code) 
 
 
-def remove_i_from_name(name):
+def normalize_class_name(name):
     if name.startswith('I') and name[1].lower() != name[1]:
         name = name[1:]  # Remove the `I` from the beginning of interfaces.
+    if 'DnD' in name:
+        name = name.replace('DnD', 'DragAndDrop')
+    if 'HW' in name:
+        name = name.replace('HW', 'Hardware')
     return name
 
 
@@ -386,7 +399,7 @@ python_types = ['str', 'bool', 'int']
 def type_to_name(t):
     if t in known_types:
         t = known_types[t]
-    return remove_i_from_name(t)
+    return normalize_class_name(t)
 
 
 def type_to_name_doc(t):
@@ -399,7 +412,7 @@ def process_interface_attribute(node):
     name = node.getAttribute('name')
     atype = node.getAttribute('type')
     array = node.getAttribute('safearray') == 'yes'
-    ntype = remove_i_from_name(type_to_name(atype))
+    ntype = normalize_class_name(type_to_name(atype))
     readonly = node.getAttribute('readonly') == 'yes'
     if readonly:
         doc_action = "Get"
@@ -616,7 +629,7 @@ def process_interface_method(node):
         if len(outvars) > 1:
             retvars = "(%s)" % (", ".join(outvars))
         else:
-            retvars = remove_i_from_name(outvars[0])
+            retvars = normalize_class_name(outvars[0])
         outvars = "%s = " % (retvars)
     else:
         outvars = ''
@@ -633,7 +646,7 @@ def process_interface_method(node):
         if array:
             convfunc = "[%s(a) for a in %s]" % (atype, name)
         else:
-            convfunc = "%s(%s)" % (remove_i_from_name(atype), name)
+            convfunc = "%s(%s)" % (normalize_class_name(atype), name)
         func.append(METHOD_OUT_CONV % dict(name=name, convfunc=convfunc))
         
     if retvars:

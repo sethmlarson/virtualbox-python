@@ -630,7 +630,7 @@ class CPUPropertyType(enum.IntEnum):
     x2_apic = 5
 
 
-class HWVirtExPropertyType(enum.IntEnum):
+class HardwareVirtExPropertyType(enum.IntEnum):
     """Hardware virtualization property type. This enumeration represents possible values
     for the :py:func:`IMachine.get_hw_virt_ex_property`  and
     :py:func:`IMachine.set_hw_virt_ex_property`  methods.
@@ -830,7 +830,7 @@ class ClipboardMode(enum.IntEnum):
     bidirectional = 3
 
 
-class DnDMode(enum.IntEnum):
+class DragAndDropMode(enum.IntEnum):
     """Drag and drop interchange mode.
 
 
@@ -2477,7 +2477,7 @@ class FsObjType(enum.IntEnum):
     white_out = 9
 
 
-class DnDAction(enum.IntEnum):
+class DragAndDropAction(enum.IntEnum):
     """Possible actions of a drag'n drop operation.
 
 
@@ -3418,7 +3418,7 @@ class VBoxEventType(enum.IntEnum):
             See :py:class:`IStorageDeviceChangedEvent` IStorageDeviceChangedEvent.
     .. describe:: on_clipboard_mode_changed(72)
             See :py:class:`IClipboardModeChangedEvent` IClipboardModeChangedEvent.
-    .. describe:: on_dn_d_mode_changed(73)
+    .. describe:: on_drag_and_drop_mode_changed(73)
             See :py:class:`IDnDModeChangedEvent` IDnDModeChangedEvent.
     .. describe:: on_nat_network_changed(74)
             See :py:class:`INATNetworkChangedEvent` INATNetworkChangedEvent.
@@ -3524,7 +3524,7 @@ class VBoxEventType(enum.IntEnum):
     on_guest_monitor_changed = 70
     on_storage_device_changed = 71
     on_clipboard_mode_changed = 72
-    on_dn_d_mode_changed = 73
+    on_drag_and_drop_mode_changed = 73
     on_nat_network_changed = 74
     on_nat_network_start_stop = 75
     on_nat_network_alter = 76
@@ -3758,21 +3758,21 @@ class NATNetwork(Interface):
         return ret
 
     @property
-    def i_pv6_enabled(self):
+    def ipv6_enabled(self):
         """Get or set bool value for 'IPv6Enabled'
         This attribute define whether gateway will support IPv6 or not.
         """
         ret = self._get_attr("IPv6Enabled")
         return ret
 
-    @i_pv6_enabled.setter
-    def i_pv6_enabled(self, value):
+    @ipv6_enabled.setter
+    def ipv6_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
         self._set_attr("IPv6Enabled", value)
 
     @property
-    def i_pv6_prefix(self):
+    def ipv6_prefix(self):
         """Get or set str value for 'IPv6Prefix'
         This a CIDR IPv6 defining prefix for link-local addresses
         autoconfiguration within network. Note: ignored if attribute
@@ -3781,20 +3781,20 @@ class NATNetwork(Interface):
         ret = self._get_attr("IPv6Prefix")
         return ret
 
-    @i_pv6_prefix.setter
-    def i_pv6_prefix(self, value):
+    @ipv6_prefix.setter
+    def ipv6_prefix(self, value):
         if not isinstance(value, basestring):
             raise TypeError("value is not an instance of basestring")
         self._set_attr("IPv6Prefix", value)
 
     @property
-    def advertise_default_i_pv6_route_enabled(self):
+    def advertise_default_ipv6_route_enabled(self):
         """Get or set bool value for 'advertiseDefaultIPv6RouteEnabled'"""
         ret = self._get_attr("advertiseDefaultIPv6RouteEnabled")
         return ret
 
-    @advertise_default_i_pv6_route_enabled.setter
-    def advertise_default_i_pv6_route_enabled(self, value):
+    @advertise_default_ipv6_route_enabled.setter
+    def advertise_default_ipv6_route_enabled(self, value):
         if not isinstance(value, bool):
             raise TypeError("value is not an instance of bool")
         self._set_attr("advertiseDefaultIPv6RouteEnabled", value)
@@ -3818,7 +3818,7 @@ class NATNetwork(Interface):
         return EventSource(ret)
 
     @property
-    def port_forward_rules4(self):
+    def port_forward_rules_ipv4(self):
         """Get str value for 'portForwardRules4'
         Array of NAT port-forwarding rules in string representation,
         in the following format:
@@ -3853,21 +3853,21 @@ class NATNetwork(Interface):
                      in_p=[hostid, offset])
 
     @property
-    def loopback_ip6(self):
+    def loopback_ipv6(self):
         """Get or set int value for 'loopbackIp6'
         Offset in ipv6 network from network id for address mapped into loopback6 interface of the host.
         """
         ret = self._get_attr("loopbackIp6")
         return ret
 
-    @loopback_ip6.setter
-    def loopback_ip6(self, value):
+    @loopback_ipv6.setter
+    def loopback_ipv6(self, value):
         if not isinstance(value, baseinteger):
             raise TypeError("value is not an instance of baseinteger")
         self._set_attr("loopbackIp6", value)
 
     @property
-    def port_forward_rules6(self):
+    def port_forward_rules_ipv6(self):
         """Get str value for 'portForwardRules6'
         Array of NAT port-forwarding rules in string representation, in the
         following format: "name:protocolid:[host ip]:host port:[guest ip]:guest port".
@@ -8546,17 +8546,17 @@ class Machine(Interface):
         self._set_attr("clipboardMode", value)
 
     @property
-    def dn_d_mode(self):
-        """Get or set DnDMode value for 'dnDMode'
+    def drag_and_drop_mode(self):
+        """Get or set DragAndDropMode value for 'dnDMode'
         Sets or retrieves the current drag'n drop mode.
         """
         ret = self._get_attr("dnDMode")
-        return DnDMode(ret)
+        return DragAndDropMode(ret)
 
-    @dn_d_mode.setter
-    def dn_d_mode(self, value):
-        if not isinstance(value, DnDMode):
-            raise TypeError("value is not an instance of DnDMode")
+    @drag_and_drop_mode.setter
+    def drag_and_drop_mode(self, value):
+        if not isinstance(value, DragAndDropMode):
+            raise TypeError("value is not an instance of DragAndDropMode")
         self._set_attr("dnDMode", value)
 
     @property
@@ -10659,8 +10659,8 @@ created differencing media, should not happen).
             Invalid property.
         
         """
-        if not isinstance(property_p, HWVirtExPropertyType):
-            raise TypeError("property_p can only be an instance of type HWVirtExPropertyType")
+        if not isinstance(property_p, HardwareVirtExPropertyType):
+            raise TypeError("property_p can only be an instance of type HardwareVirtExPropertyType")
         value = self._call("getHWVirtExProperty",
                      in_p=[property_p])
         return value
@@ -10680,8 +10680,8 @@ created differencing media, should not happen).
             Invalid property.
         
         """
-        if not isinstance(property_p, HWVirtExPropertyType):
-            raise TypeError("property_p can only be an instance of type HWVirtExPropertyType")
+        if not isinstance(property_p, HardwareVirtExPropertyType):
+            raise TypeError("property_p can only be an instance of type HardwareVirtExPropertyType")
         if not isinstance(value, bool):
             raise TypeError("value can only be an instance of type bool")
         self._call("setHWVirtExProperty",
@@ -14594,7 +14594,7 @@ class AdditionsFacility(Interface):
         return AdditionsFacilityType(ret)
 
 
-class DnDBase(Interface):
+class DragAndDropBase(Interface):
     """
     Base abstract interface for drag'n drop.
     """
@@ -14668,7 +14668,7 @@ class DnDBase(Interface):
                      in_p=[formats])
 
 
-class DnDSource(DnDBase):
+class DragAndDropSource(DragAndDropBase):
     """
     Abstract interface for handling drag'n drop sources.
     """
@@ -14694,7 +14694,7 @@ class DnDSource(DnDBase):
             raise TypeError("screen_id can only be an instance of type baseinteger")
         default_action = self._call("dragIsPending",
                      in_p=[screen_id])
-        default_action = DnDAction(default_action)
+        default_action = DragAndDropAction(default_action)
         return default_action
 
     def drop(self, format_p, action):
@@ -14718,8 +14718,8 @@ class DnDSource(DnDBase):
         """
         if not isinstance(format_p, basestring):
             raise TypeError("format_p can only be an instance of type basestring")
-        if not isinstance(action, DnDAction):
-            raise TypeError("action can only be an instance of type DnDAction")
+        if not isinstance(action, DragAndDropAction):
+            raise TypeError("action can only be an instance of type DragAndDropAction")
         progress = self._call("drop",
                      in_p=[format_p, action])
         progress = Progress(progress)
@@ -14739,7 +14739,7 @@ class DnDSource(DnDBase):
         return data
 
 
-class GuestDnDSource(DnDSource):
+class GuestDragAndDropSource(DragAndDropSource):
     """
     Implementation of the :py:class:`IDnDSource`  object
     for source drag'n drop operations on the guest.
@@ -14754,7 +14754,7 @@ class GuestDnDSource(DnDSource):
         return ret
 
 
-class DnDTarget(DnDBase):
+class DragAndDropTarget(DragAndDropBase):
     """
     Abstract interface for handling drag'n drop targets.
     """
@@ -14801,13 +14801,13 @@ class DnDTarget(DnDBase):
             raise TypeError("y can only be an instance of type baseinteger")
         if not isinstance(x, baseinteger):
             raise TypeError("x can only be an instance of type baseinteger")
-        if not isinstance(default_action, DnDAction):
-            raise TypeError("default_action can only be an instance of type DnDAction")
+        if not isinstance(default_action, DragAndDropAction):
+            raise TypeError("default_action can only be an instance of type DragAndDropAction")
         if not isinstance(allowed_actions, list):
             raise TypeError("allowed_actions can only be an instance of type list")
         for a in allowed_actions[:10]:
-            if not isinstance(a, DnDAction):
-                raise TypeError("array can only contain objects of type DnDAction")
+            if not isinstance(a, DragAndDropAction):
+                raise TypeError("array can only contain objects of type DragAndDropAction")
         if not isinstance(formats, list):
             raise TypeError("formats can only be an instance of type list")
         for a in formats[:10]:
@@ -14815,7 +14815,7 @@ class DnDTarget(DnDBase):
                 raise TypeError("array can only contain objects of type basestring")
         result_action = self._call("enter",
                      in_p=[screen_id, y, x, default_action, allowed_actions, formats])
-        result_action = [DnDAction(a) for a in result_action]
+        result_action = [DragAndDropAction(a) for a in result_action]
         return result_action
 
     def move(self, screen_id, x, y, default_action, allowed_actions, formats):
@@ -14858,13 +14858,13 @@ class DnDTarget(DnDBase):
             raise TypeError("x can only be an instance of type baseinteger")
         if not isinstance(y, baseinteger):
             raise TypeError("y can only be an instance of type baseinteger")
-        if not isinstance(default_action, DnDAction):
-            raise TypeError("default_action can only be an instance of type DnDAction")
+        if not isinstance(default_action, DragAndDropAction):
+            raise TypeError("default_action can only be an instance of type DragAndDropAction")
         if not isinstance(allowed_actions, list):
             raise TypeError("allowed_actions can only be an instance of type list")
         for a in allowed_actions[:10]:
-            if not isinstance(a, DnDAction):
-                raise TypeError("array can only contain objects of type DnDAction")
+            if not isinstance(a, DragAndDropAction):
+                raise TypeError("array can only contain objects of type DragAndDropAction")
         if not isinstance(formats, list):
             raise TypeError("formats can only be an instance of type list")
         for a in formats[:10]:
@@ -14872,7 +14872,7 @@ class DnDTarget(DnDBase):
                 raise TypeError("array can only contain objects of type basestring")
         result_action = self._call("move",
                      in_p=[screen_id, x, y, default_action, allowed_actions, formats])
-        result_action = [DnDAction(a) for a in result_action]
+        result_action = [DragAndDropAction(a) for a in result_action]
         return result_action
 
     def leave(self, screen_id):
@@ -14931,13 +14931,13 @@ class DnDTarget(DnDBase):
             raise TypeError("x can only be an instance of type baseinteger")
         if not isinstance(y, baseinteger):
             raise TypeError("y can only be an instance of type baseinteger")
-        if not isinstance(default_action, DnDAction):
-            raise TypeError("default_action can only be an instance of type DnDAction")
+        if not isinstance(default_action, DragAndDropAction):
+            raise TypeError("default_action can only be an instance of type DragAndDropAction")
         if not isinstance(allowed_actions, list):
             raise TypeError("allowed_actions can only be an instance of type list")
         for a in allowed_actions[:10]:
-            if not isinstance(a, DnDAction):
-                raise TypeError("array can only contain objects of type DnDAction")
+            if not isinstance(a, DragAndDropAction):
+                raise TypeError("array can only contain objects of type DragAndDropAction")
         if not isinstance(formats, list):
             raise TypeError("formats can only be an instance of type list")
         for a in formats[:10]:
@@ -14945,7 +14945,7 @@ class DnDTarget(DnDBase):
                 raise TypeError("array can only contain objects of type basestring")
         result_action = self._call("drop",
                      in_p=[screen_id, x, y, default_action, allowed_actions, formats])
-        result_action = [DnDAction(a) for a in result_action]
+        result_action = [DragAndDropAction(a) for a in result_action]
         return result_action
 
     def send_data(self, screen_id, format_p, data):
@@ -14999,7 +14999,7 @@ class DnDTarget(DnDBase):
         return veto
 
 
-class GuestDnDTarget(DnDTarget):
+class GuestDragAndDropTarget(DragAndDropTarget):
     """
     Implementation of the :py:class:`IDnDTarget`  object
     for target drag'n drop operations on the guest.
@@ -17490,23 +17490,23 @@ class Guest(Interface):
         return ret
 
     @property
-    def dn_d_source(self):
-        """Get GuestDnDSource value for 'dnDSource'
+    def drag_and_drop_source(self):
+        """Get GuestDragAndDropSource value for 'dnDSource'
         Retrieves the drag'n drop source implementation for the guest side, that
         is, handling and retrieving drag'n drop data from the guest.
         """
         ret = self._get_attr("dnDSource")
-        return GuestDnDSource(ret)
+        return GuestDragAndDropSource(ret)
 
     @property
-    def dn_d_target(self):
-        """Get GuestDnDTarget value for 'dnDTarget'
+    def drag_and_drop_target(self):
+        """Get GuestDragAndDropTarget value for 'dnDTarget'
         Retrieves the drag'n drop source implementation for the host side. This
         will allow the host to handle and initiate a drag'n drop operation to copy
         data from the host to the guest.
         """
         ret = self._get_attr("dnDTarget")
-        return GuestDnDTarget(ret)
+        return GuestDragAndDropTarget(ret)
 
     @property
     def event_source(self):
@@ -24272,7 +24272,7 @@ class InternalSessionControl(Interface):
         self._call("onClipboardModeChange",
                      in_p=[clipboard_mode])
 
-    def on_dn_d_mode_change(self, dnd_mode):
+    def on_drag_and_drop_mode_change(self, dnd_mode):
         """Notification when the drag'n drop mode changes.
 
         :type dnd_mode: :class:`DnDMode`
@@ -24280,8 +24280,8 @@ class InternalSessionControl(Interface):
             The new mode for drag'n drop.
 
         """
-        if not isinstance(dnd_mode, DnDMode):
-            raise TypeError("dnd_mode can only be an instance of type DnDMode")
+        if not isinstance(dnd_mode, DragAndDropMode):
+            raise TypeError("dnd_mode can only be an instance of type DragAndDropMode")
         self._call("onDnDModeChange",
                      in_p=[dnd_mode])
 
@@ -27207,20 +27207,20 @@ class ClipboardModeChangedEvent(Event):
         return ClipboardMode(ret)
 
 
-class DnDModeChangedEvent(Event):
+class DragAndDropModeChangedEvent(Event):
     """
     Notification when the drag'n drop mode changes.
     """
     __uuid__ = 'b55cf856-1f8b-4692-abb4-462429fae5e9'
     __wsmap__ = 'managed'
-    id = VBoxEventType.on_dn_d_mode_changed
+    id = VBoxEventType.on_drag_and_drop_mode_changed
     @property
     def dnd_mode(self):
-        """Get DnDMode value for 'dndMode'
+        """Get DragAndDropMode value for 'dndMode'
         The new drag'n drop mode.
         """
         ret = self._get_attr("dndMode")
-        return DnDMode(ret)
+        return DragAndDropMode(ret)
 
 
 class CPUChangedEvent(Event):
@@ -28532,7 +28532,7 @@ class NATNetworkSettingEvent(NATNetworkAlterEvent):
         return ret
 
     @property
-    def advertise_default_i_pv6_route_enabled(self):
+    def advertise_default_ipv6_route_enabled(self):
         """Get bool value for 'advertiseDefaultIPv6RouteEnabled'"""
         ret = self._get_attr("advertiseDefaultIPv6RouteEnabled")
         return ret

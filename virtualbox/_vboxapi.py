@@ -22,8 +22,7 @@ import platform
 import copy
 import atexit
 from multiprocessing import current_process
-from ._library import IVirtualBox as VirtualBox
-from ._library import ISession as Session
+from ._library import VirtualBox, Session
 
 
 @contextmanager

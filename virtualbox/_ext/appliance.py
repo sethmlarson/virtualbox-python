@@ -15,7 +15,7 @@ class Appliance(_Appliance):
     # objects.
     def read(self, ova_path):
         "Read and interpret ova file into this Appliance object."
-        p = super(IAppliance, self).read(ova_path)
+        p = super(Appliance, self).read(ova_path)
         p.wait_for_completion()
         self.interpret()
         warnings = self.get_warnings()
@@ -40,5 +40,5 @@ class Appliance(_Appliance):
     def import_machines(self, options=None):
         if options is None:
             options = []
-        return super(IAppliance, self).import_machines(options)
+        return super(Appliance, self).import_machines(options)
     import_machines.__doc__ = _Appliance.import_machines.__doc__
