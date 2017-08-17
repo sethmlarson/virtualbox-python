@@ -7,7 +7,7 @@ import os
 import sys
 
 
-install_requires = ['enum34>=1.1.6; python_version < '3.3']
+install_requires = ['enum34>=1.1.6; python_version < \'3.3\'']
 
 tests_require = ['begins', 'funconf']
 
