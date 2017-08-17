@@ -9,9 +9,10 @@ from xml.dom import minidom
 import os
 import re
 import hashlib
-import requests
 import shutil
 import begin
+import tarfile
+import requests
 
 try:
     import __builtin__ as builtin 
@@ -39,13 +40,14 @@ LIB_IMPORTS = """\
 # By Michael Dorman.
 # [mjdorma+pyvbox@gmail.com]
 #
-# Note: Commenting, and API structure generation was carved from 
-#       VirtualBox project's VirtualBox.xidl Main API definition.
+# NOTE: Don't make changes to this file directly. Instead 
+#       change `build.py` to change how this file renders
+#       or change `_ext/...` to add additional functionality
+#       to interfaces.
 #
-from __future__ import absolute_import
-from .library_base import Enum 
-from .library_base import Interface 
-from .library_base import VBoxError
+
+import enum
+from ._base import Interface, VBoxError
 
 # Py2 and Py3 compatibility  
 try:
@@ -59,7 +61,7 @@ except:
 try:
     baseinteger = (int, long)
 except:
-    baseinteger = (int, )
+    baseinteger = (int,)
 
 try:
     import typing
@@ -252,30 +254,28 @@ def process_result_node(node):
 #
 ###########################################################
 ENUM_DEFINE = '''\
-class %(name)s(Enum):
-    """%(doc)s
-    """
+class %(name)s(enum.IntEnum):
+    """%(doc)s"""
     __uuid__ = %(uuid)s
-    _enums = %(enums)s '''
+
+%(enums)s'''
 ENUM_VALUE = """\
     %(name)s.%(label)s = Enum(%(doc)svalue=%(value)s)"""
 
-ENUM_ROW = """\
-        ('%(label)s', %(value)s, 
-         '''%(doc)s'''),"""
+ENUM_ROW = '    %(label)s = %(value)s'
 
 def process_enum_node(node):
     name = node.getAttribute('name')
     uuid = "'%s'" % node.getAttribute('uuid')
     code = []
     enum_doc = [get_doc(node, 4), "\n"]
-    enums = ['[\\']
+    enums = []
     for child in node.childNodes:
         tagname = getattr(child, 'tagName', None)
         if tagname != 'const':
             continue
         doc = get_doc(child)
-        label = str(child.getAttribute('name'))
+        label = pythonic_name(str(child.getAttribute('name')))
         value = child.getAttribute('value')
         if '0x' in value:
             value = int(value[2:], 16)
@@ -283,16 +283,14 @@ def process_enum_node(node):
             value = int(value)
         enums.append(ENUM_ROW % dict(label=label, value=value, doc=doc))
         
-        enum_doc.append("""    .. describe:: %s(%s)\n\n            %s\n""" % (pythonic_name(label), value, doc))
+        enum_doc.append("""    .. describe:: %s(%s)\n            %s""" % (label, value, doc))
 
-    enum_doc = "\n".join(enum_doc)
-    enums.append('        ]')
+    enum_doc = "\n".join(enum_doc).strip()
     enums = "\n".join(enums)
 
     #lookup = pprint.pformat(enums, width=4, indent=8)
     code.append(ENUM_DEFINE % dict(name=name, doc=enum_doc, 
                                    uuid=uuid, enums=enums))
-    python_name = pythonic_name(name)
     code.append('\n')
     return "\n".join(code)
 
@@ -364,7 +362,7 @@ ATTR_SET = '''
     @%(pname)s.setter
     def %(pname)s(self, value):
 %(assert_type)s
-        return self._set_attr("%(name)s", value)'''
+        self._set_attr("%(name)s", value)'''
 
 ATTR_SET_ASSERT_INST = '''\
         if not isinstance(value, %(ntype)s):
@@ -671,9 +669,11 @@ def get_vbox_version(config_kmk):
 def download_master(downloads):
     print("Download the master xidl")
     for dest, code in downloads:
-        url = "http://www.virtualbox.org/svn/vbox/trunk/%s" % code 
-        if 0 != os.system('wget -O %s %s' % (dest, url)):
-            assert 0 == os.system('curl %s > %s' % (url, dest) ) 
+        url = "http://www.virtualbox.org/svn/vbox/trunk/%s" % code
+        with open(dest, 'wb') as f:
+            with requests.get(url, stream=True) as r:
+                for chunk in r.iter_content(16384):
+                    f.write(chunk)
         assert os.path.exists(dest), "Failed to download %s" % url
 
 def download_stable(downloads):
@@ -689,12 +689,12 @@ def download_stable(downloads):
     bzname = sourceurl.split('/')[-1]
     tarname = os.path.splitext(bzname)[0]
     print("Download stable code %s > %s" % (sourceurl, bzname) )
-    if 0 != os.system('wget -O %s %s' % (bzname, sourceurl)):
-        assert 0 == os.system('curl -L %s > %s' % (sourceurl, bzname) )
-    assert os.path.exists(bzname), "failed to download %s" % sourceurl
-    assert 0 == os.system('bunzip2 -f %s' % bzname), "failed to bunzip2 %s" % bzname
-    assert os.path.exists(tarname), "failed bunzip %s" % tarname
-    assert 0 == os.system('tar xf %s' % tarname), "failed to tar xf %s" % tarname
+    with open(bzname, 'wb') as f:
+        with requests.get(sourceurl, stream=True) as r:
+            for chunk in r.iter_content(16384):
+                f.write(chunk)
+    tar = tarfile.open(bzname, 'r:bz2')
+    tar.extractall()
     source_dir = os.path.splitext(tarname)[0]
     for dest, code in downloads:
         path = './%s/%s' % (source_dir, code)
