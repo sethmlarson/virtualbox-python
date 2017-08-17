@@ -307,6 +307,7 @@ class %(name)s(%(extends)s):
     __wsmap__ = '%(wsmap)s'
     %(event_id)s'''
 
+
 def process_interface_node(node):
     name = node.getAttribute('name')
     uuid = node.getAttribute('uuid')
@@ -381,21 +382,24 @@ known_types = {'wstring':'str',
 
 python_types = ['str', 'bool', 'int']
 
+
 def type_to_name(t):
     if t in known_types:
-        return known_types[t]
-    return t 
+        t = known_types[t]
+    return remove_i_from_name(t)
+
 
 def type_to_name_doc(t):
     if t in known_types:
         return known_types[t]
     return ":class:`%s`" % t
 
+
 def process_interface_attribute(node):
     name = node.getAttribute('name')
     atype = node.getAttribute('type')
     array = node.getAttribute('safearray') == 'yes'
-    ntype = type_to_name(atype)
+    ntype = remove_i_from_name(type_to_name(atype))
     readonly = node.getAttribute('readonly') == 'yes'
     if readonly:
         doc_action = "Get"
@@ -448,11 +452,17 @@ METHOD_FUNC = '''\
         """'''
 
 METHOD_DOC_PARAM = '''\
-        %(io)s %(pname)s of type %(ptype)s%(doc)s
+        :type %(pname)s: %(ptype)s
+        :param %(pname)s: %(doc)s
+'''
+
+METHOD_DOC_RETURN = '''\
+        :rtype: %(ptype)s
+        :returns: %(doc)s
 '''
 
 METHOD_DOC_RAISES = '''\
-        raises %(name)s%(doc)s
+        :raises: %(name)s%(doc)s
         '''
 
 METHOD_ASSERT_IN_INST = '''\
@@ -467,8 +477,7 @@ METHOD_ASSERT_ARRAY_IN = '''\
 METHOD_ASSERT_ARRAY_IN_INST = '''\
         for a in %(invar)s[:10]:
             if not isinstance(a, %(invartype)s):
-                raise TypeError(\\
-                        "array can only contain objects of type %(invartype)s")'''
+                raise TypeError("array can only contain objects of type %(invartype)s")'''
 
 METHOD_CALL = '''\
         %(outvars)sself._call("%(name)s"%(in_p)s)'''
@@ -514,9 +523,9 @@ def process_interface_method(node):
             cio = c.getAttribute('dir')
             array = c.getAttribute('safearray')
             if cio in ['in', 'out']:
-                params.append((cname, cio, cdoc, atype, array))
+                if cio == 'in':
+                    params.append((cname, cio, cdoc, atype, array))
             elif cio == 'return':
-                params.append((cname, cio, cdoc, atype, array))
                 ret_param = (cname, cdoc, atype, array)
             else:
                 raise Exception("Unknown param type '%s' for %s" % \
@@ -527,12 +536,17 @@ def process_interface_method(node):
     #function doc
     doc = [method_doc]
     doc.append('')
-    for n, io, d, t, _ in params: 
+    for n, io, d, t, _ in params:
         ptype = type_to_name_doc(t)
         if d:
             d = "\n            %s" % d
         doc.append(METHOD_DOC_PARAM % dict(io=io, pname=pythonic_name(n), 
                                 doc=d, ptype=ptype))
+    if ret_param:
+        n, d, t, _ = ret_param
+        ptype = type_to_name_doc(t)
+        doc.append(METHOD_DOC_RETURN % dict(pname=pythonic_name(n),
+                                            doc=d, ptype=ptype))
     for n, d in raises:
         doc.append(METHOD_DOC_RAISES % dict(doc=d, name=n))
     doc = "\n".join(doc)
@@ -550,7 +564,7 @@ def process_interface_method(node):
                                 doc=doc,
                                 inparams=inparams))
 
-    # prep METOD_CALL vars and insert ASSERT IN 
+    # prep METHOD_CALL vars and insert ASSERT IN
     outvars = []
     out_p = []
     for n, io, d, t, array in params:
@@ -602,7 +616,7 @@ def process_interface_method(node):
         if len(outvars) > 1:
             retvars = "(%s)" % (", ".join(outvars))
         else:
-            retvars = outvars[0]
+            retvars = remove_i_from_name(outvars[0])
         outvars = "%s = " % (retvars)
     else:
         outvars = ''
@@ -619,7 +633,7 @@ def process_interface_method(node):
         if array:
             convfunc = "[%s(a) for a in %s]" % (atype, name)
         else:
-            convfunc = "%s(%s)" % (atype, name)
+            convfunc = "%s(%s)" % (remove_i_from_name(atype), name)
         func.append(METHOD_OUT_CONV % dict(name=name, convfunc=convfunc))
         
     if retvars:
@@ -666,6 +680,7 @@ def get_vbox_version(config_kmk):
                       config).groupdict()['build']
     return b".".join([major, minor, build])
 
+
 def download_master(downloads):
     print("Download the master xidl")
     for dest, code in downloads:
@@ -675,6 +690,7 @@ def download_master(downloads):
                 for chunk in r.iter_content(16384):
                     f.write(chunk)
         assert os.path.exists(dest), "Failed to download %s" % url
+
 
 def download_stable(downloads):
     print("Download latest tarball for stable release then unpack xidl")
