@@ -4,6 +4,7 @@ import re
 import inspect
 import platform
 import time
+import enum
 
 # Py2 and Py3 compatibility
 try:
@@ -18,22 +19,6 @@ def pythonic_name(name):
     if hasattr(builtin, name) is True or name in ['global']:
         name += "_p"
     return name
-
-
-class EnumType(type):
-    """EnumType is a metaclass for Enum. It is responsible for configuring
-    the Enum class object's values defined in Enum.lookup_label"""
-    def __init__(cls, name, bases, dct):
-        cls._value = None
-        cls._lookup_label = dict((v, l) for l, v, _ in cls._enums)
-        cls._lookup_doc = dict((v, d) for _, v, d in cls._enums)
-        for l, v, _ in cls._enums:
-            setattr(cls, pythonic_name(l), cls(v))
-
-    def __getitem__(cls, k):
-        if not hasattr(cls, k):
-            raise KeyError("%s has no key %s" % cls.__name__, k)
-        return getattr(cls, k)
 
 
 # Code from six - support for py2 and py3 compatibility
@@ -51,47 +36,6 @@ def add_metaclass(metaclass):
                 orig_vars.pop(slots_var)
         return metaclass(cls.__name__, cls.__bases__, orig_vars)
     return wrapper
-
-
-@add_metaclass(EnumType)
-class Enum(object):
-    """Enum objects provide a container for VirtualBox enumerations"""
-    _enums = {}
-
-    def __init__(self, value):
-        if value not in self._lookup_label:
-            raise ValueError("Can not find enumeration where value=%s" % value)
-        self._value = value
-        self.__doc__ = self._lookup_doc[self._value]
-
-    def __str__(self):
-        if self._value is None:
-            return "None"
-        return self._lookup_label[self._value]
-
-    def __int__(self):
-        return self._value
-
-    def __repr__(self):
-        return "%s(%s)" % (self.__class__.__name__, self._value)
-
-    def __eq__(self, k):
-        return self.__cmp__(k) == 0
-
-    def __ne__(self, k):
-        return self.__cmp__(k) != 0
-
-    def __lt__(self, k):
-        return int(self) < int(k)
-
-    def __gt__(self, k):
-        return int(self) > int(k)
-
-    def __cmp__(self, k):
-        return (int(self) > int(k)) - (int(self) < int(k))
-
-    def __getitem__(self, k):
-        return self.__class__[k]
 
 
 vbox_error = {}
@@ -132,7 +76,7 @@ class Interface(object):
         def cast_to_valuetype(value):
             if isinstance(value, Interface):
                 return value._i
-            elif isinstance(value, Enum):
+            elif isinstance(value, enum.IntEnum):
                 return int(value)
             else:
                 return value
@@ -173,7 +117,7 @@ class Interface(object):
         if inspect.isfunction(attr) or inspect.ismethod(attr):
             return self._call_method(attr, value)
         else:
-            if isinstance(value, Enum):
+            if isinstance(value, enum.IntEnum):
                 value = int(value)
             return setattr(self._i, name, value)
 

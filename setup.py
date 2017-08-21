@@ -7,7 +7,7 @@ import os
 import sys
 
 
-install_requires = []
+install_requires = ['enum34>=1.1.6; python_version < \'3.3\'']
 
 tests_require = ['begins', 'funconf']
 
@@ -22,7 +22,7 @@ setup(
     name=about['__name__'],
     version=about['__version__'],
     packages=["virtualbox",
-              "virtualbox.library_ext"],
+              "virtualbox._ext"],
     author=about['__author__'],
     author_email=about['__email__'],
     url=about['__url__'],

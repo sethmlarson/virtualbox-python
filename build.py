@@ -9,9 +9,10 @@ from xml.dom import minidom
 import os
 import re
 import hashlib
-import requests
 import shutil
 import begin
+import tarfile
+import requests
 
 try:
     import __builtin__ as builtin 
@@ -24,6 +25,15 @@ def pythonic_name(name):
     name = re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
     if hasattr(builtin, name) is True or name in ['global', 'file', 'apply']:
         name += "_p"
+    if 'dn_d_' in name:
+        name = name.replace('dn_d_', 'drag_and_drop_')
+    for ipv in ['4', '6']:
+        if '_ip%s' % ipv in name:
+            name = name.replace('ip%s' % ipv, 'ipv%s' % ipv)
+        elif 'i_pv%s' % ipv in name:
+            name = name.replace('i_pv%s' % ipv, 'ipv%s' % ipv)
+        elif '_rules%s' % ipv in name:
+            name = name.replace('_rules%s' % ipv, '_rules_ipv%s' % ipv)
     return name
 
 
@@ -39,13 +49,14 @@ LIB_IMPORTS = """\
 # By Michael Dorman.
 # [mjdorma+pyvbox@gmail.com]
 #
-# Note: Commenting, and API structure generation was carved from 
-#       VirtualBox project's VirtualBox.xidl Main API definition.
+# NOTE: Don't make changes to this file directly. Instead 
+#       change `build.py` to change how this file renders
+#       or change `_ext/...` to add additional functionality
+#       to interfaces.
 #
-from __future__ import absolute_import
-from .library_base import Enum 
-from .library_base import Interface 
-from .library_base import VBoxError
+
+import enum
+from ._base import Interface, VBoxError
 
 # Py2 and Py3 compatibility  
 try:
@@ -59,7 +70,12 @@ except:
 try:
     baseinteger = (int, long)
 except:
-    baseinteger = (int, )
+    baseinteger = (int,)
+
+try:
+    import typing
+except ImportError:
+    typing = None
 
 """
 
@@ -247,30 +263,28 @@ def process_result_node(node):
 #
 ###########################################################
 ENUM_DEFINE = '''\
-class %(name)s(Enum):
-    """%(doc)s
-    """
+class %(name)s(enum.IntEnum):
+    """%(doc)s"""
     __uuid__ = %(uuid)s
-    _enums = %(enums)s '''
+
+%(enums)s'''
 ENUM_VALUE = """\
     %(name)s.%(label)s = Enum(%(doc)svalue=%(value)s)"""
 
-ENUM_ROW = """\
-        ('%(label)s', %(value)s, 
-         '''%(doc)s'''),"""
+ENUM_ROW = '    %(label)s = %(value)s'
 
 def process_enum_node(node):
     name = node.getAttribute('name')
     uuid = "'%s'" % node.getAttribute('uuid')
     code = []
     enum_doc = [get_doc(node, 4), "\n"]
-    enums = ['[\\']
+    enums = []
     for child in node.childNodes:
         tagname = getattr(child, 'tagName', None)
         if tagname != 'const':
             continue
         doc = get_doc(child)
-        label = str(child.getAttribute('name'))
+        label = pythonic_name(str(child.getAttribute('name')))
         value = child.getAttribute('value')
         if '0x' in value:
             value = int(value[2:], 16)
@@ -278,16 +292,14 @@ def process_enum_node(node):
             value = int(value)
         enums.append(ENUM_ROW % dict(label=label, value=value, doc=doc))
         
-        enum_doc.append("""    .. describe:: %s(%s)\n\n            %s\n""" % (pythonic_name(label), value, doc))
+        enum_doc.append("""    .. describe:: %s(%s)\n            %s""" % (label, value, doc))
 
-    enum_doc = "\n".join(enum_doc)
-    enums.append('        ]')
+    enum_doc = "\n".join(enum_doc).strip()
     enums = "\n".join(enums)
 
     #lookup = pprint.pformat(enums, width=4, indent=8)
-    code.append(ENUM_DEFINE % dict(name=name, doc=enum_doc, 
+    code.append(ENUM_DEFINE % dict(name=normalize_class_name(name), doc=enum_doc,
                                    uuid=uuid, enums=enums))
-    python_name = pythonic_name(name)
     code.append('\n')
     return "\n".join(code)
 
@@ -303,6 +315,7 @@ class %(name)s(%(extends)s):
     __uuid__ = '%(uuid)s'
     __wsmap__ = '%(wsmap)s'
     %(event_id)s'''
+
 
 def process_interface_node(node):
     name = node.getAttribute('name')
@@ -320,9 +333,9 @@ def process_interface_node(node):
     if event_id:
         event_id = pythonic_name(event_id)
         event_id = "id = VBoxEventType.%(event_id)s" % dict(event_id=event_id)
-    class_def = CLASS_DEF % dict(name=name, 
-        extends=extends, doc=doc, uuid=uuid, wsmap=wsmap,
-        event_id=event_id)
+    class_def = CLASS_DEF % dict(name=normalize_class_name(name),
+                                 extends=normalize_class_name(extends), doc=doc, uuid=uuid, wsmap=wsmap,
+                                 event_id=event_id)
 
     code = []
     code.append(class_def)
@@ -342,6 +355,16 @@ def process_interface_node(node):
     return "\n".join(code) 
 
 
+def normalize_class_name(name):
+    if name.startswith('I') and name[1].lower() != name[1]:
+        name = name[1:]  # Remove the `I` from the beginning of interfaces.
+    if 'DnD' in name:
+        name = name.replace('DnD', 'DragAndDrop')
+    if 'HW' in name:
+        name = name.replace('HW', 'Hardware')
+    return name
+
+
 ATTR_GET = '''\
     @property
     def %(pname)s(self):
@@ -353,7 +376,7 @@ ATTR_SET = '''
     @%(pname)s.setter
     def %(pname)s(self, value):
 %(assert_type)s
-        return self._set_attr("%(name)s", value)'''
+        self._set_attr("%(name)s", value)'''
 
 ATTR_SET_ASSERT_INST = '''\
         if not isinstance(value, %(ntype)s):
@@ -372,21 +395,24 @@ known_types = {'wstring':'str',
 
 python_types = ['str', 'bool', 'int']
 
+
 def type_to_name(t):
     if t in known_types:
-        return known_types[t]
-    return t 
+        t = known_types[t]
+    return normalize_class_name(t)
+
 
 def type_to_name_doc(t):
     if t in known_types:
         return known_types[t]
     return ":class:`%s`" % t
 
+
 def process_interface_attribute(node):
     name = node.getAttribute('name')
     atype = node.getAttribute('type')
     array = node.getAttribute('safearray') == 'yes'
-    ntype = type_to_name(atype)
+    ntype = normalize_class_name(type_to_name(atype))
     readonly = node.getAttribute('readonly') == 'yes'
     if readonly:
         doc_action = "Get"
@@ -439,11 +465,17 @@ METHOD_FUNC = '''\
         """'''
 
 METHOD_DOC_PARAM = '''\
-        %(io)s %(pname)s of type %(ptype)s%(doc)s
+        :type %(pname)s: %(ptype)s
+        :param %(pname)s: %(doc)s
+'''
+
+METHOD_DOC_RETURN = '''\
+        :rtype: %(ptype)s
+        :returns: %(doc)s
 '''
 
 METHOD_DOC_RAISES = '''\
-        raises %(name)s%(doc)s
+        :raises: %(name)s%(doc)s
         '''
 
 METHOD_ASSERT_IN_INST = '''\
@@ -458,8 +490,7 @@ METHOD_ASSERT_ARRAY_IN = '''\
 METHOD_ASSERT_ARRAY_IN_INST = '''\
         for a in %(invar)s[:10]:
             if not isinstance(a, %(invartype)s):
-                raise TypeError(\\
-                        "array can only contain objects of type %(invartype)s")'''
+                raise TypeError("array can only contain objects of type %(invartype)s")'''
 
 METHOD_CALL = '''\
         %(outvars)sself._call("%(name)s"%(in_p)s)'''
@@ -505,9 +536,9 @@ def process_interface_method(node):
             cio = c.getAttribute('dir')
             array = c.getAttribute('safearray')
             if cio in ['in', 'out']:
-                params.append((cname, cio, cdoc, atype, array))
+                if cio == 'in':
+                    params.append((cname, cio, cdoc, atype, array))
             elif cio == 'return':
-                params.append((cname, cio, cdoc, atype, array))
                 ret_param = (cname, cdoc, atype, array)
             else:
                 raise Exception("Unknown param type '%s' for %s" % \
@@ -518,12 +549,17 @@ def process_interface_method(node):
     #function doc
     doc = [method_doc]
     doc.append('')
-    for n, io, d, t, _ in params: 
+    for n, io, d, t, _ in params:
         ptype = type_to_name_doc(t)
         if d:
             d = "\n            %s" % d
         doc.append(METHOD_DOC_PARAM % dict(io=io, pname=pythonic_name(n), 
                                 doc=d, ptype=ptype))
+    if ret_param:
+        n, d, t, _ = ret_param
+        ptype = type_to_name_doc(t)
+        doc.append(METHOD_DOC_RETURN % dict(pname=pythonic_name(n),
+                                            doc=d, ptype=ptype))
     for n, d in raises:
         doc.append(METHOD_DOC_RAISES % dict(doc=d, name=n))
     doc = "\n".join(doc)
@@ -541,7 +577,7 @@ def process_interface_method(node):
                                 doc=doc,
                                 inparams=inparams))
 
-    # prep METOD_CALL vars and insert ASSERT IN 
+    # prep METHOD_CALL vars and insert ASSERT IN
     outvars = []
     out_p = []
     for n, io, d, t, array in params:
@@ -593,7 +629,7 @@ def process_interface_method(node):
         if len(outvars) > 1:
             retvars = "(%s)" % (", ".join(outvars))
         else:
-            retvars = outvars[0]
+            retvars = normalize_class_name(outvars[0])
         outvars = "%s = " % (retvars)
     else:
         outvars = ''
@@ -610,7 +646,7 @@ def process_interface_method(node):
         if array:
             convfunc = "[%s(a) for a in %s]" % (atype, name)
         else:
-            convfunc = "%s(%s)" % (atype, name)
+            convfunc = "%s(%s)" % (normalize_class_name(atype), name)
         func.append(METHOD_OUT_CONV % dict(name=name, convfunc=convfunc))
         
     if retvars:
@@ -657,13 +693,17 @@ def get_vbox_version(config_kmk):
                       config).groupdict()['build']
     return b".".join([major, minor, build])
 
+
 def download_master(downloads):
     print("Download the master xidl")
     for dest, code in downloads:
-        url = "http://www.virtualbox.org/svn/vbox/trunk/%s" % code 
-        if 0 != os.system('wget -O %s %s' % (dest, url)):
-            assert 0 == os.system('curl %s > %s' % (url, dest) ) 
+        url = "http://www.virtualbox.org/svn/vbox/trunk/%s" % code
+        with open(dest, 'wb') as f:
+            with requests.get(url, stream=True) as r:
+                for chunk in r.iter_content(16384):
+                    f.write(chunk)
         assert os.path.exists(dest), "Failed to download %s" % url
+
 
 def download_stable(downloads):
     print("Download latest tarball for stable release then unpack xidl")
@@ -678,12 +718,12 @@ def download_stable(downloads):
     bzname = sourceurl.split('/')[-1]
     tarname = os.path.splitext(bzname)[0]
     print("Download stable code %s > %s" % (sourceurl, bzname) )
-    if 0 != os.system('wget -O %s %s' % (bzname, sourceurl)):
-        assert 0 == os.system('curl -L %s > %s' % (sourceurl, bzname) )
-    assert os.path.exists(bzname), "failed to download %s" % sourceurl
-    assert 0 == os.system('bunzip2 -f %s' % bzname), "failed to bunzip2 %s" % bzname
-    assert os.path.exists(tarname), "failed bunzip %s" % tarname
-    assert 0 == os.system('tar xf %s' % tarname), "failed to tar xf %s" % tarname
+    with open(bzname, 'wb') as f:
+        with requests.get(sourceurl, stream=True) as r:
+            for chunk in r.iter_content(16384):
+                f.write(chunk)
+    tar = tarfile.open(bzname, 'r:bz2')
+    tar.extractall()
     source_dir = os.path.splitext(tarname)[0]
     for dest, code in downloads:
         path = './%s/%s' % (source_dir, code)
@@ -787,7 +827,7 @@ def main(virtualbox_xidl='VirtualBox.xidl',
     print("   xidl hash    : %s" % xidl_hash)
     print("   version      : %s" % version) 
     print("   line count   : %s" % code.count(b"\n"))
-    library_path = os.path.join('.', 'virtualbox', 'library.py')
+    library_path = os.path.join('.', 'virtualbox', '_library.py')
     if os.path.exists(library_path):
         os.unlink(library_path)
     with open(library_path, 'wb') as f:

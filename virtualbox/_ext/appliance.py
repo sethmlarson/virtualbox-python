@@ -1,21 +1,21 @@
 """
-Add helper code to the default IAppliance class.
+Add helper code to the default Appliance class.
 """
 
-from virtualbox import library
-from virtualbox.library import VirtualSystemDescriptionType as DescType
-from virtualbox.library import VirtualSystemDescriptionValueType as DescValueType
+from .._library import Appliance as _Appliance
+from .._library import (VirtualSystemDescriptionType,
+                        VirtualSystemDescriptionValueType)
 
 
 # Define some default params for create session
-class IAppliance(library.IAppliance):
-    __doc__ = library.IAppliance.__doc__
+class Appliance(_Appliance):
+    __doc__ = _Appliance.__doc__
 
     # Extend read to wait and interpret the values into Description
     # objects.
     def read(self, ova_path):
         "Read and interpret ova file into this Appliance object."
-        p = super(IAppliance, self).read(ova_path)
+        p = super(Appliance, self).read(ova_path)
         p.wait_for_completion()
         self.interpret()
         warnings = self.get_warnings()
@@ -23,13 +23,13 @@ class IAppliance(library.IAppliance):
             warning = Warning("\n".join(warnings))
             warning.warnings = warnings
             raise warning
-    read.__doc__ = library.IAppliance.read.__doc__
+    read.__doc__ = _Appliance.read.__doc__
 
     def find_description(self, name):
         "Find a description for the given appliance name."
         for desc in self.virtual_system_descriptions:
-            values = desc.get_values_by_type(DescType.name,
-                                             DescValueType.original)
+            values = desc.get_values_by_type(VirtualSystemDescriptionType.name,
+                                             VirtualSystemDescriptionValueType.original)
             if name in values:
                 break
         else:
@@ -40,5 +40,5 @@ class IAppliance(library.IAppliance):
     def import_machines(self, options=None):
         if options is None:
             options = []
-        return super(IAppliance, self).import_machines(options)
-    import_machines.__doc__ = library.IAppliance.import_machines.__doc__
+        return super(Appliance, self).import_machines(options)
+    import_machines.__doc__ = _Appliance.import_machines.__doc__
