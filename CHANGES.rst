@@ -1,6 +1,17 @@
 Changelog
 =========
 
+version 2.0.0
+
+* Changed all ``DnD...`` API method and attribute names to ``DragAndDrop...``
+* Changed all `...ip4...` and `...ip6...` API to `ipv4` and `ipv6`
+* Changed from using ``virtualbox.library_base.Enum`` to using ``enum.IntEnum``.
+  Uses ``enum34`` for backported enums on Python <3.4
+* Added Windows compatibility to ``build.py`` for Windows.
+* Moved all of ``library.py``, ``pool.py`` and ``library_ext`` to the top level module.
+  No more need to import ``virtualbox.library`` to use the module.
+* Moved all internal modules to be private. Access these via the top level module ``virtualbox``.
+
 version 1.3.0b1
 
 * Added ``SettingsVersion.v1_17`` which is written by VirtualBox 5.2.x
