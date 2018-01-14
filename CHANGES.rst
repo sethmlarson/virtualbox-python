@@ -1,7 +1,7 @@
 Changelog
 =========
 
-version 1.3.0b1
+version 1.3.1 (18/01/2018)
 
 * Added ``SettingsVersion.v1_17`` which is written by VirtualBox 5.2.x
 * Added ``VirtualBox.create_unattended_installer()``
