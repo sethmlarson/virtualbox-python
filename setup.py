@@ -19,7 +19,7 @@ with open(os.path.join(base_dir, 'virtualbox', '__about__.py')) as f:
 
 
 setup(
-    name=about['__name__'],
+    name=about['__title__'],
     version=about['__version__'],
     packages=["virtualbox",
               "virtualbox.library_ext"],
