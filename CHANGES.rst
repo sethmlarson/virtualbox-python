@@ -1,6 +1,10 @@
 Changelog
 =========
 
+version 1.3.2 (21/02/2018)
+
+* Fixed `__name__` which made Python 3 installs break.
+
 version 1.3.1 (18/01/2018)
 
 * Added ``SettingsVersion.v1_17`` which is written by VirtualBox 5.2.x
