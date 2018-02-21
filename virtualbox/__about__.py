@@ -1,4 +1,4 @@
-__name__ = 'pyvbox'
+__title__ = 'pyvbox'
 __author__ = 'Michael Dorman'
 __email__ = 'mjdorma+pyvbox@gmail.com'
 __version__ = '1.3.1'
