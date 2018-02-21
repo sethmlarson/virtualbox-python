@@ -1,6 +1,6 @@
 __title__ = 'pyvbox'
 __author__ = 'Michael Dorman'
 __email__ = 'mjdorma+pyvbox@gmail.com'
-__version__ = '1.3.1'
+__version__ = '1.3.2'
 __license__ = 'Apache-2.0'
 __url__ = 'https://github.com/mjdorma/pyvbox'
