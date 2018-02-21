@@ -24,7 +24,7 @@ import atexit
 from multiprocessing import current_process
 
 from virtualbox.library_ext import library
-from .__about__ import (__name__,  # noqa: F401
+from .__about__ import (__title__,  # noqa: F401
                         __version__,
                         __author__,
                         __email__,
