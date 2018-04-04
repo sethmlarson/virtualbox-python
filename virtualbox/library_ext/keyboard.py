@@ -249,16 +249,16 @@ class IKeyboard(library.IKeyboard):
             for k in hold_keys:
                 put, release = self.SCANCODES[k]
                 # Avoid putting codes over and over
-                # put = set(put) - put_codes
+                put = set(put) - put_codes
                 self.put_scancodes(list(put))
-                # put_codes.update(put)
+                put_codes.update(put)
                 release_codes.update(release)
             # press the keys
             for k in press_keys:
                 put, release = self.SCANCODES[k]
                 # Avoid putting held codes
-                # put = set(put) - put_codes
-                if not put:
+                _put = set(put) - put_codes
+                if not _put:
                     continue
                 release = set(release) - release_codes
                 # Avoid releasing held codes
