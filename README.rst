@@ -1,8 +1,8 @@
 pyvbox
 ******
 
-.. image:: https://img.shields.io/travis/mjdorma/pyvbox/master.svg
-   :target: https://travis-ci.org/mjdorma/pyvbox
+.. image:: https://img.shields.io/travis/SethMichaelLarson/virtualbox-python/master.svg
+   :target: https://travis-ci.org/SethMichaelLarson/virtualbox-python
 
 * A complete implementation of the VirtualBox Main API
 * Create a VirtualBox instance and seamlessly explore the potential of
