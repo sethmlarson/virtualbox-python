@@ -84,8 +84,14 @@ class Enum(object):
     def __lt__(self, k):
         return int(self) < int(k)
 
+    def __le__(self, k):
+        return int(self) <= int(k)
+
     def __gt__(self, k):
         return int(self) > int(k)
+
+    def __ge__(self, k):
+        return int(self) >= int(k)
 
     def __cmp__(self, k):
         return (int(self) > int(k)) - (int(self) < int(k))
@@ -209,6 +215,7 @@ class Interface(object):
             # TODO: get the Linux/Darwin specific args struct
 
             if errobj.msg is None:
-                errobj.msg = getattr(exc, 'msg', getattr(exc, 'message'))
+                default_msg = getattr(exc, 'message', str(exc))
+                errobj.msg = getattr(exc, 'msg', default_msg)
             raise errobj
         return ret
