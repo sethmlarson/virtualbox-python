@@ -4,12 +4,13 @@ Changelog
 2.0.0 (4/2/2019)
 ----------------
 
-* Added support for VirtualBox 6.0:
-  * Added new Recording features
-  * Added support configuring network proxies
-  * Added support for Cloud features
-  * Added new CPU, Hardware, and Virt property types
-  * Added new event and error types
+* Added support for VirtualBox 6.0:  
+   
+   * Added new Recording features
+   * Added support configuring network proxies
+   * Added support for Cloud features
+   * Added new CPU, Hardware, and Virt property types
+   * Added new event and error types
 * Renamed the PyPI project from ``pyvbox`` to ``virtualbox`` (Installing ``pyvbox`` still works).
 * Fixed a bug with streaming output from a console command.
 * Dropped explicit support for Python 2.6 and 3.3 (May still work?).
