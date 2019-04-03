@@ -27,7 +27,9 @@ from virtualbox.library_ext import library
 from .__about__ import (__title__,  # noqa: F401
                         __version__,
                         __author__,
-                        __email__,
+                        __author_email__,
+                        __maintainer__,
+                        __maintainer_email__,
                         __license__,
                         __url__)
 
@@ -242,5 +244,6 @@ class WebServiceManager(Manager):
 
 
 # Lazy include...
-from virtualbox import pool  # noqa: F401
-from virtualbox import events  # noqa: F401
+from . import pool  # noqa: F401
+from . import events  # noqa: F401
+from . import library as lib  # noqa: F401

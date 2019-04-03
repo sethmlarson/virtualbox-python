@@ -14,7 +14,7 @@ from .library_base import VBoxError
 # Py2 and Py3 compatibility  
 try:
     import __builtin__ as builtin 
-except:
+except ImportError:
     import builtins as builtin
 try:
     basestring = basestring
@@ -84,13 +84,11 @@ about how to call a method or attribute from a specific programming language.
 """
 
 
-vbox_version = '5.2.0'
+vbox_version = '6.0.4'
 lib_version  = 1.3
 lib_app_uuid = '819B4D85-9CEE-493C-B6FC-64FFE759B3C9'
 lib_uuid     = 'd7569351-1750-46f0-936e-bd127d5bc264'
-xidl_hash    = 'aec1b326b945a6b0f1eb98c62615ff52'
-
-
+xidl_hash    = '247078febc67767740f9f989ec3d0eb9'
 
 
 class VBoxErrorObjectNotFound(VBoxError):
@@ -169,6 +167,24 @@ class VBoxErrorPasswordIncorrect(VBoxError):
     """A provided password was incorrect."""
     name = 'VBOX_E_PASSWORD_INCORRECT'
     value = 0x80BB000D
+
+
+class VBoxErrorMaximumReached(VBoxError):
+    """A maximum has been reached."""
+    name = 'VBOX_E_MAXIMUM_REACHED'
+    value = 0x80BB000E
+
+
+class VBoxErrorGstctlGuestError(VBoxError):
+    """Guest Control reported an error from the guest side."""
+    name = 'VBOX_E_GSTCTL_GUEST_ERROR'
+    value = 0x80BB000F
+
+
+class VBoxErrorTimeout(VBoxError):
+    """The operation ran into an explicitly requested timeout."""
+    name = 'VBOX_E_TIMEOUT'
+    value = 0x80BB0010
 
 
 class OleErrorFail(VBoxError):
@@ -291,7 +307,7 @@ class SettingsVersion(Enum):
 
     .. describe:: v1_17(19)
 
-            Settings version "1.17", written by VirtualBox 5.2.x.
+            Settings version "1.17", written by VirtualBox 6.0.x.
 
     .. describe:: future(99999)
 
@@ -299,7 +315,7 @@ class SettingsVersion(Enum):
 
     """
     __uuid__ = 'b4cc23c2-96f2-419d-830b-bd13c1135dfb'
-    _enums = [\
+    _enums = [
         ('Null', 0, 
          '''Null value, indicates invalid version.'''),
         ('v1_0', 1, 
@@ -339,7 +355,7 @@ class SettingsVersion(Enum):
         ('v1_16', 18, 
          '''Settings version "1.16", written by VirtualBox 5.1.x.'''),
         ('v1_17', 19, 
-         '''Settings version "1.17", written by VirtualBox 5.2.x.'''),
+         '''Settings version "1.17", written by VirtualBox 6.0.x.'''),
         ('Future', 99999, 
          '''Settings version greater than "1.15", written by a future VirtualBox version.'''),
         ] 
@@ -359,7 +375,7 @@ class AccessMode(Enum):
 
     """
     __uuid__ = '1da0007c-ddf7-4be8-bcac-d84a1558785f'
-    _enums = [\
+    _enums = [
         ('ReadOnly', 1, 
          ''''''),
         ('ReadWrite', 2, 
@@ -650,7 +666,7 @@ class MachineState(Enum):
 
     """
     __uuid__ = '87f085c3-ca67-4e45-9225-6057f32e9e8e'
-    _enums = [\
+    _enums = [
         ('Null', 0, 
          '''Null value (never used by the API).'''),
         ('PoweredOff', 1, 
@@ -793,7 +809,7 @@ class SessionState(Enum):
 
     """
     __uuid__ = 'cf2700c0-ea4b-47ae-9725-7810114b94d8'
-    _enums = [\
+    _enums = [
         ('Null', 0, 
          '''Null value (never used by the API).'''),
         ('Unlocked', 1, 
@@ -858,9 +874,54 @@ class CPUPropertyType(Enum):
             Since this feature implies that the APIC feature is present, it
             automatically enables the APIC feature when set.
 
+    .. describe:: ibpb_on_vm_exit(6)
+
+            If set, force an indirect branch prediction barrier on VM exits if the
+            host CPU supports it.  This setting will significantly slow down workloads
+            causing many VM exits, so it is only recommended for situation where there
+            is a real need to be paranoid.
+
+    .. describe:: ibpb_on_vm_entry(7)
+
+            If set, force an indirect branch prediction barrier on VM entry if the
+            host CPU supports it.  This setting will significantly slow down workloads
+            causing many VM exits, so it is only recommended for situation where there
+            is a real need to be paranoid.
+
+    .. describe:: hw_virt(8)
+
+            Enabled the hardware virtualization (AMD-V/VT-x) feature on the guest CPU.
+            This requires hardware virtualization on the host CPU.
+
+    .. describe:: spec_ctrl(9)
+
+            If set, the speculation control CPUID bits and MSRs, when available on the
+            host, are exposed to the guest. Depending on the host CPU and operating
+            system, this may significantly slow down workloads causing many VM exits.
+
+    .. describe:: spec_ctrl_by_host(10)
+
+            If set, the speculation controls are managed by the host. This is intended
+            for guests which do not set the speculation controls themselves.
+            Note! This has not yet been implemented beyond leaving everything to the host OS.
+
+    .. describe:: l1_d_flush_on_emt_scheduling(11)
+
+            If set and the host is affected by CVE-2018-3646, flushes the level 1 data
+            cache when the EMT is scheduled to do ring-0 guest execution.  There could
+            be a small performance penalty for certain typs of workloads.
+            For security reasons this setting will be enabled by default.
+
+    .. describe:: l1_d_flush_on_vm_entry(12)
+
+            If set and the host is affected by CVE-2018-3646, flushes the level 1 data
+            on every VM entry.  This setting may significantly slow down workloads
+            causing many VM exits, so it is only recommended for situation where there
+            is a real need to be paranoid.
+
     """
-    __uuid__ = 'cc6ecdad-a07c-4e81-9c0e-d767e0678d5a'
-    _enums = [\
+    __uuid__ = '3fcfe589-ca66-468f-e313-656f9d0b2eb6'
+    _enums = [
         ('Null', 0, 
          '''Null value (never used by the API).'''),
         ('PAE', 1, 
@@ -881,6 +942,37 @@ class CPUPropertyType(Enum):
          '''This setting determines whether an x2APIC is part of the virtual CPU.
             Since this feature implies that the APIC feature is present, it
             automatically enables the APIC feature when set.'''),
+        ('IBPBOnVMExit', 6, 
+         '''If set, force an indirect branch prediction barrier on VM exits if the
+            host CPU supports it.  This setting will significantly slow down workloads
+            causing many VM exits, so it is only recommended for situation where there
+            is a real need to be paranoid.'''),
+        ('IBPBOnVMEntry', 7, 
+         '''If set, force an indirect branch prediction barrier on VM entry if the
+            host CPU supports it.  This setting will significantly slow down workloads
+            causing many VM exits, so it is only recommended for situation where there
+            is a real need to be paranoid.'''),
+        ('HWVirt', 8, 
+         '''Enabled the hardware virtualization (AMD-V/VT-x) feature on the guest CPU.
+            This requires hardware virtualization on the host CPU.'''),
+        ('SpecCtrl', 9, 
+         '''If set, the speculation control CPUID bits and MSRs, when available on the
+            host, are exposed to the guest. Depending on the host CPU and operating
+            system, this may significantly slow down workloads causing many VM exits.'''),
+        ('SpecCtrlByHost', 10, 
+         '''If set, the speculation controls are managed by the host. This is intended
+            for guests which do not set the speculation controls themselves.
+            Note! This has not yet been implemented beyond leaving everything to the host OS.'''),
+        ('L1DFlushOnEMTScheduling', 11, 
+         '''If set and the host is affected by CVE-2018-3646, flushes the level 1 data
+            cache when the EMT is scheduled to do ring-0 guest execution.  There could
+            be a small performance penalty for certain typs of workloads.
+            For security reasons this setting will be enabled by default.'''),
+        ('L1DFlushOnVMEntry', 12, 
+         '''If set and the host is affected by CVE-2018-3646, flushes the level 1 data
+            on every VM entry.  This setting may significantly slow down workloads
+            causing many VM exits, so it is only recommended for situation where there
+            is a real need to be paranoid.'''),
         ] 
 
 
@@ -920,9 +1012,14 @@ class HWVirtExPropertyType(Enum):
             Whether the VM should fail to start if hardware virtualization (VT-x/AMD-V) cannot be used. If
             not set, there will be an automatic fallback to software virtualization.
 
+    .. describe:: use_native_api(7)
+
+            Use the native hypervisor API instead of the VirtualBox one (HM) for VT-X/AMD-V.  This is
+            ignored if :py:attr:`HWVirtExPropertyType.enabled`  isn't set.
+
     """
-    __uuid__ = '411ad0ea-aeeb-44cb-9d03-1624d0d025ac'
-    _enums = [\
+    __uuid__ = 'bc05551e-e288-467e-1ea3-233de08e4480'
+    _enums = [
         ('Null', 0, 
          '''Null value (never used by the API).'''),
         ('Enabled', 1, 
@@ -939,6 +1036,9 @@ class HWVirtExPropertyType(Enum):
         ('Force', 6, 
          '''Whether the VM should fail to start if hardware virtualization (VT-x/AMD-V) cannot be used. If
             not set, there will be an automatic fallback to software virtualization.'''),
+        ('UseNativeApi', 7, 
+         '''Use the native hypervisor API instead of the VirtualBox one (HM) for VT-X/AMD-V.  This is
+            ignored if :py:attr:`HWVirtExPropertyType.enabled`  isn't set.'''),
         ] 
 
 
@@ -974,7 +1074,7 @@ class ParavirtProvider(Enum):
 
     """
     __uuid__ = '696453ec-3742-4a05-bead-658ccbf2c944'
-    _enums = [\
+    _enums = [
         ('None', 0, 
          '''No provider is used.'''),
         ('Default', 1, 
@@ -1009,7 +1109,7 @@ class FaultToleranceState(Enum):
 
     """
     __uuid__ = '5124f7ec-6b67-493c-9dee-ee45a44114e1'
-    _enums = [\
+    _enums = [
         ('Inactive', 1, 
          '''No fault tolerance enabled.'''),
         ('Master', 2, 
@@ -1048,7 +1148,7 @@ class LockType(Enum):
 
     """
     __uuid__ = '678aaf14-2815-4c3e-b20a-e86ed0216498'
-    _enums = [\
+    _enums = [
         ('Null', 0, 
          '''Placeholder value, do not use when obtaining a lock.'''),
         ('Shared', 1, 
@@ -1093,7 +1193,7 @@ class SessionType(Enum):
 
     """
     __uuid__ = 'A13C02CB-0C2C-421E-8317-AC0E8AAA153A'
-    _enums = [\
+    _enums = [
         ('Null', 0, 
          '''Null value (never used by the API).'''),
         ('WriteLock', 1, 
@@ -1147,7 +1247,7 @@ class DeviceType(Enum):
 
     """
     __uuid__ = 'cb977be1-d1fb-41f8-ad7e-951736c6cb3e'
-    _enums = [\
+    _enums = [
         ('Null', 0, 
          '''Null value, may also mean "no device" (not allowed for
             :py:func:`IConsole.get_device_activity` ).'''),
@@ -1190,7 +1290,7 @@ class DeviceActivity(Enum):
 
     """
     __uuid__ = '6FC8AEAA-130A-4eb5-8954-3F921422D707'
-    _enums = [\
+    _enums = [
         ('Null', 0, 
          ''''''),
         ('Idle', 1, 
@@ -1224,7 +1324,7 @@ class ClipboardMode(Enum):
 
     """
     __uuid__ = '33364716-4008-4701-8f14-be0fa3d62950'
-    _enums = [\
+    _enums = [
         ('Disabled', 0, 
          ''''''),
         ('HostToGuest', 1, 
@@ -1258,7 +1358,7 @@ class DnDMode(Enum):
 
     """
     __uuid__ = '07af8800-f936-4b33-9172-cd400e83c148'
-    _enums = [\
+    _enums = [
         ('Disabled', 0, 
          ''''''),
         ('HostToGuest', 1, 
@@ -1291,7 +1391,7 @@ class Scope(Enum):
 
     """
     __uuid__ = '7c91096e-499e-4eca-9f9b-9001438d7855'
-    _enums = [\
+    _enums = [
         ('Global', 0, 
          ''''''),
         ('Machine', 1, 
@@ -1319,7 +1419,7 @@ class BIOSBootMenuMode(Enum):
 
     """
     __uuid__ = 'ae4fb9f7-29d2-45b4-b2c7-d579603135d5'
-    _enums = [\
+    _enums = [
         ('Disabled', 0, 
          ''''''),
         ('MenuOnly', 1, 
@@ -1348,7 +1448,7 @@ class APICMode(Enum):
 
     """
     __uuid__ = 'c6884ba5-3cc4-4a92-a7f6-4410f9fd894e'
-    _enums = [\
+    _enums = [
         ('Disabled', 0, 
          ''''''),
         ('APIC', 1, 
@@ -1378,9 +1478,17 @@ class ProcessorFeature(Enum):
 
             
 
+    .. describe:: unrestricted_guest(4)
+
+            
+
+    .. describe:: nested_hw_virt(5)
+
+            
+
     """
-    __uuid__ = '64c38e6b-8bcf-45ad-ac03-9b406287c5bf'
-    _enums = [\
+    __uuid__ = 'fed0e385-dc5a-4cef-b9e2-66bafb6af6aa'
+    _enums = [
         ('HWVirtEx', 0, 
          ''''''),
         ('PAE', 1, 
@@ -1388,6 +1496,10 @@ class ProcessorFeature(Enum):
         ('LongMode', 2, 
          ''''''),
         ('NestedPaging', 3, 
+         ''''''),
+        ('UnrestrictedGuest', 4, 
+         ''''''),
+        ('NestedHWVirt', 5, 
          ''''''),
         ] 
 
@@ -1418,7 +1530,7 @@ class FirmwareType(Enum):
 
     """
     __uuid__ = 'b903f264-c230-483e-ac74-2b37ce60d371'
-    _enums = [\
+    _enums = [
         ('BIOS', 1, 
          '''BIOS Firmware.'''),
         ('EFI', 2, 
@@ -1464,7 +1576,7 @@ class PointingHIDType(Enum):
 
     """
     __uuid__ = '19964e93-0050-45c4-9382-a7bccc53e666'
-    _enums = [\
+    _enums = [
         ('None', 1, 
          '''No mouse.'''),
         ('PS2Mouse', 2, 
@@ -1505,7 +1617,7 @@ class KeyboardHIDType(Enum):
 
     """
     __uuid__ = '383e43d7-5c7c-4ec8-9cb8-eda1bccd6699'
-    _enums = [\
+    _enums = [
         ('None', 1, 
          '''No keyboard.'''),
         ('PS2Keyboard', 2, 
@@ -1562,7 +1674,7 @@ class BitmapFormat(Enum):
 
     """
     __uuid__ = 'afb2bf39-8b1e-4f9f-8948-d1b887f83eb0'
-    _enums = [\
+    _enums = [
         ('Opaque', 0, 
          '''Unknown buffer format (the user may not assume any particular format of
             the buffer).'''),
@@ -1847,7 +1959,7 @@ class DhcpOpt(Enum):
 
     """
     __uuid__ = '40d99bd3-3ece-44d2-a07e-1085fe9c4f0b'
-    _enums = [\
+    _enums = [
         ('SubnetMask', 1, 
          ''''''),
         ('TimeOffset', 2, 
@@ -1991,7 +2103,7 @@ class DhcpOptEncoding(Enum):
 
     """
     __uuid__ = '88ea6d70-8648-4871-ba30-1f49c61cfaa2'
-    _enums = [\
+    _enums = [
         ('Legacy', 0, 
          ''''''),
         ('Hex', 1, 
@@ -2019,9 +2131,13 @@ class VFSType(Enum):
 
             
 
+    .. describe:: oci(5)
+
+            
+
     """
     __uuid__ = '813999ba-b949-48a8-9230-aadc6285e2f2'
-    _enums = [\
+    _enums = [
         ('File', 1, 
          ''''''),
         ('Cloud', 2, 
@@ -2029,6 +2145,8 @@ class VFSType(Enum):
         ('S3', 3, 
          ''''''),
         ('WebDav', 4, 
+         ''''''),
+        ('OCI', 5, 
          ''''''),
         ] 
 
@@ -2051,7 +2169,7 @@ class ImportOptions(Enum):
 
     """
     __uuid__ = '0a981523-3b20-4004-8ee3-dfd322202ace'
-    _enums = [\
+    _enums = [
         ('KeepAllMACs', 1, 
          '''Don't generate new MAC addresses of the attached network adapters.'''),
         ('KeepNATMACs', 2, 
@@ -2091,7 +2209,7 @@ class ExportOptions(Enum):
 
     """
     __uuid__ = '8f45eb08-fd34-41ee-af95-a880bdee5554'
-    _enums = [\
+    _enums = [
         ('CreateManifest', 1, 
          '''Write the optional manifest file (.mf) which is used for integrity
             checks prior import.'''),
@@ -2133,7 +2251,7 @@ class CertificateVersion(Enum):
 
     """
     __uuid__ = '9e232a99-51d0-4dbd-96a0-ffac4bc3e2a8'
-    _enums = [\
+    _enums = [
         ('V1', 1, 
          ''''''),
         ('V2', 2, 
@@ -2244,11 +2362,67 @@ class VirtualSystemDescriptionType(Enum):
 
     .. describe:: settings_file(24)
 
-            Not used/implemented right now, will be added later in 4.1.x.
+            Optional, may be unset by the API caller. If this is changed by the
+            API caller it defines the absolute path of the VM settings file and
+            therefore also the VM folder with highest priority.
+
+    .. describe:: base_folder(25)
+
+            Optional, may be unset by the API caller. If set (and
+            :py:attr:`VirtualSystemDescriptionType.settings_file`  is not changed),
+            defines the VM base folder (taking the primary group into account if
+            also set).
+
+    .. describe:: primary_group(26)
+
+            Optional, empty by default and may be unset by the API caller.
+            Defines the primary group of the VM after import. May influence the
+            selection of the VM folder. Additional groups may be configured later
+            using :py:func:`IMachine.groups` , after importing.
+
+    .. describe:: cloud_instance_shape(27)
+
+            
+
+    .. describe:: cloud_domain(28)
+
+            
+
+    .. describe:: cloud_boot_disk_size(29)
+
+            
+
+    .. describe:: cloud_bucket(30)
+
+            
+
+    .. describe:: cloud_ocivcn(31)
+
+            
+
+    .. describe:: cloud_public_ip(32)
+
+            
+
+    .. describe:: cloud_profile_name(33)
+
+            
+
+    .. describe:: cloud_oci_subnet(34)
+
+            
+
+    .. describe:: cloud_keep_object(35)
+
+            
+
+    .. describe:: cloud_launch_instance(36)
+
+            
 
     """
-    __uuid__ = '303c0900-a746-4612-8c67-79003e91f459'
-    _enums = [\
+    __uuid__ = '425d0e49-eb9c-43e8-bb0d-be7f78fd3b47'
+    _enums = [
         ('Ignore', 1, 
          ''''''),
         ('OS', 2, 
@@ -2296,7 +2470,39 @@ class VirtualSystemDescriptionType(Enum):
         ('SoundCard', 23, 
          ''''''),
         ('SettingsFile', 24, 
-         '''Not used/implemented right now, will be added later in 4.1.x.'''),
+         '''Optional, may be unset by the API caller. If this is changed by the
+            API caller it defines the absolute path of the VM settings file and
+            therefore also the VM folder with highest priority.'''),
+        ('BaseFolder', 25, 
+         '''Optional, may be unset by the API caller. If set (and
+            :py:attr:`VirtualSystemDescriptionType.settings_file`  is not changed),
+            defines the VM base folder (taking the primary group into account if
+            also set).'''),
+        ('PrimaryGroup', 26, 
+         '''Optional, empty by default and may be unset by the API caller.
+            Defines the primary group of the VM after import. May influence the
+            selection of the VM folder. Additional groups may be configured later
+            using :py:func:`IMachine.groups` , after importing.'''),
+        ('CloudInstanceShape', 27, 
+         ''''''),
+        ('CloudDomain', 28, 
+         ''''''),
+        ('CloudBootDiskSize', 29, 
+         ''''''),
+        ('CloudBucket', 30, 
+         ''''''),
+        ('CloudOCIVCN', 31, 
+         ''''''),
+        ('CloudPublicIP', 32, 
+         ''''''),
+        ('CloudProfileName', 33, 
+         ''''''),
+        ('CloudOCISubnet', 34, 
+         ''''''),
+        ('CloudKeepObject', 35, 
+         ''''''),
+        ('CloudLaunchInstance', 36, 
+         ''''''),
         ] 
 
 
@@ -2323,7 +2529,7 @@ class VirtualSystemDescriptionValueType(Enum):
 
     """
     __uuid__ = '56d9403f-3425-4118-9919-36f2a9b8c77c'
-    _enums = [\
+    _enums = [
         ('Reference', 1, 
          ''''''),
         ('Original', 2, 
@@ -2335,8 +2541,184 @@ class VirtualSystemDescriptionValueType(Enum):
         ] 
 
 
+class RecordingDestination(Enum):
+    """Recording destination enumeration.
+
+
+    .. describe:: none(0)
+
+            No destination.
+
+    .. describe:: file_p(1)
+
+            Destination is a regular file.
+
+    """
+    __uuid__ = '11E3F06B-DEC1-48B9-BDC4-1E618D72893C'
+    _enums = [
+        ('None', 0, 
+         '''No destination.'''),
+        ('File', 1, 
+         '''Destination is a regular file.'''),
+        ] 
+
+
+class RecordingFeature(Enum):
+    """Recording features enumeration.
+
+
+    .. describe:: none(0)
+
+            No feature set.
+
+    .. describe:: video(1)
+
+            Video recording.
+
+    .. describe:: audio(2)
+
+            Audio recording.
+
+    """
+    __uuid__ = 'A7DDC6A5-DAA8-4485-B860-E9F2E98A7794'
+    _enums = [
+        ('None', 0, 
+         '''No feature set.'''),
+        ('Video', 1, 
+         '''Video recording.'''),
+        ('Audio', 2, 
+         '''Audio recording.'''),
+        ] 
+
+
+class RecordingAudioCodec(Enum):
+    """Recording audio codec enumeration.
+
+
+    .. describe:: none(0)
+
+            No codec set.
+
+    .. describe:: wav_pcm(1)
+
+            WAV format, linear PCM, uncompressed.
+            Not implemented yet.
+
+    .. describe:: opus(2)
+
+            Opus Audio.
+
+    """
+    __uuid__ = '0AEFF775-053A-42F8-9C00-E445107DBED8'
+    _enums = [
+        ('None', 0, 
+         '''No codec set.'''),
+        ('WavPCM', 1, 
+         '''WAV format, linear PCM, uncompressed.
+            Not implemented yet.'''),
+        ('Opus', 2, 
+         '''Opus Audio.'''),
+        ] 
+
+
+class RecordingVideoCodec(Enum):
+    """Recording video codec enumeration.
+
+
+    .. describe:: none(0)
+
+            No codec set.
+
+    .. describe:: vp8(1)
+
+            VP8 codec.
+
+    .. describe:: vp9(2)
+
+            VP9 codec. Not implemented yet.
+
+    .. describe:: av1(3)
+
+            AV1 codec. Not implemented yet.
+
+    """
+    __uuid__ = '663BFC39-AFFF-49FA-98DD-322A857E877B'
+    _enums = [
+        ('None', 0, 
+         '''No codec set.'''),
+        ('VP8', 1, 
+         '''VP8 codec.'''),
+        ('VP9', 2, 
+         '''VP9 codec. Not implemented yet.'''),
+        ('AV1', 3, 
+         '''AV1 codec. Not implemented yet.'''),
+        ] 
+
+
+class RecordingVideoScalingMethod(Enum):
+    """Recording video scaling method enumeration.
+
+
+    .. describe:: none(0)
+
+            No scaling performed.
+
+    .. describe:: nearest_neighbor(1)
+
+            Performs scaling via nearest-neighbor interpolation.
+            Not yet implemented.
+
+    .. describe:: bilinear(2)
+
+            Performs scaling via bilinear interpolation.
+            Not yet implemented.
+
+    .. describe:: bicubic(3)
+
+            Performs scaling via bicubic interpolation.
+            Not yet implemented.
+
+    """
+    __uuid__ = '5576D890-48EE-449A-A81B-B776233598B7'
+    _enums = [
+        ('None', 0, 
+         '''No scaling performed.'''),
+        ('NearestNeighbor', 1, 
+         '''Performs scaling via nearest-neighbor interpolation.
+            Not yet implemented.'''),
+        ('Bilinear', 2, 
+         '''Performs scaling via bilinear interpolation.
+            Not yet implemented.'''),
+        ('Bicubic', 3, 
+         '''Performs scaling via bicubic interpolation.
+            Not yet implemented.'''),
+        ] 
+
+
+class RecordingVideoRateControlMode(Enum):
+    """Recording video rate control mode enumeration.
+
+
+    .. describe:: cbr(0)
+
+            Constant bit rate (CBR).
+
+    .. describe:: vbr(1)
+
+            Variable bit rate (VBR). Not yet implemented.
+
+    """
+    __uuid__ = 'D4EFB692-9F98-4112-88D3-A16FBE2BF6A8'
+    _enums = [
+        ('CBR', 0, 
+         '''Constant bit rate (CBR).'''),
+        ('VBR', 1, 
+         '''Variable bit rate (VBR). Not yet implemented.'''),
+        ] 
+
+
 class GraphicsControllerType(Enum):
-    """Graphics controller type, used with :py:func:`IMachine.unregister` .
+    """Graphics controller type, used with :py:func:`IMachine.graphics_controller_type` .
 
 
     .. describe:: null(0)
@@ -2345,21 +2727,27 @@ class GraphicsControllerType(Enum):
 
     .. describe:: v_box_vga(1)
 
-            Default VirtualBox VGA device.
+            VirtualBox VGA device.
 
     .. describe:: vmsvga(2)
 
             VMware SVGA II device.
 
+    .. describe:: v_box_svga(3)
+
+            VirtualBox VGA device with VMware SVGA II extensions.
+
     """
-    __uuid__ = '79c96ca0-9f39-4900-948e-68c41cbe127a'
-    _enums = [\
+    __uuid__ = '3e009bb0-2b57-4283-a39b-4c363d4f0808'
+    _enums = [
         ('Null', 0, 
          '''Reserved value, invalid.'''),
         ('VBoxVGA', 1, 
-         '''Default VirtualBox VGA device.'''),
+         '''VirtualBox VGA device.'''),
         ('VMSVGA', 2, 
          '''VMware SVGA II device.'''),
+        ('VBoxSVGA', 3, 
+         '''VirtualBox VGA device with VMware SVGA II extensions.'''),
         ] 
 
 
@@ -2385,7 +2773,7 @@ class CleanupMode(Enum):
 
     """
     __uuid__ = '67897c50-7cca-47a9-83f6-ce8fd8eb5441'
-    _enums = [\
+    _enums = [
         ('UnregisterOnly', 1, 
          '''Unregister only the machine, but neither delete snapshots nor detach media.'''),
         ('DetachAllReturnNone', 2, 
@@ -2415,7 +2803,7 @@ class CloneMode(Enum):
 
     """
     __uuid__ = 'A7A159FE-5096-4B8D-8C3C-D033CB0B35A8'
-    _enums = [\
+    _enums = [
         ('MachineState', 1, 
          '''Clone the state of the selected machine.'''),
         ('MachineAndChildStates', 2, 
@@ -2445,9 +2833,13 @@ class CloneOptions(Enum):
 
             Don't change the disk names.
 
+    .. describe:: keep_hw_uui_ds(5)
+
+            Don't change UUID of the machine hardware.
+
     """
     __uuid__ = '22243f8e-96ab-497c-8cf0-f40a566c630b'
-    _enums = [\
+    _enums = [
         ('Link', 1, 
          '''Create a clone VM where all virtual disks are linked to the original VM.'''),
         ('KeepAllMACs', 2, 
@@ -2456,6 +2848,8 @@ class CloneOptions(Enum):
          '''Don't generate new MAC addresses of the attached network adapters when they are using NAT.'''),
         ('KeepDiskNames', 4, 
          '''Don't change the disk names.'''),
+        ('KeepHwUUIDs', 5, 
+         '''Don't change UUID of the machine hardware.'''),
         ] 
 
 
@@ -2481,7 +2875,7 @@ class AutostopType(Enum):
 
     """
     __uuid__ = '6bb96740-cf34-470d-aab2-2cd48ea2e10e'
-    _enums = [\
+    _enums = [
         ('Disabled', 1, 
          '''Stopping the VM during system shutdown is disabled.'''),
         ('SaveState', 2, 
@@ -2490,6 +2884,62 @@ class AutostopType(Enum):
          '''The VM is powered off when the system shuts down.'''),
         ('AcpiShutdown', 4, 
          '''An ACPI shutdown event is generated.'''),
+        ] 
+
+
+class VMProcPriority(Enum):
+    """Virtual machine process priorities.
+
+
+    .. describe:: invalid(0)
+
+            Invalid priority, do not use.
+
+    .. describe:: default(1)
+
+            Default process priority determined by the OS.
+
+    .. describe:: flat(2)
+
+            Assumes a scheduling policy which puts the process at the default
+            priority and with all thread at the same priority
+
+    .. describe:: low(3)
+
+            Assumes a scheduling policy which puts the process mostly below the
+            default priority of the host OS.
+
+    .. describe:: normal(5)
+
+            Assume a scheduling policy which shares the CPU resources fairly with
+            other processes running with the default priority of the host OS.
+
+    .. describe:: high(6)
+
+            Assumes a scheduling policy which puts the task above the default
+            priority of the host OS. This policy might easily cause other tasks
+            in the system to starve.
+
+    """
+    __uuid__ = '6fa72dd5-19b7-46ba-bc52-f223c98c7d80'
+    _enums = [
+        ('Invalid', 0, 
+         '''Invalid priority, do not use.'''),
+        ('Default', 1, 
+         '''Default process priority determined by the OS.'''),
+        ('Flat', 2, 
+         '''Assumes a scheduling policy which puts the process at the default
+            priority and with all thread at the same priority'''),
+        ('Low', 3, 
+         '''Assumes a scheduling policy which puts the process mostly below the
+            default priority of the host OS.'''),
+        ('Normal', 5, 
+         '''Assume a scheduling policy which shares the CPU resources fairly with
+            other processes running with the default priority of the host OS.'''),
+        ('High', 6, 
+         '''Assumes a scheduling policy which puts the task above the default
+            priority of the host OS. This policy might easily cause other tasks
+            in the system to starve.'''),
         ] 
 
 
@@ -2517,7 +2967,7 @@ class HostNetworkInterfaceMediumType(Enum):
 
     """
     __uuid__ = '1aa54aaf-2497-45a2-bfb1-8eb225e93d5b'
-    _enums = [\
+    _enums = [
         ('Unknown', 0, 
          '''The type of interface cannot be determined.'''),
         ('Ethernet', 1, 
@@ -2548,7 +2998,7 @@ class HostNetworkInterfaceStatus(Enum):
 
     """
     __uuid__ = 'CC474A69-2710-434B-8D99-C38E5D5A6F41'
-    _enums = [\
+    _enums = [
         ('Unknown', 0, 
          '''The state of interface cannot be determined.'''),
         ('Up', 1, 
@@ -2572,11 +3022,39 @@ class HostNetworkInterfaceType(Enum):
 
     """
     __uuid__ = '67431b00-9946-48a2-bc02-b25c5919f4f3'
-    _enums = [\
+    _enums = [
         ('Bridged', 1, 
          ''''''),
         ('HostOnly', 2, 
          ''''''),
+        ] 
+
+
+class ProxyMode(Enum):
+    """Proxy setting: System (default), NoProxy and Manual. :py:func:`ISystemProperties.proxy_mode` 
+
+
+    .. describe:: system(0)
+
+            Use the system proxy settings as far as possible.
+
+    .. describe:: no_proxy(1)
+
+            Direct connection to the Internet.
+
+    .. describe:: manual(2)
+
+            Use the manual proxy from :py:func:`ISystemProperties.proxy_url` .
+
+    """
+    __uuid__ = '885264b3-b517-40fc-ce46-36e3bae895a4'
+    _enums = [
+        ('System', 0, 
+         '''Use the system proxy settings as far as possible.'''),
+        ('NoProxy', 1, 
+         '''Direct connection to the Internet.'''),
+        ('Manual', 2, 
+         '''Use the manual proxy from :py:func:`ISystemProperties.proxy_url` .'''),
         ] 
 
 
@@ -2614,13 +3092,17 @@ class AdditionsFacilityType(Enum):
             are not immediately acted on and guest display resizes are probably not initiated by
             the guest additions.
 
+    .. describe:: monitor_attach(1101)
+
+            Guest supports monitor hotplug.
+
     .. describe:: all_p(2147483646)
 
             All facilities selected.
 
     """
-    __uuid__ = '98f7f957-89fb-49b6-a3b1-31e3285eb1d8'
-    _enums = [\
+    __uuid__ = 'c4b10d74-dd48-4ff4-9a40-785a2a389ade'
+    _enums = [
         ('None', 0, 
          '''No/invalid facility.'''),
         ('VBoxGuestDriver', 20, 
@@ -2637,6 +3119,8 @@ class AdditionsFacilityType(Enum):
          '''Guest graphics mode. If not enabled, seamless rendering will not work, resize hints
             are not immediately acted on and guest display resizes are probably not initiated by
             the guest additions.'''),
+        ('MonitorAttach', 1101, 
+         '''Guest supports monitor hotplug.'''),
         ('All', 2147483646, 
          '''All facilities selected.'''),
         ] 
@@ -2676,7 +3160,7 @@ class AdditionsFacilityClass(Enum):
 
     """
     __uuid__ = '446451b2-c88d-4e5d-84c9-91bc7f533f5f'
-    _enums = [\
+    _enums = [
         ('None', 0, 
          '''No/invalid class.'''),
         ('Driver', 10, 
@@ -2736,7 +3220,7 @@ class AdditionsFacilityStatus(Enum):
 
     """
     __uuid__ = 'ce06f9e1-394e-4fe9-9368-5a88c567dbde'
-    _enums = [\
+    _enums = [
         ('Inactive', 0, 
          '''Facility is not active.'''),
         ('Paused', 1, 
@@ -2780,7 +3264,7 @@ class AdditionsRunLevelType(Enum):
 
     """
     __uuid__ = 'a25417ee-a9dd-4f5b-b0dc-377860087754'
-    _enums = [\
+    _enums = [
         ('None', 0, 
          '''Guest Additions are not loaded.'''),
         ('System', 1, 
@@ -2809,7 +3293,7 @@ class AdditionsUpdateFlag(Enum):
 
     """
     __uuid__ = '726a818d-18d6-4389-94e8-3e9e6826171a'
-    _enums = [\
+    _enums = [
         ('None', 0, 
          '''No flag set.'''),
         ('WaitForUpdateStartOnly', 1, 
@@ -2863,7 +3347,7 @@ class GuestSessionStatus(Enum):
 
     """
     __uuid__ = 'ac2669da-4624-44f2-85b5-0b0bfb8d8673'
-    _enums = [\
+    _enums = [
         ('Undefined', 0, 
          '''Guest session is in an undefined state.'''),
         ('Starting', 10, 
@@ -2886,7 +3370,7 @@ class GuestSessionStatus(Enum):
 
 
 class GuestSessionWaitForFlag(Enum):
-    """Guest session waiting flags. Multiple flags can be combined.
+    """Guest session waiting flags.
 
 
     .. describe:: none(0)
@@ -2907,7 +3391,7 @@ class GuestSessionWaitForFlag(Enum):
 
     """
     __uuid__ = 'bb7a372a-f635-4e11-a81a-e707f3a52ef5'
-    _enums = [\
+    _enums = [
         ('None', 0, 
          '''No waiting flags specified. Do not use this.'''),
         ('Start', 1, 
@@ -2963,7 +3447,7 @@ class GuestSessionWaitResult(Enum):
 
     """
     __uuid__ = 'c0f6a8a5-fdb6-42bf-a582-56c6f82bcd2d'
-    _enums = [\
+    _enums = [
         ('None', 0, 
          '''No result was returned. Not being used.'''),
         ('Start', 1, 
@@ -3091,7 +3575,7 @@ class GuestUserState(Enum):
 
     """
     __uuid__ = 'b2a82b02-fd3d-4fc2-ba84-6ba5ac8be198'
-    _enums = [\
+    _enums = [
         ('Unknown', 0, 
          '''Unknown state. Not being used.'''),
         ('LoggedIn', 1, 
@@ -3182,7 +3666,7 @@ class FileSeekOrigin(Enum):
 
     """
     __uuid__ = 'ad32f789-4279-4530-979c-f16892e1c263'
-    _enums = [\
+    _enums = [
         ('Begin', 0, 
          '''Seek from the beginning of the file.'''),
         ('Current', 1, 
@@ -3207,7 +3691,7 @@ class ProcessInputFlag(Enum):
 
     """
     __uuid__ = '5d38c1dd-2604-4ddf-92e5-0c0cdd3bdbd5'
-    _enums = [\
+    _enums = [
         ('None', 0, 
          '''No flag set.'''),
         ('EndOfFile', 1, 
@@ -3230,7 +3714,7 @@ class ProcessOutputFlag(Enum):
 
     """
     __uuid__ = '9979e85a-52bb-40b7-870c-57115e27e0f1'
-    _enums = [\
+    _enums = [
         ('None', 0, 
          '''No flags set. Get output from stdout.'''),
         ('StdErr', 1, 
@@ -3239,7 +3723,7 @@ class ProcessOutputFlag(Enum):
 
 
 class ProcessWaitForFlag(Enum):
-    """Process waiting flags. Multiple flags can be combined.
+    """Process waiting flags.
 
 
     .. describe:: none(0)
@@ -3268,7 +3752,7 @@ class ProcessWaitForFlag(Enum):
 
     """
     __uuid__ = '23b550c7-78e1-437e-98f0-65fd9757bcd2'
-    _enums = [\
+    _enums = [
         ('None', 0, 
          '''No waiting flags specified. Do not use this.'''),
         ('Start', 1, 
@@ -3344,7 +3828,7 @@ class ProcessWaitResult(Enum):
 
     """
     __uuid__ = '40719cbe-f192-4fe9-a231-6697b3c8e2b4'
-    _enums = [\
+    _enums = [
         ('None', 0, 
          '''No result was returned. Not being used.'''),
         ('Start', 1, 
@@ -3398,7 +3882,7 @@ class FileCopyFlag(Enum):
 
     """
     __uuid__ = '791909d7-4c64-2fa4-4303-adb10658d347'
-    _enums = [\
+    _enums = [
         ('None', 0, 
          '''No flag set.'''),
         ('NoReplace', 1, 
@@ -3414,7 +3898,7 @@ class FileCopyFlag(Enum):
         ] 
 
 
-class FsObjMoveFlags(Enum):
+class FsObjMoveFlag(Enum):
     """File moving flags.
 
 
@@ -3439,8 +3923,8 @@ class FsObjMoveFlags(Enum):
             should do it when requested.
 
     """
-    __uuid__ = '98fdd11f-4063-ac60-5737-e49092aab95f'
-    _enums = [\
+    __uuid__ = '2450a05d-80c6-4c96-9a17-94d73293ff86'
+    _enums = [
         ('None', 0, 
          '''No flag set.'''),
         ('Replace', 1, 
@@ -3470,7 +3954,7 @@ class DirectoryCreateFlag(Enum):
 
     """
     __uuid__ = 'bd721b0e-ced5-4f79-b368-249897c32a36'
-    _enums = [\
+    _enums = [
         ('None', 0, 
          '''No flag set.'''),
         ('Parents', 1, 
@@ -3478,7 +3962,7 @@ class DirectoryCreateFlag(Enum):
         ] 
 
 
-class DirectoryCopyFlags(Enum):
+class DirectoryCopyFlag(Enum):
     """Directory copying flags.
     Not flags are implemented yet.
 
@@ -3492,8 +3976,8 @@ class DirectoryCopyFlags(Enum):
             Allow copying into an existing destination directory.
 
     """
-    __uuid__ = 'cc500f0c-4a54-88c9-56b3-7e9310416da7'
-    _enums = [\
+    __uuid__ = 'b5901856-d064-4fbc-ab06-2909ba106154'
+    _enums = [
         ('None', 0, 
          '''No flag set.'''),
         ('CopyIntoExisting', 1, 
@@ -3523,7 +4007,7 @@ class DirectoryRemoveRecFlag(Enum):
 
     """
     __uuid__ = '455aabf0-7692-48f6-9061-f21579b65769'
-    _enums = [\
+    _enums = [
         ('None', 0, 
          '''No flag set.'''),
         ('ContentAndDir', 1, 
@@ -3549,7 +4033,7 @@ class FsObjRenameFlag(Enum):
 
     """
     __uuid__ = '59bbf3a1-4e23-d7cf-05d5-ccae32080ed2'
-    _enums = [\
+    _enums = [
         ('NoReplace', 0, 
          '''Do not replace any destination object.'''),
         ('Replace', 1, 
@@ -3611,7 +4095,7 @@ class ProcessCreateFlag(Enum):
 
     """
     __uuid__ = 'C544CD2B-F02D-4886-9901-71C523DB8DC5'
-    _enums = [\
+    _enums = [
         ('None', 0, 
          '''No flag set.'''),
         ('WaitForProcessStartOnly', 1, 
@@ -3655,7 +4139,7 @@ class ProcessPriority(Enum):
 
     """
     __uuid__ = 'ee8cac50-e232-49fe-806b-d1214d9c2e49'
-    _enums = [\
+    _enums = [
         ('Invalid', 0, 
          '''Invalid priority, do not use.'''),
         ('Default', 1, 
@@ -3682,7 +4166,7 @@ class SymlinkType(Enum):
 
     """
     __uuid__ = '37794668-f8f1-4714-98a5-6f8fa2ed0118'
-    _enums = [\
+    _enums = [
         ('Unknown', 0, 
          '''It is not known what is being targeted.'''),
         ('Directory', 1, 
@@ -3706,7 +4190,7 @@ class SymlinkReadFlag(Enum):
 
     """
     __uuid__ = 'b7fe2b9d-790e-4b25-8adf-1ca33026931f'
-    _enums = [\
+    _enums = [
         ('None', 0, 
          '''No flags set.'''),
         ('NoSymlinks', 1, 
@@ -3768,7 +4252,7 @@ class ProcessStatus(Enum):
 
     """
     __uuid__ = '4d52368f-5b48-4bfe-b486-acf89139b52f'
-    _enums = [\
+    _enums = [
         ('Undefined', 0, 
          '''Process is in an undefined state.'''),
         ('Starting', 10, 
@@ -3822,7 +4306,7 @@ class ProcessInputStatus(Enum):
 
     """
     __uuid__ = 'a4a0ef9c-29cc-4805-9803-c8215ae9da6c'
-    _enums = [\
+    _enums = [
         ('Undefined', 0, 
          '''Undefined state.'''),
         ('Broken', 1, 
@@ -3857,7 +4341,7 @@ class PathStyle(Enum):
 
     """
     __uuid__ = '97303a5b-42e8-0a55-d16f-d2a92c295261'
-    _enums = [\
+    _enums = [
         ('DOS', 1, 
          '''DOS-style paths with forward and backward slashes, drive
             letters and UNC.  Known from DOS, OS/2 and Windows.'''),
@@ -3900,7 +4384,7 @@ class FileAccessMode(Enum):
 
     """
     __uuid__ = '231a578f-47fb-ea30-3b3e-8489558227f0'
-    _enums = [\
+    _enums = [
         ('ReadOnly', 1, 
          '''Open the file only with read access.'''),
         ('WriteOnly', 2, 
@@ -3959,7 +4443,7 @@ class FileOpenAction(Enum):
 
     """
     __uuid__ = '12bc97e2-4fc6-a8b4-4f84-0cbf4ab970d2'
-    _enums = [\
+    _enums = [
         ('OpenExisting', 1, 
          '''Opens an existing file, fails if no file exists. (Was "oe".)'''),
         ('OpenOrCreate', 2, 
@@ -4019,7 +4503,7 @@ class FileSharingMode(Enum):
 
     """
     __uuid__ = 'f87dfe58-425b-c5ba-7d6d-22adeea25de1'
-    _enums = [\
+    _enums = [
         ('Read', 1, 
          '''Only share read access to the file.'''),
         ('Write', 2, 
@@ -4037,7 +4521,7 @@ class FileSharingMode(Enum):
         ] 
 
 
-class FileOpenExFlags(Enum):
+class FileOpenExFlag(Enum):
     """Open flags for :py:func:`IGuestSession.file_open_ex` .
 
 
@@ -4046,8 +4530,8 @@ class FileOpenExFlags(Enum):
             No flag set.
 
     """
-    __uuid__ = '9d62017b-ddd3-4e5a-a08e-14d1c23bbac1'
-    _enums = [\
+    __uuid__ = '4671abd4-f70c-42aa-8542-6c169cb87a5c'
+    _enums = [
         ('None', 0, 
          '''No flag set.'''),
         ] 
@@ -4087,7 +4571,7 @@ class FileStatus(Enum):
 
     """
     __uuid__ = '8c86468b-b97b-4080-8914-e29f5b0abd2c'
-    _enums = [\
+    _enums = [
         ('Undefined', 0, 
          '''File is in an undefined state.'''),
         ('Opening', 10, 
@@ -4149,7 +4633,7 @@ class FsObjType(Enum):
 
     """
     __uuid__ = '34a0d1aa-491e-e209-e150-84964d6cee5f'
-    _enums = [\
+    _enums = [
         ('Unknown', 1, 
          '''Used either if the object has type that is not in this enum, or
             if the type has not yet been determined or set.'''),
@@ -4195,7 +4679,7 @@ class DnDAction(Enum):
 
     """
     __uuid__ = '17609e74-778e-4d0e-8827-35f5230f287b'
-    _enums = [\
+    _enums = [
         ('Ignore', 0, 
          '''Do nothing.'''),
         ('Copy', 1, 
@@ -4221,7 +4705,7 @@ class DirectoryOpenFlag(Enum):
 
     """
     __uuid__ = '5138837a-8fd2-4194-a1b0-08f7bc3949d0'
-    _enums = [\
+    _enums = [
         ('None', 0, 
          '''No flag set.'''),
         ('NoSymlinks', 1, 
@@ -4272,7 +4756,7 @@ class MediumState(Enum):
 
     """
     __uuid__ = 'ef41e980-e012-43cd-9dea-479d4ef14d13'
-    _enums = [\
+    _enums = [
         ('NotCreated', 0, 
          '''Associated medium storage does not exist (either was not created yet or
             was deleted).'''),
@@ -4340,7 +4824,7 @@ class MediumType(Enum):
 
     """
     __uuid__ = 'fe663fb5-c244-4e1b-9d81-c628b417dd04'
-    _enums = [\
+    _enums = [
         ('Normal', 0, 
          '''Normal medium (attached directly or indirectly, preserved
             when taking snapshots).'''),
@@ -4403,6 +4887,11 @@ class MediumVariant(Enum):
 
             Differencing image. Only allowed for child images.
 
+    .. describe:: formatted(536870912)
+
+            Special flag which requests formatting the disk image. Right now
+            supported for floppy images only.
+
     .. describe:: no_create_dir(1073741824)
 
             Special flag which suppresses automatic creation of the subdirectory.
@@ -4410,7 +4899,7 @@ class MediumVariant(Enum):
 
     """
     __uuid__ = '0282e97f-4ef3-4411-a8e0-47c384803cb6'
-    _enums = [\
+    _enums = [
         ('Standard', 0, 
          '''No particular variant requested, results in using the backend default.'''),
         ('VmdkSplit2G', 1, 
@@ -4428,6 +4917,9 @@ class MediumVariant(Enum):
          '''Fixed image. Only allowed for base images.'''),
         ('Diff', 131072, 
          '''Differencing image. Only allowed for child images.'''),
+        ('Formatted', 536870912, 
+         '''Special flag which requests formatting the disk image. Right now
+            supported for floppy images only.'''),
         ('NoCreateDir', 1073741824, 
          '''Special flag which suppresses automatic creation of the subdirectory.
             Only used when passing the medium variant as an input parameter.'''),
@@ -4452,7 +4944,7 @@ class DataType(Enum):
 
     """
     __uuid__ = 'd90ea51e-a3f1-4a01-beb1-c1723c0d3ba7'
-    _enums = [\
+    _enums = [
         ('Int32', 0, 
          ''''''),
         ('Int8', 1, 
@@ -4488,7 +4980,7 @@ class DataFlags(Enum):
 
     """
     __uuid__ = '86884dcf-1d6b-4f1b-b4bf-f5aa44959d60'
-    _enums = [\
+    _enums = [
         ('None', 0, 
          ''''''),
         ('Mandatory', 1, 
@@ -4566,7 +5058,7 @@ class MediumFormatCapabilities(Enum):
 
     """
     __uuid__ = '7342ba79-7ce0-4d94-8f86-5ed5a185d9bd'
-    _enums = [\
+    _enums = [
         ('Uuid', 1, 
          '''Supports UUIDs as expected by VirtualBox code.'''),
         ('CreateFixed', 2, 
@@ -4602,6 +5094,28 @@ class MediumFormatCapabilities(Enum):
         ] 
 
 
+class PartitionTableType(Enum):
+    """Partition table types.
+
+
+    .. describe:: mbr(1)
+
+            
+
+    .. describe:: gpt(2)
+
+            
+
+    """
+    __uuid__ = '360066eb-d19e-4fa1-57ef-fed434fbe2a9'
+    _enums = [
+        ('MBR', 1, 
+         ''''''),
+        ('GPT', 2, 
+         ''''''),
+        ] 
+
+
 class KeyboardLED(Enum):
     """Keyboard LED indicators.
 
@@ -4620,7 +5134,7 @@ class KeyboardLED(Enum):
 
     """
     __uuid__ = 'ef29ea38-409b-49c7-a817-c858d426dfba'
-    _enums = [\
+    _enums = [
         ('NumLock', 1, 
          ''''''),
         ('CapsLock', 2, 
@@ -4668,7 +5182,7 @@ class MouseButtonState(Enum):
 
     """
     __uuid__ = '9ee094b8-b28a-4d56-a166-973cb588d7f8'
-    _enums = [\
+    _enums = [
         ('LeftButton', 1, 
          ''''''),
         ('RightButton', 2, 
@@ -4710,7 +5224,7 @@ class TouchContactState(Enum):
 
     """
     __uuid__ = '3f942686-2506-421c-927c-90d4b45f4a38'
-    _enums = [\
+    _enums = [
         ('None', 0, 
          '''The touch has finished.'''),
         ('InContact', 1, 
@@ -4738,15 +5252,33 @@ class FramebufferCapabilities(Enum):
 
             Supports visible region. If set, then IFramebuffer::setVisibleRegion can be called.
 
+    .. describe:: render_cursor(8)
+
+            This framebuffer implementation can render a pointer cursor itself.  Unless the
+            MoveCursor capability is also set the cursor will always be rendered at the
+            location of (and usually using) the host pointer.
+
+    .. describe:: move_cursor(16)
+
+            Supports rendering a pointer cursor anywhere within the guest screen.  Implies
+            RenderCursor.
+
     """
     __uuid__ = 'cc395839-30fa-4ca5-ae65-e6360e3edd7a'
-    _enums = [\
+    _enums = [
         ('UpdateImage', 1, 
          '''Requires NotifyUpdateImage. NotifyUpdate must not be called.'''),
         ('VHWA', 2, 
          '''Supports VHWA interface. If set, then IFramebuffer::processVHWACommand can be called.'''),
         ('VisibleRegion', 4, 
          '''Supports visible region. If set, then IFramebuffer::setVisibleRegion can be called.'''),
+        ('RenderCursor', 8, 
+         '''This framebuffer implementation can render a pointer cursor itself.  Unless the
+            MoveCursor capability is also set the cursor will always be rendered at the
+            location of (and usually using) the host pointer.'''),
+        ('MoveCursor', 16, 
+         '''Supports rendering a pointer cursor anywhere within the guest screen.  Implies
+            RenderCursor.'''),
         ] 
 
 
@@ -4768,7 +5300,7 @@ class GuestMonitorStatus(Enum):
 
     """
     __uuid__ = '6b8d3f71-39cb-459e-a916-48917ed43e19'
-    _enums = [\
+    _enums = [
         ('Disabled', 0, 
          '''The guest monitor is disabled in the guest.'''),
         ('Enabled', 1, 
@@ -4790,13 +5322,19 @@ class ScreenLayoutMode(Enum):
 
             Always set the new mode even if the guest is already at desired mode.
 
+    .. describe:: attach(2)
+
+            Attach new screens and always set the new mode for existing screens.
+
     """
-    __uuid__ = '9a982f4f-b815-4802-8539-d0b46435a7b7'
-    _enums = [\
+    __uuid__ = 'c7a9ee66-cfed-438b-9f8c-d3adf7588a4d'
+    _enums = [
         ('Apply', 0, 
          '''If the guest is already at desired mode then the API might avoid setting the mode.'''),
         ('Reset', 1, 
          '''Always set the new mode even if the guest is already at desired mode.'''),
+        ('Attach', 2, 
+         '''Attach new screens and always set the new mode for existing screens.'''),
         ] 
 
 
@@ -4834,7 +5372,7 @@ class NetworkAttachmentType(Enum):
 
     """
     __uuid__ = '524a8f9d-4b86-4b51-877d-1aa27c4ebeac'
-    _enums = [\
+    _enums = [
         ('Null', 0, 
          '''Null value, also means "not attached".'''),
         ('NAT', 1, 
@@ -4886,7 +5424,7 @@ class NetworkAdapterType(Enum):
 
     """
     __uuid__ = '3c2281e4-d952-4e87-8c7d-24379cb6a81c'
-    _enums = [\
+    _enums = [
         ('Null', 0, 
          '''Null value (never used by the API).'''),
         ('Am79C970A', 1, 
@@ -4924,7 +5462,7 @@ class NetworkAdapterPromiscModePolicy(Enum):
 
     """
     __uuid__ = 'c963768a-376f-4c85-8d84-d8ced4b7269e'
-    _enums = [\
+    _enums = [
         ('Deny', 1, 
          '''Deny promiscuous mode requests.'''),
         ('AllowNetwork', 2, 
@@ -4963,7 +5501,7 @@ class PortMode(Enum):
 
     """
     __uuid__ = '7485fcfd-d603-470a-87af-26d33beb7de9'
-    _enums = [\
+    _enums = [
         ('Disconnected', 0, 
          '''Virtual device is not attached to any real host device.'''),
         ('HostPipe', 1, 
@@ -4974,6 +5512,72 @@ class PortMode(Enum):
          '''Virtual device is attached to a raw file.'''),
         ('TCP', 4, 
          '''Virtual device is attached to a TCP socket.'''),
+        ] 
+
+
+class UartType(Enum):
+    """The UART type represents the emulated UART chip for the serial port device.
+
+
+    .. describe:: u16450(0)
+
+            The most basic emulated UART which doesn't support FIFO operation.
+
+    .. describe:: u16550_a(1)
+
+            The successor of the 16450 UART introducing a 16 byte FIFO to reduce
+            operational overhead.
+
+    .. describe:: u16750(2)
+
+            This UART developed by Texas Instruments introduced a 64 byte FIFO
+            and hardware flow control.
+
+    """
+    __uuid__ = 'c8899d39-0b90-4265-9d02-1e38bd4d1b39'
+    _enums = [
+        ('U16450', 0, 
+         '''The most basic emulated UART which doesn't support FIFO operation.'''),
+        ('U16550A', 1, 
+         '''The successor of the 16450 UART introducing a 16 byte FIFO to reduce
+            operational overhead.'''),
+        ('U16750', 2, 
+         '''This UART developed by Texas Instruments introduced a 64 byte FIFO
+            and hardware flow control.'''),
+        ] 
+
+
+class VMExecutionEngine(Enum):
+    """The main execution engine of a VM.
+
+
+    .. describe:: not_set(0)
+
+            Has not yet been set (try again later).
+
+    .. describe:: raw_mode(1)
+
+            Raw-mode.
+
+    .. describe:: hw_virt(2)
+
+            Hardware assisted virtualization thru HM.
+
+    .. describe:: native_api(3)
+
+            Hardware assisted virtualization thru native API (NEM).
+
+    """
+    __uuid__ = '56029577-31f7-44d2-3334-7ecbf95294b6'
+    _enums = [
+        ('NotSet', 0, 
+         '''Has not yet been set (try again later).'''),
+        ('RawMode', 1, 
+         '''Raw-mode.'''),
+        ('HwVirt', 2, 
+         '''Hardware assisted virtualization thru HM.'''),
+        ('NativeApi', 3, 
+         '''Hardware assisted virtualization thru native API (NEM).'''),
         ] 
 
 
@@ -5003,7 +5607,7 @@ class USBControllerType(Enum):
 
     """
     __uuid__ = '8fdd1c6a-5412-41da-ab07-7baed7d6e18e'
-    _enums = [\
+    _enums = [
         ('Null', 0, 
          '''@c null value. Never used by the API.'''),
         ('OHCI', 1, 
@@ -5058,7 +5662,7 @@ class USBConnectionSpeed(Enum):
 
     """
     __uuid__ = 'd2915840-ea26-4fb4-b72a-21eaf6b888ff'
-    _enums = [\
+    _enums = [
         ('Null', 0, 
          '''@c null value. Never returned by the API.'''),
         ('Low', 1, 
@@ -5138,7 +5742,7 @@ class USBDeviceState(Enum):
 
     """
     __uuid__ = 'b99a2e65-67fb-4882-82fd-f3e5e8193ab4'
-    _enums = [\
+    _enums = [
         ('NotSupported', 0, 
          '''Not supported by the VirtualBox server, not available to guests.'''),
         ('Unavailable', 1, 
@@ -5177,7 +5781,7 @@ class USBDeviceFilterAction(Enum):
 
     """
     __uuid__ = 'cbc30a49-2f4e-43b5-9da6-121320475933'
-    _enums = [\
+    _enums = [
         ('Null', 0, 
          '''Null value (never used by the API).'''),
         ('Ignore', 1, 
@@ -5229,7 +5833,7 @@ class AudioDriverType(Enum):
 
     """
     __uuid__ = '4bcc3d73-c2fe-40db-b72f-0c2ca9d68496'
-    _enums = [\
+    _enums = [
         ('Null', 0, 
          '''Null value, also means "dummy audio driver".'''),
         ('WinMM', 1, 
@@ -5269,7 +5873,7 @@ class AudioControllerType(Enum):
 
     """
     __uuid__ = '7afd395c-42c3-444e-8788-3ce80292f36c'
-    _enums = [\
+    _enums = [
         ('AC97', 0, 
          ''''''),
         ('SB16', 1, 
@@ -5306,7 +5910,7 @@ class AudioCodecType(Enum):
 
     """
     __uuid__ = '7b406301-f520-420c-9805-8ce11c086370'
-    _enums = [\
+    _enums = [
         ('Null', 0, 
          '''@c null value. Never used by the API.'''),
         ('SB16', 1, 
@@ -5338,7 +5942,7 @@ class AuthType(Enum):
 
     """
     __uuid__ = '7eef6ef6-98c2-4dc2-ab35-10d2b292028d'
-    _enums = [\
+    _enums = [
         ('Null', 0, 
          '''Null value, also means "no authentication".'''),
         ('External', 1, 
@@ -5374,7 +5978,7 @@ class Reason(Enum):
 
     """
     __uuid__ = 'e7e8e097-299d-4e98-8bbc-c31c2d47d0cc'
-    _enums = [\
+    _enums = [
         ('Unspecified', 0, 
          '''Null value, means "no known reason".'''),
         ('HostSuspend', 1, 
@@ -5427,7 +6031,7 @@ class StorageBus(Enum):
 
     """
     __uuid__ = '21371490-8542-4b5a-a74d-ee9ac2d45a90'
-    _enums = [\
+    _enums = [
         ('Null', 0, 
          '''@c null value. Never used by the API.'''),
         ('IDE', 1, 
@@ -5498,7 +6102,7 @@ class StorageControllerType(Enum):
 
     """
     __uuid__ = '9427f309-82e7-468f-9964-abfefc4d3058'
-    _enums = [\
+    _enums = [
         ('Null', 0, 
          '''@c null value. Never used by the API.'''),
         ('LsiLogic', 1, 
@@ -5542,7 +6146,7 @@ class ChipsetType(Enum):
 
     """
     __uuid__ = '8b4096a8-a7c3-4d3b-bbb1-05a0a51ec394'
-    _enums = [\
+    _enums = [
         ('Null', 0, 
          '''@c null value. Never used by the API.'''),
         ('PIIX3', 1, 
@@ -5570,7 +6174,7 @@ class NATAliasMode(Enum):
 
     """
     __uuid__ = '67772168-50d9-11df-9669-7fb714ee4fa1'
-    _enums = [\
+    _enums = [
         ('AliasLog', 1, 
          ''''''),
         ('AliasProxyOnly', 2, 
@@ -5594,7 +6198,7 @@ class NATProtocol(Enum):
 
     """
     __uuid__ = 'e90164be-eb03-11de-94af-fff9b1c1b19f'
-    _enums = [\
+    _enums = [
         ('UDP', 0, 
          '''Port-forwarding uses UDP protocol.'''),
         ('TCP', 1, 
@@ -5620,7 +6224,7 @@ class BandwidthGroupType(Enum):
 
     """
     __uuid__ = '1d92b67d-dc69-4be9-ad4c-93a01e1e0c8e'
-    _enums = [\
+    _enums = [
         ('Null', 0, 
          '''Null type, must be first.'''),
         ('Disk', 1, 
@@ -5912,9 +6516,9 @@ class VBoxEventType(Enum):
             For performance reasons this is a separate event to
             not unnecessarily overflow the event queue.
 
-    .. describe:: on_video_capture_changed(91)
+    .. describe:: on_recording_changed(91)
 
-            See :py:class:`IVideoCaptureChangedEvent` IVideoCapturedChangeEvent.
+            See :py:class:`IRecordingChangedEvent` IRecordingChangeEvent.
 
     .. describe:: on_guest_user_state_changed(92)
 
@@ -5936,13 +6540,29 @@ class VBoxEventType(Enum):
 
             See :py:class:`IMediumConfigChangedEvent` IMediumConfigChangedEvent.
 
-    .. describe:: last(97)
+    .. describe:: on_audio_adapter_changed(97)
+
+            See :py:class:`IAudioAdapterChangedEvent` IAudioAdapterChangedEvent.
+
+    .. describe:: on_progress_percentage_changed(98)
+
+            See :py:class:`IProgressPercentageChangedEvent` IProgressPercentageChangedEvent.
+
+    .. describe:: on_progress_task_completed(99)
+
+            See :py:class:`IProgressTaskCompletedEvent` IProgressTaskCompletedEvent.
+
+    .. describe:: on_cursor_position_changed(100)
+
+            See :py:class:`ICursorPositionChangedEvent` ICursorPositionChangedEvent.
+
+    .. describe:: last(101)
 
             Must be last event, used for iterations and structures relying on numerical event values.
 
     """
-    __uuid__ = 'b2ddb312-2f9e-4e69-98df-7235e43b2149'
-    _enums = [\
+    __uuid__ = '822087CA-4703-49E4-B20D-C6D794E67969'
+    _enums = [
         ('Invalid', 0, 
          '''Invalid event, must be first.'''),
         ('Any', 1, 
@@ -6088,8 +6708,8 @@ class VBoxEventType(Enum):
             
             For performance reasons this is a separate event to
             not unnecessarily overflow the event queue.'''),
-        ('OnVideoCaptureChanged', 91, 
-         '''See :py:class:`IVideoCaptureChangedEvent` IVideoCapturedChangeEvent.'''),
+        ('OnRecordingChanged', 91, 
+         '''See :py:class:`IRecordingChangedEvent` IRecordingChangeEvent.'''),
         ('OnGuestUserStateChanged', 92, 
          '''See :py:class:`IGuestUserStateChangedEvent` IGuestUserStateChangedEvent.'''),
         ('OnGuestMultiTouch', 93, 
@@ -6100,7 +6720,15 @@ class VBoxEventType(Enum):
          '''See :py:class:`ISnapshotRestoredEvent` ISnapshotRestoredEvent.'''),
         ('OnMediumConfigChanged', 96, 
          '''See :py:class:`IMediumConfigChangedEvent` IMediumConfigChangedEvent.'''),
-        ('Last', 97, 
+        ('OnAudioAdapterChanged', 97, 
+         '''See :py:class:`IAudioAdapterChangedEvent` IAudioAdapterChangedEvent.'''),
+        ('OnProgressPercentageChanged', 98, 
+         '''See :py:class:`IProgressPercentageChangedEvent` IProgressPercentageChangedEvent.'''),
+        ('OnProgressTaskCompleted', 99, 
+         '''See :py:class:`IProgressTaskCompletedEvent` IProgressTaskCompletedEvent.'''),
+        ('OnCursorPositionChanged', 100, 
+         '''See :py:class:`ICursorPositionChangedEvent` ICursorPositionChangedEvent.'''),
+        ('Last', 101, 
          '''Must be last event, used for iterations and structures relying on numerical event values.'''),
         ] 
 
@@ -6124,7 +6752,7 @@ class GuestMouseEventMode(Enum):
 
     """
     __uuid__ = '4b500146-ebba-4b7c-bc29-69c2d57a5caf'
-    _enums = [\
+    _enums = [
         ('Relative', 0, 
          '''Relative event.'''),
         ('Absolute', 1, 
@@ -6150,13 +6778,157 @@ class GuestMonitorChangedEventType(Enum):
 
     """
     __uuid__ = 'ef172985-7e36-4297-95be-e46396968d66'
-    _enums = [\
+    _enums = [
         ('Enabled', 0, 
          '''The guest monitor has been enabled by the guest.'''),
         ('Disabled', 1, 
          '''The guest monitor has been disabled by the guest.'''),
         ('NewOrigin', 2, 
          '''The guest monitor origin has changed in the guest.'''),
+        ] 
+
+
+class FormValueType(Enum):
+    """
+
+
+    .. describe:: boolean(0)
+
+            
+
+    .. describe:: string(1)
+
+            
+
+    .. describe:: choice(2)
+
+            
+
+    """
+    __uuid__ = '56ad9e8e-3e78-11e9-b661-bfeead3ff066'
+    _enums = [
+        ('Boolean', 0, 
+         ''''''),
+        ('String', 1, 
+         ''''''),
+        ('Choice', 2, 
+         ''''''),
+        ] 
+
+
+class CloudMachineState(Enum):
+    """Cloud instance execution state
+
+
+    .. describe:: invalid(0)
+
+            Invalid state
+
+    .. describe:: provisioning(1)
+
+            The machine is in the process of provisioning
+
+    .. describe:: running(2)
+
+            The machine runs
+
+    .. describe:: starting(3)
+
+            The machine is in the process of starting
+
+    .. describe:: stopping(4)
+
+            The machine is in the process of stopping
+
+    .. describe:: stopped(5)
+
+            The machine was stopped
+
+    .. describe:: creating_image(6)
+
+            The machine is in the process of creating image
+
+    .. describe:: terminating(7)
+
+            The machine is in the process of terminating
+
+    .. describe:: terminated(8)
+
+            The machine was terminated
+
+    """
+    __uuid__ = '67b6d054-0154-4f5d-b71b-6ac406e1ff78'
+    _enums = [
+        ('Invalid', 0, 
+         '''Invalid state'''),
+        ('Provisioning', 1, 
+         '''The machine is in the process of provisioning'''),
+        ('Running', 2, 
+         '''The machine runs'''),
+        ('Starting', 3, 
+         '''The machine is in the process of starting'''),
+        ('Stopping', 4, 
+         '''The machine is in the process of stopping'''),
+        ('Stopped', 5, 
+         '''The machine was stopped'''),
+        ('CreatingImage', 6, 
+         '''The machine is in the process of creating image'''),
+        ('Terminating', 7, 
+         '''The machine is in the process of terminating'''),
+        ('Terminated', 8, 
+         '''The machine was terminated'''),
+        ] 
+
+
+class CloudImageState(Enum):
+    """Cloud image state
+
+
+    .. describe:: invalid(0)
+
+            Invalid state
+
+    .. describe:: provisioning(1)
+
+            The image is in the process of provisioning
+
+    .. describe:: importing(2)
+
+            The image is in the process of importing
+
+    .. describe:: available(3)
+
+            The image is avalable
+
+    .. describe:: exporting(4)
+
+            The image is in the process of exporting
+
+    .. describe:: disabled(5)
+
+            The image is disabled
+
+    .. describe:: deleted(6)
+
+            The image was deleted
+
+    """
+    __uuid__ = '6e5d6762-eea2-4f2c-b104-2952d0aa8a0a'
+    _enums = [
+        ('Invalid', 0, 
+         '''Invalid state'''),
+        ('Provisioning', 1, 
+         '''The image is in the process of provisioning'''),
+        ('Importing', 2, 
+         '''The image is in the process of importing'''),
+        ('Available', 3, 
+         '''The image is avalable'''),
+        ('Exporting', 4, 
+         '''The image is in the process of exporting'''),
+        ('Disabled', 5, 
+         '''The image is disabled'''),
+        ('Deleted', 6, 
+         '''The image was deleted'''),
         ] 
 
 
@@ -6530,7 +7302,7 @@ class IDHCPServer(Interface):
     To enumerate all the DHCP servers on the host, use the
     :py:func:`IVirtualBox.dhcp_servers`  attribute.
     """
-    __uuid__ = '00c8f974-92c5-44a1-8f3f-702469fdd04b'
+    __uuid__ = 'ea2d467f-b6c2-4b9a-8eb5-6e2f275dd72e'
     __wsmap__ = 'managed'
     
     @property
@@ -6608,6 +7380,29 @@ class IDHCPServer(Interface):
         self._call("addGlobalOption",
                      in_p=[option, value])
 
+    def remove_global_option(self, option):
+        """removes the specified option
+
+        in option of type :class:`DhcpOpt`
+
+        raises :class:`OleErrorInvalidarg`
+            invalid option id supplied
+        
+        """
+        if not isinstance(option, DhcpOpt):
+            raise TypeError("option can only be an instance of type DhcpOpt")
+        self._call("removeGlobalOption",
+                     in_p=[option])
+
+    def remove_global_options(self):
+        """removes all global options
+
+        raises :class:`OleErrorFail`
+            failed to remove global options
+        
+        """
+        self._call("removeGlobalOptions")
+
     @property
     def global_options(self):
         """Get str value for 'globalOptions'"""
@@ -6643,13 +7438,38 @@ class IDHCPServer(Interface):
         self._call("addVmSlotOption",
                      in_p=[vmname, slot, option, value])
 
-    def remove_vm_slot_options(self, vmname, slot):
-        """
+    def remove_vm_slot_option(self, vmname, slot, option):
+        """removes the specified option
 
         in vmname of type str
 
         in slot of type int
 
+        in option of type :class:`DhcpOpt`
+
+        raises :class:`OleErrorInvalidarg`
+            invalid VM, slot, or option id supplied
+        
+        """
+        if not isinstance(vmname, basestring):
+            raise TypeError("vmname can only be an instance of type basestring")
+        if not isinstance(slot, baseinteger):
+            raise TypeError("slot can only be an instance of type baseinteger")
+        if not isinstance(option, DhcpOpt):
+            raise TypeError("option can only be an instance of type DhcpOpt")
+        self._call("removeVmSlotOption",
+                     in_p=[vmname, slot, option])
+
+    def remove_vm_slot_options(self, vmname, slot):
+        """removes all option for the specified adapter
+
+        in vmname of type str
+
+        in slot of type int
+
+        raises :class:`OleErrorInvalidarg`
+            invalid VM or slot supplied
+        
         """
         if not isinstance(vmname, basestring):
             raise TypeError("vmname can only be an instance of type basestring")
@@ -6754,6 +7574,15 @@ class IDHCPServer(Interface):
         """
         self._call("stop")
 
+    def restart(self):
+        """Restart running DHCP server process.
+
+        raises :class:`OleErrorFail`
+            Failed to restart the process.
+        
+        """
+        self._call("restart")
+
 
 class IVirtualBox(Interface):
     """
@@ -6776,7 +7605,7 @@ class IVirtualBox(Interface):
     reason for this is that COM likes to mutilate the error code and lose
     the detailed error information returned by instance creation.
     """
-    __uuid__ = '9570b9d5-f1a1-448a-10c5-e12f5285adad'
+    __uuid__ = 'd0a0163f-e254-4e5b-a1f2-011cf991c38d'
     __wsmap__ = 'managed'
     
     @property
@@ -7023,6 +7852,14 @@ class IVirtualBox(Interface):
         ret = self._get_attr("genericNetworkDrivers")
         return ret
 
+    @property
+    def cloud_provider_manager(self):
+        """Get ICloudProviderManager value for 'cloudProviderManager'
+        The cloud provider manager (singleton).
+        """
+        ret = self._get_attr("cloudProviderManager")
+        return ICloudProviderManager(ret)
+
     def compose_machine_filename(self, name, group, create_flags, base_folder):
         """Returns a recommended full path of the settings file name for a new virtual
         machine.
@@ -7197,7 +8034,7 @@ exists or could not be created due to an I/O error.
             raise TypeError("groups can only be an instance of type list")
         for a in groups[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         if not isinstance(os_type_id, basestring):
             raise TypeError("os_type_id can only be an instance of type basestring")
@@ -7303,7 +8140,7 @@ exists or could not be created due to an I/O error.
             raise TypeError("groups can only be an instance of type list")
         for a in groups[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         machines = self._call("getMachinesByGroups",
                      in_p=[groups])
@@ -7324,7 +8161,7 @@ exists or could not be created due to an I/O error.
             raise TypeError("machines can only be an instance of type list")
         for a in machines[:10]:
             if not isinstance(a, IMachine):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type IMachine")
         states = self._call("getMachineStates",
                      in_p=[machines])
@@ -7553,6 +8390,10 @@ at the specified location.
         available guest OS type objects. Each object has an
         :py:func:`IGuestOSType.id_p`  attribute which contains an identifier of
         the guest OS this object describes.
+        
+        While this function returns an error for unknown guest OS types, they
+        can be still used without serious problems (if one accepts the fact
+        that there is no default VM config information).
 
         in id_p of type str
             Guest OS type ID string.
@@ -7571,7 +8412,7 @@ at the specified location.
         type_p = IGuestOSType(type_p)
         return type_p
 
-    def create_shared_folder(self, name, host_path, writable, automount):
+    def create_shared_folder(self, name, host_path, writable, automount, auto_mount_point):
         """Creates a new global shared folder by associating the given logical
         name with the given host path, adds it to the collection of shared
         folders and starts sharing it. Refer to the description of
@@ -7593,6 +8434,11 @@ at the specified location.
             Whether the share gets automatically mounted by the guest
             or not.
 
+        in auto_mount_point of type str
+            Where the guest should automatically mount the folder, if possible.
+            For Windows and OS/2 guests this should be a drive letter, while other
+            guests it should be a absolute directory.
+
         """
         if not isinstance(name, basestring):
             raise TypeError("name can only be an instance of type basestring")
@@ -7602,8 +8448,10 @@ at the specified location.
             raise TypeError("writable can only be an instance of type bool")
         if not isinstance(automount, bool):
             raise TypeError("automount can only be an instance of type bool")
+        if not isinstance(auto_mount_point, basestring):
+            raise TypeError("auto_mount_point can only be an instance of type basestring")
         self._call("createSharedFolder",
-                     in_p=[name, host_path, writable, automount])
+                     in_p=[name, host_path, writable, automount, auto_mount_point])
 
     def remove_shared_folder(self, name):
         """Removes the global shared folder with the given name previously
@@ -7665,6 +8513,9 @@ at the specified location.
         will be deleted.
         
         
+        Key must contain only printable ASCII characters.
+        
+        
         Before performing the actual data change, this method will ask all
         registered event listener using the
         :py:class:`IExtraDataCanChangeEvent` 
@@ -7691,6 +8542,9 @@ at the specified location.
         
         raises :class:`OleErrorAccessdenied`
             Modification request refused.
+        
+        raises :class:`OleErrorInvalidarg`
+            Key contains invalid characters.
         
         """
         if not isinstance(key, basestring):
@@ -7945,7 +8799,7 @@ class IVFSExplorer(Interface):
             raise TypeError("names can only be an instance of type list")
         for a in names[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         exists = self._call("exists",
                      in_p=[names])
@@ -7965,7 +8819,7 @@ class IVFSExplorer(Interface):
             raise TypeError("names can only be an instance of type list")
         for a in names[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         progress = self._call("remove",
                      in_p=[names])
@@ -8041,7 +8895,7 @@ class ICertificate(Interface):
     @property
     def validity_period_not_before(self):
         """Get str value for 'validityPeriodNotBefore'
-        Certificate not valid before ISO time stamp.
+        Certificate not valid before ISO timestamp.
         """
         ret = self._get_attr("validityPeriodNotBefore")
         return ret
@@ -8049,7 +8903,7 @@ class ICertificate(Interface):
     @property
     def validity_period_not_after(self):
         """Get str value for 'validityPeriodNotAfter'
-        Certificate not valid after ISO time stamp.
+        Certificate not valid after ISO timestamp.
         """
         ret = self._get_attr("validityPeriodNotAfter")
         return ret
@@ -8250,7 +9104,7 @@ class IAppliance(Interface):
     Finally, call :py:func:`write`  with a path specification to have the OVF
     file written.
     """
-    __uuid__ = '8398f026-4add-4474-5bc3-2f9f2140b23e'
+    __uuid__ = '86a98347-7619-41aa-aece-b21ac5c1a7e6'
     __wsmap__ = 'managed'
     
     @property
@@ -8400,7 +9254,7 @@ class IAppliance(Interface):
             raise TypeError("options can only be an instance of type list")
         for a in options[:10]:
             if not isinstance(a, ImportOptions):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type ImportOptions")
         progress = self._call("importMachines",
                      in_p=[options])
@@ -8458,7 +9312,7 @@ class IAppliance(Interface):
             raise TypeError("options can only be an instance of type list")
         for a in options[:10]:
             if not isinstance(a, ExportOptions):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type ExportOptions")
         if not isinstance(path, basestring):
             raise TypeError("path can only be an instance of type basestring")
@@ -8518,13 +9372,13 @@ class IAppliance(Interface):
             raise TypeError("identifiers can only be an instance of type list")
         for a in identifiers[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         if not isinstance(passwords, list):
             raise TypeError("passwords can only be an instance of type list")
         for a in passwords[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         self._call("addPasswords",
                      in_p=[identifiers, passwords])
@@ -8539,7 +9393,7 @@ class IVirtualSystemDescription(Interface):
     VirtualBox virtual machines. See :py:class:`IAppliance`  for the steps required to
     import an OVF into VirtualBox.
     """
-    __uuid__ = '316c99a2-405d-41af-8508-46889144d067'
+    __uuid__ = 'ec49259c-1c50-4353-97a5-0fd92e2caac2'
     __wsmap__ = 'managed'
     
     @property
@@ -8700,6 +9554,17 @@ class IVirtualSystemDescription(Interface):
         types = [VirtualSystemDescriptionType(a) for a in types]
         return (types, refs, ovf_values, v_box_values, extra_config_values)
 
+    def remove_description_by_type(self, type_p):
+        """Delete all records which are equal to the passed type from the list
+
+        in type_p of type :class:`VirtualSystemDescriptionType`
+
+        """
+        if not isinstance(type_p, VirtualSystemDescriptionType):
+            raise TypeError("type_p can only be an instance of type VirtualSystemDescriptionType")
+        self._call("removeDescriptionByType",
+                     in_p=[type_p])
+
     def get_values_by_type(self, type_p, which):
         """This is the same as :py:func:`get_description_by_type`  except that you can specify which
         value types should be returned. See :py:class:`VirtualSystemDescriptionValueType`  for possible
@@ -8748,19 +9613,19 @@ class IVirtualSystemDescription(Interface):
             raise TypeError("enabled can only be an instance of type list")
         for a in enabled[:10]:
             if not isinstance(a, bool):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type bool")
         if not isinstance(v_box_values, list):
             raise TypeError("v_box_values can only be an instance of type list")
         for a in v_box_values[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         if not isinstance(extra_config_values, list):
             raise TypeError("extra_config_values can only be an instance of type list")
         for a in extra_config_values[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         self._call("setFinalValues",
                      in_p=[enabled, v_box_values, extra_config_values])
@@ -9578,7 +10443,7 @@ class IInternalMachineControl(Interface):
 
     def pull_guest_properties(self):
         """Get the list of the guest properties matching a set of patterns along
-        with their values, time stamps and flags and give responsibility for
+        with their values, timestamps and flags and give responsibility for
         managing properties to the console.
 
         out names of type str
@@ -9589,7 +10454,7 @@ class IInternalMachineControl(Interface):
             corresponding entries in the @a name array.
 
         out timestamps of type int
-            The time stamps of the properties returned. The array entries match
+            The timestamps of the properties returned. The array entries match
             the corresponding entries in the @a name array.
 
         out flags of type str
@@ -9770,7 +10635,7 @@ class IInternalMachineControl(Interface):
             raise TypeError("auth_params can only be an instance of type list")
         for a in auth_params[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         result = self._call("authenticateExternal",
                      in_p=[auth_params])
@@ -9944,6 +10809,389 @@ class IBIOSSettings(Interface):
         return ret
 
 
+class IRecordingScreenSettings(Interface):
+    """
+    The IRecordingScreenSettings interface represents recording settings of a
+    single virtual screen. This is used only in the :py:class:`IRecordingSettings` 
+    interface.
+    """
+    __uuid__ = '678fbd9a-93af-42a7-7f13-79ad6ef1a18d'
+    __wsmap__ = 'managed'
+    
+    def is_feature_enabled(self, feature):
+        """Returns whether a particular recording feature is enabled for this
+        screen or not.
+
+        in feature of type :class:`RecordingFeature`
+            Feature to check for.
+
+        return enabled of type bool
+            @c true if the feature is enabled, @c false if not.
+
+        """
+        if not isinstance(feature, RecordingFeature):
+            raise TypeError("feature can only be an instance of type RecordingFeature")
+        enabled = self._call("isFeatureEnabled",
+                     in_p=[feature])
+        return enabled
+
+    @property
+    def id_p(self):
+        """Get int value for 'id'
+        This attribute contains the screen ID bound to these settings.
+        """
+        ret = self._get_attr("id")
+        return ret
+
+    @property
+    def enabled(self):
+        """Get or set bool value for 'enabled'
+        This setting determines whether this screen is enabled while recording.
+        """
+        ret = self._get_attr("enabled")
+        return ret
+
+    @enabled.setter
+    def enabled(self, value):
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
+        return self._set_attr("enabled", value)
+
+    @property
+    def features(self):
+        """Get or set int value for 'features'
+        This setting determines all enabled recording features for this
+        screen.
+        """
+        ret = self._get_attr("features")
+        return ret
+
+    @features.setter
+    def features(self, value):
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
+        return self._set_attr("features", value)
+
+    @property
+    def destination(self):
+        """Get or set RecordingDestination value for 'destination'
+        This setting determines the recording destination for this
+        screen.
+        """
+        ret = self._get_attr("destination")
+        return RecordingDestination(ret)
+
+    @destination.setter
+    def destination(self, value):
+        if not isinstance(value, RecordingDestination):
+            raise TypeError("value is not an instance of RecordingDestination")
+        return self._set_attr("destination", value)
+
+    @property
+    def filename(self):
+        """Get or set str value for 'filename'
+        This setting determines the filename VirtualBox uses to save
+        the recorded content. This setting cannot be changed while video
+        recording is enabled.
+        
+        When setting this attribute, the specified path has to be
+        absolute (full path). When reading this attribute, a full path is
+        always returned.
+        """
+        ret = self._get_attr("filename")
+        return ret
+
+    @filename.setter
+    def filename(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("filename", value)
+
+    @property
+    def max_time(self):
+        """Get or set int value for 'maxTime'
+        This setting defines the maximum amount of time in seconds
+        to record. Recording will stop as soon as the defined time
+        interval has elapsed. If this value is zero, recording will not be
+        limited by time. This setting cannot be changed while recording is
+        enabled.
+        """
+        ret = self._get_attr("maxTime")
+        return ret
+
+    @max_time.setter
+    def max_time(self, value):
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
+        return self._set_attr("maxTime", value)
+
+    @property
+    def max_file_size(self):
+        """Get or set int value for 'maxFileSize'
+        This setting determines the maximal number of recording file
+        size in MB. Recording will stop as soon as the file size has
+        reached the defined value. If this value is zero, recording
+        will not be limited by the file size. This setting cannot be changed
+        while recording is enabled.
+        """
+        ret = self._get_attr("maxFileSize")
+        return ret
+
+    @max_file_size.setter
+    def max_file_size(self, value):
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
+        return self._set_attr("maxFileSize", value)
+
+    @property
+    def options(self):
+        """Get or set str value for 'options'
+        This setting contains any additional recording options
+        required in comma-separated key=value format. This setting
+        cannot be changed while recording is enabled.
+        
+        The following keys and their corresponding values are available:
+        
+        
+        
+        ac_enabled
+        Enables audio recording when set to true, otherwise
+        set to false to disable.
+        
+        **This feature is considered being experimental.**
+        """
+        ret = self._get_attr("options")
+        return ret
+
+    @options.setter
+    def options(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("options", value)
+
+    @property
+    def audio_codec(self):
+        """Get or set RecordingAudioCodec value for 'audioCodec'
+        Determines the audio codec to use for encoding the
+        recorded audio data. This setting cannot be changed while recording is
+        enabled.
+        """
+        ret = self._get_attr("audioCodec")
+        return RecordingAudioCodec(ret)
+
+    @audio_codec.setter
+    def audio_codec(self, value):
+        if not isinstance(value, RecordingAudioCodec):
+            raise TypeError("value is not an instance of RecordingAudioCodec")
+        return self._set_attr("audioCodec", value)
+
+    @property
+    def audio_hz(self):
+        """Get or set int value for 'audioHz'
+        Determines the Hertz (Hz) rate of the recorded audio data. This setting
+        cannot be changed while recording is enabled.
+        """
+        ret = self._get_attr("audioHz")
+        return ret
+
+    @audio_hz.setter
+    def audio_hz(self, value):
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
+        return self._set_attr("audioHz", value)
+
+    @property
+    def audio_bits(self):
+        """Get or set int value for 'audioBits'
+        Determines the bits per sample of the recorded audio data. This setting
+        cannot be changed while recording is enabled.
+        """
+        ret = self._get_attr("audioBits")
+        return ret
+
+    @audio_bits.setter
+    def audio_bits(self, value):
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
+        return self._set_attr("audioBits", value)
+
+    @property
+    def audio_channels(self):
+        """Get or set int value for 'audioChannels'
+        Determines the audio channels of the recorded audio data.
+        Specifiy 2 for stereo or 1 for mono. More than stereo (2) channels
+        are not supported at the moment. This setting cannot be changed while
+        recording is enabled.
+        """
+        ret = self._get_attr("audioChannels")
+        return ret
+
+    @audio_channels.setter
+    def audio_channels(self, value):
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
+        return self._set_attr("audioChannels", value)
+
+    @property
+    def video_codec(self):
+        """Get or set RecordingVideoCodec value for 'videoCodec'
+        Determines the video codec to use for encoding the recorded video data.
+        This setting cannot be changed while recording is enabled.
+        """
+        ret = self._get_attr("videoCodec")
+        return RecordingVideoCodec(ret)
+
+    @video_codec.setter
+    def video_codec(self, value):
+        if not isinstance(value, RecordingVideoCodec):
+            raise TypeError("value is not an instance of RecordingVideoCodec")
+        return self._set_attr("videoCodec", value)
+
+    @property
+    def video_width(self):
+        """Get or set int value for 'videoWidth'
+        Determines the horizontal resolution of the recorded video data. This
+        setting cannot be changed while recording is enabled.
+        """
+        ret = self._get_attr("videoWidth")
+        return ret
+
+    @video_width.setter
+    def video_width(self, value):
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
+        return self._set_attr("videoWidth", value)
+
+    @property
+    def video_height(self):
+        """Get or set int value for 'videoHeight'
+        Determines the vertical resolution of the recorded video data. This
+        setting cannot be changed while recording is enabled.
+        """
+        ret = self._get_attr("videoHeight")
+        return ret
+
+    @video_height.setter
+    def video_height(self, value):
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
+        return self._set_attr("videoHeight", value)
+
+    @property
+    def video_rate(self):
+        """Get or set int value for 'videoRate'
+        Determines the bitrate in kilobits per second. Increasing this value
+        makes the video look better for the cost of an increased file size or
+        transfer rate. This setting cannot be changed while recording is enabled.
+        """
+        ret = self._get_attr("videoRate")
+        return ret
+
+    @video_rate.setter
+    def video_rate(self, value):
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
+        return self._set_attr("videoRate", value)
+
+    @property
+    def video_rate_control_mode(self):
+        """Get or set RecordingVideoRateControlMode value for 'videoRateControlMode'
+        Determines the rate control mode. This setting cannot be changed
+        while recording is enabled.
+        """
+        ret = self._get_attr("videoRateControlMode")
+        return RecordingVideoRateControlMode(ret)
+
+    @video_rate_control_mode.setter
+    def video_rate_control_mode(self, value):
+        if not isinstance(value, RecordingVideoRateControlMode):
+            raise TypeError("value is not an instance of RecordingVideoRateControlMode")
+        return self._set_attr("videoRateControlMode", value)
+
+    @property
+    def video_fps(self):
+        """Get or set int value for 'videoFPS'
+        Determines the maximum number of frames per second (FPS). Frames with
+        a higher frequency will be skipped. Reducing this value increases the
+        number of skipped frames and reduces the file size or transfer rate.
+        This setting cannot be changed while recording is enabled.
+        """
+        ret = self._get_attr("videoFPS")
+        return ret
+
+    @video_fps.setter
+    def video_fps(self, value):
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
+        return self._set_attr("videoFPS", value)
+
+    @property
+    def video_scaling_method(self):
+        """Get or set RecordingVideoScalingMethod value for 'videoScalingMethod'
+        Determines the video scaling method to use.
+        This setting cannot be changed while recording is enabled.
+        """
+        ret = self._get_attr("videoScalingMethod")
+        return RecordingVideoScalingMethod(ret)
+
+    @video_scaling_method.setter
+    def video_scaling_method(self, value):
+        if not isinstance(value, RecordingVideoScalingMethod):
+            raise TypeError("value is not an instance of RecordingVideoScalingMethod")
+        return self._set_attr("videoScalingMethod", value)
+
+
+class IRecordingSettings(Interface):
+    """
+    The IRecordingSettings interface represents recording settings of the virtual
+    machine. This is used only in the :py:func:`IMachine.recording_settings` 
+    attribute.
+    """
+    __uuid__ = 'D88F2A5A-47C7-4A3F-AAE1-1B516817DB41'
+    __wsmap__ = 'managed'
+    
+    def get_screen_settings(self, screen_id):
+        """Returns the recording settings for a particular screen.
+
+        in screen_id of type int
+            Screen ID to retrieve recording screen settings for.
+
+        return record_screen_settings of type :class:`IRecordingScreenSettings`
+            Recording screen settings for the requested screen.
+
+        """
+        if not isinstance(screen_id, baseinteger):
+            raise TypeError("screen_id can only be an instance of type baseinteger")
+        record_screen_settings = self._call("getScreenSettings",
+                     in_p=[screen_id])
+        record_screen_settings = IRecordingScreenSettings(record_screen_settings)
+        return record_screen_settings
+
+    @property
+    def enabled(self):
+        """Get or set bool value for 'enabled'
+        This setting determines whether VirtualBox uses recording to record a
+        VM session.
+        """
+        ret = self._get_attr("enabled")
+        return ret
+
+    @enabled.setter
+    def enabled(self, value):
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
+        return self._set_attr("enabled", value)
+
+    @property
+    def screens(self):
+        """Get IRecordingScreenSettings value for 'screens'
+        This setting returns an array for recording settings of all configured
+        virtual screens.
+        """
+        ret = self._get_attr("screens")
+        return [IRecordingScreenSettings(a) for a in ret]
+
+
 class IPCIAddress(Interface):
     """
     Address on the PCI bus.
@@ -10090,7 +11338,7 @@ class IMachine(Interface):
     
     :py:class:`ISession` , :py:class:`IConsole` 
     """
-    __uuid__ = 'f50b24f0-0956-453c-d14c-8c27c683c295'
+    __uuid__ = '5047460a-265d-4538-b23e-ddba5fb84976'
     __wsmap__ = 'managed'
     
     @property
@@ -10274,7 +11522,8 @@ class IMachine(Interface):
         User-defined identifier of the Guest OS type.
         You may use :py:func:`IVirtualBox.get_guest_os_type`  to obtain
         an IGuestOSType object representing details about the given
-        Guest OS type.
+        Guest OS type. All Guest OS types are considered valid, even those
+        which are not known to :py:func:`IVirtualBox.get_guest_os_type` .
         
         This value may differ from the value returned by
         :py:func:`IGuest.os_type_id`  if Guest Additions are
@@ -10506,181 +11755,20 @@ class IMachine(Interface):
         return self._set_attr("monitorCount", value)
 
     @property
-    def video_capture_enabled(self):
-        """Get or set bool value for 'videoCaptureEnabled'
-        This setting determines whether VirtualBox uses video recording to
-        record VM session.
-        """
-        ret = self._get_attr("videoCaptureEnabled")
-        return ret
-
-    @video_capture_enabled.setter
-    def video_capture_enabled(self, value):
-        if not isinstance(value, bool):
-            raise TypeError("value is not an instance of bool")
-        return self._set_attr("videoCaptureEnabled", value)
-
-    @property
-    def video_capture_screens(self):
-        """Get or set bool value for 'videoCaptureScreens'
-        This setting determines for which screens video recording is
-        enabled.
-        """
-        ret = self._get_attr("videoCaptureScreens")
-        return ret
-
-    @video_capture_screens.setter
-    def video_capture_screens(self, value):
-        if not isinstance(value, bool):
-            raise TypeError("value is not an instance of bool")
-        return self._set_attr("videoCaptureScreens", value)
-
-    @property
-    def video_capture_file(self):
-        """Get or set str value for 'videoCaptureFile'
-        This setting determines the filename VirtualBox uses to save
-        the recorded content. This setting cannot be changed while video
-        capturing is enabled.
-        
-        When setting this attribute, the specified path has to be
-        absolute (full path). When reading this attribute, a full path is
-        always returned.
-        """
-        ret = self._get_attr("videoCaptureFile")
-        return ret
-
-    @video_capture_file.setter
-    def video_capture_file(self, value):
-        if not isinstance(value, basestring):
-            raise TypeError("value is not an instance of basestring")
-        return self._set_attr("videoCaptureFile", value)
-
-    @property
-    def video_capture_width(self):
-        """Get or set int value for 'videoCaptureWidth'
-        This setting determines the horizontal resolution of the recorded
-        video. This setting cannot be changed while video capturing is
-        enabled.
-        """
-        ret = self._get_attr("videoCaptureWidth")
-        return ret
-
-    @video_capture_width.setter
-    def video_capture_width(self, value):
-        if not isinstance(value, baseinteger):
-            raise TypeError("value is not an instance of baseinteger")
-        return self._set_attr("videoCaptureWidth", value)
-
-    @property
-    def video_capture_height(self):
-        """Get or set int value for 'videoCaptureHeight'
-        This setting determines the vertical resolution of the recorded
-        video. This setting cannot be changed while video capturing is
-        enabled.
-        """
-        ret = self._get_attr("videoCaptureHeight")
-        return ret
-
-    @video_capture_height.setter
-    def video_capture_height(self, value):
-        if not isinstance(value, baseinteger):
-            raise TypeError("value is not an instance of baseinteger")
-        return self._set_attr("videoCaptureHeight", value)
-
-    @property
-    def video_capture_rate(self):
-        """Get or set int value for 'videoCaptureRate'
-        This setting determines the bitrate in kilobits per second.
-        Increasing this value makes the video look better for the
-        cost of an increased file size. This setting cannot be changed
-        while video capturing is enabled.
-        """
-        ret = self._get_attr("videoCaptureRate")
-        return ret
-
-    @video_capture_rate.setter
-    def video_capture_rate(self, value):
-        if not isinstance(value, baseinteger):
-            raise TypeError("value is not an instance of baseinteger")
-        return self._set_attr("videoCaptureRate", value)
-
-    @property
-    def video_capture_fps(self):
-        """Get or set int value for 'videoCaptureFPS'
-        This setting determines the maximum number of frames per second.
-        Frames with a higher frequency will be skipped. Reducing this
-        value increases the number of skipped frames and reduces the
-        file size. This setting cannot be changed while video capturing
-        is enabled.
-        """
-        ret = self._get_attr("videoCaptureFPS")
-        return ret
-
-    @video_capture_fps.setter
-    def video_capture_fps(self, value):
-        if not isinstance(value, baseinteger):
-            raise TypeError("value is not an instance of baseinteger")
-        return self._set_attr("videoCaptureFPS", value)
-
-    @property
-    def video_capture_max_time(self):
-        """Get or set int value for 'videoCaptureMaxTime'
-        This setting determines the maximum amount of time in milliseconds
-        the video capture will work for. The capture stops as the defined time
-        interval  has elapsed. If this value is zero the capturing will not be
-        limited by time. This setting cannot be changed while video capturing is
-        enabled.
-        """
-        ret = self._get_attr("videoCaptureMaxTime")
-        return ret
-
-    @video_capture_max_time.setter
-    def video_capture_max_time(self, value):
-        if not isinstance(value, baseinteger):
-            raise TypeError("value is not an instance of baseinteger")
-        return self._set_attr("videoCaptureMaxTime", value)
-
-    @property
-    def video_capture_max_file_size(self):
-        """Get or set int value for 'videoCaptureMaxFileSize'
-        This setting determines the maximal number of captured video file
-        size in MB. The capture stops as the captured video file size
-        has reached the defined. If this value is zero the capturing
-        will not be limited by file size. This setting cannot be changed
-        while video capturing is enabled.
-        """
-        ret = self._get_attr("videoCaptureMaxFileSize")
-        return ret
-
-    @video_capture_max_file_size.setter
-    def video_capture_max_file_size(self, value):
-        if not isinstance(value, baseinteger):
-            raise TypeError("value is not an instance of baseinteger")
-        return self._set_attr("videoCaptureMaxFileSize", value)
-
-    @property
-    def video_capture_options(self):
-        """Get or set str value for 'videoCaptureOptions'
-        This setting contains any additional video capture options
-        required in comma-separated key=value format. This setting
-        cannot be changed while video capturing is enabled.
-        """
-        ret = self._get_attr("videoCaptureOptions")
-        return ret
-
-    @video_capture_options.setter
-    def video_capture_options(self, value):
-        if not isinstance(value, basestring):
-            raise TypeError("value is not an instance of basestring")
-        return self._set_attr("videoCaptureOptions", value)
-
-    @property
     def bios_settings(self):
         """Get IBIOSSettings value for 'BIOSSettings'
         Object containing all BIOS settings.
         """
         ret = self._get_attr("BIOSSettings")
         return IBIOSSettings(ret)
+
+    @property
+    def recording_settings(self):
+        """Get IRecordingSettings value for 'recordingSettings'
+        Object containing all recording settings.
+        """
+        ret = self._get_attr("recordingSettings")
+        return IRecordingSettings(ret)
 
     @property
     def firmware_type(self):
@@ -10955,7 +12043,7 @@ class IMachine(Interface):
     @property
     def last_state_change(self):
         """Get int value for 'lastStateChange'
-        Time stamp of the last execution state change,
+        Timestamp of the last execution state change,
         in milliseconds since 1970-01-01 UTC.
         """
         ret = self._get_attr("lastStateChange")
@@ -11446,23 +12534,20 @@ class IMachine(Interface):
 
     @property
     def vm_process_priority(self):
-        """Get or set str value for 'VMProcessPriority'
+        """Get or set VMProcPriority value for 'VMProcessPriority'
         Sets the priority of the VM process. It is a VM setting which can
-        be changed both before starting the VM and at runtime. The valid
-        values are system specific, and if a value is specified which does
-        not get recognized, then it will be remembered (useful for preparing
-        VM configs for other host OSes), with a successful result.
+        be changed both before starting the VM and at runtime.
         
-        The default value is the empty string, which selects the default
+        The default value is 'Default', which selects the default
         process priority.
         """
         ret = self._get_attr("VMProcessPriority")
-        return ret
+        return VMProcPriority(ret)
 
     @vm_process_priority.setter
     def vm_process_priority(self, value):
-        if not isinstance(value, basestring):
-            raise TypeError("value is not an instance of basestring")
+        if not isinstance(value, VMProcPriority):
+            raise TypeError("value is not an instance of VMProcPriority")
         return self._set_attr("VMProcessPriority", value)
 
     @property
@@ -12896,6 +13981,9 @@ created differencing media, should not happen).
         @a key will be deleted.
         
         
+        Key must contain only printable ASCII characters.
+        
+        
         Before performing the actual data change, this method will ask all
         registered listeners using the
         :py:class:`IExtraDataCanChangeEvent` 
@@ -12924,6 +14012,9 @@ created differencing media, should not happen).
         
         raises :class:`VBoxErrorXmlError`
             Could not parse the settings file.
+        
+        raises :class:`OleErrorInvalidarg`
+            Key contains invalid characters.
         
         """
         if not isinstance(key, basestring):
@@ -12972,18 +14063,17 @@ created differencing media, should not happen).
         self._call("setCPUProperty",
                      in_p=[property_p, value])
 
-    def get_cpuid_leaf(self, id_p):
-        """Returns the virtual CPU cpuid information for the specified leaf.
-        
-        Currently supported index values for cpuid:
-        Standard CPUID leafs: 0 - 0xA
-        Extended CPUID leafs: 0x80000000 - 0x8000000A
-        
-        See the Intel and AMD programmer's manuals for detailed information
-        about the cpuid instruction and its leafs.
+    def get_cpuid_leaf_by_ordinal(self, ordinal):
+        """Used to enumerate CPUID information override values.
 
-        in id_p of type int
+        in ordinal of type int
+            The ordinal number of the leaf to get.
+
+        out idx of type int
             CPUID leaf index.
+
+        out idx_sub of type int
+            CPUID leaf sub-index.
 
         out val_eax of type int
             CPUID leaf value for register eax.
@@ -12998,31 +14088,81 @@ created differencing media, should not happen).
             CPUID leaf value for register edx.
 
         raises :class:`OleErrorInvalidarg`
-            Invalid id.
+            Invalid ordinal number is out of range.
         
         """
-        if not isinstance(id_p, baseinteger):
-            raise TypeError("id_p can only be an instance of type baseinteger")
+        if not isinstance(ordinal, baseinteger):
+            raise TypeError("ordinal can only be an instance of type baseinteger")
+        (idx, idx_sub, val_eax, val_ebx, val_ecx, val_edx) = self._call("getCPUIDLeafByOrdinal",
+                     in_p=[ordinal])
+        return (idx, idx_sub, val_eax, val_ebx, val_ecx, val_edx)
+
+    def get_cpuid_leaf(self, idx, idx_sub):
+        """Returns the virtual CPU cpuid information for the specified leaf.
+        
+        Currently supported index values for cpuid:
+        Standard CPUID leaves: 0 - 0x1f
+        Extended CPUID leaves: 0x80000000 - 0x8000001f
+        VIA CPUID leaves:      0xc0000000 - 0xc000000f
+        
+        See the Intel, AMD and VIA programmer's manuals for detailed information
+        about the CPUID instruction and its leaves.
+
+        in idx of type int
+            CPUID leaf index.
+
+        in idx_sub of type int
+            CPUID leaf sub-index (ECX).  Set to 0xffffffff (or 0) if not applicable.
+
+        out val_eax of type int
+            CPUID leaf value for register eax.
+
+        out val_ebx of type int
+            CPUID leaf value for register ebx.
+
+        out val_ecx of type int
+            CPUID leaf value for register ecx.
+
+        out val_edx of type int
+            CPUID leaf value for register edx.
+
+        raises :class:`OleErrorInvalidarg`
+            Invalid index.
+        
+        """
+        if not isinstance(idx, baseinteger):
+            raise TypeError("idx can only be an instance of type baseinteger")
+        if not isinstance(idx_sub, baseinteger):
+            raise TypeError("idx_sub can only be an instance of type baseinteger")
         (val_eax, val_ebx, val_ecx, val_edx) = self._call("getCPUIDLeaf",
-                     in_p=[id_p])
+                     in_p=[idx, idx_sub])
         return (val_eax, val_ebx, val_ecx, val_edx)
 
-    def set_cpuid_leaf(self, id_p, val_eax, val_ebx, val_ecx, val_edx):
+    def set_cpuid_leaf(self, idx, idx_sub, val_eax, val_ebx, val_ecx, val_edx):
         """Sets the virtual CPU cpuid information for the specified leaf. Note that these values
         are not passed unmodified. VirtualBox clears features that it doesn't support.
         
         Currently supported index values for cpuid:
-        Standard CPUID leafs: 0 - 0xA
-        Extended CPUID leafs: 0x80000000 - 0x8000000A
+        Standard CPUID leaves: 0 - 0x1f
+        Extended CPUID leaves: 0x80000000 - 0x8000001f
+        VIA CPUID leaves:      0xc0000000 - 0xc000000f
         
-        See the Intel and AMD programmer's manuals for detailed information
-        about the cpuid instruction and its leafs.
+        The subleaf index is only applicable to certain leaves (see manuals as this is
+        subject to change).
+        
+        See the Intel, AMD and VIA programmer's manuals for detailed information
+        about the cpuid instruction and its leaves.
         
         Do not use this method unless you know exactly what you're doing. Misuse can lead to
         random crashes inside VMs.
 
-        in id_p of type int
+        in idx of type int
             CPUID leaf index.
+
+        in idx_sub of type int
+            CPUID leaf sub-index (ECX).  Set to 0xffffffff (or 0) if not applicable.
+            The 0xffffffff causes it to remove all other subleaves before adding one
+            with sub-index 0.
 
         in val_eax of type int
             CPUID leaf value for register eax.
@@ -13037,11 +14177,13 @@ created differencing media, should not happen).
             CPUID leaf value for register edx.
 
         raises :class:`OleErrorInvalidarg`
-            Invalid id.
+            Invalid index.
         
         """
-        if not isinstance(id_p, baseinteger):
-            raise TypeError("id_p can only be an instance of type baseinteger")
+        if not isinstance(idx, baseinteger):
+            raise TypeError("idx can only be an instance of type baseinteger")
+        if not isinstance(idx_sub, baseinteger):
+            raise TypeError("idx_sub can only be an instance of type baseinteger")
         if not isinstance(val_eax, baseinteger):
             raise TypeError("val_eax can only be an instance of type baseinteger")
         if not isinstance(val_ebx, baseinteger):
@@ -13051,22 +14193,28 @@ created differencing media, should not happen).
         if not isinstance(val_edx, baseinteger):
             raise TypeError("val_edx can only be an instance of type baseinteger")
         self._call("setCPUIDLeaf",
-                     in_p=[id_p, val_eax, val_ebx, val_ecx, val_edx])
+                     in_p=[idx, idx_sub, val_eax, val_ebx, val_ecx, val_edx])
 
-    def remove_cpuid_leaf(self, id_p):
+    def remove_cpuid_leaf(self, idx, idx_sub):
         """Removes the virtual CPU cpuid leaf for the specified index
 
-        in id_p of type int
+        in idx of type int
             CPUID leaf index.
 
+        in idx_sub of type int
+            CPUID leaf sub-index (ECX).  Set to 0xffffffff (or 0) if not applicable.
+            The 0xffffffff value works like a wildcard.
+
         raises :class:`OleErrorInvalidarg`
-            Invalid id.
+            Invalid index.
         
         """
-        if not isinstance(id_p, baseinteger):
-            raise TypeError("id_p can only be an instance of type baseinteger")
+        if not isinstance(idx, baseinteger):
+            raise TypeError("idx can only be an instance of type baseinteger")
+        if not isinstance(idx_sub, baseinteger):
+            raise TypeError("idx_sub can only be an instance of type baseinteger")
         self._call("removeCPUIDLeaf",
-                     in_p=[id_p])
+                     in_p=[idx, idx_sub])
 
     def remove_all_cpuid_leaves(self):
         """Removes all the virtual CPU cpuid leaves
@@ -13329,7 +14477,7 @@ created differencing media, should not happen).
             raise TypeError("media can only be an instance of type list")
         for a in media[:10]:
             if not isinstance(a, IMedium):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type IMedium")
         progress = self._call("deleteConfig",
                      in_p=[media])
@@ -13385,7 +14533,7 @@ created differencing media, should not happen).
         snapshot = ISnapshot(snapshot)
         return snapshot
 
-    def create_shared_folder(self, name, host_path, writable, automount):
+    def create_shared_folder(self, name, host_path, writable, automount, auto_mount_point):
         """Creates a new permanent shared folder by associating the given logical
         name with the given host path, adds it to the collection of shared
         folders and starts sharing it. Refer to the description of
@@ -13404,6 +14552,11 @@ created differencing media, should not happen).
             Whether the share gets automatically mounted by the guest
             or not.
 
+        in auto_mount_point of type str
+            Where the guest should automatically mount the folder, if possible.
+            For Windows and OS/2 guests this should be a drive letter, while other
+            guests it should be a absolute directory.
+
         raises :class:`VBoxErrorObjectInUse`
             Shared folder already exists.
         
@@ -13419,8 +14572,10 @@ created differencing media, should not happen).
             raise TypeError("writable can only be an instance of type bool")
         if not isinstance(automount, bool):
             raise TypeError("automount can only be an instance of type bool")
+        if not isinstance(auto_mount_point, basestring):
+            raise TypeError("auto_mount_point can only be an instance of type basestring")
         self._call("createSharedFolder",
-                     in_p=[name, host_path, writable, automount])
+                     in_p=[name, host_path, writable, automount, auto_mount_point])
 
     def remove_shared_folder(self, name):
         """Removes the permanent shared folder with the given name previously
@@ -13643,7 +14798,7 @@ created differencing media, should not happen).
 
     def enumerate_guest_properties(self, patterns):
         """Return a list of the guest properties matching a set of patterns along
-        with their values, time stamps and flags.
+        with their values, timestamps and flags.
 
         in patterns of type str
             The patterns to match the properties against, separated by '|'
@@ -13657,7 +14812,7 @@ created differencing media, should not happen).
             corresponding entries in the @a name array.
 
         out timestamps of type int
-            The time stamps of the properties returned. The array entries match
+            The timestamps of the properties returned. The array entries match
             the corresponding entries in the @a name array.
 
         out flags of type str
@@ -13912,10 +15067,39 @@ created differencing media, should not happen).
             raise TypeError("options can only be an instance of type list")
         for a in options[:10]:
             if not isinstance(a, CloneOptions):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type CloneOptions")
         progress = self._call("cloneTo",
                      in_p=[target, mode, options])
+        progress = IProgress(progress)
+        return progress
+
+    def move_to(self, folder, type_p):
+        """Move machine on to new place/folder
+
+        in folder of type str
+            Target folder where machine is moved.
+
+        in type_p of type str
+            Type of moving.
+            Possible values:
+            basic - Only the files which belong solely to this machine
+            are moved from the original machine's folder to
+            a new folder.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        raises :class:`OleErrorInvalidarg`
+            @a target is @c null.
+        
+        """
+        if not isinstance(folder, basestring):
+            raise TypeError("folder can only be an instance of type basestring")
+        if not isinstance(type_p, basestring):
+            raise TypeError("type_p can only be an instance of type basestring")
+        progress = self._call("moveTo",
+                     in_p=[folder, type_p])
         progress = IProgress(progress)
         return progress
 
@@ -14862,7 +16046,7 @@ class IConsole(Interface):
             raise TypeError("type_p can only be an instance of type list")
         for a in type_p[:10]:
             if not isinstance(a, DeviceType):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type DeviceType")
         activity = self._call("getDeviceActivity",
                      in_p=[type_p])
@@ -14987,7 +16171,7 @@ class IConsole(Interface):
         device = IUSBDevice(device)
         return device
 
-    def create_shared_folder(self, name, host_path, writable, automount):
+    def create_shared_folder(self, name, host_path, writable, automount, auto_mount_point):
         """Creates a transient new shared folder by associating the given logical
         name with the given host path, adds it to the collection of shared
         folders and starts sharing it. Refer to the description of
@@ -15006,6 +16190,11 @@ class IConsole(Interface):
             Whether the share gets automatically mounted by the guest
             or not.
 
+        in auto_mount_point of type str
+            Where the guest should automatically mount the folder, if possible.
+            For Windows and OS/2 guests this should be a drive letter, while other
+            guests it should be a absolute directory.
+
         raises :class:`VBoxErrorInvalidVmState`
             Virtual machine in Saved state or currently changing state.
         
@@ -15021,8 +16210,10 @@ class IConsole(Interface):
             raise TypeError("writable can only be an instance of type bool")
         if not isinstance(automount, bool):
             raise TypeError("automount can only be an instance of type bool")
+        if not isinstance(auto_mount_point, basestring):
+            raise TypeError("auto_mount_point can only be an instance of type basestring")
         self._call("createSharedFolder",
-                     in_p=[name, host_path, writable, automount])
+                     in_p=[name, host_path, writable, automount, auto_mount_point])
 
     def remove_shared_folder(self, name):
         """Removes a transient shared folder with the given name previously
@@ -15141,13 +16332,13 @@ ID.
             raise TypeError("ids can only be an instance of type list")
         for a in ids[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         if not isinstance(passwords, list):
             raise TypeError("passwords can only be an instance of type list")
         for a in passwords[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         if not isinstance(clear_on_suspend, bool):
             raise TypeError("clear_on_suspend can only be an instance of type bool")
@@ -15398,7 +16589,7 @@ class IHost(Interface):
     and so on) and also allows for manipulating some of the host's hardware,
     such as global USB device filters and host interface networking.
     """
-    __uuid__ = 'afca788c-4477-787d-60b2-3fa70e56fbbc'
+    __uuid__ = 'dbe11e5f-7f10-46e7-94c4-1e95bf4b6627'
     __wsmap__ = 'managed'
     
     @property
@@ -15986,13 +17177,13 @@ class IHost(Interface):
             raise TypeError("property_names can only be an instance of type list")
         for a in property_names[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         if not isinstance(property_values, list):
             raise TypeError("property_values can only be an instance of type list")
         for a in property_values[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         self._call("addUSBDeviceSource",
                      in_p=[backend, id_p, address, property_names, property_values])
@@ -16019,7 +17210,7 @@ class ISystemProperties(Interface):
     and parameters. Most of the properties are read-only, but some can be
     changed by a user.
     """
-    __uuid__ = '0eb668d2-495e-5a36-8890-29999b5f030c'
+    __uuid__ = 'd55176e5-6730-4e9e-fc1f-a59b1f44f78f'
     __wsmap__ = 'managed'
     
     @property
@@ -16499,6 +17690,50 @@ class ISystemProperties(Interface):
         ret = self._get_attr("screenShotFormats")
         return [BitmapFormat(a) for a in ret]
 
+    @property
+    def proxy_mode(self):
+        """Get or set ProxyMode value for 'proxyMode'
+        The proxy mode setting: System, NoProxy or Manual.
+        """
+        ret = self._get_attr("proxyMode")
+        return ProxyMode(ret)
+
+    @proxy_mode.setter
+    def proxy_mode(self, value):
+        if not isinstance(value, ProxyMode):
+            raise TypeError("value is not an instance of ProxyMode")
+        return self._set_attr("proxyMode", value)
+
+    @property
+    def proxy_url(self):
+        """Get or set str value for 'proxyURL'
+        Proxy server URL for the :py:func:`ProxyMode.manual`  proxy mode.
+        
+        The format is: [{type}"://"][{userid}[@{password}]:]{server}[":"{port}]
+        
+        Valid types are: http (default), https, socks4, socks4a, socks5, socks5h and direct.
+        Please note that these are proxy types defining how the proxy operates rather than
+        how to proxy any similarly named protocol (i.e. don't confuse a http-proxy with
+        proxying the http protocol, as a http-proxy usually can proxy https and other protocols too).
+        
+        The port number defaults to 80 for http, 443 for https and 1080 for the socks ones.
+        
+        The password is currently stored as plain text!  Use the :py:func:`ProxyMode.system` 
+        mode if you consider the proxy password to be sensitive.
+        
+        An empty string will cause the behavior to be identical to :py:func:`ProxyMode.system` .
+        For compatibility with libproxy, an URL starting with "direct://" will cause
+        :py:func:`ProxyMode.no_proxy`  behavior.
+        """
+        ret = self._get_attr("proxyURL")
+        return ret
+
+    @proxy_url.setter
+    def proxy_url(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("proxyURL", value)
+
     def get_max_network_adapters(self, chipset):
         """Maximum total number of network adapters associated with every
         :py:class:`IMachine`  instance.
@@ -16693,7 +17928,7 @@ class ISystemProperties(Interface):
 
 class IGuestOSType(Interface):
     """"""
-    __uuid__ = 'b1336a0a-2546-4d99-8cff-8efb130cfa9d'
+    __uuid__ = 'd0d6c6d8-e5db-4d2c-baaa-c71053a6236d'
     __wsmap__ = 'struct'
     
     @property
@@ -16759,6 +17994,14 @@ class IGuestOSType(Interface):
         """
         ret = self._get_attr("recommendedRAM")
         return ret
+
+    @property
+    def recommended_graphics_controller(self):
+        """Get GraphicsControllerType value for 'recommendedGraphicsController'
+        Recommended graphics controller type.
+        """
+        ret = self._get_attr("recommendedGraphicsController")
+        return GraphicsControllerType(ret)
 
     @property
     def recommended_vram(self):
@@ -16963,7 +18206,7 @@ class IAdditionsFacility(Interface):
     @property
     def last_updated(self):
         """Get int value for 'lastUpdated'
-        Time stamp of the last status update,
+        Timestamp of the last status update,
         in milliseconds since 1970-01-01 UTC.
         """
         ret = self._get_attr("lastUpdated")
@@ -17045,7 +18288,7 @@ class IDnDBase(Interface):
             raise TypeError("formats can only be an instance of type list")
         for a in formats[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         self._call("addFormats",
                      in_p=[formats])
@@ -17061,7 +18304,7 @@ class IDnDBase(Interface):
             raise TypeError("formats can only be an instance of type list")
         for a in formats[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         self._call("removeFormats",
                      in_p=[formats])
@@ -17204,13 +18447,13 @@ class IDnDTarget(IDnDBase):
             raise TypeError("allowed_actions can only be an instance of type list")
         for a in allowed_actions[:10]:
             if not isinstance(a, DnDAction):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type DnDAction")
         if not isinstance(formats, list):
             raise TypeError("formats can only be an instance of type list")
         for a in formats[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         result_action = self._call("enter",
                      in_p=[screen_id, y, x, default_action, allowed_actions, formats])
@@ -17257,13 +18500,13 @@ class IDnDTarget(IDnDBase):
             raise TypeError("allowed_actions can only be an instance of type list")
         for a in allowed_actions[:10]:
             if not isinstance(a, DnDAction):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type DnDAction")
         if not isinstance(formats, list):
             raise TypeError("formats can only be an instance of type list")
         for a in formats[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         result_action = self._call("move",
                      in_p=[screen_id, x, y, default_action, allowed_actions, formats])
@@ -17328,13 +18571,13 @@ class IDnDTarget(IDnDBase):
             raise TypeError("allowed_actions can only be an instance of type list")
         for a in allowed_actions[:10]:
             if not isinstance(a, DnDAction):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type DnDAction")
         if not isinstance(formats, list):
             raise TypeError("formats can only be an instance of type list")
         for a in formats[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         (result_action, format_p) = self._call("drop",
                      in_p=[screen_id, x, y, default_action, allowed_actions, formats])
@@ -17368,7 +18611,7 @@ class IDnDTarget(IDnDBase):
             raise TypeError("data can only be an instance of type list")
         for a in data[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         progress = self._call("sendData",
                      in_p=[screen_id, format_p, data])
@@ -17412,8 +18655,9 @@ class IGuestSession(Interface):
     the session object via :py:func:`IGuest.create_session` .
     
     There can be a maximum of 32 sessions at once per VM, whereas session 0
-    is reserved for the root session.
-    <!-- r=bird: Is the root session part of the maximum of 32?? Not really clear. -->
+    always is reserved for the root session (the root session is part of that
+    limit).
+    
     This root session is controlling all other guest sessions and also is
     responsible for actions which require system level privileges.
     
@@ -17425,8 +18669,8 @@ class IGuestSession(Interface):
     there a methods for creating guest processes.
     
     There can be up to 2048 objects (guest processes, files and directories)
-    a time per guest session.  Exceeding the limit will result in an error.
-    <!-- @todo r=bird: Add specific VBOX_E_XXX error for this and document it here! -->
+    a time per guest session.  Exceeding the limit will result in an error (see
+    the corresponding functions for more).
     
     When done with either of these objects, including the guest session itself,
     use the appropriate close() method to let the object do its cleanup work.
@@ -17448,7 +18692,7 @@ class IGuestSession(Interface):
     with older guest additions.  Another reason is that this way it is always
     possible to undo all the changes you've scheduled.)
     """
-    __uuid__ = '486fd828-4c6b-239b-a846-c4bb69e41038'
+    __uuid__ = '3E14C189-4A75-437E-B0BB-7E7C90D0DF2A'
     __wsmap__ = 'managed'
     
     @property
@@ -17575,7 +18819,7 @@ class IGuestSession(Interface):
     @property
     def current_directory(self):
         """Get or set str value for 'currentDirectory'
-        The current directory of the session.  Guest path style.
+        Gets or sets the current directory of the session.  Guest path style.
         """
         ret = self._get_attr("currentDirectory")
         return ret
@@ -17585,6 +18829,22 @@ class IGuestSession(Interface):
         if not isinstance(value, basestring):
             raise TypeError("value is not an instance of basestring")
         return self._set_attr("currentDirectory", value)
+
+    @property
+    def user_home(self):
+        """Get str value for 'userHome'
+        Returns the user's home / profile directory.  Guest path style.
+        """
+        ret = self._get_attr("userHome")
+        return ret
+
+    @property
+    def user_documents(self):
+        """Get str value for 'userDocuments'
+        Returns the user's documents directory.  Guest path style.
+        """
+        ret = self._get_attr("userDocuments")
+        return ret
 
     @property
     def directories(self):
@@ -17619,6 +18879,156 @@ class IGuestSession(Interface):
         """
         self._call("close")
 
+    def copy_from_guest(self, sources, filters, flags, destination):
+        """Copies directories and/or files from guest to the host.
+        
+        This function requires several parallel arrays to be supplied, one
+        set for each source.
+
+        in sources of type str
+            Paths to directories and/or files on the guest side that should be
+            copied to the host. If the path ends with a path delimiter, only
+            the directory's content is being copied. Guest path style.
+
+        in filters of type str
+            Array of source filters. This uses the
+            DOS/NT style wildcard characters '?' and '*'.
+
+        in flags of type str
+            Array of comma-separated list of source flags.
+            
+            The following flags are available for directory sources:
+            
+            
+            
+            CopyIntoExisting
+            Allow copying into an existing destination directory.
+            
+            
+            
+            The following flags are available for file sources:
+            
+            
+            
+            NoReplace
+            Do not replace any destination object.
+            
+            
+            FollowLinks
+            Follows (and handles) (symbolic) links.
+            
+            
+            Update
+            Only copy when the source file is newer than the destination
+            file or when the destination file is missing.
+
+        in destination of type str
+            Where to put the sources on the host. Host path style.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation to completion.
+
+        """
+        if not isinstance(sources, list):
+            raise TypeError("sources can only be an instance of type list")
+        for a in sources[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(
+                        "array can only contain objects of type basestring")
+        if not isinstance(filters, list):
+            raise TypeError("filters can only be an instance of type list")
+        for a in filters[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(
+                        "array can only contain objects of type basestring")
+        if not isinstance(flags, list):
+            raise TypeError("flags can only be an instance of type list")
+        for a in flags[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(
+                        "array can only contain objects of type basestring")
+        if not isinstance(destination, basestring):
+            raise TypeError("destination can only be an instance of type basestring")
+        progress = self._call("copyFromGuest",
+                     in_p=[sources, filters, flags, destination])
+        progress = IProgress(progress)
+        return progress
+
+    def copy_to_guest(self, sources, filters, flags, destination):
+        """Copies directories and/or files from host to the guest.
+        
+        This function requires several parallel arrays to be supplied, one
+        set for each source.
+
+        in sources of type str
+            Paths to directories and/or files on the host side that should be
+            copied to the guest. If the path ends with a path delimiter, only
+            the directory's content is being copied. Host path style.
+
+        in filters of type str
+            Array of source filters. This uses the
+            DOS/NT style wildcard characters '?' and '*'.
+
+        in flags of type str
+            Array of comma-separated list of source flags.
+            
+            The following flags are available for directory sources:
+            
+            
+            
+            CopyIntoExisting
+            Allow copying into an existing destination directory.
+            
+            
+            
+            The following flags are available for file sources:
+            
+            
+            
+            NoReplace
+            Do not replace any destination object.
+            
+            
+            FollowLinks
+            Follows (and handles) (symbolic) links.
+            
+            
+            Update
+            Only copy when the source file is newer than the destination
+            file or when the destination file is missing.
+
+        in destination of type str
+            Where to put the sources on the guest. Guest path style.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation to completion.
+
+        """
+        if not isinstance(sources, list):
+            raise TypeError("sources can only be an instance of type list")
+        for a in sources[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(
+                        "array can only contain objects of type basestring")
+        if not isinstance(filters, list):
+            raise TypeError("filters can only be an instance of type list")
+        for a in filters[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(
+                        "array can only contain objects of type basestring")
+        if not isinstance(flags, list):
+            raise TypeError("flags can only be an instance of type list")
+        for a in flags[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(
+                        "array can only contain objects of type basestring")
+        if not isinstance(destination, basestring):
+            raise TypeError("destination can only be an instance of type basestring")
+        progress = self._call("copyToGuest",
+                     in_p=[sources, filters, flags, destination])
+        progress = IProgress(progress)
+        return progress
+
     def directory_copy(self, source, destination, flags):
         """Recursively copies a directory from one guest location to another.
 
@@ -17627,11 +19037,11 @@ class IGuestSession(Interface):
 
         in destination of type str
             The path to the target directory (in the guest).  Unless the
-            :py:attr:`DirectoryCopyFlags.copy_into_existing`  flag is given, the
+            :py:attr:`DirectoryCopyFlag.copy_into_existing`  flag is given, the
             directory shall not already exist.  Guest path style.
 
-        in flags of type :class:`DirectoryCopyFlags`
-            Zero or more :py:class:`DirectoryCopyFlags`  values.
+        in flags of type :class:`DirectoryCopyFlag`
+            Zero or more :py:class:`DirectoryCopyFlag`  values.
 
         return progress of type :class:`IProgress`
             Progress object to track the operation to completion.
@@ -17647,9 +19057,9 @@ class IGuestSession(Interface):
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
-            if not isinstance(a, DirectoryCopyFlags):
-                raise TypeError(\
-                        "array can only contain objects of type DirectoryCopyFlags")
+            if not isinstance(a, DirectoryCopyFlag):
+                raise TypeError(
+                        "array can only contain objects of type DirectoryCopyFlag")
         progress = self._call("directoryCopy",
                      in_p=[source, destination, flags])
         progress = IProgress(progress)
@@ -17660,22 +19070,19 @@ class IGuestSession(Interface):
 
         in source of type str
             Path to the directory on the guest side that should be copied to
-            the host.  Guest path style.
+            the host. Guest path style.
 
         in destination of type str
             Where to put the directory on the host.  Unless the
-            :py:attr:`DirectoryCopyFlags.copy_into_existing`  flag is given, the
+            :py:attr:`DirectoryCopyFlag.copy_into_existing`  flag is given, the
             directory shall not already exist.  Host path style.
 
-        in flags of type :class:`DirectoryCopyFlags`
-            Zero or more :py:class:`DirectoryCopyFlags`  values.
+        in flags of type :class:`DirectoryCopyFlag`
+            Zero or more :py:class:`DirectoryCopyFlag`  values.
 
         return progress of type :class:`IProgress`
             Progress object to track the operation to completion.
 
-        raises :class:`OleErrorNotimpl`
-            Not yet implemented.
-        
         """
         if not isinstance(source, basestring):
             raise TypeError("source can only be an instance of type basestring")
@@ -17684,9 +19091,9 @@ class IGuestSession(Interface):
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
-            if not isinstance(a, DirectoryCopyFlags):
-                raise TypeError(\
-                        "array can only contain objects of type DirectoryCopyFlags")
+            if not isinstance(a, DirectoryCopyFlag):
+                raise TypeError(
+                        "array can only contain objects of type DirectoryCopyFlag")
         progress = self._call("directoryCopyFromGuest",
                      in_p=[source, destination, flags])
         progress = IProgress(progress)
@@ -17701,18 +19108,15 @@ class IGuestSession(Interface):
 
         in destination of type str
             Where to put the file in the guest. Unless the
-            :py:attr:`DirectoryCopyFlags.copy_into_existing`  flag is given, the
-            directory shall not already exist.  Guest style path.
+            :py:attr:`DirectoryCopyFlag.copy_into_existing`  flag is given, the
+            directory shall not already exist. Guest style path.
 
-        in flags of type :class:`DirectoryCopyFlags`
-            Zero or more :py:class:`DirectoryCopyFlags`  values.
+        in flags of type :class:`DirectoryCopyFlag`
+            Zero or more :py:class:`DirectoryCopyFlag`  values.
 
         return progress of type :class:`IProgress`
             Progress object to track the operation to completion.
 
-        raises :class:`OleErrorNotimpl`
-            Not yet implemented.
-        
         """
         if not isinstance(source, basestring):
             raise TypeError("source can only be an instance of type basestring")
@@ -17721,9 +19125,9 @@ class IGuestSession(Interface):
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
-            if not isinstance(a, DirectoryCopyFlags):
-                raise TypeError(\
-                        "array can only contain objects of type DirectoryCopyFlags")
+            if not isinstance(a, DirectoryCopyFlag):
+                raise TypeError(
+                        "array can only contain objects of type DirectoryCopyFlag")
         progress = self._call("directoryCopyToGuest",
                      in_p=[source, destination, flags])
         progress = IProgress(progress)
@@ -17756,7 +19160,7 @@ class IGuestSession(Interface):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
             if not isinstance(a, DirectoryCreateFlag):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type DirectoryCreateFlag")
         self._call("directoryCreate",
                      in_p=[path, mode, flags])
@@ -17873,6 +19277,9 @@ option was requested.
         raises :class:`VBoxErrorIprtError`
             Error while opening the directory.
         
+        raises :class:`VBoxErrorMaximumReached`
+            The maximum of concurrent guest directories has been reached.
+        
         """
         if not isinstance(path, basestring):
             raise TypeError("path can only be an instance of type basestring")
@@ -17882,7 +19289,7 @@ option was requested.
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
             if not isinstance(a, DirectoryOpenFlag):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type DirectoryOpenFlag")
         directory = self._call("directoryOpen",
                      in_p=[path, filter_p, flags])
@@ -17941,7 +19348,7 @@ option was requested.
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
             if not isinstance(a, DirectoryRemoveRecFlag):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type DirectoryRemoveRecFlag")
         progress = self._call("directoryRemoveRecursive",
                      in_p=[path, flags])
@@ -18070,7 +19477,7 @@ yet to report the session base environment.
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
             if not isinstance(a, FileCopyFlag):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type FileCopyFlag")
         progress = self._call("fileCopy",
                      in_p=[source, destination, flags])
@@ -18109,7 +19516,7 @@ yet to report the session base environment.
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
             if not isinstance(a, FileCopyFlag):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type FileCopyFlag")
         progress = self._call("fileCopyFromGuest",
                      in_p=[source, destination, flags])
@@ -18148,7 +19555,7 @@ yet to report the session base environment.
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
             if not isinstance(a, FileCopyFlag):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type FileCopyFlag")
         progress = self._call("fileCopyToGuest",
                      in_p=[source, destination, flags])
@@ -18273,6 +19680,9 @@ option was requested.
         raises :class:`VBoxErrorIprtError`
             Error while opening the file.
         
+        raises :class:`VBoxErrorMaximumReached`
+            The maximum of concurrent guest files has been reached.
+        
         """
         if not isinstance(path, basestring):
             raise TypeError("path can only be an instance of type basestring")
@@ -18314,8 +19724,8 @@ option was requested.
             three access groups and associated access rights are realized is guest
             OS dependent.  The API does the best it can on each OS.
 
-        in flags of type :class:`FileOpenExFlags`
-            Zero or more :py:class:`FileOpenExFlags`  values.
+        in flags of type :class:`FileOpenExFlag`
+            Zero or more :py:class:`FileOpenExFlag`  values.
 
         return file_p of type :class:`IGuestFile`
             :py:class:`IGuestFile`  object representing the opened file.
@@ -18340,9 +19750,9 @@ option was requested.
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
-            if not isinstance(a, FileOpenExFlags):
-                raise TypeError(\
-                        "array can only contain objects of type FileOpenExFlags")
+            if not isinstance(a, FileOpenExFlag):
+                raise TypeError(
+                        "array can only contain objects of type FileOpenExFlag")
         file_p = self._call("fileOpenEx",
                      in_p=[path, access_mode, open_action, sharing_mode, creation_mode, flags])
         file_p = IGuestFile(file_p)
@@ -18465,6 +19875,36 @@ option was requested.
         self._call("fsObjRemove",
                      in_p=[path])
 
+    def fs_obj_remove_array(self, path):
+        """Removes multiple file system objects (files, directories, symlinks, etc)
+        in the guest. Use with caution.
+        
+        This method is not implemented yet and will return E_NOTIMPL.
+        
+        This method will remove symbolic links in the final path
+        component, not follow them.
+
+        in path of type str
+            Array of paths to the file system objects to remove.  Guest style path.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation to completion.
+
+        raises :class:`OleErrorNotimpl`
+            The method has not been implemented yet.
+        
+        """
+        if not isinstance(path, list):
+            raise TypeError("path can only be an instance of type list")
+        for a in path[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(
+                        "array can only contain objects of type basestring")
+        progress = self._call("fsObjRemoveArray",
+                     in_p=[path])
+        progress = IProgress(progress)
+        return progress
+
     def fs_obj_rename(self, old_path, new_path, flags):
         """Renames a file system object (file, directory, symlink, etc) in the
         guest.
@@ -18493,7 +19933,7 @@ option was requested.
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
             if not isinstance(a, FsObjRenameFlag):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type FsObjRenameFlag")
         self._call("fsObjRename",
                      in_p=[old_path, new_path, flags])
@@ -18514,8 +19954,8 @@ option was requested.
             Where to move the file to (file, not directory).  Guest path
             style.
 
-        in flags of type :class:`FsObjMoveFlags`
-            Zero or more :py:class:`FsObjMoveFlags`  values.
+        in flags of type :class:`FsObjMoveFlag`
+            Zero or more :py:class:`FsObjMoveFlag`  values.
 
         return progress of type :class:`IProgress`
             Progress object to track the operation to completion.
@@ -18531,10 +19971,90 @@ option was requested.
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
-            if not isinstance(a, FsObjMoveFlags):
-                raise TypeError(\
-                        "array can only contain objects of type FsObjMoveFlags")
+            if not isinstance(a, FsObjMoveFlag):
+                raise TypeError(
+                        "array can only contain objects of type FsObjMoveFlag")
         progress = self._call("fsObjMove",
+                     in_p=[source, destination, flags])
+        progress = IProgress(progress)
+        return progress
+
+    def fs_obj_move_array(self, source, destination, flags):
+        """Moves file system objects (files, directories, symlinks, etc) from one
+        guest location to another.
+
+        in source of type str
+            Array of paths to the file system objects to move.  Guest style path.
+
+        in destination of type str
+            Where to move the file system objects to (directory).  Guest path
+            style.
+
+        in flags of type :class:`FsObjMoveFlag`
+            Zero or more :py:class:`FsObjMoveFlag`  values.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation to completion.
+
+        raises :class:`OleErrorNotimpl`
+            Not yet implemented.
+        
+        """
+        if not isinstance(source, list):
+            raise TypeError("source can only be an instance of type list")
+        for a in source[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(
+                        "array can only contain objects of type basestring")
+        if not isinstance(destination, basestring):
+            raise TypeError("destination can only be an instance of type basestring")
+        if not isinstance(flags, list):
+            raise TypeError("flags can only be an instance of type list")
+        for a in flags[:10]:
+            if not isinstance(a, FsObjMoveFlag):
+                raise TypeError(
+                        "array can only contain objects of type FsObjMoveFlag")
+        progress = self._call("fsObjMoveArray",
+                     in_p=[source, destination, flags])
+        progress = IProgress(progress)
+        return progress
+
+    def fs_obj_copy_array(self, source, destination, flags):
+        """Copies file system objects (files, directories, symlinks, etc) from one
+        guest location to another.
+
+        in source of type str
+            Array of paths to the file system objects to copy.  Guest style path.
+
+        in destination of type str
+            Where to copy the file system objects to (directory).  Guest path
+            style.
+
+        in flags of type :class:`FileCopyFlag`
+            Zero or more :py:class:`FileCopyFlag`  values.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation to completion.
+
+        raises :class:`OleErrorNotimpl`
+            Not yet implemented.
+        
+        """
+        if not isinstance(source, list):
+            raise TypeError("source can only be an instance of type list")
+        for a in source[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(
+                        "array can only contain objects of type basestring")
+        if not isinstance(destination, basestring):
+            raise TypeError("destination can only be an instance of type basestring")
+        if not isinstance(flags, list):
+            raise TypeError("flags can only be an instance of type list")
+        for a in flags[:10]:
+            if not isinstance(a, FileCopyFlag):
+                raise TypeError(
+                        "array can only contain objects of type FileCopyFlag")
+        progress = self._call("fsObjCopyArray",
                      in_p=[source, destination, flags])
         progress = IProgress(progress)
         return progress
@@ -18633,6 +20153,9 @@ option was requested.
         raises :class:`VBoxErrorIprtError`
             Error creating guest process.
         
+        raises :class:`VBoxErrorMaximumReached`
+            The maximum of concurrent guest processes has been reached.
+        
         """
         if not isinstance(executable, basestring):
             raise TypeError("executable can only be an instance of type basestring")
@@ -18640,19 +20163,19 @@ option was requested.
             raise TypeError("arguments can only be an instance of type list")
         for a in arguments[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         if not isinstance(environment_changes, list):
             raise TypeError("environment_changes can only be an instance of type list")
         for a in environment_changes[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
             if not isinstance(a, ProcessCreateFlag):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type ProcessCreateFlag")
         if not isinstance(timeout_ms, baseinteger):
             raise TypeError("timeout_ms can only be an instance of type baseinteger")
@@ -18727,19 +20250,19 @@ option was requested.
             raise TypeError("arguments can only be an instance of type list")
         for a in arguments[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         if not isinstance(environment_changes, list):
             raise TypeError("environment_changes can only be an instance of type list")
         for a in environment_changes[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
             if not isinstance(a, ProcessCreateFlag):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type ProcessCreateFlag")
         if not isinstance(timeout_ms, baseinteger):
             raise TypeError("timeout_ms can only be an instance of type baseinteger")
@@ -18749,7 +20272,7 @@ option was requested.
             raise TypeError("affinity can only be an instance of type list")
         for a in affinity[:10]:
             if not isinstance(a, baseinteger):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type baseinteger")
         guest_process = self._call("processCreateEx",
                      in_p=[executable, arguments, environment_changes, flags, timeout_ms, priority, affinity])
@@ -18846,7 +20369,7 @@ option was requested.
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
             if not isinstance(a, SymlinkReadFlag):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type SymlinkReadFlag")
         target = self._call("symlinkRead",
                      in_p=[symlink, flags])
@@ -18898,7 +20421,7 @@ option was requested.
             raise TypeError("wait_for can only be an instance of type list")
         for a in wait_for[:10]:
             if not isinstance(a, GuestSessionWaitForFlag):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type GuestSessionWaitForFlag")
         if not isinstance(timeout_ms, baseinteger):
             raise TypeError("timeout_ms can only be an instance of type baseinteger")
@@ -18912,7 +20435,7 @@ class IProcess(Interface):
     """
     Abstract parent interface for processes handled by VirtualBox.
     """
-    __uuid__ = '2e20707d-4325-9a83-83cf-3faf5b97457c'
+    __uuid__ = 'bc68370c-8a02-45f3-a07d-a67aa72756aa'
     __wsmap__ = 'managed'
     
     @property
@@ -19027,7 +20550,7 @@ class IProcess(Interface):
             raise TypeError("wait_for can only be an instance of type list")
         for a in wait_for[:10]:
             if not isinstance(a, ProcessWaitForFlag):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type ProcessWaitForFlag")
         if not isinstance(timeout_ms, baseinteger):
             raise TypeError("timeout_ms can only be an instance of type baseinteger")
@@ -19081,7 +20604,7 @@ class IProcess(Interface):
             Pass 0 for an infinite timeout.
 
         return written of type int
-            How much bytes were written.
+            How many bytes were written.
 
         """
         if not isinstance(handle, baseinteger):
@@ -19092,7 +20615,7 @@ class IProcess(Interface):
             raise TypeError("data can only be an instance of type list")
         for a in data[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         if not isinstance(timeout_ms, baseinteger):
             raise TypeError("timeout_ms can only be an instance of type baseinteger")
@@ -19119,7 +20642,7 @@ class IProcess(Interface):
             Pass 0 for an infinite timeout.
 
         return written of type int
-            How much bytes were written.
+            How may bytes were written.
 
         """
         if not isinstance(handle, baseinteger):
@@ -19128,13 +20651,13 @@ class IProcess(Interface):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
             if not isinstance(a, ProcessInputFlag):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type ProcessInputFlag")
         if not isinstance(data, list):
             raise TypeError("data can only be an instance of type list")
         for a in data[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         if not isinstance(timeout_ms, baseinteger):
             raise TypeError("timeout_ms can only be an instance of type baseinteger")
@@ -19171,7 +20694,7 @@ class IDirectory(Interface):
     """
     Abstract parent interface for directories handled by VirtualBox.
     """
-    __uuid__ = 'f73650f4-4506-50ca-045a-23a0e32ea508'
+    __uuid__ = '758d7eac-e4b1-486a-8f2e-747ae346c3e9'
     __wsmap__ = 'managed'
     
     @property
@@ -19232,7 +20755,7 @@ class IFile(Interface):
     """
     Abstract parent interface for files handled by VirtualBox.
     """
-    __uuid__ = '14c66b23-404c-f24a-3cc1-ee9501d44f2a'
+    __uuid__ = '59a235ac-2f1a-4d6c-81fc-e3fa843f49ae'
     __wsmap__ = 'managed'
     
     @property
@@ -19285,14 +20808,14 @@ class IFile(Interface):
         return FileStatus(ret)
 
     @property
-    def file_name(self):
-        """Get str value for 'fileName'
+    def filename(self):
+        """Get str value for 'filename'
         Full path of the actual file name of this file.
         <!-- r=bird: The 'actual' file name is too tough, we cannot guarentee
         that on unix guests.  Seeing how IGuestDirectory did things,
         I'm questioning the 'Full path' part too.   Not urgent to check. -->
         """
-        ret = self._get_attr("fileName")
+        ret = self._get_attr("filename")
         return ret
 
     @property
@@ -19333,9 +20856,6 @@ class IFile(Interface):
             Object information of this file. Also see
             :py:class:`IFsObjInfo` .
 
-        raises :class:`OleErrorNotimpl`
-            The method is not implemented yet.
-        
         """
         obj_info = self._call("queryInfo")
         obj_info = IFsObjInfo(obj_info)
@@ -19347,9 +20867,6 @@ class IFile(Interface):
         return size of type int
             Queried file size.
 
-        raises :class:`OleErrorNotimpl`
-            The method is not implemented yet.
-        
         """
         size = self._call("querySize")
         return size
@@ -19484,14 +21001,14 @@ class IFile(Interface):
             Pass 0 for an infinite timeout.
 
         return written of type int
-            How much bytes were written.
+            How many bytes were written.
 
         """
         if not isinstance(data, list):
             raise TypeError("data can only be an instance of type list")
         for a in data[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         if not isinstance(timeout_ms, baseinteger):
             raise TypeError("timeout_ms can only be an instance of type baseinteger")
@@ -19514,7 +21031,7 @@ class IFile(Interface):
             Pass 0 for an infinite timeout.
 
         return written of type int
-            How much bytes were written.
+            How many bytes were written.
 
         raises :class:`OleErrorNotimpl`
             The method is not implemented yet.
@@ -19526,7 +21043,7 @@ class IFile(Interface):
             raise TypeError("data can only be an instance of type list")
         for a in data[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         if not isinstance(timeout_ms, baseinteger):
             raise TypeError("timeout_ms can only be an instance of type baseinteger")
@@ -19555,15 +21072,41 @@ class IFsObjInfo(Interface):
     Abstract parent interface for VirtualBox file system object information.
     This can be information about a file or a directory, for example.
     """
-    __uuid__ = 'd344626e-4b0a-10bc-9c2b-68973052de16'
+    __uuid__ = '081fc833-c6fa-430e-6020-6a505d086387'
     __wsmap__ = 'managed'
     
     @property
-    def access_time(self):
-        """Get int value for 'accessTime'
-        Time of last access (st_atime).
+    def name(self):
+        """Get str value for 'name'
+        The object's name.
         """
-        ret = self._get_attr("accessTime")
+        ret = self._get_attr("name")
+        return ret
+
+    @property
+    def type_p(self):
+        """Get FsObjType value for 'type'
+        The object type. See :py:class:`FsObjType`  for more.
+        """
+        ret = self._get_attr("type")
+        return FsObjType(ret)
+
+    @property
+    def file_attributes(self):
+        """Get str value for 'fileAttributes'
+        File attributes. Not implemented yet.
+        """
+        ret = self._get_attr("fileAttributes")
+        return ret
+
+    @property
+    def object_size(self):
+        """Get int value for 'objectSize'
+        The logical size (st_size). For normal files this is the size of the file.
+        For symbolic links, this is the length of the path name contained in the
+        symbolic link. For other objects this fields needs to be specified.
+        """
+        ret = self._get_attr("objectSize")
         return ret
 
     @property
@@ -19572,6 +21115,14 @@ class IFsObjInfo(Interface):
         Disk allocation size (st_blocks * DEV_BSIZE).
         """
         ret = self._get_attr("allocatedSize")
+        return ret
+
+    @property
+    def access_time(self):
+        """Get int value for 'accessTime'
+        Time of last access (st_atime).
+        """
+        ret = self._get_attr("accessTime")
         return ret
 
     @property
@@ -19591,33 +21142,33 @@ class IFsObjInfo(Interface):
         return ret
 
     @property
-    def device_number(self):
-        """Get int value for 'deviceNumber'
-        The device number of a character or block device type object (st_rdev).
+    def modification_time(self):
+        """Get int value for 'modificationTime'
+        Time of last data modification (st_mtime).
         """
-        ret = self._get_attr("deviceNumber")
+        ret = self._get_attr("modificationTime")
         return ret
 
     @property
-    def file_attributes(self):
-        """Get str value for 'fileAttributes'
-        File attributes. Not implemented yet.
+    def uid(self):
+        """Get int value for 'UID'
+        The user owning the filesystem object (st_uid).  This is -1 if not available.
         """
-        ret = self._get_attr("fileAttributes")
+        ret = self._get_attr("UID")
         return ret
 
     @property
-    def generation_id(self):
-        """Get int value for 'generationId'
-        The current generation number (st_gen).
+    def user_name(self):
+        """Get str value for 'userName'
+        The user name.
         """
-        ret = self._get_attr("generationId")
+        ret = self._get_attr("userName")
         return ret
 
     @property
     def gid(self):
         """Get int value for 'GID'
-        The group the filesystem object is assigned (st_gid).
+        The group the filesystem object is assigned (st_gid).  This is -1 if not available.
         """
         ret = self._get_attr("GID")
         return ret
@@ -19631,33 +21182,10 @@ class IFsObjInfo(Interface):
         return ret
 
     @property
-    def hard_links(self):
-        """Get int value for 'hardLinks'
-        Number of hard links to this filesystem object (st_nlink).
-        """
-        ret = self._get_attr("hardLinks")
-        return ret
-
-    @property
-    def modification_time(self):
-        """Get int value for 'modificationTime'
-        Time of last data modification (st_mtime).
-        """
-        ret = self._get_attr("modificationTime")
-        return ret
-
-    @property
-    def name(self):
-        """Get str value for 'name'
-        The object's name.
-        """
-        ret = self._get_attr("name")
-        return ret
-
-    @property
     def node_id(self):
         """Get int value for 'nodeId'
         The unique identifier (within the filesystem) of this filesystem object (st_ino).
+        This is zero if not availalbe.
         """
         ret = self._get_attr("nodeId")
         return ret
@@ -19671,29 +21199,27 @@ class IFsObjInfo(Interface):
         return ret
 
     @property
-    def object_size(self):
-        """Get int value for 'objectSize'
-        The logical size (st_size). For normal files this is the size of the file.
-        For symbolic links, this is the length of the path name contained in the
-        symbolic link. For other objects this fields needs to be specified.
+    def hard_links(self):
+        """Get int value for 'hardLinks'
+        Number of hard links to this filesystem object (st_nlink).
         """
-        ret = self._get_attr("objectSize")
+        ret = self._get_attr("hardLinks")
         return ret
 
     @property
-    def type_p(self):
-        """Get FsObjType value for 'type'
-        The object type. See :py:class:`FsObjType`  for more.
+    def device_number(self):
+        """Get int value for 'deviceNumber'
+        The device number of a character or block device type object (st_rdev).
         """
-        ret = self._get_attr("type")
-        return FsObjType(ret)
+        ret = self._get_attr("deviceNumber")
+        return ret
 
     @property
-    def uid(self):
-        """Get int value for 'UID'
-        The user owning the filesystem object (st_uid).
+    def generation_id(self):
+        """Get int value for 'generationId'
+        The current generation number (st_gen).
         """
-        ret = self._get_attr("UID")
+        ret = self._get_attr("generationId")
         return ret
 
     @property
@@ -19702,14 +21228,6 @@ class IFsObjInfo(Interface):
         User flags (st_flags).
         """
         ret = self._get_attr("userFlags")
-        return ret
-
-    @property
-    def user_name(self):
-        """Get str value for 'userName'
-        The user name.
-        """
-        ret = self._get_attr("userName")
         return ret
 
 
@@ -19990,14 +21508,7 @@ class IGuest(Interface):
         user account in the guest are not allowed reasons of security.
         
         There can be a maximum of 32 sessions at once per VM.  An error will
-        be returned if this has been reached. <!-- This should actually read:
-        VBOX_E_IPRT_ERROR will be return if this limit has been reached.
-        However, keep in mind that VBOX_E_IPRT_ERROR can be returned for about
-        88 unrelated reasons, so you don't know what happend unless you parse
-        the error text. (bird) -->
-        <!-- @todo r=bird: Seriously, add an dedicated VBOX_E_MAX_GUEST_SESSIONS status
-        for this condition.  Do the same for all other maximums and things that could be
-        useful to the API client. -->
+        be returned if this has been reached.
         
         For more information please consult :py:class:`IGuestSession` 
 
@@ -20019,6 +21530,12 @@ class IGuest(Interface):
         return guest_session of type :class:`IGuestSession`
             The newly created session object.
 
+        raises :class:`VBoxErrorIprtError`
+            Error creating guest session.
+        
+        raises :class:`VBoxErrorMaximumReached`
+            The maximum of concurrent guest sessions has been reached.
+        
         """
         if not isinstance(user, basestring):
             raise TypeError("user can only be an instance of type basestring")
@@ -20094,13 +21611,13 @@ already installed Guest Additions are not ready yet.
             raise TypeError("arguments can only be an instance of type list")
         for a in arguments[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         if not isinstance(flags, list):
             raise TypeError("flags can only be an instance of type list")
         for a in flags[:10]:
             if not isinstance(a, AdditionsUpdateFlag):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type AdditionsUpdateFlag")
         progress = self._call("updateGuestAdditions",
                      in_p=[source, arguments, flags])
@@ -20145,7 +21662,7 @@ class IProgress(Interface):
     for the completion of the whole task via
     :py:func:`wait_for_completion` .
     """
-    __uuid__ = '77faf1c0-489d-b123-274c-5a95e77ab286'
+    __uuid__ = 'd7b98d2b-30e8-447e-99cb-e31becae6ae4'
     __wsmap__ = 'managed'
     
     @property
@@ -20300,31 +21817,11 @@ class IProgress(Interface):
             raise TypeError("value is not an instance of baseinteger")
         return self._set_attr("timeout", value)
 
-    def set_current_operation_progress(self, percent):
-        """Internal method, not to be called externally.
-
-        in percent of type int
-
-        """
-        if not isinstance(percent, baseinteger):
-            raise TypeError("percent can only be an instance of type baseinteger")
-        self._call("setCurrentOperationProgress",
-                     in_p=[percent])
-
-    def set_next_operation(self, next_operation_description, next_operations_weight):
-        """Internal method, not to be called externally.
-
-        in next_operation_description of type str
-
-        in next_operations_weight of type int
-
-        """
-        if not isinstance(next_operation_description, basestring):
-            raise TypeError("next_operation_description can only be an instance of type basestring")
-        if not isinstance(next_operations_weight, baseinteger):
-            raise TypeError("next_operations_weight can only be an instance of type baseinteger")
-        self._call("setNextOperation",
-                     in_p=[next_operation_description, next_operations_weight])
+    @property
+    def event_source(self):
+        """Get IEventSource value for 'eventSource'"""
+        ret = self._get_attr("eventSource")
+        return IEventSource(ret)
 
     def wait_for_completion(self, timeout):
         """Waits until the task is done (including all sub-operations)
@@ -20374,34 +21871,6 @@ class IProgress(Interface):
         self._call("waitForOperationCompletion",
                      in_p=[operation, timeout])
 
-    def wait_for_async_progress_completion(self, p_progress_async):
-        """Waits until the other task is completed (including all
-        sub-operations) and forward all changes from the other progress to
-        this progress. This means sub-operation number, description, percent
-        and so on.
-        
-        You have to take care on setting up at least the same count on
-        sub-operations in this progress object like there are in the other
-        progress object.
-        
-        If the other progress object supports cancel and this object gets any
-        cancel request (when here enabled as well), it will be forwarded to
-        the other progress object.
-        
-        If there is an error in the other progress, this error isn't
-        automatically transfered to this progress object. So you have to
-        check any operation error within the other progress object, after
-        this method returns.
-
-        in p_progress_async of type :class:`IProgress`
-            The progress object of the asynchrony process.
-
-        """
-        if not isinstance(p_progress_async, IProgress):
-            raise TypeError("p_progress_async can only be an instance of type IProgress")
-        self._call("waitForAsyncProgressCompletion",
-                     in_p=[p_progress_async])
-
     def cancel(self):
         """Cancels the task.
         
@@ -20412,6 +21881,96 @@ class IProgress(Interface):
         
         """
         self._call("cancel")
+
+
+class IInternalProgressControl(Interface):
+    """
+    Internal method, not to be called externally.
+    """
+    __uuid__ = '41a033b8-cc87-4f6e-a0e9-47bb7f2d4be5'
+    __wsmap__ = 'suppress'
+    
+    def set_current_operation_progress(self, percent):
+        """Internal method, not to be called externally.
+
+        in percent of type int
+
+        """
+        if not isinstance(percent, baseinteger):
+            raise TypeError("percent can only be an instance of type baseinteger")
+        self._call("setCurrentOperationProgress",
+                     in_p=[percent])
+
+    def wait_for_other_progress_completion(self, progress_other, timeout_ms):
+        """Internal method, not to be called externally.
+        
+        Waits until the other task is completed (including all sub-operations)
+        and forward all changes from the other progress to this progress. This
+        means sub-operation number, description, percent and so on.
+        
+        The caller is responsible for having at least the same count of
+        sub-operations in this progress object as there are in the other
+        progress object.
+        
+        If the other progress object supports cancel and this object gets any
+        cancel request (when here enabled as well), it will be forwarded to
+        the other progress object.
+        
+        Error information is automatically preserved (by transferring it to
+        the current thread's error information). If the caller wants to set it
+        as the completion state of this progress it needs to be done separately.
+
+        in progress_other of type :class:`IProgress`
+
+        in timeout_ms of type int
+            Timeout (in ms). Pass 0 for an infinite timeout.
+
+        raises :class:`VBoxErrorTimeout`
+            Waiting time has expired.
+        
+        """
+        if not isinstance(progress_other, IProgress):
+            raise TypeError("progress_other can only be an instance of type IProgress")
+        if not isinstance(timeout_ms, baseinteger):
+            raise TypeError("timeout_ms can only be an instance of type baseinteger")
+        self._call("waitForOtherProgressCompletion",
+                     in_p=[progress_other, timeout_ms])
+
+    def set_next_operation(self, next_operation_description, next_operations_weight):
+        """Internal method, not to be called externally.
+
+        in next_operation_description of type str
+
+        in next_operations_weight of type int
+
+        """
+        if not isinstance(next_operation_description, basestring):
+            raise TypeError("next_operation_description can only be an instance of type basestring")
+        if not isinstance(next_operations_weight, baseinteger):
+            raise TypeError("next_operations_weight can only be an instance of type baseinteger")
+        self._call("setNextOperation",
+                     in_p=[next_operation_description, next_operations_weight])
+
+    def notify_point_of_no_return(self):
+        """Internal method, not to be called externally.
+
+        """
+        self._call("notifyPointOfNoReturn")
+
+    def notify_complete(self, result_code, error_info):
+        """Internal method, not to be called externally.
+
+        in result_code of type int
+
+        in error_info of type :class:`IVirtualBoxErrorInfo`
+
+        """
+        if not isinstance(result_code, baseinteger):
+            raise TypeError("result_code can only be an instance of type baseinteger")
+        if not isinstance(error_info, IVirtualBoxErrorInfo):
+            raise TypeError("error_info can only be an instance of type IVirtualBoxErrorInfo")
+        self._call("notifyComplete",
+                     in_p=[result_code, error_info])
 
 
 class ISnapshot(Interface):
@@ -20496,7 +22055,7 @@ class ISnapshot(Interface):
     it then contains a so-called "zero execution state", representing a
     machine that is powered off.
     """
-    __uuid__ = '5732f030-4194-ec8b-c761-e1a99327e9f0'
+    __uuid__ = '6cc49055-dad4-4496-85cf-3f76bcb3b5fa'
     __wsmap__ = 'managed'
     
     @property
@@ -20542,7 +22101,7 @@ class ISnapshot(Interface):
     @property
     def time_stamp(self):
         """Get int value for 'timeStamp'
-        Time stamp of the snapshot, in milliseconds since 1970-01-01 UTC.
+        Timestamp of the snapshot, in milliseconds since 1970-01-01 UTC.
         """
         ret = self._get_attr("timeStamp")
         return ret
@@ -20593,14 +22152,13 @@ class ISnapshot(Interface):
         ret = self._get_attr("children")
         return [ISnapshot(a) for a in ret]
 
-    def get_children_count(self):
-        """Returns the number of direct children of this snapshot.
-
-        return children_count of type int
-
+    @property
+    def children_count(self):
+        """Get int value for 'childrenCount'
+        Returns the number of direct children of this snapshot.
         """
-        children_count = self._call("getChildrenCount")
-        return children_count
+        ret = self._get_attr("childrenCount")
+        return ret
 
 
 class IMediumAttachment(Interface):
@@ -20783,7 +22341,7 @@ class IMediumAttachment(Interface):
     without losing the contents of the differencing hard disk actually
     attached to the machine in place of it.
     """
-    __uuid__ = '3785b3f7-7b5f-4000-8842-ad0cc6ab30b7'
+    __uuid__ = 'cbc97ce0-dfae-4c70-a6aa-769e5186363b'
     __wsmap__ = 'struct'
     
     @property
@@ -21046,7 +22604,7 @@ class IMedium(Interface):
     that, you may call any of the methods that create a new hard disk storage
     unit and they will use the generated UUID and file name.
     """
-    __uuid__ = '4afe423b-43e0-e9d0-82e8-ceb307940dda'
+    __uuid__ = 'ad47ad09-787b-44ab-b343-a082a3f2dfb1'
     __wsmap__ = 'managed'
     
     @property
@@ -21117,7 +22675,7 @@ class IMedium(Interface):
 
     @property
     def location(self):
-        """Get str value for 'location'
+        """Get or set str value for 'location'
         Location of the storage unit holding medium data.
         
         The format of the location string is medium type specific. For medium
@@ -21126,6 +22684,12 @@ class IMedium(Interface):
         """
         ret = self._get_attr("location")
         return ret
+
+    @location.setter
+    def location(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("location", value)
 
     @property
     def name(self):
@@ -21774,20 +23338,20 @@ inaccessible).
             raise TypeError("names can only be an instance of type list")
         for a in names[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         if not isinstance(values, list):
             raise TypeError("values can only be an instance of type list")
         for a in values[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         self._call("setProperties",
                      in_p=[names, values])
 
     def create_base_storage(self, logical_size, variant):
         """Starts creating a hard disk storage unit (fixed/dynamic, according
-        to the variant flags) in in the background. The previous storage unit
+        to the variant flags) in the background. The previous storage unit
         created for this object, if any, must first be deleted using
         :py:func:`delete_storage` , otherwise the operation will fail.
         
@@ -21820,7 +23384,7 @@ inaccessible).
             raise TypeError("variant can only be an instance of type list")
         for a in variant[:10]:
             if not isinstance(a, MediumVariant):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type MediumVariant")
         progress = self._call("createBaseStorage",
                      in_p=[logical_size, variant])
@@ -21912,7 +23476,7 @@ operations are supported. See
             raise TypeError("variant can only be an instance of type list")
         for a in variant[:10]:
             if not isinstance(a, MediumVariant):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type MediumVariant")
         progress = self._call("createDiffStorage",
                      in_p=[target, variant])
@@ -22054,7 +23618,7 @@ operations are supported. See
             raise TypeError("variant can only be an instance of type list")
         for a in variant[:10]:
             if not isinstance(a, MediumVariant):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type MediumVariant")
         if not isinstance(parent, IMedium):
             raise TypeError("parent can only be an instance of type IMedium")
@@ -22111,14 +23675,14 @@ operations are supported. See
             raise TypeError("variant can only be an instance of type list")
         for a in variant[:10]:
             if not isinstance(a, MediumVariant):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type MediumVariant")
         progress = self._call("cloneToBase",
                      in_p=[target, variant])
         progress = IProgress(progress)
         return progress
 
-    def set_location(self, location):
+    def move_to(self, location):
         """Changes the location of this medium. Some medium types may support
         changing the storage unit location by simply changing the value of the
         associated property. In this case the operation is performed
@@ -22153,7 +23717,7 @@ operations are supported. See
         """
         if not isinstance(location, basestring):
             raise TypeError("location can only be an instance of type basestring")
-        progress = self._call("setLocation",
+        progress = self._call("moveTo",
                      in_p=[location])
         progress = IProgress(progress)
         return progress
@@ -22327,6 +23891,29 @@ or has children.
         self._call("checkEncryptionPassword",
                      in_p=[password])
 
+    def open_for_io(self, writable, password):
+        """Open the medium for I/O.
+
+        in writable of type bool
+            Set this to open the medium for both reading and writing.  When
+            not set the medium is opened readonly.
+
+        in password of type str
+            Password for accessing an encrypted medium. Must be empty if not encrypted.
+
+        return medium_io of type :class:`IMediumIO`
+            Medium I/O object.
+
+        """
+        if not isinstance(writable, bool):
+            raise TypeError("writable can only be an instance of type bool")
+        if not isinstance(password, basestring):
+            raise TypeError("password can only be an instance of type basestring")
+        medium_io = self._call("openForIO",
+                     in_p=[writable, password])
+        medium_io = IMediumIO(medium_io)
+        return medium_io
+
 
 class IMediumFormat(Interface):
     """
@@ -22346,7 +23933,7 @@ class IMediumFormat(Interface):
     
     :py:class:`IMedium` 
     """
-    __uuid__ = '10f337fb-422e-e57e-661b-0998ac309175'
+    __uuid__ = '11be93c7-a862-4dc9-8c89-bf4ba74a886a'
     __wsmap__ = 'managed'
     
     @property
@@ -22452,6 +24039,237 @@ class IMediumFormat(Interface):
         return (names, descriptions, types, flags, defaults)
 
 
+class IDataStream(Interface):
+    """
+    The IDataStream interface is used to retrieve a data stream. It is
+    returned by :py:func:`IMediumIO.convert_to_stream` .
+    """
+    __uuid__ = 'a338ed20-58d9-43ae-8b03-c1fd7088ef15'
+    __wsmap__ = 'managed'
+    
+    @property
+    def read_size(self):
+        """Get int value for 'readSize'
+        Recommended size of a read. Requesting a larger read may be
+        possible in certain situations, but it is not guaranteed.
+        """
+        ret = self._get_attr("readSize")
+        return ret
+
+    def read(self, size, timeout_ms):
+        """Read data from the stream.
+
+        in size of type int
+            How many bytes to try read.
+
+        in timeout_ms of type int
+            Timeout (in ms) for limiting the wait time for data to be available.
+            Pass 0 for an infinite timeout.
+
+        return data of type str
+            Array of data read. This may be shorter than the specified size.
+            Returning a zero-sized array indicates the end of the stream, if the
+            status is successful.
+
+        raises :class:`VBoxErrorTimeout`
+            Waiting time has expired.
+        
+        """
+        if not isinstance(size, baseinteger):
+            raise TypeError("size can only be an instance of type baseinteger")
+        if not isinstance(timeout_ms, baseinteger):
+            raise TypeError("timeout_ms can only be an instance of type baseinteger")
+        data = self._call("read",
+                     in_p=[size, timeout_ms])
+        return data
+
+
+class IMediumIO(Interface):
+    """
+    The IMediumIO interface is used to access and modify the content of a
+    medium.  It is returned by :py:func:`IMedium.open_for_io` .
+    """
+    __uuid__ = 'e4b301a9-5f86-4d65-ad1b-87ca284fb1c8'
+    __wsmap__ = 'managed'
+    
+    @property
+    def medium(self):
+        """Get IMedium value for 'medium'
+        The open medium.
+        """
+        ret = self._get_attr("medium")
+        return IMedium(ret)
+
+    @property
+    def writable(self):
+        """Get bool value for 'writable'
+        Whether the medium can be written to. (It can always be read from.)
+        """
+        ret = self._get_attr("writable")
+        return ret
+
+    @property
+    def explorer(self):
+        """Get IVFSExplorer value for 'explorer'
+        Returns the virtual file system explorer for the medium.
+        
+        This will attempt to recognize the format of the medium content and
+        present it as a virtual directory structure to the API user.
+        
+        A FAT floppy image will be represented will a single root subdir 'fat12'
+        that gives access to the file system content.
+        
+        A ISO-9660 image will have one subdir in the root for each format present
+        in the image, so the API user can select which data view to access (iso9660,
+        rockridge, jolie, udf, hfs, ...).
+        
+        A partitioned harddisk image will have subdirs for each partition.  The
+        the filesystem content of each partition can be accessed thru the subdirs
+        if we have a file system interpreter for it.  There will also be raw files
+        for each subdirectory, to provide a simple way of accessing raw partition
+        data from an API client.
+        
+        Please note that the explorer may show inconsistent information if
+        the API user modifies the raw image content after it was opened.
+        """
+        ret = self._get_attr("explorer")
+        return IVFSExplorer(ret)
+
+    def read(self, offset, size):
+        """Read data from the medium.
+
+        in offset of type int
+            The byte offset into the medium to start reading at.
+
+        in size of type int
+            How many bytes to try read.
+
+        return data of type str
+            Array of data read. This may be shorter than the specified size.
+
+        """
+        if not isinstance(offset, baseinteger):
+            raise TypeError("offset can only be an instance of type baseinteger")
+        if not isinstance(size, baseinteger):
+            raise TypeError("size can only be an instance of type baseinteger")
+        data = self._call("read",
+                     in_p=[offset, size])
+        return data
+
+    def write(self, offset, data):
+        """Write data to the medium.
+
+        in offset of type int
+            The byte offset into the medium to start reading at.
+
+        in data of type str
+            Array of data to write.
+
+        return written of type int
+            How many bytes were actually written.
+
+        """
+        if not isinstance(offset, baseinteger):
+            raise TypeError("offset can only be an instance of type baseinteger")
+        if not isinstance(data, list):
+            raise TypeError("data can only be an instance of type list")
+        for a in data[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(
+                        "array can only contain objects of type basestring")
+        written = self._call("write",
+                     in_p=[offset, data])
+        return written
+
+    def format_fat(self, quick):
+        """Formats the medium as FAT.  Generally only useful for floppy images as
+        no partition table will be created.
+
+        in quick of type bool
+            Quick format it when set.
+
+        """
+        if not isinstance(quick, bool):
+            raise TypeError("quick can only be an instance of type bool")
+        self._call("formatFAT",
+                     in_p=[quick])
+
+    def initialize_partition_table(self, format_p, whole_disk_in_one_entry):
+        """Writes an empty partition table to the disk.
+
+        in format_p of type :class:`PartitionTableType`
+            The partition table format.
+
+        in whole_disk_in_one_entry of type bool
+            When @c true a partition table entry for the whole disk is created.
+            Otherwise the partition table is empty.
+
+        """
+        if not isinstance(format_p, PartitionTableType):
+            raise TypeError("format_p can only be an instance of type PartitionTableType")
+        if not isinstance(whole_disk_in_one_entry, bool):
+            raise TypeError("whole_disk_in_one_entry can only be an instance of type bool")
+        self._call("initializePartitionTable",
+                     in_p=[format_p, whole_disk_in_one_entry])
+
+    def convert_to_stream(self, format_p, variant, buffer_size):
+        """Converts the currently opened image into a stream of the specified
+        image type/variant. It is sufficient to open the image in read-only
+        mode. Only few types and variants are supported due to the inherent
+        restrictions of the output style.
+
+        in format_p of type str
+            Identifier of the storage format to use for output.
+
+        in variant of type :class:`MediumVariant`
+            The partition table format.
+
+        in buffer_size of type int
+            Requested buffer size (in bytes) for efficient conversion. Sizes
+            which are too small or too large are silently truncated to suitable
+            values. Tens to hundreds of Megabytes are a good choice.
+
+        out stream of type :class:`IDataStream`
+            Data stream object for reading the target image.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        raises :class:`VBoxErrorNotSupported`
+            The requested format/variant combination cannot handle stream output.
+        
+        raises :class:`VBoxErrorFileError`
+            An error occurred during the conversion.
+        
+        """
+        if not isinstance(format_p, basestring):
+            raise TypeError("format_p can only be an instance of type basestring")
+        if not isinstance(variant, list):
+            raise TypeError("variant can only be an instance of type list")
+        for a in variant[:10]:
+            if not isinstance(a, MediumVariant):
+                raise TypeError(
+                        "array can only contain objects of type MediumVariant")
+        if not isinstance(buffer_size, baseinteger):
+            raise TypeError("buffer_size can only be an instance of type baseinteger")
+        (progress, stream) = self._call("convertToStream",
+                     in_p=[format_p, variant, buffer_size])
+        progress = IProgress(progress)
+        stream = IDataStream(stream)
+        return (progress, stream)
+
+    def close(self):
+        """Explictly close the medium I/O rather than waiting for garbage
+        collection and the destructor.
+        
+        This will wait for any pending reads and writes to complete and then
+        close down the I/O access without regard for open explorer instances or
+        anything like that.
+
+        """
+        self._call("close")
+
+
 class IToken(Interface):
     """
     The IToken interface represents a token passed to an API client, which
@@ -22493,7 +24311,7 @@ class IKeyboard(Interface):
     Use this interface to send keystrokes or the Ctrl-Alt-Del sequence
     to the virtual machine.
     """
-    __uuid__ = 'da91d4c9-4c02-fdb1-c5ac-d89e22e81302'
+    __uuid__ = 'a7c88b82-2330-44e3-b247-1421a018f9c1'
     __wsmap__ = 'managed'
     
     @property
@@ -22533,7 +24351,7 @@ class IKeyboard(Interface):
             raise TypeError("scancodes can only be an instance of type list")
         for a in scancodes[:10]:
             if not isinstance(a, baseinteger):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type baseinteger")
         codes_stored = self._call("putScancodes",
                      in_p=[scancodes])
@@ -22574,7 +24392,7 @@ class IMousePointerShape(Interface):
     """
     The guest mouse pointer description.
     """
-    __uuid__ = 'e04e5545-4a0f-f9d2-5bef-f9b25b6557ed'
+    __uuid__ = '1e775ea3-9070-4f9c-b0d5-53054496dbe0'
     __wsmap__ = 'managed'
     
     @property
@@ -22668,7 +24486,7 @@ class IMouse(Interface):
     Through this interface, the virtual machine's virtual mouse can be
     controlled.
     """
-    __uuid__ = 'ee35adb0-4748-3e12-e7fd-5aad957bba0f'
+    __uuid__ = '10cd08d0-e8b8-4838-b10c-45ba193734c1'
     __wsmap__ = 'managed'
     
     @property
@@ -22795,7 +24613,11 @@ class IMouse(Interface):
         """Positions the mouse pointer using absolute x and y coordinates.
         These coordinates are expressed in pixels and
         start from [1,1] which corresponds to the top left
-        corner of the virtual display.
+        corner of the virtual display.  The values [-1,-1] and
+        [0x7fffffff,0x7fffffff] have special meanings as
+        respectively "no data" (to signal that the host wishes to report
+        absolute pointer data in future) and "out of range" (the host
+        pointer is outside of all guest windows).
         
         
         
@@ -22894,7 +24716,7 @@ class IMouse(Interface):
             raise TypeError("contacts can only be an instance of type list")
         for a in contacts[:10]:
             if not isinstance(a, baseinteger):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type baseinteger")
         if not isinstance(scan_time, baseinteger):
             raise TypeError("scan_time can only be an instance of type baseinteger")
@@ -22972,7 +24794,7 @@ class IFramebuffer(Interface):
     """
     Frame buffer width, in pixels.
     """
-    __uuid__ = '8b82295f-415f-1aa1-17fd-9fbbac8edf44'
+    __uuid__ = '1e8d3f27-b45c-48ae-8b36-d35e83d207aa'
     __wsmap__ = 'managed'
     
     @property
@@ -23119,7 +24941,7 @@ class IFramebuffer(Interface):
             raise TypeError("image can only be an instance of type list")
         for a in image[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         self._call("notifyUpdateImage",
                      in_p=[x, y, width, height, image])
@@ -23255,7 +25077,7 @@ class IFramebuffer(Interface):
         self._call("setVisibleRegion",
                      in_p=[rectangles, count])
 
-    def process_vhwa_command(self, command):
+    def process_vhwa_command(self, command, enm_cmd, from_guest):
         """Posts a Video HW Acceleration Command to the frame buffer for processing.
         The commands used for 2D video acceleration (DDraw surface creation/destroying, blitting, scaling, color conversion, overlaying, etc.)
         are posted from quest to the host to be processed by the host hardware.
@@ -23267,11 +25089,21 @@ class IFramebuffer(Interface):
         in command of type str
             Pointer to VBOXVHWACMD containing the command to execute.
 
+        in enm_cmd of type int
+            The validated VBOXVHWACMD::enmCmd value from the command.
+
+        in from_guest of type bool
+            Set when the command origins from the guest, clear if host.
+
         """
         if not isinstance(command, basestring):
             raise TypeError("command can only be an instance of type basestring")
+        if not isinstance(enm_cmd, baseinteger):
+            raise TypeError("enm_cmd can only be an instance of type baseinteger")
+        if not isinstance(from_guest, bool):
+            raise TypeError("from_guest can only be an instance of type bool")
         self._call("processVHWACommand",
-                     in_p=[command])
+                     in_p=[command, enm_cmd, from_guest])
 
     def notify3_d_event(self, type_p, data):
         """Notifies framebuffer about 3D backend event.
@@ -23289,7 +25121,7 @@ class IFramebuffer(Interface):
             raise TypeError("data can only be an instance of type list")
         for a in data[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         self._call("notify3DEvent",
                      in_p=[type_p, data])
@@ -23372,7 +25204,7 @@ class IFramebufferOverlay(IFramebuffer):
 
 class IGuestScreenInfo(Interface):
     """"""
-    __uuid__ = '5f99cd4d-bbd2-49ba-b24d-4b5b42fb4c3a'
+    __uuid__ = '6b2f98f8-9641-4397-854a-040439d0114b'
     __wsmap__ = 'managed'
     
     @property
@@ -23429,6 +25261,12 @@ class IGuestScreenInfo(Interface):
         ret = self._get_attr("bitsPerPixel")
         return ret
 
+    @property
+    def extended_info(self):
+        """Get str value for 'extendedInfo'"""
+        ret = self._get_attr("extendedInfo")
+        return ret
+
 
 class IDisplay(Interface):
     """
@@ -23442,7 +25280,7 @@ class IDisplay(Interface):
     IFramebuffer interface. Examples of the output target are a window on
     the host computer or an RDP session's display on a remote computer.
     """
-    __uuid__ = '02326f63-bcb3-4481-96e0-30d1c2ee97f6'
+    __uuid__ = 'ab4164db-c13e-4dab-842d-61ee3f0c1e87'
     __wsmap__ = 'managed'
     
     @property
@@ -23854,10 +25692,84 @@ class IDisplay(Interface):
             raise TypeError("guest_screen_info can only be an instance of type list")
         for a in guest_screen_info[:10]:
             if not isinstance(a, IGuestScreenInfo):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type IGuestScreenInfo")
         self._call("setScreenLayout",
                      in_p=[screen_layout_mode, guest_screen_info])
+
+    def detach_screens(self, screen_ids):
+        """Unplugs monitors from the virtual graphics card.
+
+        in screen_ids of type int
+
+        """
+        if not isinstance(screen_ids, list):
+            raise TypeError("screen_ids can only be an instance of type list")
+        for a in screen_ids[:10]:
+            if not isinstance(a, baseinteger):
+                raise TypeError(
+                        "array can only contain objects of type baseinteger")
+        self._call("detachScreens",
+                     in_p=[screen_ids])
+
+    def create_guest_screen_info(self, display, status, primary, change_origin, origin_x, origin_y, width, height, bits_per_pixel):
+        """Make a IGuestScreenInfo object with the provided parameters.
+
+        in display of type int
+            The number of the guest display.
+
+        in status of type :class:`GuestMonitorStatus`
+            @c True, if this guest screen is enabled,
+            @c False otherwise.
+
+        in primary of type bool
+            Whether this guest monitor must be primary.
+
+        in change_origin of type bool
+            @c True, if the origin of the guest screen should be changed,
+            @c False otherwise.
+
+        in origin_x of type int
+            The X origin of the guest screen.
+
+        in origin_y of type int
+            The Y origin of the guest screen.
+
+        in width of type int
+            The width of the guest screen.
+
+        in height of type int
+            The height of the guest screen.
+
+        in bits_per_pixel of type int
+            The number of bits per pixel of the guest screen.
+
+        return guest_screen_info of type :class:`IGuestScreenInfo`
+            The created object.
+
+        """
+        if not isinstance(display, baseinteger):
+            raise TypeError("display can only be an instance of type baseinteger")
+        if not isinstance(status, GuestMonitorStatus):
+            raise TypeError("status can only be an instance of type GuestMonitorStatus")
+        if not isinstance(primary, bool):
+            raise TypeError("primary can only be an instance of type bool")
+        if not isinstance(change_origin, bool):
+            raise TypeError("change_origin can only be an instance of type bool")
+        if not isinstance(origin_x, baseinteger):
+            raise TypeError("origin_x can only be an instance of type baseinteger")
+        if not isinstance(origin_y, baseinteger):
+            raise TypeError("origin_y can only be an instance of type baseinteger")
+        if not isinstance(width, baseinteger):
+            raise TypeError("width can only be an instance of type baseinteger")
+        if not isinstance(height, baseinteger):
+            raise TypeError("height can only be an instance of type baseinteger")
+        if not isinstance(bits_per_pixel, baseinteger):
+            raise TypeError("bits_per_pixel can only be an instance of type baseinteger")
+        guest_screen_info = self._call("createGuestScreenInfo",
+                     in_p=[display, status, primary, change_origin, origin_x, origin_y, width, height, bits_per_pixel])
+        guest_screen_info = IGuestScreenInfo(guest_screen_info)
+        return guest_screen_info
 
 
 class INetworkAdapter(Interface):
@@ -23872,7 +25784,7 @@ class INetworkAdapter(Interface):
     represented by the :py:class:`NetworkAttachmentType`  enumeration;
     see the :py:func:`attachment_type`  attribute.
     """
-    __uuid__ = 'e925c2aa-4fe4-aaf6-91c5-e9b8ea4151ee'
+    __uuid__ = 'e9a0c183-7071-4894-93d6-dcbec010fa91'
     __wsmap__ = 'managed'
     
     @property
@@ -24233,7 +26145,7 @@ class ISerialPort(Interface):
     
     :py:func:`IMachine.get_serial_port` 
     """
-    __uuid__ = 'cb0a4a29-43a3-9040-0c25-34845db7b042'
+    __uuid__ = '5587d0f6-a227-4f23-8278-2f675eea1bb2'
     __wsmap__ = 'managed'
     
     @property
@@ -24342,6 +26254,20 @@ class ISerialPort(Interface):
             raise TypeError("value is not an instance of basestring")
         return self._set_attr("path", value)
 
+    @property
+    def uart_type(self):
+        """Get or set UartType value for 'uartType'
+        Selects the emulated UART implementation.
+        """
+        ret = self._get_attr("uartType")
+        return UartType(ret)
+
+    @uart_type.setter
+    def uart_type(self, value):
+        if not isinstance(value, UartType):
+            raise TypeError("value is not an instance of UartType")
+        return self._set_attr("uartType", value)
+
 
 class IParallelPort(Interface):
     """
@@ -24437,7 +26363,7 @@ class IMachineDebugger(Interface):
     
     See include/VBox/dbgfcorefmt.h for details on the file format.
     """
-    __uuid__ = '9c0f5269-47ae-ee34-c2fe-53a16e388925'
+    __uuid__ = 'e91bb944-f211-4bd5-b44c-8f1d0beafa13'
     __wsmap__ = 'managed'
     
     def dump_guest_core(self, filename, compression):
@@ -24596,7 +26522,7 @@ class IMachineDebugger(Interface):
             raise TypeError("bytes_p can only be an instance of type list")
         for a in bytes_p[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         self._call("writePhysicalMemory",
                      in_p=[address, size, bytes_p])
@@ -24659,7 +26585,7 @@ class IMachineDebugger(Interface):
             raise TypeError("bytes_p can only be an instance of type list")
         for a in bytes_p[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         self._call("writeVirtualMemory",
                      in_p=[cpu_id, address, size, bytes_p])
@@ -24815,13 +26741,13 @@ class IMachineDebugger(Interface):
             raise TypeError("names can only be an instance of type list")
         for a in names[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         if not isinstance(values, list):
             raise TypeError("values can only be an instance of type list")
         for a in values[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         self._call("setRegisters",
                      in_p=[cpu_id, names, values])
@@ -25039,10 +26965,20 @@ class IMachineDebugger(Interface):
         return ret
 
     @property
+    def execution_engine(self):
+        """Get VMExecutionEngine value for 'executionEngine'
+        Gets the main execution engine of the VM.
+        """
+        ret = self._get_attr("executionEngine")
+        return VMExecutionEngine(ret)
+
+    @property
     def hw_virt_ex_enabled(self):
         """Get bool value for 'HWVirtExEnabled'
         Flag indicating whether the VM is currently making use of CPU hardware
         virtualization extensions.
+        
+        Superseeded by mainExecutionMode.
         """
         ret = self._get_attr("HWVirtExEnabled")
         return ret
@@ -25299,7 +27235,7 @@ class IUSBController(Interface):
     """
     The USB Controller name.
     """
-    __uuid__ = '0c293c51-4810-e174-4f78-199376c63bbe'
+    __uuid__ = 'ee206a6e-7ff8-4a84-bd34-0c651e118bb5'
     __wsmap__ = 'managed'
     
     @property
@@ -25350,7 +27286,7 @@ class IUSBDevice(Interface):
     :py:func:`IConsole.usb_devices`  attribute which lists all USB devices
     attached to a running virtual machine's USB controller.
     """
-    __uuid__ = '5915d179-83c7-4f2b-a323-9a97f46f4e29'
+    __uuid__ = '202c8c43-2d2d-4866-acf7-56ffae36f1f9'
     __wsmap__ = 'managed'
     
     @property
@@ -25829,7 +27765,7 @@ class IAudioAdapter(Interface):
     The IAudioAdapter interface represents the virtual audio adapter of
     the virtual machine. Used in :py:func:`IMachine.audio_adapter` .
     """
-    __uuid__ = 'aeccc0a8-e0a0-427f-b946-c42063f54d81'
+    __uuid__ = '5155bfd3-7ba7-45a8-b26d-c91ae3754e37'
     __wsmap__ = 'managed'
     
     @property
@@ -25977,7 +27913,7 @@ class IVRDEServer(Interface):
     """
     Flag if VRDE server is enabled.
     """
-    __uuid__ = '6e758489-453a-6f98-9cb9-2da2cb8eabb5'
+    __uuid__ = '08e25756-08a2-41af-a05f-d7c661abaebe'
     __wsmap__ = 'managed'
     
     @property
@@ -26180,8 +28116,8 @@ class ISharedFolder(Interface):
     Global shared folders are not implemented in the current version of the
     product.
     """
-    __uuid__ = '15aabe95-e594-4e18-9222-b5e83a23f1da'
-    __wsmap__ = 'struct'
+    __uuid__ = '9622225a-5409-414b-bd16-77df7ba3451e'
+    __wsmap__ = 'managed'
     
     @property
     def name(self):
@@ -26204,6 +28140,7 @@ class ISharedFolder(Interface):
         """Get bool value for 'accessible'
         Whether the folder defined by the host path is currently
         accessible or not.
+        
         For example, the folder can be inaccessible if it is placed
         on the network share that is not available by the time
         this property is read.
@@ -26213,20 +28150,54 @@ class ISharedFolder(Interface):
 
     @property
     def writable(self):
-        """Get bool value for 'writable'
+        """Get or set bool value for 'writable'
         Whether the folder defined by the host path is writable or
         not.
         """
         ret = self._get_attr("writable")
         return ret
 
+    @writable.setter
+    def writable(self, value):
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
+        return self._set_attr("writable", value)
+
     @property
     def auto_mount(self):
-        """Get bool value for 'autoMount'
+        """Get or set bool value for 'autoMount'
         Whether the folder gets automatically mounted by the guest or not.
         """
         ret = self._get_attr("autoMount")
         return ret
+
+    @auto_mount.setter
+    def auto_mount(self, value):
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
+        return self._set_attr("autoMount", value)
+
+    @property
+    def auto_mount_point(self):
+        """Get or set str value for 'autoMountPoint'
+        Desired mount point in the guest for automatically mounting the folder
+        when :py:func:`ISharedFolder.auto_mount`  is set.  For Windows and
+        OS/2 guests this should be a drive letter, while other guests it should
+        be a absolute directory.  It is possible to combine the two, e.g.
+        "T:/mnt/testrsrc" will be attached to "T:" by windows and OS/2 while
+        the unixy guests will mount it at "/mnt/testrsrc".
+        
+        When empty the guest will choose a mount point.  The guest may do so
+        too should the specified mount point be in use or otherwise unusable.
+        """
+        ret = self._get_attr("autoMountPoint")
+        return ret
+
+    @auto_mount_point.setter
+    def auto_mount_point(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("autoMountPoint", value)
 
     @property
     def last_access_error(self):
@@ -26248,7 +28219,7 @@ class IInternalSessionControl(Interface):
     """
     PID of the process that has created this Session object.
     """
-    __uuid__ = '747e397e-69c8-45a0-88d9-f7f070960718'
+    __uuid__ = 'f4638054-f1f8-4590-941a-cdb66075c5bf'
     __wsmap__ = 'suppress'
     
     @property
@@ -26375,6 +28346,24 @@ class IInternalSessionControl(Interface):
         self._call("onNetworkAdapterChange",
                      in_p=[network_adapter, change_adapter])
 
+    def on_audio_adapter_change(self, audio_adapter):
+        """Triggerd when settings of the audio adapter of the
+        associated virtual machine have changed.
+
+        in audio_adapter of type :class:`IAudioAdapter`
+
+        raises :class:`VBoxErrorInvalidVmState`
+            Session state prevents operation.
+        
+        raises :class:`VBoxErrorInvalidObjectState`
+            Session type prevents operation.
+        
+        """
+        if not isinstance(audio_adapter, IAudioAdapter):
+            raise TypeError("audio_adapter can only be an instance of type IAudioAdapter")
+        self._call("onAudioAdapterChange",
+                     in_p=[audio_adapter])
+
     def on_serial_port_change(self, serial_port):
         """Triggered when settings of a serial port of the
         associated virtual machine have changed.
@@ -26478,6 +28467,28 @@ class IInternalSessionControl(Interface):
         self._call("onStorageDeviceChange",
                      in_p=[medium_attachment, remove, silent])
 
+    def on_vm_process_priority_change(self, priority):
+        """Triggered when process priority of the
+        associated virtual machine have changed.
+
+        in priority of type :class:`VMProcPriority`
+            The priority which set.
+
+        raises :class:`VBoxErrorInvalidVmState`
+            Session state prevents operation.
+        
+        raises :class:`VBoxErrorInvalidObjectState`
+            Session type prevents operation.
+        
+        raises :class:`VBoxErrorVmError`
+            Error from underlying level. See additional error info.
+        
+        """
+        if not isinstance(priority, VMProcPriority):
+            raise TypeError("priority can only be an instance of type VMProcPriority")
+        self._call("onVMProcessPriorityChange",
+                     in_p=[priority])
+
     def on_clipboard_mode_change(self, clipboard_mode):
         """Notification when the shared clipboard mode changes.
 
@@ -26550,11 +28561,17 @@ class IInternalSessionControl(Interface):
         self._call("onVRDEServerChange",
                      in_p=[restart])
 
-    def on_video_capture_change(self):
-        """Triggered when video capture settings have changed.
+    def on_recording_change(self, enable):
+        """Triggered when recording settings have changed.
+
+        in enable of type bool
+            TODO
 
         """
-        self._call("onVideoCaptureChange")
+        if not isinstance(enable, bool):
+            raise TypeError("enable can only be an instance of type bool")
+        self._call("onRecordingChange",
+                     in_p=[enable])
 
     def on_usb_controller_change(self):
         """Triggered when settings of the USB controller object of the
@@ -26726,7 +28743,7 @@ class IInternalSessionControl(Interface):
 
     def enumerate_guest_properties(self, patterns):
         """Return a list of the guest properties matching a set of patterns along
-        with their values, time stamps and flags.
+        with their values, timestamps and flags.
 
         in patterns of type str
             The patterns to match the properties against as a comma-separated
@@ -26741,7 +28758,7 @@ class IInternalSessionControl(Interface):
             corresponding entries in the @a key array.
 
         out timestamps of type int
-            The time stamps of the properties returned. The array entries match
+            The timestamps of the properties returned. The array entries match
             the corresponding entries in the @a key array.
 
         out flags of type str
@@ -26816,7 +28833,7 @@ class IInternalSessionControl(Interface):
             raise TypeError("attachments can only be an instance of type list")
         for a in attachments[:10]:
             if not isinstance(a, IMediumAttachment):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type IMediumAttachment")
         self._call("reconfigureMediumAttachments",
                      in_p=[attachments])
@@ -26885,7 +28902,7 @@ class IInternalSessionControl(Interface):
         self._call("resumeWithReason",
                      in_p=[reason])
 
-    def save_state_with_reason(self, reason, progress, state_file_path, pause_vm):
+    def save_state_with_reason(self, reason, progress, snapshot, state_file_path, pause_vm):
         """Internal method for triggering a VM save state with a specified reason
         code. The reason code can be interpreted by device/drivers and thus it
         might behave slightly differently than a normal VM save state.
@@ -26902,6 +28919,9 @@ class IInternalSessionControl(Interface):
 
         in progress of type :class:`IProgress`
             Progress object to track the operation completion.
+
+        in snapshot of type :class:`ISnapshot`
+            Snapshot object for which this save state operation is executed.
 
         in state_file_path of type str
             File path the VM process must save the execution state to.
@@ -26925,12 +28945,14 @@ class IInternalSessionControl(Interface):
             raise TypeError("reason can only be an instance of type Reason")
         if not isinstance(progress, IProgress):
             raise TypeError("progress can only be an instance of type IProgress")
+        if not isinstance(snapshot, ISnapshot):
+            raise TypeError("snapshot can only be an instance of type ISnapshot")
         if not isinstance(state_file_path, basestring):
             raise TypeError("state_file_path can only be an instance of type basestring")
         if not isinstance(pause_vm, bool):
             raise TypeError("pause_vm can only be an instance of type bool")
         left_paused = self._call("saveStateWithReason",
-                     in_p=[reason, progress, state_file_path, pause_vm])
+                     in_p=[reason, progress, snapshot, state_file_path, pause_vm])
         return left_paused
 
     def cancel_save_state_with_reason(self):
@@ -26996,7 +29018,7 @@ class ISession(Interface):
     is called. A managed object reference to that session object can be retrieved by
     calling :py:func:`IWebsessionManager.get_session_object` .
     """
-    __uuid__ = '7844aa05-b02e-4cdd-a04f-ade4a762e6b7'
+    __uuid__ = 'c0447716-ff5a-4795-b57a-ecd5fffa18a4'
     __wsmap__ = 'managed'
     
     @property
@@ -27099,7 +29121,7 @@ class IStorageController(Interface):
     Depending on these settings, the guest operating system might see
     significantly different virtual hardware.
     """
-    __uuid__ = '49b19d41-4a75-7bd5-c124-259acba3c41d'
+    __uuid__ = 'ddca7247-bf98-47fb-ab2f-b5177533f493'
     __wsmap__ = 'managed'
     
     @property
@@ -27451,13 +29473,13 @@ class IPerformanceCollector(Interface):
             raise TypeError("metric_names can only be an instance of type list")
         for a in metric_names[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         if not isinstance(objects, list):
             raise TypeError("objects can only be an instance of type list")
         for a in objects[:10]:
             if not isinstance(a, Interface):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type Interface")
         metrics = self._call("getMetrics",
                      in_p=[metric_names, objects])
@@ -27498,13 +29520,13 @@ class IPerformanceCollector(Interface):
             raise TypeError("metric_names can only be an instance of type list")
         for a in metric_names[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         if not isinstance(objects, list):
             raise TypeError("objects can only be an instance of type list")
         for a in objects[:10]:
             if not isinstance(a, Interface):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type Interface")
         if not isinstance(period, baseinteger):
             raise TypeError("period can only be an instance of type baseinteger")
@@ -27541,13 +29563,13 @@ class IPerformanceCollector(Interface):
             raise TypeError("metric_names can only be an instance of type list")
         for a in metric_names[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         if not isinstance(objects, list):
             raise TypeError("objects can only be an instance of type list")
         for a in objects[:10]:
             if not isinstance(a, Interface):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type Interface")
         affected_metrics = self._call("enableMetrics",
                      in_p=[metric_names, objects])
@@ -27580,13 +29602,13 @@ class IPerformanceCollector(Interface):
             raise TypeError("metric_names can only be an instance of type list")
         for a in metric_names[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         if not isinstance(objects, list):
             raise TypeError("objects can only be an instance of type list")
         for a in objects[:10]:
             if not isinstance(a, Interface):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type Interface")
         affected_metrics = self._call("disableMetrics",
                      in_p=[metric_names, objects])
@@ -27672,13 +29694,13 @@ class IPerformanceCollector(Interface):
             raise TypeError("metric_names can only be an instance of type list")
         for a in metric_names[:10]:
             if not isinstance(a, basestring):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type basestring")
         if not isinstance(objects, list):
             raise TypeError("objects can only be an instance of type list")
         for a in objects[:10]:
             if not isinstance(a, Interface):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type Interface")
         (return_data, return_metric_names, return_objects, return_units, return_scales, return_sequence_numbers, return_data_indices, return_data_lengths) = self._call("queryMetricsData",
                      in_p=[metric_names, objects])
@@ -27692,7 +29714,7 @@ class INATEngine(Interface):
     allows for changing NAT behavior such as port-forwarding rules. This interface is
     used in the :py:func:`INetworkAdapter.nat_engine`  attribute.
     """
-    __uuid__ = 'c1cdb6bf-44cb-e334-66fa-469a17fd09df'
+    __uuid__ = '8faef61e-6e15-4f71-a6a5-94e707fafbcc'
     __wsmap__ = 'managed'
     
     @property
@@ -27947,7 +29969,7 @@ class IExtPackPlugIn(Interface):
     Interface for keeping information about a plug-in that ships with an
     extension pack.
     """
-    __uuid__ = 'c8e667b2-4234-1f9c-6508-afa9cea4efa1'
+    __uuid__ = '78861431-d545-44aa-8013-181b8c288554'
     __wsmap__ = 'suppress'
     
     @property
@@ -27988,7 +30010,7 @@ class IExtPackBase(Interface):
     Interface for querying information about an extension pack as well as
     accessing COM objects within it.
     """
-    __uuid__ = '4bd17415-4438-8657-e78e-80a40713a23c'
+    __uuid__ = 'f25aca3d-0b79-4350-bdd9-a0376cd6e6e3'
     __wsmap__ = 'suppress'
     
     @property
@@ -28162,7 +30184,7 @@ class IExtPackFile(IExtPackBase):
     by :py:func:`IExtPackManager.open_ext_pack_file` . This provides the base
     extension pack information with the addition of the file name.
     """
-    __uuid__ = '4c7f4bf6-4671-2f75-0fbb-a99f6218cdfc'
+    __uuid__ = '41304f1b-7e72-4f34-b8f6-682785620c57'
     __wsmap__ = 'suppress'
     
     @property
@@ -28203,7 +30225,7 @@ class IExtPackManager(Interface):
     
     @todo Describe extension packs, how they are managed and how to create one.
     """
-    __uuid__ = 'edba9d10-45d8-b440-1712-46ac0c9bc4c5'
+    __uuid__ = '70401eef-c8e9-466b-9660-45cb3e9979e4'
     __wsmap__ = 'suppress'
     
     @property
@@ -28547,7 +30569,7 @@ class IEventSource(Interface):
             raise TypeError("subordinates can only be an instance of type list")
         for a in subordinates[:10]:
             if not isinstance(a, IEventSource):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type IEventSource")
         result = self._call("createAggregator",
                      in_p=[subordinates])
@@ -28588,7 +30610,7 @@ class IEventSource(Interface):
             raise TypeError("interesting can only be an instance of type list")
         for a in interesting[:10]:
             if not isinstance(a, VBoxEventType):
-                raise TypeError(\
+                raise TypeError(
                         "array can only contain objects of type VBoxEventType")
         if not isinstance(active, bool):
             raise TypeError("active can only be an instance of type bool")
@@ -28915,7 +30937,6 @@ class IMediumRegisteredEvent(IEvent):
     """
     The given medium was registered or unregistered
     within this VirtualBox installation.
-    This event is not yet implemented.
     """
     __uuid__ = '53fac49a-b7f1-4a5a-a4ef-a11dd9c2a458'
     __wsmap__ = 'managed'
@@ -28950,7 +30971,6 @@ class IMediumConfigChangedEvent(IEvent):
     """
     The configuration of the given medium was changed (location, properties,
     child/parent or anything else).
-    This event is not yet implemented.
     """
     __uuid__ = 'dd3e2654-a161-41f1-b583-4892f4a9d5d5'
     __wsmap__ = 'managed'
@@ -29330,6 +31350,24 @@ class INetworkAdapterChangedEvent(IEvent):
         return INetworkAdapter(ret)
 
 
+class IAudioAdapterChangedEvent(IEvent):
+    """
+    Notification when a property of the audio adapter changes.
+    Interested callees should use IAudioAdapter methods and attributes
+    to find out what has changed.
+    """
+    __uuid__ = 'D5ABC823-04D0-4DB6-8D66-DC2F033120E1'
+    __wsmap__ = 'managed'
+    id = VBoxEventType.on_audio_adapter_changed
+    @property
+    def audio_adapter(self):
+        """Get IAudioAdapter value for 'audioAdapter'
+        Audio adapter that is subject to change.
+        """
+        ret = self._get_attr("audioAdapter")
+        return IAudioAdapter(ret)
+
+
 class ISerialPortChangedEvent(IEvent):
     """
     Notification when a property of one of the
@@ -29389,7 +31427,6 @@ class IMediumChangedEvent(IEvent):
     Notification when a
     :py:func:`IMachine.medium_attachments` medium attachment
     changes.
-    This event is not yet implemented.
     """
     __uuid__ = '0FE2DA40-5637-472A-9736-72019EABD7DE'
     __wsmap__ = 'managed'
@@ -29963,13 +32000,13 @@ class IVRDEServerInfoChangedEvent(IEvent):
         return ret
 
 
-class IVideoCaptureChangedEvent(IEvent):
+class IRecordingChangedEvent(IEvent):
     """
-    Notification when video capture settings have changed.
+    Notification when recording settings have changed.
     """
-    __uuid__ = '6215d169-25dd-4719-ab34-c908701efb58'
+    __uuid__ = 'B5DDB370-08A7-4C8F-910D-47AABD67253A'
     __wsmap__ = 'managed'
-    id = VBoxEventType.on_video_capture_changed
+    id = VBoxEventType.on_recording_changed
     @property
     def midl_does_not_like_empty_interfaces(self):
         """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
@@ -30817,4 +32854,724 @@ class IHostNameResolutionConfigurationChangeEvent(IEvent):
         """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
         ret = self._get_attr("midlDoesNotLikeEmptyInterfaces")
         return ret
+
+
+class IProgressEvent(IEvent):
+    """
+    Base abstract interface for all progress events.
+    """
+    __uuid__ = 'daaf9016-1f04-4191-aa2f-1fac9646ae4c'
+    __wsmap__ = 'managed'
+
+    @property
+    def progress_id(self):
+        """Get str value for 'progressId'
+        GUID of the progress this event relates to.
+        """
+        ret = self._get_attr("progressId")
+        return ret
+
+
+class IProgressPercentageChangedEvent(IProgressEvent):
+    """
+    Progress state change event.
+    """
+    __uuid__ = 'f05d7e60-1bcf-4218-9807-04e036cc70f1'
+    __wsmap__ = 'managed'
+    id = VBoxEventType.on_progress_percentage_changed
+    @property
+    def percent(self):
+        """Get int value for 'percent'
+        New percent
+        """
+        ret = self._get_attr("percent")
+        return ret
+
+
+class IProgressTaskCompletedEvent(IProgressEvent):
+    """
+    Progress task completion event.
+    """
+    __uuid__ = 'a5bbdb7d-8ce7-469f-a4c2-6476f581ff72'
+    __wsmap__ = 'managed'
+    id = VBoxEventType.on_progress_task_completed
+    @property
+    def midl_does_not_like_empty_interfaces(self):
+        """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
+        ret = self._get_attr("midlDoesNotLikeEmptyInterfaces")
+        return ret
+
+
+class ICursorPositionChangedEvent(IEvent):
+    """
+    The guest reports cursor position data.
+    """
+    __uuid__ = '6f302674-c927-11e7-b788-33c248e71fc7'
+    __wsmap__ = 'managed'
+    id = VBoxEventType.on_cursor_position_changed
+    @property
+    def has_data(self):
+        """Get bool value for 'hasData'
+        Event contains valid data.  If not set, switch back to using the host cursor.
+        """
+        ret = self._get_attr("hasData")
+        return ret
+
+    @property
+    def x(self):
+        """Get int value for 'x'
+        Reported X position
+        """
+        ret = self._get_attr("x")
+        return ret
+
+    @property
+    def y(self):
+        """Get int value for 'y'
+        Reported Y position
+        """
+        ret = self._get_attr("y")
+        return ret
+
+
+class IFormValue(Interface):
+    """"""
+    __uuid__ = '67c50afe-3e78-11e9-b25e-7768f80c0e07'
+    __wsmap__ = 'managed'
+    
+    @property
+    def type_p(self):
+        """Get FormValueType value for 'type'"""
+        ret = self._get_attr("type")
+        return FormValueType(ret)
+
+    @property
+    def generation(self):
+        """Get int value for 'generation'"""
+        ret = self._get_attr("generation")
+        return ret
+
+    @property
+    def enabled(self):
+        """Get bool value for 'enabled'"""
+        ret = self._get_attr("enabled")
+        return ret
+
+    @property
+    def visible(self):
+        """Get bool value for 'visible'"""
+        ret = self._get_attr("visible")
+        return ret
+
+    @property
+    def label(self):
+        """Get str value for 'label'"""
+        ret = self._get_attr("label")
+        return ret
+
+    @property
+    def description(self):
+        """Get str value for 'description'"""
+        ret = self._get_attr("description")
+        return ret
+
+    @property
+    def help_p(self):
+        """Get str value for 'help'"""
+        ret = self._get_attr("help")
+        return ret
+
+
+class IBooleanFormValue(IFormValue):
+    """"""
+    __uuid__ = '4f4adcf6-3e87-11e9-8af2-576e84223953'
+    __wsmap__ = 'managed'
+    
+    def get_selected(self):
+        """
+
+        return selected of type bool
+
+        """
+        selected = self._call("getSelected")
+        return selected
+
+    def set_selected(self, selected):
+        """
+
+        in selected of type bool
+
+        return progress of type :class:`IProgress`
+
+        """
+        if not isinstance(selected, bool):
+            raise TypeError("selected can only be an instance of type bool")
+        progress = self._call("setSelected",
+                     in_p=[selected])
+        progress = IProgress(progress)
+        return progress
+
+
+class IStringFormValue(IFormValue):
+    """"""
+    __uuid__ = '4378aa22-3e8a-11e9-8ce9-03940555aae1'
+    __wsmap__ = 'managed'
+    
+    def get_string(self):
+        """
+
+        return text of type str
+
+        """
+        text = self._call("getString")
+        return text
+
+    def set_string(self, text):
+        """
+
+        in text of type str
+
+        return progress of type :class:`IProgress`
+
+        """
+        if not isinstance(text, basestring):
+            raise TypeError("text can only be an instance of type basestring")
+        progress = self._call("setString",
+                     in_p=[text])
+        progress = IProgress(progress)
+        return progress
+
+
+class IChoiceFormValue(IFormValue):
+    """"""
+    __uuid__ = '7191cf38-3e8a-11e9-825c-ab7b2cabce23'
+    __wsmap__ = 'managed'
+    
+    @property
+    def values(self):
+        """Get str value for 'values'"""
+        ret = self._get_attr("values")
+        return ret
+
+    def get_selected_index(self):
+        """
+
+        return index of type int
+
+        """
+        index = self._call("getSelectedIndex")
+        return index
+
+    def set_selected_index(self, index):
+        """
+
+        in index of type int
+
+        return progress of type :class:`IProgress`
+
+        """
+        if not isinstance(index, baseinteger):
+            raise TypeError("index can only be an instance of type baseinteger")
+        progress = self._call("setSelectedIndex",
+                     in_p=[index])
+        progress = IProgress(progress)
+        return progress
+
+
+class IForm(Interface):
+    """"""
+    __uuid__ = 'd05c91e2-3e8a-11e9-8082-db8ae479ef87'
+    __wsmap__ = 'managed'
+    
+    @property
+    def values(self):
+        """Get IFormValue value for 'values'"""
+        ret = self._get_attr("values")
+        return [IFormValue(a) for a in ret]
+
+
+class IVirtualSystemDescriptionForm(IForm):
+    """"""
+    __uuid__ = '14c2db8a-3ee4-11e9-b872-cb9447aad965'
+    __wsmap__ = 'managed'
+    
+    def get_virtual_system_description(self):
+        """
+
+        return description of type :class:`IVirtualSystemDescription`
+
+        """
+        description = self._call("getVirtualSystemDescription")
+        description = IVirtualSystemDescription(description)
+        return description
+
+
+class ICloudClient(Interface):
+    """
+    Returns parameters to be shown to the user for the cloud export and launch operation.
+    """
+    __uuid__ = '07c04464-981c-4418-8fcf-5ad12aed7c38'
+    __wsmap__ = 'managed'
+    
+    def get_export_launch_parameters(self):
+        """Returns parameters to be shown to the user for the cloud export and launch operation.
+
+        return json_string of type str
+            the parameters with values in json format.
+
+        """
+        json_string = self._call("getExportLaunchParameters")
+        return json_string
+
+    def export_launch_vm(self, description, progress, virtual_box):
+        """Exports and optionally launch a VM described in description parameter
+
+        in description of type :class:`IVirtualSystemDescription`
+            VirtualSystemDescription object which is describing a machine and all required parameters.
+
+        in progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        in virtual_box of type :class:`IVirtualBox`
+            Reference to the server-side API root object.
+
+        """
+        if not isinstance(description, IVirtualSystemDescription):
+            raise TypeError("description can only be an instance of type IVirtualSystemDescription")
+        if not isinstance(progress, IProgress):
+            raise TypeError("progress can only be an instance of type IProgress")
+        if not isinstance(virtual_box, IVirtualBox):
+            raise TypeError("virtual_box can only be an instance of type IVirtualBox")
+        self._call("exportLaunchVM",
+                     in_p=[description, progress, virtual_box])
+
+    def get_export_launch_description_form(self):
+        """Returns a form for editing the virtual system description.
+        Since the data for the form are fetched from the cloud a
+        progress object is also returned to indicate if/when the form
+        is ready to be used.
+
+        out form of type :class:`IVirtualSystemDescriptionForm`
+            An IForm instance for editing the virtual system description.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        (progress, form) = self._call("getExportLaunchDescriptionForm")
+        progress = IProgress(progress)
+        form = IVirtualSystemDescriptionForm(form)
+        return (progress, form)
+
+    def list_instances(self, machine_state):
+        """Returns the list of the instances in the Cloud.
+
+        in machine_state of type :class:`CloudMachineState`
+
+        out return_names of type str
+            VM names.
+
+        return return_ids of type str
+            VM ids.
+
+        """
+        if not isinstance(machine_state, CloudMachineState):
+            raise TypeError("machine_state can only be an instance of type CloudMachineState")
+        (return_ids, return_names) = self._call("listInstances",
+                     in_p=[machine_state])
+        return (return_ids, return_names)
+
+    def list_images(self, image_state):
+        """Returns the list of the images in the Cloud.
+
+        in image_state of type :class:`CloudImageState`
+
+        out return_names of type str
+            Images names.
+
+        return return_ids of type str
+            Images ids.
+
+        """
+        if not isinstance(image_state, CloudImageState):
+            raise TypeError("image_state can only be an instance of type CloudImageState")
+        (return_ids, return_names) = self._call("listImages",
+                     in_p=[image_state])
+        return (return_ids, return_names)
+
+
+class ICloudProfile(Interface):
+    """
+    Returns the profile name.
+    """
+    __uuid__ = 'b1d978b8-f7b7-4b05-900e-2a9253c00f51'
+    __wsmap__ = 'managed'
+    
+    @property
+    def name(self):
+        """Get or set str value for 'name'
+        Returns the profile name.
+        """
+        ret = self._get_attr("name")
+        return ret
+
+    @name.setter
+    def name(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("name", value)
+
+    @property
+    def provider_id(self):
+        """Get str value for 'providerId'
+        Returns provider identifier tied with this profile.
+        """
+        ret = self._get_attr("providerId")
+        return ret
+
+    def get_property(self, name):
+        """Returns the value of the cloud profile property with the given name.
+        
+        If the requested data @a name does not exist, this function will
+        succeed and return an empty string in the @a value argument.
+
+        in name of type str
+            Name of the property to get.
+
+        return value of type str
+            Current property value.
+
+        raises :class:`OleErrorInvalidarg`
+            @a name is @c null or empty.
+        
+        """
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        value = self._call("getProperty",
+                     in_p=[name])
+        return value
+
+    def set_property(self, name, value):
+        """Sets the value of the cloud profile property with the given name.
+        
+        Setting the property value to @c null or an empty string is equivalent
+        to deleting the existing value.
+
+        in name of type str
+            Name of the property to set.
+
+        in value of type str
+            Property value to set.
+
+        raises :class:`OleErrorInvalidarg`
+            @a name is @c null or empty.
+        
+        """
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(value, basestring):
+            raise TypeError("value can only be an instance of type basestring")
+        self._call("setProperty",
+                     in_p=[name, value])
+
+    def get_properties(self, names):
+        """Returns values for a group of properties in one call.
+        
+        The names of the properties to get are specified using the @a names
+        argument which is a list of comma-separated property names or
+        an empty string if all properties are to be returned.
+        Currently the value of this argument is ignored and the method
+        always returns all existing properties.
+        
+        The method returns two arrays, the array of property names corresponding
+        to the @a names argument and the current values of these properties.
+        Both arrays have the same number of elements with each element at the
+        given index in the first array corresponds to an element at the same
+        index in the second array.
+
+        in names of type str
+            Names of properties to get.
+
+        out return_names of type str
+            Names of returned properties.
+
+        return return_values of type str
+            Values of returned properties.
+
+        """
+        if not isinstance(names, basestring):
+            raise TypeError("names can only be an instance of type basestring")
+        (return_values, return_names) = self._call("getProperties",
+                     in_p=[names])
+        return (return_values, return_names)
+
+    def set_properties(self, names, values):
+        """Updates profile, changing/adding/removing properties.
+        
+        The names of the properties to set are passed in the @a names
+        array along with the new values for them in the @a values array. Both
+        arrays have the same number of elements with each element at the given
+        index in the first array corresponding to an element at the same index
+        in the second array.
+        
+        If there is at least one property name in @a names that is not valid,
+        the method will fail before changing the values of any other properties
+        from the @a names array.
+        
+        Using this method over :py:func:`set_property`  is preferred if you
+        need to set several properties at once since it is more efficient.
+        
+        Setting the property value to @c null or an empty string is equivalent
+        to deleting the existing value.
+
+        in names of type str
+            Names of properties.
+
+        in values of type str
+            Values of set properties.
+
+        """
+        if not isinstance(names, list):
+            raise TypeError("names can only be an instance of type list")
+        for a in names[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(
+                        "array can only contain objects of type basestring")
+        if not isinstance(values, list):
+            raise TypeError("values can only be an instance of type list")
+        for a in values[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(
+                        "array can only contain objects of type basestring")
+        self._call("setProperties",
+                     in_p=[names, values])
+
+    def remove(self):
+        """Deletes a profile.
+
+        """
+        self._call("remove")
+
+    def create_cloud_client(self):
+        """Creates a cloud client for this cloud profile.
+
+        return cloud_client of type :class:`ICloudClient`
+            The cloud client object reference.
+
+        """
+        cloud_client = self._call("createCloudClient")
+        cloud_client = ICloudClient(cloud_client)
+        return cloud_client
+
+
+class ICloudProvider(Interface):
+    """
+    Returns the long name of the provider. Includes vendor and precise
+    product name spelled out in the preferred way.
+    """
+    __uuid__ = '22363cfc-07da-41ec-ac4a-3dd99db35594'
+    __wsmap__ = 'managed'
+    
+    @property
+    def name(self):
+        """Get str value for 'name'
+        Returns the long name of the provider. Includes vendor and precise
+        product name spelled out in the preferred way.
+        """
+        ret = self._get_attr("name")
+        return ret
+
+    @property
+    def short_name(self):
+        """Get str value for 'shortName'
+        Returns the short name of the provider. Less than 8 ASCII chars,
+        using acronyms. No vendor name, but can contain a hint if it's a 3rd
+        party implementation for this cloud provider, to keep it unique.
+        """
+        ret = self._get_attr("shortName")
+        return ret
+
+    @property
+    def id_p(self):
+        """Get str value for 'id'
+        Returns the UUID of this cloud provider.
+        """
+        ret = self._get_attr("id")
+        return ret
+
+    @property
+    def profiles(self):
+        """Get ICloudProfile value for 'profiles'
+        Returns all profiles for this cloud provider.
+        """
+        ret = self._get_attr("profiles")
+        return [ICloudProfile(a) for a in ret]
+
+    @property
+    def profile_names(self):
+        """Get str value for 'profileNames'
+        Returns all profile names for this cloud provider.
+        """
+        ret = self._get_attr("profileNames")
+        return ret
+
+    @property
+    def supported_property_names(self):
+        """Get str value for 'supportedPropertyNames'
+        Returns the supported property names.
+        """
+        ret = self._get_attr("supportedPropertyNames")
+        return ret
+
+    def get_property_description(self, name):
+        """Property name.
+
+        in name of type str
+            Property name.
+
+        return description of type str
+            Property description.
+
+        """
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        description = self._call("getPropertyDescription",
+                     in_p=[name])
+        return description
+
+    def create_profile(self, profile_name, names, values):
+        """Creates a new profile.
+
+        in profile_name of type str
+            The profile name. Must not exist, otherwise an error is raised.
+
+        in names of type str
+            Names of properties.
+
+        in values of type str
+            Values of set properties.
+
+        """
+        if not isinstance(profile_name, basestring):
+            raise TypeError("profile_name can only be an instance of type basestring")
+        if not isinstance(names, list):
+            raise TypeError("names can only be an instance of type list")
+        for a in names[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(
+                        "array can only contain objects of type basestring")
+        if not isinstance(values, list):
+            raise TypeError("values can only be an instance of type list")
+        for a in values[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(
+                        "array can only contain objects of type basestring")
+        self._call("createProfile",
+                     in_p=[profile_name, names, values])
+
+    def import_profiles(self):
+        """Import the profiles from the original source
+
+        """
+        self._call("importProfiles")
+
+    def restore_profiles(self):
+        """Restores the old local profiles if they exist
+
+        """
+        self._call("restoreProfiles")
+
+    def save_profiles(self):
+        """Saves the local profiles
+
+        """
+        self._call("saveProfiles")
+
+    def get_profile_by_name(self, profile_name):
+        """
+
+        in profile_name of type str
+
+        return profile of type :class:`ICloudProfile`
+
+        """
+        if not isinstance(profile_name, basestring):
+            raise TypeError("profile_name can only be an instance of type basestring")
+        profile = self._call("getProfileByName",
+                     in_p=[profile_name])
+        profile = ICloudProfile(profile)
+        return profile
+
+    def prepare_uninstall(self):
+        """The caller requests the cloud provider to cease operation. Should
+        return an error if this is currently not possible (due to ongoing
+        cloud activity, possibly by a different API client). However, this
+        must not wait for the completion for a larger amount of time (ideally
+        stays below a second of execution time). If this succeeds it should
+        leave the cloud provider in a state which does not allow starting new
+        operations.
+
+        """
+        self._call("prepareUninstall")
+
+
+class ICloudProviderManager(Interface):
+    """
+    Returns all supported cloud providers.
+    """
+    __uuid__ = '9128800f-762e-4120-871c-a2014234a607'
+    __wsmap__ = 'managed'
+    
+    @property
+    def providers(self):
+        """Get ICloudProvider value for 'providers'
+        Returns all supported cloud providers.
+        """
+        ret = self._get_attr("providers")
+        return [ICloudProvider(a) for a in ret]
+
+    def get_provider_by_id(self, provider_id):
+        """
+
+        in provider_id of type str
+
+        return provider of type :class:`ICloudProvider`
+
+        """
+        if not isinstance(provider_id, basestring):
+            raise TypeError("provider_id can only be an instance of type basestring")
+        provider = self._call("getProviderById",
+                     in_p=[provider_id])
+        provider = ICloudProvider(provider)
+        return provider
+
+    def get_provider_by_short_name(self, provider_name):
+        """
+
+        in provider_name of type str
+
+        return provider of type :class:`ICloudProvider`
+
+        """
+        if not isinstance(provider_name, basestring):
+            raise TypeError("provider_name can only be an instance of type basestring")
+        provider = self._call("getProviderByShortName",
+                     in_p=[provider_name])
+        provider = ICloudProvider(provider)
+        return provider
+
+    def get_provider_by_name(self, provider_name):
+        """
+
+        in provider_name of type str
+
+        return provider of type :class:`ICloudProvider`
+
+        """
+        if not isinstance(provider_name, basestring):
+            raise TypeError("provider_name can only be an instance of type basestring")
+        provider = self._call("getProviderByName",
+                     in_p=[provider_name])
+        provider = ICloudProvider(provider)
+        return provider
 
