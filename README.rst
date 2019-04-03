@@ -104,7 +104,7 @@ Registering Event Handlers
  .. code-block::
 
     >>> def test(event):
-    >>>    print("scancode received: %r" % a.scancodes)
+    >>>    print("scancode received: %r" % event.scancodes)
     >>>
     >>> session.console.keyboard.set_on_guest_keyboard(test)
     140448201250560
