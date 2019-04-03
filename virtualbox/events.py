@@ -54,7 +54,7 @@ def _event_monitor(callback, event_source, listener, event_interface, quit):
             if event:
                 try:
                     callback(event_interface(event))
-                except:
+                except Exception:
                     print("Unhanded exception in callback: \n%s" %
                           traceback.format_exc(), file=sys.stderr)
                 event_source.event_processed(listener, event)

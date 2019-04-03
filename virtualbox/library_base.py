@@ -8,7 +8,7 @@ import time
 # Py2 and Py3 compatibility
 try:
     import __builtin__ as builtin
-except:
+except ImportError:
     import builtins as builtin
 
 

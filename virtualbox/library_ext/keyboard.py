@@ -234,7 +234,7 @@ class IKeyboard(library.IKeyboard):
 
            press_delay: Number of milliseconds to delay between each press
 
-        Note: Both press_keys and hold_keys are interable objects that yield
+        Note: Both press_keys and hold_keys are iterable objects that yield
               self.SCANCODE.keys() keys.
         """
         if press_keys is None:

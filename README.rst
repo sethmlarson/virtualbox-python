@@ -1,135 +1,76 @@
-pyvbox
-******
+virtualbox-python
+*****************
 
-.. image:: https://img.shields.io/travis/SethMichaelLarson/virtualbox-python/master.svg
-   :target: https://travis-ci.org/SethMichaelLarson/virtualbox-python
+.. image:: https://img.shields.io/travis/sethmlarson/virtualbox-python/master.svg
+   :target: https://travis-ci.org/sethmlarson/virtualbox-python
 
-* A complete implementation of the VirtualBox Main API
-* Create a VirtualBox instance and seamlessly explore the potential of
-  VirtualBox's amazing Main API 
-* Pythonic functions and names.
-* Introspection, documentation strings, getters and setters, and more...
-
-Project documentation at `pythonhosted.org`_.
-
-Project hosting provided by `github.com`_.
-
-[mjdorma+pyvbox@gmail.com]
-
+Complete implementation of VirtualBox's COM API a Pythoninc interface.
 
 Installation
 ============
 
-To get the latest released version of pyvbox from `PyPI`_ run the following::
-Simply run the following::
+Go to VirtualBox's downloads page (https://www.virtualbox.org/wiki/Downloads) and download the VirtualBox SDK.
+Within the extracted ZIP file there is a directory called "installer". Open a console within the installer directory
+and run ``python vboxapisetup.py install`` using your system Python. This installs ``vboxapi`` which is the interface
+that talks to VirtualBox via COM.
 
-    $ pip install pyvbox
+Next is to install this library:
+
+To get the latest released version of virtualbox from PyPI run the following::
+
+    $ python -m pip install virtualbox
     
 or to install the latest development version from GitHub::
 
-    $ git clone https://github.com/mjdorma/pyvbox
-    $ cd pyvbox
+    $ git clone https://github.com/sethmlarson/virtualbox-python
+    $ cd virtualbox-python
     $ python setup.py install
-    
 
 Getting Started 
 ===============
 
-Exploring the library::
-    
-    > ipython
-    In [1]: import virtualbox
+Listing Available Machines
+--------------------------
 
-    In [2]: virtualbox?
+ .. code-block::
 
-    In [3]: virtualbox.VirtualBox?
+    >>> import virtualbox
+    >>> vbox = virtualbox.VirtualBox()
+    >>> [m.name for m in vbox.machines]
+    ["windows"]
 
-    In [4]: virtualbox.library.IMachine?
+Launching a Machine
+-------------------
 
-    In [5]: virtualbox.library.MachineState?
+  .. code-block::
 
-    In [6]: virtualbox.library.MachineState.teleported?
+    >>> session = virtualbox.Session()
+    >>> machine = vbox.find_machine("windows")
+    >>> progress = machine.launch_vm_process(session, "gui", "")
+    >>> progress.wait_for_completion()
 
+Querying the Machine
+--------------------
 
-Listing machines::
+ .. code-block::
 
-    > ipython
-    In [1]: import virtualbox
+    >>> session.state
+    SessionState(2)  # locked
+    >>> machine.state
+    MachineState(5)  # running
+    >>> height, width, _, _, _, _ = session.console.display.get_screen_resolution()
 
-    In [2]: vbox = virtualbox.VirtualBox()
+Interacting with the Machine
+----------------------------
 
-    In [3]: print("VM(s):\n + %s" % "\n + ".join([vm.name for vm in vbox.machines]))
-    VM(s):
-     + filestore
-     + xpsp3
-     + win7
-     + win8
-     + test_vm
+ .. code-block::
 
-
-Launch machine, take a screen shot, stop machine::
-
-    > ipython
-    In [1]: import virtualbox
-
-    In [2]: vbox = virtualbox.VirtualBox()
-
-    In [3]: session = virtualbox.Session()
-
-    In [4]: vm = vbox.find_machine('test_vm')
-
-    In [5]: progress = vm.launch_vm_process(session, 'gui', '')
-
-    In [6]: h, w, _, _, _, _ = session.console.display.get_screen_resolution(0)
-
-    In [7]: png = session.console.display.take_screen_shot_to_array(0, h, w, virtualbox.library.BitmapFormat.png)
-
-    In [8]: with open('screenshot.png', 'wb') as f:
-      ....:     f.write(png)
-
-    In [9]: print(session.state)
-    Locked
-
-    In [10]: session.state
-    Out[10]: SessionState(2)
-
-    In [11]: session.state >= 2
-    Out[11]: True
-    
-    In [12]: session.console.power_down()
-
-
-Write text into a window on a running machine::
-
-    > ipython
-    In [1]: import virtualbox
-
-    In [2]: vbox = virtualbox.VirtualBox()
-
-    In [3]: vm = vbox.find_machine('test_vm')
-
-    In [4]: session = vm.create_session() 
-
-    In [5]: session.console.keyboard.put_keys("Q: 'You want control?'\nA: 'Yes, but just a tad...'")
-
-
-Execute a command in the guest::
-
-    > ipython
-    In [1]: import virtualbox
-
-    In [2]: vbox = virtualbox.VirtualBox()
-
-    In [3]: vm = vbox.find_machine('test_vm')
-
-    In [4]: session = vm.create_session() 
-
-    In [5]: gs = session.console.guest.create_session('Michael Dorman', 'password')
-
-    In [6]: process, stdout, stderr = gs.execute('C:\\Windows\\System32\\cmd.exe', ['/C', 'tasklist'])
-
-    In [7]: print stdout
-
+    >>> session.console.keyboard.put_keys("Hello, world!")
+    >>> guest_session = session.console.guest.create_session("Seth Larson", "password")
+    >>> guest_session.directory_exists("C:\\Windows")
+    True
+    >>> proc, stdout, stderr = guest_session.execute("C:\\\\Windows\\System32\\cmd.exe", ["/C", "tasklist"])
+    >>> print(stdout)
     Image Name                   PID Session Name     Session#    Mem Usage
     ========================= ====== ================ ======== ============
     System Idle Process            0 Console                 0         28 K
@@ -157,76 +98,30 @@ Execute a command in the guest::
     cmd.exe                     1284 Console                 0      2,576 K
     tasklist.exe                 124 Console                 0      4,584 K
 
+Registering Event Handlers
+--------------------------
 
-Using context to manage opened sessions and locks::
+ .. code-block::
 
-    > ipython
-    In [1]: import virtualbox
+    >>> def test(event):
+    >>>    print("scancode received: %r" % a.scancodes)
+    >>>
+    >>> session.console.keyboard.set_on_guest_keyboard(test)
+    140448201250560
+    scancode received: [35]
+    scancode received: [23]
+    scancode received: [163]
+    scancode received: [151]
+    scancode received: [57]
 
-    In [2]: vbox = virtualbox.VirtualBox()
+Powering-Down a Machine
+-----------------------
 
-    In [3]: vm = vbox.find_machine('test_vm')
+  .. code-block::
 
-    In [4]: with vm.create_session() as session:
-       ...:     with session.console.guest.create_session('Michael Dorman', 'password') as gs:
-       ...:         print(gs.directory_exists("C:\\Windows"))
-       ...:         
-    True
+    >>> session.console.power_down()
 
+License
+=======
 
-On an already running VM, register to receive on guest keyboard events::
-
-    >ipython
-    In [1]: from virtualbox import library
-
-    In [2]: import virtualbox
-
-    In [3]: vbox = virtualbox.VirtualBox()
-
-    In [4]: vm = vbox.find_machine('test_vm')
-
-    In [5]: s = vm.create_session()
-
-    In [6]: def test(a):
-       ...:     print(a.scancodes)
-       ...:     
-
-    In [7]: s.console.keyboard.set_on_guest_keyboard(test)
-    Out[7]: 140448201250560
-
-    In [8]: [35]
-    [23]
-    [163]
-    [151]
-    [57]
-    [185]
-    [35]
-    [24]
-    [163]
-    [152]
-
-
-See `gist`_ for more pyvbox examples.
-
-
-Issues
-======
-
-Source code for *pyvbox* is hosted on `GitHub
-<https://github.com/mjdorma/pyvbox>`_. 
-Please file `bug reports <https://github.com/mjdorma/pyvbox/issues>`_
-with GitHub's issues system.
-
-
-Compatibility
-=============
-
-*pyvbox* utilises the VirtualBox project's vboxapi to gain access to the
-underlying COM API primitives.  Therefore, pyvbox is compatible on systems
-which have a running vboxapi.
-
-
-.. _gist: https://gist.github.com/mjdorma
-.. _pythonhosted.org: http://pythonhosted.org/pyvbox/
-.. _github.com: https://github.com/mjdorma/pyvbox
-.. _PyPi: http://pypi.python.org/pypi/pyvbox
+Apache-2.0

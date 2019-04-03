@@ -1,15 +1,6 @@
 #!/usr/bin/env python
 from setuptools import setup
-
-import re
-import platform
 import os
-import sys
-
-
-install_requires = []
-
-tests_require = ['begins', 'funconf']
 
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -24,13 +15,15 @@ setup(
     packages=["virtualbox",
               "virtualbox.library_ext"],
     author=about['__author__'],
-    author_email=about['__email__'],
+    author_email=about['__author_email__'],
+    maintainer=about['__maintainer__'],
+    maintainer_email=about['__maintainer_email__'],
     url=about['__url__'],
-    description="A complete VirtualBox Main API implementation",
+    description="Complete implementation of VirtualBox's COM API with a Pythoninc interface",
     long_description=open('README.rst').read(),
     license=about['__license__'],
     zip_safe=False,
-    install_requires=install_requires,
+    install_requires=[],
     platforms=['cygwin', 'win', 'linux'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -43,14 +36,12 @@ setup(
         'Operating System :: POSIX',
         'Operating System :: MacOS',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.2',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: Implementation :: CPython',
         'Topic :: Security',
         'Topic :: Scientific/Engineering :: Visualization',
@@ -60,5 +51,4 @@ setup(
         'Topic :: Software Development :: Testing'
     ],
     test_suite="tests",
-    tests_require=tests_require
 )

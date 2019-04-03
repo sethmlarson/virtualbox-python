@@ -27,7 +27,9 @@ from virtualbox.library_ext import library
 from .__about__ import (__title__,  # noqa: F401
                         __version__,
                         __author__,
-                        __email__,
+                        __author_email__,
+                        __maintainer__,
+                        __maintainer_email__,
                         __license__,
                         __url__)
 
@@ -65,8 +67,8 @@ def import_vboxapi():
 
             for x in ['', py_major]:
                 search.extend(['C:\\Anaconda%s\\Lib\\site-packages' % x,
-                               'C:\\Anaconda%s\\Lib\\site-packages\win32' % x,
-                               'C:\\Anaconda%s\\Lib\\site-packages\win32\\lib' % x])
+                               'C:\\Anaconda%s\\Lib\\site-packages\\win32' % x,
+                               'C:\\Anaconda%s\\Lib\\site-packages\\win32\\lib' % x])
 
         elif system == 'Linux':
             search = ['/usr/lib/python%s.%s/dist-packages' % py_mm_ver,
@@ -212,7 +214,7 @@ def _cleanup_managers():
     for manager in managers.values():
         try:
             del manager
-        except:
+        except Exception:
             pass
     managers.clear()
 
@@ -242,5 +244,6 @@ class WebServiceManager(Manager):
 
 
 # Lazy include...
-from virtualbox import pool  # noqa: F401
-from virtualbox import events  # noqa: F401
+from . import pool  # noqa: F401
+from . import events  # noqa: F401
+from . import library as lib  # noqa: F401

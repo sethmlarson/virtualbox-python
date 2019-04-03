@@ -4,6 +4,7 @@ Add helper code to the default IGuestSession class.
 
 import time
 from virtualbox import library
+from virtualbox import utils
 
 
 # Add context management to IGuestSession
@@ -52,11 +53,11 @@ class IGuestSession(library.IGuestSession):
         def read_out(process, flags, stdout, stderr):
             if library.ProcessCreateFlag.wait_for_std_err in flags:
                 process.wait_for(int(library.ProcessWaitResult.std_err))
-                e = bytes(process.read(2, 65000, 0))
+                e = utils.to_bytes(process.read(2, 65000, 0))
                 stderr.append(e)
             if library.ProcessCreateFlag.wait_for_std_out in flags:
                 process.wait_for(int(library.ProcessWaitResult.std_out))
-                o = bytes(process.read(1, 65000, 0))
+                o = utils.to_bytes(process.read(1, 65000, 0))
                 stdout.append(o)
 
         process = self.process_create_ex(command,
@@ -122,37 +123,8 @@ class IGuestSession(library.IGuestSession):
 
     def path_exists(self, path, follow_symlinks=True):
         "test if path exists"
-        return (self.file_exists(path, follow_symlinks) or
-                self.symlink_exists(path, follow_symlinks) or
-                self.directory_exists(path, follow_symlinks))
-
-    # TODO: re-introduce copy_to and copy_from. Inspect the source to figure out if its a
-    # directory or file...  Use new apis as required.
-    """
-    # Simplify copy to.  Expand host path to abspath.
-    def copy_to(self, host_path, guest_path, flags=[]):
-        if not os.path.exists(host_path):
-            raise OSError("Failed to find %s on host" % host_path)
-        copy_to = super(IGuestSession, self).copy_to
-        p = copy_to(os.path.abspath(host_path), guest_path, flags)
-        p.wait_for_completion()
-        return p
-    copy_to.__doc__ = library.IGuestSession.copy_to.__doc__
-
-    # Simplify copy from.  Expand host path to abspath.
-    def copy_from(self, guest_path, host_path, flags=[]):
-        # Dodgy exists check...
-        for x in range(10):
-            try:
-                self.file_exists(guest_path)
-                break
-            except:
-                time.sleep(0.1)
-        else:
-            raise OSError("Failed to find %s on guest" % guest_path)
-        copy_from = super(IGuestSession, self).copy_from
-        p = copy_from(guest_path, os.path.abspath(host_path), flags)
-        p.wait_for_completion()
-        return p
-    copy_from.__doc__ = library.IGuestSession.copy_from.__doc__
-    """
+        return (
+            self.file_exists(path, follow_symlinks)
+            or self.symlink_exists(path, follow_symlinks)
+            or self.directory_exists(path, follow_symlinks)
+        )

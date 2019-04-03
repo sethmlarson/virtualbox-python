@@ -1,21 +1,13 @@
-"""
-This build tool generates the VirtualBox librar.py Main COM API.
+"""This build tool generates the VirtualBox library.py Main COM API."""
 
-By Michael Dorman
-[mjdorma+pyvbox@gmail.com]
-
-"""
 from xml.dom import minidom
 import os
 import re
 import hashlib
-import requests
-import shutil
-import begin
 
 try:
     import __builtin__ as builtin 
-except:
+except ImportError:
     import builtins as builtin
 
 
@@ -34,10 +26,7 @@ def to_string(value):
 
 
 LIB_IMPORTS = """\
-# A Pythonic VirtalBox Main API
-#
-# By Michael Dorman.
-# [mjdorma+pyvbox@gmail.com]
+# Complete implementation of VirtualBox's COM API with a Pythoninc interface.
 #
 # Note: Commenting, and API structure generation was carved from 
 #       VirtualBox project's VirtualBox.xidl Main API definition.
@@ -143,7 +132,7 @@ def desc_text(m):
 
 
 TEXT = "(?P<text>[^<]+)"
-replace_rules = [\
+replace_rules = [
     (re.compile('<link to="(?P<class>[a-zA-Z]+)::(?P<func>[a-zA-Z]+)"/>'),
         link_class_func),
     (re.compile('<link to="(?P<class>[a-zA-Z]+)::(?P<func>[a-zA-Z]+)">' + TEXT + '</link>'),
@@ -264,7 +253,7 @@ def process_enum_node(node):
     uuid = "'%s'" % node.getAttribute('uuid')
     code = []
     enum_doc = [get_doc(node, 4), "\n"]
-    enums = ['[\\']
+    enums = ['[']
     for child in node.childNodes:
         tagname = getattr(child, 'tagName', None)
         if tagname != 'const':
@@ -287,7 +276,6 @@ def process_enum_node(node):
     #lookup = pprint.pformat(enums, width=4, indent=8)
     code.append(ENUM_DEFINE % dict(name=name, doc=enum_doc, 
                                    uuid=uuid, enums=enums))
-    python_name = pythonic_name(name)
     code.append('\n')
     return "\n".join(code)
 
@@ -458,7 +446,7 @@ METHOD_ASSERT_ARRAY_IN = '''\
 METHOD_ASSERT_ARRAY_IN_INST = '''\
         for a in %(invar)s[:10]:
             if not isinstance(a, %(invartype)s):
-                raise TypeError(\\
+                raise TypeError(
                         "array can only contain objects of type %(invartype)s")'''
 
 METHOD_CALL = '''\
@@ -649,68 +637,15 @@ def get_vbox_version(config_kmk):
     "Return the vbox config major, minor, build"
     with open(config_kmk, 'rb') as f:
         config = f.read()
-    major = re.search(b"VBOX_VERSION_MAJOR = (?P<major>[\d])",
-                      config).groupdict()['major']
-    minor = re.search(b"VBOX_VERSION_MINOR = (?P<minor>[\d])",
-                      config).groupdict()['minor']
-    build = re.search(b"VBOX_VERSION_BUILD = (?P<build>[\d])",
-                      config).groupdict()['build']
+    major = b"6"#re.search(b"VBOX_VERSION_MAJOR = (?P<major>[\d])", config).groupdict()['major']
+    minor = b"0"#re.search(b"VBOX_VERSION_MINOR = (?P<minor>[\d])", config).groupdict()['minor']
+    build = b"4"#re.search(b"VBOX_VERSION_BUILD = (?P<build>[\d])", config).groupdict()['build']
     return b".".join([major, minor, build])
 
-def download_master(downloads):
-    print("Download the master xidl")
-    for dest, code in downloads:
-        url = "http://www.virtualbox.org/svn/vbox/trunk/%s" % code 
-        if 0 != os.system('wget -O %s %s' % (dest, url)):
-            assert 0 == os.system('curl %s > %s' % (url, dest) ) 
-        assert os.path.exists(dest), "Failed to download %s" % url
 
-def download_stable(downloads):
-    print("Download latest tarball for stable release then unpack xidl")
-    with requests.get('https://www.virtualbox.org/wiki/Downloads') as r:
-        page = r.content
-
-    match = re.search("http://download.virtualbox.org/virtualbox/"
-                      "([0-9\.]+)/VirtualBox-([0-9\.]+).tar.bz2", page)
-    if not match:
-        raise Exception("Failed to find source tarball url")
-    sourceurl = page[match.start():match.end()]
-    bzname = sourceurl.split('/')[-1]
-    tarname = os.path.splitext(bzname)[0]
-    print("Download stable code %s > %s" % (sourceurl, bzname) )
-    if 0 != os.system('wget -O %s %s' % (bzname, sourceurl)):
-        assert 0 == os.system('curl -L %s > %s' % (sourceurl, bzname) )
-    assert os.path.exists(bzname), "failed to download %s" % sourceurl
-    assert 0 == os.system('bunzip2 -f %s' % bzname), "failed to bunzip2 %s" % bzname
-    assert os.path.exists(tarname), "failed bunzip %s" % tarname
-    assert 0 == os.system('tar xf %s' % tarname), "failed to tar xf %s" % tarname
-    source_dir = os.path.splitext(tarname)[0]
-    for dest, code in downloads:
-        path = './%s/%s' % (source_dir, code)
-        path.replace('/', os.path.sep)
-        assert os.path.exists(path), "Source file not found at %s" % path
-        shutil.copy(path, dest)    
-
-@begin.start
-def main(virtualbox_xidl='VirtualBox.xidl', 
-         config_kmk='Config.kmk',
-         build_against_master=False,
-         force_download=False):
-    """Build the virtualbox/library.py file.
-    """
-    if force_download:
-        if os.path.exists(virtualbox_xidl):
-            os.remove(virtualbox_xidl)
-        if os.path.exists(config_kmk):
-            os.remove(config_kmk)
-
-    downloads = [(virtualbox_xidl, "src/VBox/Main/idl/VirtualBox.xidl"),
-                 (config_kmk, "Config.kmk")]
-    if not os.path.exists(virtualbox_xidl) or not os.path.exists(config_kmk):
-        if build_against_master:
-            download_master(downloads)
-        else:
-            download_stable(downloads)
+def main():
+    virtualbox_xidl = 'VirtualBox.xidl'
+    config_kmk = 'Config.kmk'
 
     print("Create new virtualbox/library.py")
     xidl = open(virtualbox_xidl, 'rb').read()
@@ -793,3 +728,5 @@ def main(virtualbox_xidl='VirtualBox.xidl',
     with open(library_path, 'wb') as f:
         f.write(code)
 
+if __name__ == "__main__":
+    main()
