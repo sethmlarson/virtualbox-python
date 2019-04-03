@@ -6,19 +6,16 @@ matrix:
     # Lint
     - python: 2.7
       env: TOXENV=lint
-    - python: 3.6
+    - python: 3.7
       env: TOXENV=lint
+      sudo: required
+      dist: xenial
 
     # Packaging
+    - python: 2.7
+      env: TOXENV=packaging
     - python: 3.6
       env: TOXENV=packaging
-
-    # Building Library.py
-    - python: 2.7
-      env: TOXENV=build
-
-    - python: 3.6
-      env: TOXENV=build
 
 cache:
   - pip
