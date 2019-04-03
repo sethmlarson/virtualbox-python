@@ -143,13 +143,13 @@ class MachinePool(object):
                 session = Session()
                 try:
                     clone.lock_machine(session, LockType.write)
-                except:
+                except Exception:
                     continue
                 else:
                     try:
                         p = session.machine.restore_snapshot()
                         p.wait_for_completion(60 * 1000)
-                    except:
+                    except Exception:
                         pass
                     session.unlock_machine()
                     break

@@ -67,8 +67,8 @@ def import_vboxapi():
 
             for x in ['', py_major]:
                 search.extend(['C:\\Anaconda%s\\Lib\\site-packages' % x,
-                               'C:\\Anaconda%s\\Lib\\site-packages\win32' % x,
-                               'C:\\Anaconda%s\\Lib\\site-packages\win32\\lib' % x])
+                               'C:\\Anaconda%s\\Lib\\site-packages\\win32' % x,
+                               'C:\\Anaconda%s\\Lib\\site-packages\\win32\\lib' % x])
 
         elif system == 'Linux':
             search = ['/usr/lib/python%s.%s/dist-packages' % py_mm_ver,
@@ -214,7 +214,7 @@ def _cleanup_managers():
     for manager in managers.values():
         try:
             del manager
-        except:
+        except Exception:
             pass
     managers.clear()
 

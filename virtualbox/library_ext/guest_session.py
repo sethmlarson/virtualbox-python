@@ -123,6 +123,8 @@ class IGuestSession(library.IGuestSession):
 
     def path_exists(self, path, follow_symlinks=True):
         "test if path exists"
-        return (self.file_exists(path, follow_symlinks) or
-                self.symlink_exists(path, follow_symlinks) or
-                self.directory_exists(path, follow_symlinks))
+        return (
+            self.file_exists(path, follow_symlinks)
+            or self.symlink_exists(path, follow_symlinks)
+            or self.directory_exists(path, follow_symlinks)
+        )
