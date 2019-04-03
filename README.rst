@@ -4,7 +4,7 @@ virtualbox-python
 .. image:: https://img.shields.io/travis/sethmlarson/virtualbox-python/master.svg
    :target: https://travis-ci.org/sethmlarson/virtualbox-python
 
-Complete implementation of VirtualBox's COM API with a Pythoninc interface.
+Complete implementation of VirtualBox's COM API with a Pythonic interface.
 
 Installation
 ============
