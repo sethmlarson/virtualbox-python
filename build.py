@@ -1,10 +1,5 @@
-"""
-This build tool generates the VirtualBox librar.py Main COM API.
+"""This build tool generates the VirtualBox library.py Main COM API."""
 
-By Michael Dorman
-[mjdorma+pyvbox@gmail.com]
-
-"""
 from xml.dom import minidom
 import os
 import re
@@ -31,10 +26,7 @@ def to_string(value):
 
 
 LIB_IMPORTS = """\
-# A Pythonic VirtalBox Main API
-#
-# By Michael Dorman.
-# [mjdorma+pyvbox@gmail.com]
+# Complete implementation of VirtualBox's COM API with a Pythoninc interface.
 #
 # Note: Commenting, and API structure generation was carved from 
 #       VirtualBox project's VirtualBox.xidl Main API definition.

@@ -1,15 +1,6 @@
 #!/usr/bin/env python
 from setuptools import setup
-
-import re
-import platform
 import os
-import sys
-
-
-install_requires = []
-
-tests_require = ['begins', 'funconf']
 
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -28,11 +19,11 @@ setup(
     maintainer=about['__maintainer__'],
     maintainer_email=about['__maintainer_email__'],
     url=about['__url__'],
-    description="A complete VirtualBox Main API implementation",
+    description="Complete implementation of VirtualBox's COM API with a Pythoninc interface",
     long_description=open('README.rst').read(),
     license=about['__license__'],
     zip_safe=False,
-    install_requires=install_requires,
+    install_requires=[],
     platforms=['cygwin', 'win', 'linux'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -60,5 +51,4 @@ setup(
         'Topic :: Software Development :: Testing'
     ],
     test_suite="tests",
-    tests_require=tests_require
 )

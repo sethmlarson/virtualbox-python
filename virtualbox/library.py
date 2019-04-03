@@ -1,9 +1,6 @@
-# A Pythonic VirtalBox Main API
+# Complete implementation of VirtualBox's COM API with a Pythoninc interface.
 #
-# By Michael Dorman.
-# [mjdorma+pyvbox@gmail.com]
-#
-# Note: Commenting, and API structure generation was carved from 
+# Note: Commenting, and API structure generation was carved from
 #       VirtualBox project's VirtualBox.xidl Main API definition.
 #
 from __future__ import absolute_import

@@ -10,6 +10,7 @@ Changelog
   * Added support for Cloud features
   * Added new CPU, Hardware, and Virt property types
   * Added new event and error types
+* Renamed the PyPI project from ``pyvbox`` to ``virtualbox`` (Installing ``pyvbox`` still works).
 * Fixed a bug with streaming output from a console command.
 * Dropped explicit support for Python 2.6 and 3.3 (May still work?).
 * This is a new major version and many argument and function names have
@@ -123,12 +124,12 @@ Changelog
 0.0.7 (09/10/2013)
 ------------------
 
-* `machine pool`_
+* machine pool
 
 0.0.6 (25/07/2013)
 ------------------
 
-* now with `event support`_
+* now with event support
 
 0.0.5 (23/07/2013)
 ------------------
@@ -150,7 +151,7 @@ Changelog
 0.0.2 (28/05/2013)
 ------------------
 
-* `library ext module`_
+* library ext module
 
 0.0.1 (27/05/2013)
 ------------------
@@ -163,8 +164,4 @@ Changelog
 * builder
 * library primitives
 
-
-.. _event support: http://pythonhosted.org//pyvbox/virtualbox/events.html
-.. _library ext module: http://pythonhosted.org/pyvbox/virtualbox/library_ext.html
-.. _machine pool: http://pythonhosted.org/pyvbox/virtualbox/pool.html
 .. _Keyboard scancode decoder: https://gist.github.com/mjdorma/9132605
