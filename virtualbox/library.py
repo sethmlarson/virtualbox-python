@@ -12795,8 +12795,8 @@ class IMachine(Interface):
             raise TypeError("session can only be an instance of type ISession")
         if not isinstance(name, basestring):
             raise TypeError("name can only be an instance of type basestring")
-        if not isinstance(environment, basestring):
-            raise TypeError("environment can only be an instance of type basestring")
+        if not (isinstance(environment, basestring) or isinstance(environment, list)):
+            raise TypeError("environment can only be an instance of type basestring or list")
         progress = self._call("launchVMProcess",
                      in_p=[session, name, environment])
         progress = IProgress(progress)
