@@ -46,7 +46,9 @@ Launching a Machine
 
     >>> session = virtualbox.Session()
     >>> machine = vbox.find_machine("windows")
-    >>> progress = machine.launch_vm_process(session, "gui", "")
+    >>> # progress = machine.launch_vm_process(session, "gui", "")
+    >>> # For virtualbox API 6_1 and above (VirtualBox 6.1.2+), use the following:
+    >>> progress = machine.launch_vm_process(session, "gui", [])
     >>> progress.wait_for_completion()
 
 Querying the Machine
