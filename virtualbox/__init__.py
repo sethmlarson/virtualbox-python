@@ -24,14 +24,16 @@ import atexit
 from multiprocessing import current_process
 
 from virtualbox.library_ext import library
-from .__about__ import (__title__,  # noqa: F401
-                        __version__,
-                        __author__,
-                        __author_email__,
-                        __maintainer__,
-                        __maintainer_email__,
-                        __license__,
-                        __url__)
+from .__about__ import (
+    __title__,  # noqa: F401
+    __version__,
+    __author__,
+    __author_email__,
+    __maintainer__,
+    __maintainer_email__,
+    __license__,
+    __url__,
+)
 
 
 # Adopt on the library API root documentation
@@ -55,28 +57,38 @@ def import_vboxapi():
         system = platform.system()
         py_mm_ver = sys.version_info[:2]
         py_major = sys.version_info[0]
-        packages = ['vboxapi']
+        packages = ["vboxapi"]
 
-        if system == 'Windows':
-            packages.extend(['win32com', 'win32', 'win32api', 'pywintypes', 'win32comext'])
-            search = ['C:\\Python%s%s\\Lib\\site-packages' % py_mm_ver,
-                      'C:\\Python%s%s\\Lib\\site-packages\\win32' % py_mm_ver,
-                      'C:\\Python%s%s\\Lib\\site-packages\\win32\\lib' % py_mm_ver,
-                      'C:\\Program Files\\Oracle\\VirtualBox\\sdk\\install',
-                      'C:\\Program Files (x86)\\Oracle\\VirtualBox\\sdk\\install']
+        if system == "Windows":
+            packages.extend(
+                ["win32com", "win32", "win32api", "pywintypes", "win32comext"]
+            )
+            search = [
+                "C:\\Python%s%s\\Lib\\site-packages" % py_mm_ver,
+                "C:\\Python%s%s\\Lib\\site-packages\\win32" % py_mm_ver,
+                "C:\\Python%s%s\\Lib\\site-packages\\win32\\lib" % py_mm_ver,
+                "C:\\Program Files\\Oracle\\VirtualBox\\sdk\\install",
+                "C:\\Program Files (x86)\\Oracle\\VirtualBox\\sdk\\install",
+            ]
 
-            for x in ['', py_major]:
-                search.extend(['C:\\Anaconda%s\\Lib\\site-packages' % x,
-                               'C:\\Anaconda%s\\Lib\\site-packages\\win32' % x,
-                               'C:\\Anaconda%s\\Lib\\site-packages\\win32\\lib' % x])
+            for x in ["", py_major]:
+                search.extend(
+                    [
+                        "C:\\Anaconda%s\\Lib\\site-packages" % x,
+                        "C:\\Anaconda%s\\Lib\\site-packages\\win32" % x,
+                        "C:\\Anaconda%s\\Lib\\site-packages\\win32\\lib" % x,
+                    ]
+                )
 
-        elif system == 'Linux':
-            search = ['/usr/lib/python%s.%s/dist-packages' % py_mm_ver,
-                      '/usr/lib/python%s.%s/site-packages' % py_mm_ver,
-                      '/usr/share/pyshared']
+        elif system == "Linux":
+            search = [
+                "/usr/lib/python%s.%s/dist-packages" % py_mm_ver,
+                "/usr/lib/python%s.%s/site-packages" % py_mm_ver,
+                "/usr/share/pyshared",
+            ]
 
-        elif system == 'Darwin':
-            search = ['/Library/Python/%s.%s/site-packages' % py_mm_ver]
+        elif system == "Darwin":
+            search = ["/Library/Python/%s.%s/site-packages" % py_mm_ver]
         else:
             # No idea where to look...
             search = []
@@ -91,11 +103,15 @@ def import_vboxapi():
         # NOTE: We don't have to worry if these directories don't
         # exist as they're checked below.
         prefix = os.path.dirname(os.path.dirname(sys.executable))
-        search.extend([os.path.join(prefix, 'Lib', 'site-packages'),
-                       os.path.join(prefix, 'Lib', 'site-packages', 'win32'),
-                       os.path.join(prefix, 'Lib', 'site-packages', 'win32', 'lib'),
-                       os.path.join(prefix, 'lib', 'site-packages'),
-                       os.path.join(prefix, 'lib', 'dist-packages')])
+        search.extend(
+            [
+                os.path.join(prefix, "Lib", "site-packages"),
+                os.path.join(prefix, "Lib", "site-packages", "win32"),
+                os.path.join(prefix, "Lib", "site-packages", "win32", "lib"),
+                os.path.join(prefix, "lib", "site-packages"),
+                os.path.join(prefix, "lib", "dist-packages"),
+            ]
+        )
 
         packages = set(packages)
         original_path = copy.copy(sys.path)
@@ -113,6 +129,7 @@ def import_vboxapi():
             # the required set of packages.
             raise
         import vboxapi
+
         try:
             yield vboxapi
         finally:
@@ -136,6 +153,7 @@ class Manager(object):
     :param mparams: The params that the mtype manager object accepts.
     :type mparams: tuple|list (Default None)
     """
+
     def __init__(self, mtype=None, mparams=None):
         pid = current_process().ident
         if _managers is None:
@@ -182,8 +200,8 @@ class Manager(object):
         :rtype: library.ISession
         """
         # The inconsistent vboxapi implementation makes this annoying...
-        if hasattr(self.manager, 'mgr'):
-            manager = getattr(self.manager, 'mgr')
+        if hasattr(self.manager, "mgr"):
+            manager = getattr(self.manager, "mgr")
         else:
             manager = self.manager
         return Session(interface=manager.getSessionObject(None))
@@ -226,7 +244,8 @@ class WebServiceManager(Manager):
     """The WebServiceManager extends the base Manager to include the ability
     to build a WEBSERVICE type vboxapi interface.
     """
-    def __init__(self, url='http://localhost/', user='', password=''):
+
+    def __init__(self, url="http://localhost/", user="", password=""):
         """Create a VirtualBoxManager WEBSERVICE manager for IVirtualBox
 
         Options:

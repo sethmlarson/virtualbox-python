@@ -17,36 +17,46 @@ class IGuestSession(library.IGuestSession):
     def __exit__(self, *_):
         self.close()
 
-    def execute(self, command, arguments=None, stdin="", environment=None,
-                flags=None, priority=library.ProcessPriority.default,
-                affinity=None, timeout_ms=0):
+    def execute(
+        self,
+        command,
+        arguments=None,
+        stdin="",
+        environment=None,
+        flags=None,
+        priority=library.ProcessPriority.default,
+        affinity=None,
+        timeout_ms=0,
+    ):
         """Execute a command in the Guest
 
-            Arguments:
-                command - Command to execute.
-                arguments - List of arguments for the command
-                stdin - A buffer to write to the stdin of the command.
-                environment - See IGuestSession.create_process?
-                flags - List of ProcessCreateFlag objects.
-                    Default value set to [wait_for_std_err,
-                                          wait_for_stdout,
-                                          ignore_orphaned_processes]
-                timeout_ms - ms to wait for the process to complete.
-                    If 0, wait for ever...
-                priority - Set the ProcessPriority priority to be used for
-                    execution.
-                affinity - Process affinity to use for execution.
+        Arguments:
+            command - Command to execute.
+            arguments - List of arguments for the command
+            stdin - A buffer to write to the stdin of the command.
+            environment - See IGuestSession.create_process?
+            flags - List of ProcessCreateFlag objects.
+                Default value set to [wait_for_std_err,
+                                      wait_for_stdout,
+                                      ignore_orphaned_processes]
+            timeout_ms - ms to wait for the process to complete.
+                If 0, wait for ever...
+            priority - Set the ProcessPriority priority to be used for
+                execution.
+            affinity - Process affinity to use for execution.
 
-            Return IProcess, stdout, stderr
+        Return IProcess, stdout, stderr
         """
         if arguments is None:
             arguments = []
         if environment is None:
             environment = []
         if flags is None:
-            flags = [library.ProcessCreateFlag.wait_for_std_err,
-                     library.ProcessCreateFlag.wait_for_std_out,
-                     library.ProcessCreateFlag.ignore_orphaned_processes]
+            flags = [
+                library.ProcessCreateFlag.wait_for_std_err,
+                library.ProcessCreateFlag.wait_for_std_out,
+                library.ProcessCreateFlag.ignore_orphaned_processes,
+            ]
         if affinity is None:
             affinity = []
 
@@ -60,12 +70,15 @@ class IGuestSession(library.IGuestSession):
                 o = utils.to_bytes(process.read(1, 65000, 0))
                 stdout.append(o)
 
-        process = self.process_create_ex(command,
-                                         [command] + arguments, environment,
-                                         flags,
-                                         timeout_ms,
-                                         priority,
-                                         affinity)
+        process = self.process_create_ex(
+            command,
+            [command] + arguments,
+            environment,
+            flags,
+            timeout_ms,
+            priority,
+            affinity,
+        )
 
         process.wait_for(int(library.ProcessWaitResult.start), 0)
 
@@ -104,21 +117,27 @@ class IGuestSession(library.IGuestSession):
         if flags is None:
             flags = [library.DirectoryRemoveRecFlag.content_and_dir]
         super(IGuestSession, self).directory_remove_recursive(path, flags)
-    directory_remove_recursive.__doc__ = library.IGuestSession.directory_remove_recursive.__doc__
+
+    directory_remove_recursive.__doc__ = (
+        library.IGuestSession.directory_remove_recursive.__doc__
+    )
 
     # Simplify file_exists with default follow_symlink == False
     def file_exists(self, path, follow_symlinks=True):
         return super(IGuestSession, self).file_exists(path, follow_symlinks)
+
     file_exists.__doc__ = library.IGuestSession.file_exists.__doc__
 
     # Simplify symlink_exists with default follow_symlink == False
     def symlink_exists(self, path, follow_symlinks=True):
         return super(IGuestSession, self).symlink_exists(path)
+
     symlink_exists.__doc__ = library.IGuestSession.symlink_exists.__doc__
 
     # Simplify directory_exists with default follow_symlink == False
     def directory_exists(self, path, follow_symlinks=True):
         return super(IGuestSession, self).directory_exists(path, follow_symlinks)
+
     directory_exists.__doc__ = library.IGuestSession.directory_exists.__doc__
 
     def path_exists(self, path, follow_symlinks=True):

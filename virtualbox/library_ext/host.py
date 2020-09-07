@@ -12,5 +12,7 @@ class IHost(library.IHost):
         host_interface = library.IHostNetworkInterface(host_interface)
         progress = IProgress(progress)
         return host_interface, progress
-    create_host_only_network_interface.__doc__ = \
+
+    create_host_only_network_interface.__doc__ = (
         library.IHost.create_host_only_network_interface.__doc__
+    )

@@ -29,7 +29,7 @@ def type_to_interface(event_type):
                 continue
             if not issubclass(event_interface, library.Interface):
                 continue
-            et = getattr(event_interface, 'id', None)
+            et = getattr(event_interface, "id", None)
             if et is None:
                 continue
             if not isinstance(et, library.VBoxEventType):
@@ -48,23 +48,26 @@ def _event_monitor(callback, event_source, listener, event_interface, quit):
             try:
                 event = event_source.get_event(listener, 1000)
             except library.VBoxError:
-                print("Unregistering %s due to VBoxError on get_event" %
-                      listener, file=sys.stderr)
+                print(
+                    "Unregistering %s due to VBoxError on get_event" % listener,
+                    file=sys.stderr,
+                )
                 break
             if event:
                 try:
                     callback(event_interface(event))
                 except Exception:
-                    print("Unhanded exception in callback: \n%s" %
-                          traceback.format_exc(), file=sys.stderr)
+                    print(
+                        "Unhanded exception in callback: \n%s" % traceback.format_exc(),
+                        file=sys.stderr,
+                    )
                 event_source.event_processed(listener, event)
     finally:
         _callbacks.pop(threading.current_thread().ident, None)
         try:
             event_source.unregister_listener(listener)
         except Exception:
-            print("Failed to unregister listener %s" % listener,
-                  file=sys.stderr)
+            print("Failed to unregister listener %s" % listener, file=sys.stderr)
 
 
 def register_callback(callback, event_source, event_type):
@@ -83,11 +86,10 @@ def register_callback(callback, event_source, event_type):
     listener = event_source.create_listener()
     event_source.register_listener(listener, [event_type], False)
     quit = threading.Event()
-    t = threading.Thread(target=_event_monitor, args=(callback,
-                                                      event_source,
-                                                      listener,
-                                                      event_interface,
-                                                      quit))
+    t = threading.Thread(
+        target=_event_monitor,
+        args=(callback, event_source, listener, event_interface, quit),
+    )
     t.daemon = True
     t.start()
     while t.is_alive() is False:

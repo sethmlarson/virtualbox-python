@@ -65,7 +65,8 @@ from virtualbox.library import OleErrorUnexpected
 
 class MachinePool(object):
     """MachinePool manages a pool of resources and enable cross process
-    coordination of a linked machine clone. """
+    coordination of a linked machine clone."""
+
     def __init__(self, machine_name):
         """Create a MachinePool instance.
 
@@ -76,9 +77,7 @@ class MachinePool(object):
         with self._lock() as session:
             machine = session.machine
             if not machine.current_snapshot:
-                p, id_p = machine.take_snapshot('initialised',
-                                                'root machine',
-                                                False)
+                p, id_p = machine.take_snapshot("initialised", "root machine", False)
                 p.wait_for_completion(60 * 1000)
 
     @contextmanager
@@ -135,7 +134,7 @@ class MachinePool(object):
             if session.state == SessionState.locked:
                 session.unlock_machine()
 
-    def acquire(self, username, password, frontend='headless'):
+    def acquire(self, username, password, frontend="headless"):
         """Acquire a Machine resource."""
         with self._lock() as root_session:
             for clone in self._clones:
@@ -163,8 +162,9 @@ class MachinePool(object):
                 console = session.console
                 guest = console.guest
                 try:
-                    guest_session = guest.create_session(username, password,
-                                                         timeout_ms=300 * 1000)
+                    guest_session = guest.create_session(
+                        username, password, timeout_ms=300 * 1000
+                    )
                     idle_count = 0
                     timeout = 60
                     while idle_count < 5 and timeout > 0:
@@ -175,9 +175,9 @@ class MachinePool(object):
                         timeout -= 0.5
                     guest_session.close()
                     console.pause()
-                    p, id_p = console.machine.take_snapshot('initialised',
-                                                            'machine pool',
-                                                            True)
+                    p, id_p = console.machine.take_snapshot(
+                        "initialised", "machine pool", True
+                    )
                     p.wait_for_completion(60 * 1000)
                     self._power_down(session)
                 finally:

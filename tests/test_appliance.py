@@ -2,20 +2,21 @@ import os
 import unittest
 
 import virtualbox
+
 """
 ATENTION: This test case interacts with the local VirtualBox and
           may harm your setup.
 """
-FIXTURES = os.path.join(os.path.dirname(__file__), 'fixtures')
+FIXTURES = os.path.join(os.path.dirname(__file__), "fixtures")
 
-APPLIANCE_FILE = 'appliance_test_1.ova'
+APPLIANCE_FILE = "appliance_test_1.ova"
 
-APPLIANCE_NAME = 'appliance_test_1'
+APPLIANCE_NAME = "appliance_test_1"
 APPLIANCE_CPU = 1
 APPLIANCE_MEM = 5
 APPLIANCE_AUDIO = virtualbox.library.AudioControllerType(0)  # AC97
 
-MACHINE_NEW_NAME = 'appliance_test_1_RENAMED'
+MACHINE_NEW_NAME = "appliance_test_1_RENAMED"
 MACHINE_CPU = 2
 MACHINE_MEM = 64
 MACHINE_AUDIO = virtualbox.library.AudioControllerType(1)  # SB16
@@ -28,9 +29,12 @@ def is_dangerous():
     return any(name in current_machines for name in test_names)
 
 
-@unittest.skipIf(is_dangerous(),
-                 "Please delete boxes: {} manually.".format(
-                     (', '.join((APPLIANCE_NAME, MACHINE_NEW_NAME)))))
+@unittest.skipIf(
+    is_dangerous(),
+    "Please delete boxes: {} manually.".format(
+        (", ".join((APPLIANCE_NAME, MACHINE_NEW_NAME)))
+    ),
+)
 class TestAppliance(unittest.TestCase):
     def setUp(self):
         self.vbox = virtualbox.VirtualBox()
