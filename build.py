@@ -638,8 +638,8 @@ def get_vbox_version(config_kmk):
     with open(config_kmk, 'rb') as f:
         config = f.read()
     major = b"6"#re.search(b"VBOX_VERSION_MAJOR = (?P<major>[\d])", config).groupdict()['major']
-    minor = b"0"#re.search(b"VBOX_VERSION_MINOR = (?P<minor>[\d])", config).groupdict()['minor']
-    build = b"4"#re.search(b"VBOX_VERSION_BUILD = (?P<build>[\d])", config).groupdict()['build']
+    minor = b"1"#re.search(b"VBOX_VERSION_MINOR = (?P<minor>[\d])", config).groupdict()['minor']
+    build = b"14"#re.search(b"VBOX_VERSION_BUILD = (?P<build>[\d])", config).groupdict()['build']
     return b".".join([major, minor, build])
 
 
