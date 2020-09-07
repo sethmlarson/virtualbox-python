@@ -10,5 +10,6 @@ from virtualbox.library_ext import process
 # IGuestProcess, we'll inherit from our fixed IProcess to ensure
 # that IGuestPRocess behaves correctly.
 
+
 class IGuestProcess(process.IProcess):
     __doc__ = library.IGuestProcess.__doc__

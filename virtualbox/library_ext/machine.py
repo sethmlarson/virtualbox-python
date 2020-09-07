@@ -41,7 +41,9 @@ class IMachine(library.IMachine):
             except Exception:
                 print("Error powering off machine", file=sys.stderr)
             session.unlock_machine()
-            time.sleep(0.5)  # TODO figure out how to ensure session is really unlocked...
+            time.sleep(
+                0.5
+            )  # TODO figure out how to ensure session is really unlocked...
 
         settings_dir = os.path.dirname(self.settings_file_path)
         if delete:
@@ -61,10 +63,17 @@ class IMachine(library.IMachine):
 
         return media
 
-    def clone(self, snapshot_name_or_id=None,
-              mode=library.CloneMode.machine_state,
-              options=None, name=None,
-              uuid=None, groups=None, basefolder='', register=True):
+    def clone(
+        self,
+        snapshot_name_or_id=None,
+        mode=library.CloneMode.machine_state,
+        options=None,
+        name=None,
+        uuid=None,
+        groups=None,
+        basefolder="",
+        register=True,
+    ):
         """Clone this Machine
 
         Options:
@@ -107,28 +116,27 @@ class IMachine(library.IMachine):
             name = "%s Clone" % vm.name
 
         # Build the settings file
-        create_flags = ''
+        create_flags = ""
         if uuid is not None:
             create_flags = "UUID=%s" % uuid
-        primary_group = ''
+        primary_group = ""
         if groups:
             primary_group = groups[0]
 
         # Make sure this settings file does not already exist
         test_name = name
-        settings_file = ''
+        settings_file = ""
         for i in range(1, 1000):
-            settings_file = vbox.compose_machine_filename(test_name,
-                                                          primary_group,
-                                                          create_flags,
-                                                          basefolder)
+            settings_file = vbox.compose_machine_filename(
+                test_name, primary_group, create_flags, basefolder
+            )
             if not os.path.exists(os.path.dirname(settings_file)):
                 break
             test_name = "%s (%s)" % (name, i)
         name = test_name
 
         # Create the new machine and clone it!
-        vm_clone = vbox.create_machine(settings_file, name, groups, '', create_flags)
+        vm_clone = vbox.create_machine(settings_file, name, groups, "", create_flags)
         progress = vm.clone_to(vm_clone, mode, options)
         progress.wait_for_completion(-1)
 
@@ -137,8 +145,7 @@ class IMachine(library.IMachine):
         return vm_clone
 
     # Add a helper to make locking and building a session simple
-    def create_session(self, lock_type=library.LockType.shared,
-                       session=None):
+    def create_session(self, lock_type=library.LockType.shared, session=None):
         """Lock this machine
 
         Arguments:
@@ -174,17 +181,17 @@ class IMachine(library.IMachine):
         return session
 
     # Simplify the launch_vm_process. Build a ISession if it has not been defined...
-    def launch_vm_process(self, session=None, type_p='gui', environment=''):
+    def launch_vm_process(self, session=None, type_p="gui", environment=""):
         if session is None:
             local_session = library.ISession()
         else:
             local_session = session
-        p = super(IMachine, self).launch_vm_process(local_session,
-                                                    type_p, environment)
+        p = super(IMachine, self).launch_vm_process(local_session, type_p, environment)
         if session is None:
             p.wait_for_completion(-1)
             local_session.unlock_machine()
         return p
+
     launch_vm_process.__doc__ = library.IMachine.launch_vm_process.__doc__
 
     # BUG: xidl describes this function as exportTo.  The interface seems
@@ -196,9 +203,9 @@ class IMachine(library.IMachine):
         if not isinstance(location, basestring):
             raise TypeError("value is not an instance of basestring")
         # see https://github.com/mjdorma/pyvbox/issues/40
-        description = self._call("exportTo",
-                                 in_p=[appliance, location])
+        description = self._call("exportTo", in_p=[appliance, location])
         return library.IVirtualSystemDescription(description)
+
     export_to.__doc__ = library.IMachine.export_to.__doc__
 
     # If no snapshot has been supplied, try using the current_snapshot
@@ -209,4 +216,5 @@ class IMachine(library.IMachine):
             else:
                 raise Exception("Machine has no snapshots")
         return super(IMachine, self).restore_snapshot(snapshot)
+
     restore_snapshot.__doc__ = library.IMachine.restore_snapshot.__doc__

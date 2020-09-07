@@ -3,9 +3,7 @@ import unittest
 import virtualbox
 
 
-
 class TestVBox(unittest.TestCase):
-
     def test_gettr_safearray(self):
         vbox = virtualbox.VirtualBox()
         vbox.machines
@@ -25,7 +23,3 @@ class TestVBox(unittest.TestCase):
     def test_method_in_safearray(self):
         vbox = virtualbox.VirtualBox()
         vbox.get_machine_states(vbox.machines)
-
-
-
-

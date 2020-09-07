@@ -13,9 +13,9 @@ except ImportError:
 
 
 def pythonic_name(name):
-    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
-    name = re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
-    if hasattr(builtin, name) is True or name in ['global']:
+    s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", name)
+    name = re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1).lower()
+    if hasattr(builtin, name) is True or name in ["global"]:
         name += "_p"
     return name
 
@@ -23,6 +23,7 @@ def pythonic_name(name):
 class EnumType(type):
     """EnumType is a metaclass for Enum. It is responsible for configuring
     the Enum class object's values defined in Enum.lookup_label"""
+
     def __init__(cls, name, bases, dct):
         cls._value = None
         cls._lookup_label = dict((v, l) for l, v, _ in cls._enums)
@@ -39,23 +40,26 @@ class EnumType(type):
 # Code from six - support for py2 and py3 compatibility
 def add_metaclass(metaclass):
     """Class decorator for creating a class with a metaclass."""
+
     def wrapper(cls):
         orig_vars = cls.__dict__.copy()
-        orig_vars.pop('__dict__', None)
-        orig_vars.pop('__weakref__', None)
-        slots = orig_vars.get('__slots__')
+        orig_vars.pop("__dict__", None)
+        orig_vars.pop("__weakref__", None)
+        slots = orig_vars.get("__slots__")
         if slots is not None:
             if isinstance(slots, str):
                 slots = [slots]
             for slots_var in slots:
                 orig_vars.pop(slots_var)
         return metaclass(cls.__name__, cls.__bases__, orig_vars)
+
     return wrapper
 
 
 @add_metaclass(EnumType)
 class Enum(object):
     """Enum objects provide a container for VirtualBox enumerations"""
+
     _enums = {}
 
     def __init__(self, value):
@@ -113,6 +117,7 @@ class VBoxErrorMeta(type):
 @add_metaclass(VBoxErrorMeta)
 class VBoxError(Exception):
     """Generic VBoxError"""
+
     name = "undef"
     value = -1
     msg = ""
@@ -123,9 +128,11 @@ class VBoxError(Exception):
 
 class Interface(object):
     """Interface objects provide a wrapper for the VirtualBox COM objects"""
+
     def __init__(self, interface=None):
         if isinstance(interface, Interface):
             import virtualbox
+
             manager = virtualbox.Manager()
             self._i = manager.cast_object(interface, self.__class__)._i
         else:
@@ -142,6 +149,7 @@ class Interface(object):
                 return int(value)
             else:
                 return value
+
         if isinstance(value, list):
             return [cast_to_valuetype(a) for a in value]
         else:
@@ -168,14 +176,14 @@ class Interface(object):
         return attr
 
     def _get_attr(self, name):
-        attr = self._search_attr(name, prefix='get')
+        attr = self._search_attr(name, prefix="get")
         if inspect.isfunction(attr) or inspect.ismethod(attr):
             return self._call_method(attr)
         else:
             return attr
 
     def _set_attr(self, name, value):
-        attr = self._search_attr(name, prefix='set')
+        attr = self._search_attr(name, prefix="set")
         if inspect.isfunction(attr) or inspect.ismethod(attr):
             return self._call_method(attr, value)
         else:
@@ -200,7 +208,7 @@ class Interface(object):
         try:
             ret = method(*in_params)
         except Exception as exc:
-            errno = getattr(exc, 'errno', getattr(exc, 'hresult', -1))
+            errno = getattr(exc, "errno", getattr(exc, "hresult", -1))
             errno &= 0xFFFFFFFF
             errclass = vbox_error.get(errno, VBoxError)
             errobj = errclass()
@@ -209,13 +217,13 @@ class Interface(object):
             # TODO: Is this the only way to get a message from exc...
             #       does this also vary between nix vs windows.
             errobj.msg = None
-            if platform.system() == 'Windows':
-                if hasattr(exc, 'args'):
+            if platform.system() == "Windows":
+                if hasattr(exc, "args"):
                     errobj.msg = exc.args[2][2]
             # TODO: get the Linux/Darwin specific args struct
 
             if errobj.msg is None:
-                default_msg = getattr(exc, 'message', str(exc))
-                errobj.msg = getattr(exc, 'msg', default_msg)
+                default_msg = getattr(exc, "message", str(exc))
+                errobj.msg = getattr(exc, "msg", default_msg)
             raise errobj
         return ret
