@@ -1,6 +1,6 @@
 # Complete implementation of VirtualBox's COM API with a Pythoninc interface.
 #
-# Note: Commenting, and API structure generation was carved from
+# Note: Commenting, and API structure generation was carved from 
 #       VirtualBox project's VirtualBox.xidl Main API definition.
 #
 from __future__ import absolute_import
@@ -11,7 +11,7 @@ from .library_base import VBoxError
 # Py2 and Py3 compatibility  
 try:
     import __builtin__ as builtin 
-except ImportError:
+except:
     import builtins as builtin
 try:
     basestring = basestring
@@ -81,11 +81,13 @@ about how to call a method or attribute from a specific programming language.
 """
 
 
-vbox_version = '6.0.4'
+vbox_version = '6.1.14'
 lib_version  = 1.3
 lib_app_uuid = '819B4D85-9CEE-493C-B6FC-64FFE759B3C9'
 lib_uuid     = 'd7569351-1750-46f0-936e-bd127d5bc264'
-xidl_hash    = '247078febc67767740f9f989ec3d0eb9'
+xidl_hash    = 'f6fc2decce1cdf49f616583addcd3ab4'
+
+
 
 
 class VBoxErrorObjectNotFound(VBoxError):
@@ -306,6 +308,10 @@ class SettingsVersion(Enum):
 
             Settings version "1.17", written by VirtualBox 6.0.x.
 
+    .. describe:: v1_18(20)
+
+            Settings version "1.18", written by VirtualBox 6.1.x.
+
     .. describe:: future(99999)
 
             Settings version greater than "1.15", written by a future VirtualBox version.
@@ -353,6 +359,8 @@ class SettingsVersion(Enum):
          '''Settings version "1.16", written by VirtualBox 5.1.x.'''),
         ('v1_17', 19, 
          '''Settings version "1.17", written by VirtualBox 6.0.x.'''),
+        ('v1_18', 20, 
+         '''Settings version "1.18", written by VirtualBox 6.1.x.'''),
         ('Future', 99999, 
          '''Settings version greater than "1.15", written by a future VirtualBox version.'''),
         ] 
@@ -608,40 +616,36 @@ class MachineState(Enum):
 
             Teleporting the machine state in from another host or process.
 
-    .. describe:: fault_tolerant_syncing(16)
-
-            The machine is being synced with a fault tolerant VM running elsewhere.
-
-    .. describe:: deleting_snapshot_online(17)
+    .. describe:: deleting_snapshot_online(16)
 
             Like @c DeletingSnapshot, but the merging of media is ongoing in
             the background while the machine is running.
 
-    .. describe:: deleting_snapshot_paused(18)
+    .. describe:: deleting_snapshot_paused(17)
 
             Like @c DeletingSnapshotOnline, but the machine was paused when the
             merging of differencing media was started.
 
-    .. describe:: online_snapshotting(19)
+    .. describe:: online_snapshotting(18)
 
             Like @c LiveSnapshotting, but the machine was paused when the
             merging of differencing media was started.
 
-    .. describe:: restoring_snapshot(20)
+    .. describe:: restoring_snapshot(19)
 
             A machine snapshot is being restored; this typically does not take long.
 
-    .. describe:: deleting_snapshot(21)
+    .. describe:: deleting_snapshot(20)
 
             A machine snapshot is being deleted; this can take a long time since this
             may require merging differencing media. This value indicates that the
             machine is not running while the snapshot is being deleted.
 
-    .. describe:: setting_up(22)
+    .. describe:: setting_up(21)
 
             Lengthy setup operation is in progress.
 
-    .. describe:: snapshotting(23)
+    .. describe:: snapshotting(22)
 
             Taking an (offline) snapshot.
 
@@ -649,7 +653,7 @@ class MachineState(Enum):
 
             Pseudo-state: first online state (for use in relational expressions).
 
-    .. describe:: last_online(19)
+    .. describe:: last_online(18)
 
             Pseudo-state: last online state (for use in relational expressions).
 
@@ -657,12 +661,12 @@ class MachineState(Enum):
 
             Pseudo-state: first transient state (for use in relational expressions).
 
-    .. describe:: last_transient(23)
+    .. describe:: last_transient(22)
 
             Pseudo-state: last transient state (for use in relational expressions).
 
     """
-    __uuid__ = '87f085c3-ca67-4e45-9225-6057f32e9e8e'
+    __uuid__ = '00bc01b5-00a4-48db-000a-9061008357aa'
     _enums = [
         ('Null', 0, 
          '''Null value (never used by the API).'''),
@@ -732,34 +736,32 @@ class MachineState(Enum):
             @c Teleporting state.'''),
         ('TeleportingIn', 15, 
          '''Teleporting the machine state in from another host or process.'''),
-        ('FaultTolerantSyncing', 16, 
-         '''The machine is being synced with a fault tolerant VM running elsewhere.'''),
-        ('DeletingSnapshotOnline', 17, 
+        ('DeletingSnapshotOnline', 16, 
          '''Like @c DeletingSnapshot, but the merging of media is ongoing in
             the background while the machine is running.'''),
-        ('DeletingSnapshotPaused', 18, 
+        ('DeletingSnapshotPaused', 17, 
          '''Like @c DeletingSnapshotOnline, but the machine was paused when the
             merging of differencing media was started.'''),
-        ('OnlineSnapshotting', 19, 
+        ('OnlineSnapshotting', 18, 
          '''Like @c LiveSnapshotting, but the machine was paused when the
             merging of differencing media was started.'''),
-        ('RestoringSnapshot', 20, 
+        ('RestoringSnapshot', 19, 
          '''A machine snapshot is being restored; this typically does not take long.'''),
-        ('DeletingSnapshot', 21, 
+        ('DeletingSnapshot', 20, 
          '''A machine snapshot is being deleted; this can take a long time since this
             may require merging differencing media. This value indicates that the
             machine is not running while the snapshot is being deleted.'''),
-        ('SettingUp', 22, 
+        ('SettingUp', 21, 
          '''Lengthy setup operation is in progress.'''),
-        ('Snapshotting', 23, 
+        ('Snapshotting', 22, 
          '''Taking an (offline) snapshot.'''),
         ('FirstOnline', 5, 
          '''Pseudo-state: first online state (for use in relational expressions).'''),
-        ('LastOnline', 19, 
+        ('LastOnline', 18, 
          '''Pseudo-state: last online state (for use in relational expressions).'''),
         ('FirstTransient', 8, 
          '''Pseudo-state: first transient state (for use in relational expressions).'''),
-        ('LastTransient', 23, 
+        ('LastTransient', 22, 
          '''Pseudo-state: last transient state (for use in relational expressions).'''),
         ] 
 
@@ -831,6 +833,34 @@ class SessionState(Enum):
             call.'''),
         ('Unlocking', 4, 
          '''The session is being unlocked.'''),
+        ] 
+
+
+class CPUArchitecture(Enum):
+    """Basic CPU architecture types.
+
+
+    .. describe:: any_p(0)
+
+            Matches any CPU architecture.
+
+    .. describe:: x86(1)
+
+            32-bit (and 16-bit) x86.
+
+    .. describe:: amd64(2)
+
+            64-bit x86.  (Also known as x86-64 or x64.)
+
+    """
+    __uuid__ = '4a2c9915-12f1-43b2-bb84-e4bd4d5ca227'
+    _enums = [
+        ('Any', 0, 
+         '''Matches any CPU architecture.'''),
+        ('x86', 1, 
+         '''32-bit (and 16-bit) x86.'''),
+        ('AMD64', 2, 
+         '''64-bit x86.  (Also known as x86-64 or x64.)'''),
         ] 
 
 
@@ -916,6 +946,21 @@ class CPUPropertyType(Enum):
             causing many VM exits, so it is only recommended for situation where there
             is a real need to be paranoid.
 
+    .. describe:: mds_clear_on_emt_scheduling(13)
+
+            If set and the host is affected by CVE-2018-12126, CVE-2018-12127, or
+            CVE-2018-12130, clears the relevant MDS buffers when the EMT is scheduled
+            to do ring-0 guest execution.  There could be a small performance penalty
+            for certain typs of workloads. For security reasons this setting will be
+            enabled by default.
+
+    .. describe:: mds_clear_on_vm_entry(14)
+
+            If set and the host is affected by CVE-2018-12126, CVE-2018-12127, or
+            CVE-2018-12130, clears the relevant MDS buffers on every VM entry.  This
+            setting may slow down workloads causing many VM exits, so it is only
+            recommended for situation where there is a real need to be paranoid.
+
     """
     __uuid__ = '3fcfe589-ca66-468f-e313-656f9d0b2eb6'
     _enums = [
@@ -970,6 +1015,17 @@ class CPUPropertyType(Enum):
             on every VM entry.  This setting may significantly slow down workloads
             causing many VM exits, so it is only recommended for situation where there
             is a real need to be paranoid.'''),
+        ('MDSClearOnEMTScheduling', 13, 
+         '''If set and the host is affected by CVE-2018-12126, CVE-2018-12127, or
+            CVE-2018-12130, clears the relevant MDS buffers when the EMT is scheduled
+            to do ring-0 guest execution.  There could be a small performance penalty
+            for certain typs of workloads. For security reasons this setting will be
+            enabled by default.'''),
+        ('MDSClearOnVMEntry', 14, 
+         '''If set and the host is affected by CVE-2018-12126, CVE-2018-12127, or
+            CVE-2018-12130, clears the relevant MDS buffers on every VM entry.  This
+            setting may slow down workloads causing many VM exits, so it is only
+            recommended for situation where there is a real need to be paranoid.'''),
         ] 
 
 
@@ -1014,8 +1070,13 @@ class HWVirtExPropertyType(Enum):
             Use the native hypervisor API instead of the VirtualBox one (HM) for VT-X/AMD-V.  This is
             ignored if :py:attr:`HWVirtExPropertyType.enabled`  isn't set.
 
+    .. describe:: virt_vmsave_vmload(8)
+
+            Whether AMD-V Virtualized VMSAVE/VMLOAD is enabled. If this feature is not available, it will not
+            be used.
+
     """
-    __uuid__ = 'bc05551e-e288-467e-1ea3-233de08e4480'
+    __uuid__ = '00069d9c-00b5-460c-00dd-64250024f7aa'
     _enums = [
         ('Null', 0, 
          '''Null value (never used by the API).'''),
@@ -1036,6 +1097,9 @@ class HWVirtExPropertyType(Enum):
         ('UseNativeApi', 7, 
          '''Use the native hypervisor API instead of the VirtualBox one (HM) for VT-X/AMD-V.  This is
             ignored if :py:attr:`HWVirtExPropertyType.enabled`  isn't set.'''),
+        ('VirtVmsaveVmload', 8, 
+         '''Whether AMD-V Virtualized VMSAVE/VMLOAD is enabled. If this feature is not available, it will not
+            be used.'''),
         ] 
 
 
@@ -1085,34 +1149,6 @@ class ParavirtProvider(Enum):
          '''Microsoft Hyper-V.'''),
         ('KVM', 5, 
          '''Linux KVM.'''),
-        ] 
-
-
-class FaultToleranceState(Enum):
-    """Used with :py:func:`IMachine.fault_tolerance_state` .
-
-
-    .. describe:: inactive(1)
-
-            No fault tolerance enabled.
-
-    .. describe:: master(2)
-
-            Fault tolerant master VM.
-
-    .. describe:: standby(3)
-
-            Fault tolerant standby VM.
-
-    """
-    __uuid__ = '5124f7ec-6b67-493c-9dee-ee45a44114e1'
-    _enums = [
-        ('Inactive', 1, 
-         '''No fault tolerance enabled.'''),
-        ('Master', 2, 
-         '''Fault tolerant master VM.'''),
-        ('Standby', 3, 
-         '''Fault tolerant standby VM.'''),
         ] 
 
 
@@ -1483,8 +1519,12 @@ class ProcessorFeature(Enum):
 
             
 
+    .. describe:: virt_vmsave_vmload(6)
+
+            
+
     """
-    __uuid__ = 'fed0e385-dc5a-4cef-b9e2-66bafb6af6aa'
+    __uuid__ = '0064dece-000e-4963-00f8-eb9b00674c8a'
     _enums = [
         ('HWVirtEx', 0, 
          ''''''),
@@ -1497,6 +1537,8 @@ class ProcessorFeature(Enum):
         ('UnrestrictedGuest', 4, 
          ''''''),
         ('NestedHWVirt', 5, 
+         ''''''),
+        ('VirtVmsaveVmload', 6, 
          ''''''),
         ] 
 
@@ -1698,413 +1740,1463 @@ class BitmapFormat(Enum):
         ] 
 
 
-class DhcpOpt(Enum):
-    """
+class PartitioningType(Enum):
+    """The type of the disk partition.
 
 
-    .. describe:: subnet_mask(1)
-
-            
-
-    .. describe:: time_offset(2)
+    .. describe:: mbr(0)
 
             
 
-    .. describe:: router(3)
-
-            
-
-    .. describe:: time_server(4)
-
-            
-
-    .. describe:: name_server(5)
-
-            
-
-    .. describe:: domain_name_server(6)
-
-            
-
-    .. describe:: log_server(7)
-
-            
-
-    .. describe:: cookie(8)
-
-            
-
-    .. describe:: lpr_server(9)
-
-            
-
-    .. describe:: impress_server(10)
-
-            
-
-    .. describe:: resourse_location_server(11)
-
-            
-
-    .. describe:: host_name(12)
-
-            
-
-    .. describe:: boot_file_size(13)
-
-            
-
-    .. describe:: merit_dump_file(14)
-
-            
-
-    .. describe:: domain_name(15)
-
-            
-
-    .. describe:: swap_server(16)
-
-            
-
-    .. describe:: root_path(17)
-
-            
-
-    .. describe:: extension_path(18)
-
-            
-
-    .. describe:: ip_forwarding_enable_disable(19)
-
-            
-
-    .. describe:: non_local_source_routing_enable_disable(20)
-
-            
-
-    .. describe:: policy_filter(21)
-
-            
-
-    .. describe:: maximum_datagram_reassembly_size(22)
-
-            
-
-    .. describe:: default_ip_time2_live(23)
-
-            
-
-    .. describe:: path_mtu_aging_timeout(24)
-
-            
-
-    .. describe:: ip_layer_parameters_per_interface(25)
-
-            
-
-    .. describe:: interface_mtu(26)
-
-            
-
-    .. describe:: all_subnets_are_local(27)
-
-            
-
-    .. describe:: broadcast_address(28)
-
-            
-
-    .. describe:: perform_mask_discovery(29)
-
-            
-
-    .. describe:: mask_supplier(30)
-
-            
-
-    .. describe:: perform_route_discovery(31)
-
-            
-
-    .. describe:: router_solicitation_address(32)
-
-            
-
-    .. describe:: static_route(33)
-
-            
-
-    .. describe:: trailer_encapsulation(34)
-
-            
-
-    .. describe:: arp_cache_timeout(35)
-
-            
-
-    .. describe:: ethernet_encapsulation(36)
-
-            
-
-    .. describe:: tcp_default_ttl(37)
-
-            
-
-    .. describe:: tcp_keep_alive_interval(38)
-
-            
-
-    .. describe:: tcp_keep_alive_garbage(39)
-
-            
-
-    .. describe:: network_information_service_domain(40)
-
-            
-
-    .. describe:: network_information_service_servers(41)
-
-            
-
-    .. describe:: network_time_protocol_servers(42)
-
-            
-
-    .. describe:: vendor_specific_information(43)
-
-            
-
-    .. describe:: option_44(44)
-
-            
-
-    .. describe:: option_45(45)
-
-            
-
-    .. describe:: option_46(46)
-
-            
-
-    .. describe:: option_47(47)
-
-            
-
-    .. describe:: option_48(48)
-
-            
-
-    .. describe:: option_49(49)
-
-            
-
-    .. describe:: ip_address_lease_time(51)
-
-            
-
-    .. describe:: option_64(64)
-
-            
-
-    .. describe:: option_65(65)
-
-            
-
-    .. describe:: tftp_server_name(66)
-
-            
-
-    .. describe:: bootfile_name(67)
-
-            
-
-    .. describe:: option_68(68)
-
-            
-
-    .. describe:: option_69(69)
-
-            
-
-    .. describe:: option_70(70)
-
-            
-
-    .. describe:: option_71(71)
-
-            
-
-    .. describe:: option_72(72)
-
-            
-
-    .. describe:: option_73(73)
-
-            
-
-    .. describe:: option_74(74)
-
-            
-
-    .. describe:: option_75(75)
-
-            
-
-    .. describe:: option_119(119)
+    .. describe:: gpt(1)
 
             
 
     """
-    __uuid__ = '40d99bd3-3ece-44d2-a07e-1085fe9c4f0b'
+    __uuid__ = '64c4c806-8908-4c0b-9a51-2d7a0151321f'
     _enums = [
-        ('SubnetMask', 1, 
+        ('MBR', 0, 
          ''''''),
-        ('TimeOffset', 2, 
-         ''''''),
-        ('Router', 3, 
-         ''''''),
-        ('TimeServer', 4, 
-         ''''''),
-        ('NameServer', 5, 
-         ''''''),
-        ('DomainNameServer', 6, 
-         ''''''),
-        ('LogServer', 7, 
-         ''''''),
-        ('Cookie', 8, 
-         ''''''),
-        ('LPRServer', 9, 
-         ''''''),
-        ('ImpressServer', 10, 
-         ''''''),
-        ('ResourseLocationServer', 11, 
-         ''''''),
-        ('HostName', 12, 
-         ''''''),
-        ('BootFileSize', 13, 
-         ''''''),
-        ('MeritDumpFile', 14, 
-         ''''''),
-        ('DomainName', 15, 
-         ''''''),
-        ('SwapServer', 16, 
-         ''''''),
-        ('RootPath', 17, 
-         ''''''),
-        ('ExtensionPath', 18, 
-         ''''''),
-        ('IPForwardingEnableDisable', 19, 
-         ''''''),
-        ('NonLocalSourceRoutingEnableDisable', 20, 
-         ''''''),
-        ('PolicyFilter', 21, 
-         ''''''),
-        ('MaximumDatagramReassemblySize', 22, 
-         ''''''),
-        ('DefaultIPTime2Live', 23, 
-         ''''''),
-        ('PathMTUAgingTimeout', 24, 
-         ''''''),
-        ('IPLayerParametersPerInterface', 25, 
-         ''''''),
-        ('InterfaceMTU', 26, 
-         ''''''),
-        ('AllSubnetsAreLocal', 27, 
-         ''''''),
-        ('BroadcastAddress', 28, 
-         ''''''),
-        ('PerformMaskDiscovery', 29, 
-         ''''''),
-        ('MaskSupplier', 30, 
-         ''''''),
-        ('PerformRouteDiscovery', 31, 
-         ''''''),
-        ('RouterSolicitationAddress', 32, 
-         ''''''),
-        ('StaticRoute', 33, 
-         ''''''),
-        ('TrailerEncapsulation', 34, 
-         ''''''),
-        ('ARPCacheTimeout', 35, 
-         ''''''),
-        ('EthernetEncapsulation', 36, 
-         ''''''),
-        ('TCPDefaultTTL', 37, 
-         ''''''),
-        ('TCPKeepAliveInterval', 38, 
-         ''''''),
-        ('TCPKeepAliveGarbage', 39, 
-         ''''''),
-        ('NetworkInformationServiceDomain', 40, 
-         ''''''),
-        ('NetworkInformationServiceServers', 41, 
-         ''''''),
-        ('NetworkTimeProtocolServers', 42, 
-         ''''''),
-        ('VendorSpecificInformation', 43, 
-         ''''''),
-        ('Option_44', 44, 
-         ''''''),
-        ('Option_45', 45, 
-         ''''''),
-        ('Option_46', 46, 
-         ''''''),
-        ('Option_47', 47, 
-         ''''''),
-        ('Option_48', 48, 
-         ''''''),
-        ('Option_49', 49, 
-         ''''''),
-        ('IPAddressLeaseTime', 51, 
-         ''''''),
-        ('Option_64', 64, 
-         ''''''),
-        ('Option_65', 65, 
-         ''''''),
-        ('TFTPServerName', 66, 
-         ''''''),
-        ('BootfileName', 67, 
-         ''''''),
-        ('Option_68', 68, 
-         ''''''),
-        ('Option_69', 69, 
-         ''''''),
-        ('Option_70', 70, 
-         ''''''),
-        ('Option_71', 71, 
-         ''''''),
-        ('Option_72', 72, 
-         ''''''),
-        ('Option_73', 73, 
-         ''''''),
-        ('Option_74', 74, 
-         ''''''),
-        ('Option_75', 75, 
-         ''''''),
-        ('Option_119', 119, 
+        ('GPT', 1, 
          ''''''),
         ] 
 
 
-class DhcpOptEncoding(Enum):
+class PartitionType(Enum):
     """
 
 
-    .. describe:: legacy(0)
+    .. describe:: empty(0)
 
-            
+            Empty partition entry
+
+    .. describe:: fat12(1)
+
+            FAT12 if partition size less than 65536 sectors
+
+    .. describe:: fat16(4)
+
+            FAT16 if partition size less than 65536 sectors
+
+    .. describe:: fat(6)
+
+            FAT12 or FAT16 if partition size greater or equal than 65536 sectors
+
+    .. describe:: ifs(7)
+
+            NT and OS/2 installable file system, e.g. NTFS, exFAT, HPFS.
+
+    .. describe:: fat32_chs(11)
+
+            The FAT32 with CHS addressing.
+
+    .. describe:: fat32_lba(12)
+
+            The FAT32 with LBA addressing.
+
+    .. describe:: fat16_b(14)
+
+            The FAT16 with LBA addressing.
+
+    .. describe:: extended(15)
+
+            The extended partition with LBA addressing.
+
+    .. describe:: windows_re(39)
+
+            Windows Recovery Environment (RE) partition (hidden NTFS partition).
+
+    .. describe:: linux_swap_old(66)
+
+            The linux swap partition (old versions).
+
+    .. describe:: linux_old(67)
+
+            The linux native partition (old versions).
+
+    .. describe:: dragon_fly_bsd_slice(108)
+
+            The BSD slice.
+
+    .. describe:: linux_swap(130)
+
+            The linux swap partition.
+
+    .. describe:: linux(131)
+
+            The linux native partition.
+
+    .. describe:: linux_extended(133)
+
+            The linux extended partition.
+
+    .. describe:: linux_lvm(142)
+
+            The linux LVM partition.
+
+    .. describe:: bsd_slice(165)
+
+            The BSD slice.
+
+    .. describe:: apple_ufs(168)
+
+            The Apple UFS partition.
+
+    .. describe:: apple_hfs(175)
+
+            The Apple HFS partition.
+
+    .. describe:: solaris(191)
+
+            The Apple HFS partition.
+
+    .. describe:: gpt(238)
+
+            The GPT protective MBR partition.
+
+    .. describe:: efi(239)
+
+            The EFI system partition.
+
+    .. describe:: unknown(256)
+
+            Unknown partition type.
+
+    .. describe:: mbr(257)
+
+            MBR partition scheme.
+
+    .. describe:: i_ffs(258)
+
+            Intel Fast Flash (iFFS) partition.
+
+    .. describe:: sony_boot(259)
+
+            Sony boot partition.
+
+    .. describe:: lenovo_boot(260)
+
+            Lenovo boot partition.
+
+    .. describe:: windows_msr(270)
+
+            Microsoft Reserved Partition (MSR).
+
+    .. describe:: windows_basic_data(271)
+
+            Windows Basic data partition
+
+    .. describe:: windows_ldm_meta(272)
+
+            Windows Logical Disk Manager (LDM) metadata partition.
+
+    .. describe:: windows_ldm_data(273)
+
+            Windows Logical Disk Manager data partition.
+
+    .. describe:: windows_recovery(274)
+
+            Windows Recovery Environment.
+
+    .. describe:: windows_storage_spaces(276)
+
+            Windows Storage Spaces partition.
+
+    .. describe:: windows_storage_replica(277)
+
+            Windows Storage Replica partition.
+
+    .. describe:: ibmgpfs(275)
+
+            IBM General Parallel File System (GPFS) partition.
+
+    .. describe:: linux_data(300)
+
+            Linux filesystem data.
+
+    .. describe:: linux_raid(301)
+
+            Linux RAID partition.
+
+    .. describe:: linux_root_x86(302)
+
+            Linux root partition for x86.
+
+    .. describe:: linux_root_amd64(303)
+
+            Linux root partition for AMD64.
+
+    .. describe:: linux_root_arm32(304)
+
+            Linux root partition for ARM32.
+
+    .. describe:: linux_root_arm64(305)
+
+            Linux root partition for ARM64 / AArch64.
+
+    .. describe:: linux_home(306)
+
+            Linux /home partition.
+
+    .. describe:: linux_srv(307)
+
+            Linux /srv partition..
+
+    .. describe:: linux_plain_dm_crypt(308)
+
+            Linux plain dm-crypt partition.
+
+    .. describe:: linux_luks(309)
+
+            Linux unitified key setup (LUKS) partition.
+
+    .. describe:: linux_reserved(310)
+
+            Linux reserved partition.
+
+    .. describe:: free_bsd_boot(330)
+
+            FreeBSD boot partition.
+
+    .. describe:: free_bsd_data(331)
+
+            FreeBSD data partition.
+
+    .. describe:: free_bsd_swap(332)
+
+            FreeBSD swap partition.
+
+    .. describe:: free_bsdufs(333)
+
+            FreeBSD unix file system (UFS) partition.
+
+    .. describe:: free_bsd_vinum(334)
+
+            FreeBSD Vinum volume manager partition.
+
+    .. describe:: free_bsdzfs(335)
+
+            FreeBSD ZFS partition.
+
+    .. describe:: free_bsd_unknown(359)
+
+            Unknown FreeBSD partition.
+
+    .. describe:: apple_hfs_plus(360)
+
+            Apple hierarchical file system plus (HFS+) partition.
+
+    .. describe:: apple_apfs(361)
+
+            Apple APFS/FileFault container partition.
+
+    .. describe:: apple_raid(362)
+
+            Apple RAID partition.
+
+    .. describe:: apple_raid_offline(363)
+
+            Apple RAID partition, offline.
+
+    .. describe:: apple_boot(364)
+
+            Apple boot partition.
+
+    .. describe:: apple_label(365)
+
+            Apple label.
+
+    .. describe:: apple_tv_recovery(366)
+
+            Apple TV recovery partition.
+
+    .. describe:: apple_core_storage(367)
+
+            Apple Core Storage Containe.
+
+    .. describe:: soft_raid_status(370)
+
+            SoftRAID status.
+
+    .. describe:: soft_raid_scratch(371)
+
+            SoftRAID scratch.
+
+    .. describe:: soft_raid_volume(372)
+
+            SoftRAID volume.
+
+    .. describe:: soft_raid_cache(373)
+
+            SoftRAID cache.
+
+    .. describe:: apple_unknown(389)
+
+            Unknown Apple partition.
+
+    .. describe:: solaris_boot(390)
+
+            Solaris boot partition.
+
+    .. describe:: solaris_root(391)
+
+            Solaris root partition.
+
+    .. describe:: solaris_swap(392)
+
+            Solaris swap partition.
+
+    .. describe:: solaris_backup(393)
+
+            Solaris backup partition.
+
+    .. describe:: solaris_usr(394)
+
+            Solaris /usr partition.
+
+    .. describe:: solaris_var(395)
+
+            Solaris /var partition.
+
+    .. describe:: solaris_home(396)
+
+            Solaris /home partition.
+
+    .. describe:: solaris_alt_sector(397)
+
+            Solaris alternate sector.
+
+    .. describe:: solaris_reserved(398)
+
+            Solaris reserved partition.
+
+    .. describe:: solaris_unknown(419)
+
+            Unknown Solaris partition.
+
+    .. describe:: net_bsd_swap(420)
+
+            NetBSD swap partition.
+
+    .. describe:: net_bsdffs(421)
+
+            NetBSD fast file system (FFS) partition.
+
+    .. describe:: net_bsdlfs(422)
+
+            NetBSD log structured file system (LFS) partition.
+
+    .. describe:: net_bsdraid(423)
+
+            NetBSD RAID partition.
+
+    .. describe:: net_bsd_concatenated(424)
+
+            NetBSD concatenated partition.
+
+    .. describe:: net_bsd_encrypted(425)
+
+            NetBSD encrypted partition.
+
+    .. describe:: net_bsd_unknown(449)
+
+            Unknown NetBSD partition.
+
+    .. describe:: chrome_os_kernel(450)
+
+            Chrome OS kernel partition.
+
+    .. describe:: chrome_os_root_fs(451)
+
+            Chrome OS root file system partition.
+
+    .. describe:: chrome_os_future(452)
+
+            Chrome OS partition reserved for future.
+
+    .. describe:: cont_lnx_usr(480)
+
+            Container Linux /usr partition.
+
+    .. describe:: cont_lnx_root(481)
+
+            Container Linux resizable root filesystem partition.
+
+    .. describe:: cont_lnx_reserved(482)
+
+            Container Linux OEM customization partition.
+
+    .. describe:: cont_lnx_root_raid(483)
+
+            Container Linux root filesystem on RAID partition.
+
+    .. describe:: haiku_bfs(510)
+
+            Haiku BFS
+
+    .. describe:: midnt_bsd_boot(540)
+
+            MidnightBSD boot partition.
+
+    .. describe:: midnt_bsd_data(541)
+
+            MidnightBSD data partition.
+
+    .. describe:: midnt_bsd_swap(542)
+
+            MidnightBSD swap partition.
+
+    .. describe:: midnt_bsdufs(543)
+
+            MidnightBSD unix file system (UFS) partition.
+
+    .. describe:: midnt_bsd_vium(544)
+
+            MidnightBSD Vinum volume manager partition.
+
+    .. describe:: midnt_bsdzfs(545)
+
+            MidnightBSD ZFS partition.
+
+    .. describe:: midnt_bsd_unknown(569)
+
+            Unknown MidnightBSD partition.
+
+    .. describe:: open_bsd_data(570)
+
+            OpenBSD data partition.
+
+    .. describe:: qnx_power_safe_fs(600)
+
+            QNX power-safe file system partition.
+
+    .. describe:: plan9(630)
+
+            Plan 9 partition.
+
+    .. describe:: vm_ware_vmk_core(660)
+
+            VMWare ESX coredump partition.
+
+    .. describe:: vm_ware_vmfs(661)
+
+            VMWare ESX virtual machine file system (VMFS) partition.
+
+    .. describe:: vm_ware_reserved(662)
+
+            VMWare ESX reserved partition.
+
+    .. describe:: vm_ware_unknown(689)
+
+            Unknown VMWare partition.
+
+    .. describe:: android_x86_bootloader(690)
+
+            Android x86 bootloader partition.
+
+    .. describe:: android_x86_bootloader2(691)
+
+            Android x86 bootloader2 partition.
+
+    .. describe:: android_x86_boot(692)
+
+            Android x86 boot partition.
+
+    .. describe:: android_x86_recovery(693)
+
+            Android x86 recovery partition.
+
+    .. describe:: android_x86_misc(694)
+
+            Android x86 misc partition.
+
+    .. describe:: android_x86_metadata(695)
+
+            Android x86 metadata partition.
+
+    .. describe:: android_x86_system(696)
+
+            Android x86 system partition.
+
+    .. describe:: android_x86_cache(697)
+
+            Android x86 cache partition.
+
+    .. describe:: android_x86_data(698)
+
+            Android x86 data partition.
+
+    .. describe:: android_x86_persistent(699)
+
+            Android x86 persistent data partition.
+
+    .. describe:: android_x86_vendor(700)
+
+            Android x86 vendor partition.
+
+    .. describe:: android_x86_config(701)
+
+            Android x86 config partition.
+
+    .. describe:: android_x86_factory(702)
+
+            Android x86 factory partition.
+
+    .. describe:: android_x86_factory_alt(703)
+
+            Android x86 alternative factory partition.
+
+    .. describe:: android_x86_fastboot(704)
+
+            Android x86 fastboot partition.
+
+    .. describe:: android_x86_oem(705)
+
+            Android x86 OEM partition.
+
+    .. describe:: android_arm_meta(720)
+
+            Android ARM meta partition.
+
+    .. describe:: android_arm_ext(721)
+
+            Android ARM EXT partition.
+
+    .. describe:: onie_boot(750)
+
+            Open Network Install Environment (ONIE) boot partition.
+
+    .. describe:: onie_config(751)
+
+            Open Network Install Environment (ONIE) config partition.
+
+    .. describe:: power_pc_prep(780)
+
+            PowerPC PReP boot partition.
+
+    .. describe:: xdg_shr_boot_config(810)
+
+            freedesktop.org shared boot loader configuration partition.
+
+    .. describe:: ceph_block(830)
+
+            Ceph block partition.
+
+    .. describe:: ceph_block_db(831)
+
+            Ceph block DB partition.
+
+    .. describe:: ceph_block_db_dmc(832)
+
+            Ceph dm-crypt block DB partition.
+
+    .. describe:: ceph_block_db_dmc_luks(833)
+
+            Ceph dm-crypt Linux unitified key setup (LUKS) block DB partition.
+
+    .. describe:: ceph_block_dmc(834)
+
+            Ceph dm-crypt block partition.
+
+    .. describe:: ceph_block_dmc_luks(835)
+
+            Ceph dm-crypt Linux unitified key setup (LUKS) block partition.
+
+    .. describe:: ceph_block_wa_log(836)
+
+            Ceph block write-ahead log partition.
+
+    .. describe:: ceph_block_wa_log_dmc(837)
+
+            Ceph dm-crypt block write-ahead log partition.
+
+    .. describe:: ceph_block_wa_log_dmc_luks(838)
+
+            Ceph dm-crypt Linux unitified key setup (LUKS) block write-ahead log partition.
+
+    .. describe:: ceph_disk(839)
+
+            Ceph disk in creation partition.
+
+    .. describe:: ceph_disk_dmc(840)
+
+            Ceph dm-crypt disk in creation partition.
+
+    .. describe:: ceph_journal(841)
+
+            Ceph Journal partition.
+
+    .. describe:: ceph_journal_dmc(842)
+
+            Ceph dm-crypt journal partition.
+
+    .. describe:: ceph_journal_dmc_luks(843)
+
+            Ceph dm-crypt Linux unitified key setup (LUKS) journal partition.
+
+    .. describe:: ceph_lockbox(844)
+
+            Ceph Lockbox for dm-crypt keys partition.
+
+    .. describe:: ceph_multipath_block1(845)
+
+            Ceph multipath block 1 partition.
+
+    .. describe:: ceph_multipath_block2(846)
+
+            Ceph multipath block 2 partition.
+
+    .. describe:: ceph_multipath_block_db(847)
+
+            Ceph multipath block DB partition.
+
+    .. describe:: ceph_multipath_b_lock_wa_log(848)
+
+            Ceph multipath block write-ahead log partition.
+
+    .. describe:: ceph_multipath_journal(849)
+
+            Ceph multipath journal partition.
+
+    .. describe:: ceph_multipath_osd(851)
+
+            Ceph multipath object storage deamon (OSD) partition.
+
+    .. describe:: ceph_osd(852)
+
+            Ceph object storage deamon (OSD) partition.
+
+    .. describe:: ceph_osd_dmc(853)
+
+            Ceph dm-crypt object storage deamon (OSD) partition.
+
+    .. describe:: ceph_osd_dmc_luks(854)
+
+            Ceph dm-crypt Linux unitified key setup (LUKS) object storage deamon (OSD) partition.
+
+    """
+    __uuid__ = '84a6629c-8e9c-474c-adbb-21995671597f'
+    _enums = [
+        ('Empty', 0, 
+         '''Empty partition entry'''),
+        ('FAT12', 1, 
+         '''FAT12 if partition size less than 65536 sectors'''),
+        ('FAT16', 4, 
+         '''FAT16 if partition size less than 65536 sectors'''),
+        ('FAT', 6, 
+         '''FAT12 or FAT16 if partition size greater or equal than 65536 sectors'''),
+        ('IFS', 7, 
+         '''NT and OS/2 installable file system, e.g. NTFS, exFAT, HPFS.'''),
+        ('FAT32CHS', 11, 
+         '''The FAT32 with CHS addressing.'''),
+        ('FAT32LBA', 12, 
+         '''The FAT32 with LBA addressing.'''),
+        ('FAT16B', 14, 
+         '''The FAT16 with LBA addressing.'''),
+        ('Extended', 15, 
+         '''The extended partition with LBA addressing.'''),
+        ('WindowsRE', 39, 
+         '''Windows Recovery Environment (RE) partition (hidden NTFS partition).'''),
+        ('LinuxSwapOld', 66, 
+         '''The linux swap partition (old versions).'''),
+        ('LinuxOld', 67, 
+         '''The linux native partition (old versions).'''),
+        ('DragonFlyBSDSlice', 108, 
+         '''The BSD slice.'''),
+        ('LinuxSwap', 130, 
+         '''The linux swap partition.'''),
+        ('Linux', 131, 
+         '''The linux native partition.'''),
+        ('LinuxExtended', 133, 
+         '''The linux extended partition.'''),
+        ('LinuxLVM', 142, 
+         '''The linux LVM partition.'''),
+        ('BSDSlice', 165, 
+         '''The BSD slice.'''),
+        ('AppleUFS', 168, 
+         '''The Apple UFS partition.'''),
+        ('AppleHFS', 175, 
+         '''The Apple HFS partition.'''),
+        ('Solaris', 191, 
+         '''The Apple HFS partition.'''),
+        ('GPT', 238, 
+         '''The GPT protective MBR partition.'''),
+        ('EFI', 239, 
+         '''The EFI system partition.'''),
+        ('Unknown', 256, 
+         '''Unknown partition type.'''),
+        ('MBR', 257, 
+         '''MBR partition scheme.'''),
+        ('iFFS', 258, 
+         '''Intel Fast Flash (iFFS) partition.'''),
+        ('SonyBoot', 259, 
+         '''Sony boot partition.'''),
+        ('LenovoBoot', 260, 
+         '''Lenovo boot partition.'''),
+        ('WindowsMSR', 270, 
+         '''Microsoft Reserved Partition (MSR).'''),
+        ('WindowsBasicData', 271, 
+         '''Windows Basic data partition'''),
+        ('WindowsLDMMeta', 272, 
+         '''Windows Logical Disk Manager (LDM) metadata partition.'''),
+        ('WindowsLDMData', 273, 
+         '''Windows Logical Disk Manager data partition.'''),
+        ('WindowsRecovery', 274, 
+         '''Windows Recovery Environment.'''),
+        ('WindowsStorageSpaces', 276, 
+         '''Windows Storage Spaces partition.'''),
+        ('WindowsStorageReplica', 277, 
+         '''Windows Storage Replica partition.'''),
+        ('IBMGPFS', 275, 
+         '''IBM General Parallel File System (GPFS) partition.'''),
+        ('LinuxData', 300, 
+         '''Linux filesystem data.'''),
+        ('LinuxRAID', 301, 
+         '''Linux RAID partition.'''),
+        ('LinuxRootX86', 302, 
+         '''Linux root partition for x86.'''),
+        ('LinuxRootAMD64', 303, 
+         '''Linux root partition for AMD64.'''),
+        ('LinuxRootARM32', 304, 
+         '''Linux root partition for ARM32.'''),
+        ('LinuxRootARM64', 305, 
+         '''Linux root partition for ARM64 / AArch64.'''),
+        ('LinuxHome', 306, 
+         '''Linux /home partition.'''),
+        ('LinuxSrv', 307, 
+         '''Linux /srv partition..'''),
+        ('LinuxPlainDmCrypt', 308, 
+         '''Linux plain dm-crypt partition.'''),
+        ('LinuxLUKS', 309, 
+         '''Linux unitified key setup (LUKS) partition.'''),
+        ('LinuxReserved', 310, 
+         '''Linux reserved partition.'''),
+        ('FreeBSDBoot', 330, 
+         '''FreeBSD boot partition.'''),
+        ('FreeBSDData', 331, 
+         '''FreeBSD data partition.'''),
+        ('FreeBSDSwap', 332, 
+         '''FreeBSD swap partition.'''),
+        ('FreeBSDUFS', 333, 
+         '''FreeBSD unix file system (UFS) partition.'''),
+        ('FreeBSDVinum', 334, 
+         '''FreeBSD Vinum volume manager partition.'''),
+        ('FreeBSDZFS', 335, 
+         '''FreeBSD ZFS partition.'''),
+        ('FreeBSDUnknown', 359, 
+         '''Unknown FreeBSD partition.'''),
+        ('AppleHFSPlus', 360, 
+         '''Apple hierarchical file system plus (HFS+) partition.'''),
+        ('AppleAPFS', 361, 
+         '''Apple APFS/FileFault container partition.'''),
+        ('AppleRAID', 362, 
+         '''Apple RAID partition.'''),
+        ('AppleRAIDOffline', 363, 
+         '''Apple RAID partition, offline.'''),
+        ('AppleBoot', 364, 
+         '''Apple boot partition.'''),
+        ('AppleLabel', 365, 
+         '''Apple label.'''),
+        ('AppleTvRecovery', 366, 
+         '''Apple TV recovery partition.'''),
+        ('AppleCoreStorage', 367, 
+         '''Apple Core Storage Containe.'''),
+        ('SoftRAIDStatus', 370, 
+         '''SoftRAID status.'''),
+        ('SoftRAIDScratch', 371, 
+         '''SoftRAID scratch.'''),
+        ('SoftRAIDVolume', 372, 
+         '''SoftRAID volume.'''),
+        ('SoftRAIDCache', 373, 
+         '''SoftRAID cache.'''),
+        ('AppleUnknown', 389, 
+         '''Unknown Apple partition.'''),
+        ('SolarisBoot', 390, 
+         '''Solaris boot partition.'''),
+        ('SolarisRoot', 391, 
+         '''Solaris root partition.'''),
+        ('SolarisSwap', 392, 
+         '''Solaris swap partition.'''),
+        ('SolarisBackup', 393, 
+         '''Solaris backup partition.'''),
+        ('SolarisUsr', 394, 
+         '''Solaris /usr partition.'''),
+        ('SolarisVar', 395, 
+         '''Solaris /var partition.'''),
+        ('SolarisHome', 396, 
+         '''Solaris /home partition.'''),
+        ('SolarisAltSector', 397, 
+         '''Solaris alternate sector.'''),
+        ('SolarisReserved', 398, 
+         '''Solaris reserved partition.'''),
+        ('SolarisUnknown', 419, 
+         '''Unknown Solaris partition.'''),
+        ('NetBSDSwap', 420, 
+         '''NetBSD swap partition.'''),
+        ('NetBSDFFS', 421, 
+         '''NetBSD fast file system (FFS) partition.'''),
+        ('NetBSDLFS', 422, 
+         '''NetBSD log structured file system (LFS) partition.'''),
+        ('NetBSDRAID', 423, 
+         '''NetBSD RAID partition.'''),
+        ('NetBSDConcatenated', 424, 
+         '''NetBSD concatenated partition.'''),
+        ('NetBSDEncrypted', 425, 
+         '''NetBSD encrypted partition.'''),
+        ('NetBSDUnknown', 449, 
+         '''Unknown NetBSD partition.'''),
+        ('ChromeOSKernel', 450, 
+         '''Chrome OS kernel partition.'''),
+        ('ChromeOSRootFS', 451, 
+         '''Chrome OS root file system partition.'''),
+        ('ChromeOSFuture', 452, 
+         '''Chrome OS partition reserved for future.'''),
+        ('ContLnxUsr', 480, 
+         '''Container Linux /usr partition.'''),
+        ('ContLnxRoot', 481, 
+         '''Container Linux resizable root filesystem partition.'''),
+        ('ContLnxReserved', 482, 
+         '''Container Linux OEM customization partition.'''),
+        ('ContLnxRootRAID', 483, 
+         '''Container Linux root filesystem on RAID partition.'''),
+        ('HaikuBFS', 510, 
+         '''Haiku BFS'''),
+        ('MidntBSDBoot', 540, 
+         '''MidnightBSD boot partition.'''),
+        ('MidntBSDData', 541, 
+         '''MidnightBSD data partition.'''),
+        ('MidntBSDSwap', 542, 
+         '''MidnightBSD swap partition.'''),
+        ('MidntBSDUFS', 543, 
+         '''MidnightBSD unix file system (UFS) partition.'''),
+        ('MidntBSDVium', 544, 
+         '''MidnightBSD Vinum volume manager partition.'''),
+        ('MidntBSDZFS', 545, 
+         '''MidnightBSD ZFS partition.'''),
+        ('MidntBSDUnknown', 569, 
+         '''Unknown MidnightBSD partition.'''),
+        ('OpenBSDData', 570, 
+         '''OpenBSD data partition.'''),
+        ('QNXPowerSafeFS', 600, 
+         '''QNX power-safe file system partition.'''),
+        ('Plan9', 630, 
+         '''Plan 9 partition.'''),
+        ('VMWareVMKCore', 660, 
+         '''VMWare ESX coredump partition.'''),
+        ('VMWareVMFS', 661, 
+         '''VMWare ESX virtual machine file system (VMFS) partition.'''),
+        ('VMWareReserved', 662, 
+         '''VMWare ESX reserved partition.'''),
+        ('VMWareUnknown', 689, 
+         '''Unknown VMWare partition.'''),
+        ('AndroidX86Bootloader', 690, 
+         '''Android x86 bootloader partition.'''),
+        ('AndroidX86Bootloader2', 691, 
+         '''Android x86 bootloader2 partition.'''),
+        ('AndroidX86Boot', 692, 
+         '''Android x86 boot partition.'''),
+        ('AndroidX86Recovery', 693, 
+         '''Android x86 recovery partition.'''),
+        ('AndroidX86Misc', 694, 
+         '''Android x86 misc partition.'''),
+        ('AndroidX86Metadata', 695, 
+         '''Android x86 metadata partition.'''),
+        ('AndroidX86System', 696, 
+         '''Android x86 system partition.'''),
+        ('AndroidX86Cache', 697, 
+         '''Android x86 cache partition.'''),
+        ('AndroidX86Data', 698, 
+         '''Android x86 data partition.'''),
+        ('AndroidX86Persistent', 699, 
+         '''Android x86 persistent data partition.'''),
+        ('AndroidX86Vendor', 700, 
+         '''Android x86 vendor partition.'''),
+        ('AndroidX86Config', 701, 
+         '''Android x86 config partition.'''),
+        ('AndroidX86Factory', 702, 
+         '''Android x86 factory partition.'''),
+        ('AndroidX86FactoryAlt', 703, 
+         '''Android x86 alternative factory partition.'''),
+        ('AndroidX86Fastboot', 704, 
+         '''Android x86 fastboot partition.'''),
+        ('AndroidX86OEM', 705, 
+         '''Android x86 OEM partition.'''),
+        ('AndroidARMMeta', 720, 
+         '''Android ARM meta partition.'''),
+        ('AndroidARMExt', 721, 
+         '''Android ARM EXT partition.'''),
+        ('ONIEBoot', 750, 
+         '''Open Network Install Environment (ONIE) boot partition.'''),
+        ('ONIEConfig', 751, 
+         '''Open Network Install Environment (ONIE) config partition.'''),
+        ('PowerPCPrep', 780, 
+         '''PowerPC PReP boot partition.'''),
+        ('XDGShrBootConfig', 810, 
+         '''freedesktop.org shared boot loader configuration partition.'''),
+        ('CephBlock', 830, 
+         '''Ceph block partition.'''),
+        ('CephBlockDB', 831, 
+         '''Ceph block DB partition.'''),
+        ('CephBlockDBDmc', 832, 
+         '''Ceph dm-crypt block DB partition.'''),
+        ('CephBlockDBDmcLUKS', 833, 
+         '''Ceph dm-crypt Linux unitified key setup (LUKS) block DB partition.'''),
+        ('CephBlockDmc', 834, 
+         '''Ceph dm-crypt block partition.'''),
+        ('CephBlockDmcLUKS', 835, 
+         '''Ceph dm-crypt Linux unitified key setup (LUKS) block partition.'''),
+        ('CephBlockWALog', 836, 
+         '''Ceph block write-ahead log partition.'''),
+        ('CephBlockWALogDmc', 837, 
+         '''Ceph dm-crypt block write-ahead log partition.'''),
+        ('CephBlockWALogDmcLUKS', 838, 
+         '''Ceph dm-crypt Linux unitified key setup (LUKS) block write-ahead log partition.'''),
+        ('CephDisk', 839, 
+         '''Ceph disk in creation partition.'''),
+        ('CephDiskDmc', 840, 
+         '''Ceph dm-crypt disk in creation partition.'''),
+        ('CephJournal', 841, 
+         '''Ceph Journal partition.'''),
+        ('CephJournalDmc', 842, 
+         '''Ceph dm-crypt journal partition.'''),
+        ('CephJournalDmcLUKS', 843, 
+         '''Ceph dm-crypt Linux unitified key setup (LUKS) journal partition.'''),
+        ('CephLockbox', 844, 
+         '''Ceph Lockbox for dm-crypt keys partition.'''),
+        ('CephMultipathBlock1', 845, 
+         '''Ceph multipath block 1 partition.'''),
+        ('CephMultipathBlock2', 846, 
+         '''Ceph multipath block 2 partition.'''),
+        ('CephMultipathBlockDB', 847, 
+         '''Ceph multipath block DB partition.'''),
+        ('CephMultipathBLockWALog', 848, 
+         '''Ceph multipath block write-ahead log partition.'''),
+        ('CephMultipathJournal', 849, 
+         '''Ceph multipath journal partition.'''),
+        ('CephMultipathOSD', 851, 
+         '''Ceph multipath object storage deamon (OSD) partition.'''),
+        ('CephOSD', 852, 
+         '''Ceph object storage deamon (OSD) partition.'''),
+        ('CephOSDDmc', 853, 
+         '''Ceph dm-crypt object storage deamon (OSD) partition.'''),
+        ('CephOSDDmcLUKS', 854, 
+         '''Ceph dm-crypt Linux unitified key setup (LUKS) object storage deamon (OSD) partition.'''),
+        ] 
+
+
+class DHCPOption(Enum):
+    """IPv4 netmask. Set to :py:func:`IDHCPServer.network_mask`  by default.
+
+
+    .. describe:: subnet_mask(1)
+
+            IPv4 netmask. Set to :py:func:`IDHCPServer.network_mask`  by default.
+
+    .. describe:: time_offset(2)
+
+            UTC offset in seconds (32-bit decimal value).
+
+    .. describe:: routers(3)
+
+            Space separated list of IPv4 router addresses.
+
+    .. describe:: time_servers(4)
+
+            Space separated list of IPv4 time server (RFC 868) addresses.
+
+    .. describe:: name_servers(5)
+
+            Space separated list of IPv4 name server (IEN 116) addresses.
+
+    .. describe:: domain_name_servers(6)
+
+            Space separated list of IPv4 DNS addresses.
+
+    .. describe:: log_servers(7)
+
+            Space separated list of IPv4 log server addresses.
+
+    .. describe:: cookie_servers(8)
+
+            Space separated list of IPv4 cookie server (RFC 865) addresses.
+
+    .. describe:: lpr_servers(9)
+
+            Space separated list of IPv4 line printer server (RFC 1179) addresses.
+
+    .. describe:: impress_servers(10)
+
+            Space separated list of IPv4 imagen impress server addresses.
+
+    .. describe:: resourse_location_servers(11)
+
+            Space separated list of IPv4 resource location (RFC 887) addresses.
+
+    .. describe:: host_name(12)
+
+            The client name. See RFC 1035 for character limits.
+
+    .. describe:: boot_file_size(13)
+
+            Number of 512 byte blocks making up the boot file (16-bit decimal value).
+
+    .. describe:: merit_dump_file(14)
+
+            Client core file.
+
+    .. describe:: domain_name(15)
+
+            Domain name for the client.
+
+    .. describe:: swap_server(16)
+
+            IPv4 address of the swap server that the client should use.
+
+    .. describe:: root_path(17)
+
+            The path to the root disk the client should use.
+
+    .. describe:: extension_path(18)
+
+            Path to a file containing additional DHCP options (RFC2123).
+
+    .. describe:: ip_forwarding(19)
+
+            Whether IP forwarding should be enabled by the client (boolean).
+
+    .. describe:: opt_non_local_source_routing(20)
+
+            Whether non-local datagrams should be forwarded by the client (boolean)
+
+    .. describe:: policy_filter(21)
+
+            List of IPv4 addresses and masks paris controlling non-local source routing.
+
+    .. describe:: max_dgram_reassembly_size(22)
+
+            The maximum datagram size the client should reassemble (16-bit decimal value).
+
+    .. describe:: default_ipttl(23)
+
+            The default time-to-leave on outgoing (IP) datagrams (8-bit decimal value).
+
+    .. describe:: path_mtu_aging_timeout(24)
+
+            RFC1191 path MTU discovery timeout value in seconds (32-bit decimal value).
+
+    .. describe:: path_mtu_plateau_table(25)
+
+            RFC1191 path MTU discovery size table, sorted in ascending order (list of 16-bit decimal values).
+
+    .. describe:: interface_mtu(26)
+
+            The MTU size for the interface (16-bit decimal value).
+
+    .. describe:: all_subnets_are_local(27)
+
+            Indicates whether the MTU size is the same for all subnets (boolean).
+
+    .. describe:: broadcast_address(28)
+
+            Broadcast address (RFC1122) for the client to use (IPv4 address).
+
+    .. describe:: perform_mask_discovery(29)
+
+            Whether to perform subnet mask discovery via ICMP (boolean).
+
+    .. describe:: mask_supplier(30)
+
+            Whether to respond to subnet mask requests via ICMP (boolean).
+
+    .. describe:: perform_router_discovery(31)
+
+            Whether to perform router discovery (RFC1256) (boolean).
+
+    .. describe:: router_solicitation_address(32)
+
+            Where to send router solicitation requests (RFC1256) (IPv4 address).
+
+    .. describe:: static_route(33)
+
+            List of network and router address pairs addresses.
+
+    .. describe:: trailer_encapsulation(34)
+
+            Whether to negotiate the use of trailers for ARP (RTF893) (boolean).
+
+    .. describe:: arp_cache_timeout(35)
+
+            The timeout in seconds for ARP cache entries (32-bit decimal value).
+
+    .. describe:: ethernet_encapsulation(36)
+
+            Whether to use IEEE 802.3 (RTF1042) rather than of v2 (RFC894) ethernet encapsulation (boolean).
+
+    .. describe:: tcp_default_ttl(37)
+
+            Default time-to-live for TCP sends (non-zero 8-bit decimal value).
+
+    .. describe:: tcp_keepalive_interval(38)
+
+            The interface in seconds between TCP keepalive messages (32-bit decimal value).
+
+    .. describe:: tcp_keepalive_garbage(39)
+
+            Whether to include a byte of garbage in TCP keepalive messages for backward compatibility (boolean).
+
+    .. describe:: nis_domain(40)
+
+            The NIS (Sun Network Information Services) domain name (string).
+
+    .. describe:: nis_servers(41)
+
+            Space separated list of IPv4 NIS server addresses.
+
+    .. describe:: ntp_servers(42)
+
+            Space separated list of IPv4 NTP (RFC1035) server addresses.
+
+    .. describe:: vendor_specific_info(43)
+
+            Vendor specific information. Only accessible using :py:attr:`DHCPOptionEncoding.hex_p` .
+
+    .. describe:: net_bios_name_servers(44)
+
+            Space separated list of IPv4 NetBIOS name server (NBNS) addresses (RFC1001,RFC1002).
+
+    .. describe:: net_bios_datagram_servers(45)
+
+            Space separated list of IPv4 NetBIOS datagram distribution server (NBDD) addresses (RFC1001,RFC1002).
+
+    .. describe:: net_bios_node_type(46)
+
+            NetBIOS node type (RFC1001,RFC1002): 1=B-node, 2=P-node, 4=M-node, and 8=H-node (8-bit decimal value).
+
+    .. describe:: net_bios_scope(47)
+
+            NetBIOS scope (RFC1001,RFC1002). Only accessible using :py:attr:`DHCPOptionEncoding.hex_p` .
+
+    .. describe:: x_windows_font_servers(48)
+
+            Space separated list of IPv4 X windows font server addresses.
+
+    .. describe:: x_windows_display_manager(49)
+
+            Space separated list of IPv4 X windows display manager addresses.
+
+    .. describe:: net_ware_ip_domain_name(62)
+
+            Netware IP domain name (RFC2242) (string).
+
+    .. describe:: net_ware_ip_information(63)
+
+            Netware IP information (RFC2242). Only accessible using :py:attr:`DHCPOptionEncoding.hex_p` .
+
+    .. describe:: nis_plus_domain(64)
+
+            The NIS+ domain name (string).
+
+    .. describe:: nis_plus_servers(65)
+
+            Space separated list of IPv4 NIS+ server addresses.
+
+    .. describe:: tftp_server_name(66)
+
+            TFTP server name (string).
+
+    .. describe:: bootfile_name(67)
+
+            Bootfile name (string).
+
+    .. describe:: mobile_ip_home_agents(68)
+
+            Space separated list of IPv4 mobile IP agent addresses.
+
+    .. describe:: smtp_servers(69)
+
+            Space separated list of IPv4 simple mail transport protocol (SMPT) server addresses.
+
+    .. describe:: pop3_servers(70)
+
+            Space separated list of IPv4 post office protocol 3 (POP3) server addresses.
+
+    .. describe:: nntp_servers(71)
+
+            Space separated list of IPv4 network news transport protocol (NTTP) server addresses.
+
+    .. describe:: www_servers(72)
+
+            Space separated list of default IPv4 world wide web (WWW) server addresses.
+
+    .. describe:: finger_servers(73)
+
+            Space separated list of default IPv4 finger server addresses.
+
+    .. describe:: irc_servers(74)
+
+            Space separated list of default IPv4 internet relay chat (IRC) server  addresses.
+
+    .. describe:: street_talk_servers(75)
+
+            Space separated list of IPv4 StreetTalk server addresses.
+
+    .. describe:: stda_servers(76)
+
+            Space separated list of IPv4 StreetTalk directory assistance (STDA) server addresses.
+
+    .. describe:: slp_directory_agent(78)
+
+            Addresses of one or more service location protocol (SLP) directory agent, and an indicator of whether their use is mandatory. Only accessible using :py:attr:`DHCPOptionEncoding.hex_p` .
+
+    .. describe:: slp_service_scope(79)
+
+            List of service scopes for the service location protocol (SLP) and whether using the list is mandator. Only accessible using :py:attr:`DHCPOptionEncoding.hex_p` .
+
+    .. describe:: domain_search(119)
+
+            Domain search list, see RFC3397 and section 4.1.4 in RFC1035 for encoding.  Only accessible using :py:attr:`DHCPOptionEncoding.hex_p` .
+
+    """
+    __uuid__ = '00f5b10f-0021-4513-00f7-5bf4000982bf'
+    _enums = [
+        ('SubnetMask', 1, 
+         '''IPv4 netmask. Set to :py:func:`IDHCPServer.network_mask`  by default.'''),
+        ('TimeOffset', 2, 
+         '''UTC offset in seconds (32-bit decimal value).'''),
+        ('Routers', 3, 
+         '''Space separated list of IPv4 router addresses.'''),
+        ('TimeServers', 4, 
+         '''Space separated list of IPv4 time server (RFC 868) addresses.'''),
+        ('NameServers', 5, 
+         '''Space separated list of IPv4 name server (IEN 116) addresses.'''),
+        ('DomainNameServers', 6, 
+         '''Space separated list of IPv4 DNS addresses.'''),
+        ('LogServers', 7, 
+         '''Space separated list of IPv4 log server addresses.'''),
+        ('CookieServers', 8, 
+         '''Space separated list of IPv4 cookie server (RFC 865) addresses.'''),
+        ('LPRServers', 9, 
+         '''Space separated list of IPv4 line printer server (RFC 1179) addresses.'''),
+        ('ImpressServers', 10, 
+         '''Space separated list of IPv4 imagen impress server addresses.'''),
+        ('ResourseLocationServers', 11, 
+         '''Space separated list of IPv4 resource location (RFC 887) addresses.'''),
+        ('HostName', 12, 
+         '''The client name. See RFC 1035 for character limits.'''),
+        ('BootFileSize', 13, 
+         '''Number of 512 byte blocks making up the boot file (16-bit decimal value).'''),
+        ('MeritDumpFile', 14, 
+         '''Client core file.'''),
+        ('DomainName', 15, 
+         '''Domain name for the client.'''),
+        ('SwapServer', 16, 
+         '''IPv4 address of the swap server that the client should use.'''),
+        ('RootPath', 17, 
+         '''The path to the root disk the client should use.'''),
+        ('ExtensionPath', 18, 
+         '''Path to a file containing additional DHCP options (RFC2123).'''),
+        ('IPForwarding', 19, 
+         '''Whether IP forwarding should be enabled by the client (boolean).'''),
+        ('OptNonLocalSourceRouting', 20, 
+         '''Whether non-local datagrams should be forwarded by the client (boolean)'''),
+        ('PolicyFilter', 21, 
+         '''List of IPv4 addresses and masks paris controlling non-local source routing.'''),
+        ('MaxDgramReassemblySize', 22, 
+         '''The maximum datagram size the client should reassemble (16-bit decimal value).'''),
+        ('DefaultIPTTL', 23, 
+         '''The default time-to-leave on outgoing (IP) datagrams (8-bit decimal value).'''),
+        ('PathMTUAgingTimeout', 24, 
+         '''RFC1191 path MTU discovery timeout value in seconds (32-bit decimal value).'''),
+        ('PathMTUPlateauTable', 25, 
+         '''RFC1191 path MTU discovery size table, sorted in ascending order (list of 16-bit decimal values).'''),
+        ('InterfaceMTU', 26, 
+         '''The MTU size for the interface (16-bit decimal value).'''),
+        ('AllSubnetsAreLocal', 27, 
+         '''Indicates whether the MTU size is the same for all subnets (boolean).'''),
+        ('BroadcastAddress', 28, 
+         '''Broadcast address (RFC1122) for the client to use (IPv4 address).'''),
+        ('PerformMaskDiscovery', 29, 
+         '''Whether to perform subnet mask discovery via ICMP (boolean).'''),
+        ('MaskSupplier', 30, 
+         '''Whether to respond to subnet mask requests via ICMP (boolean).'''),
+        ('PerformRouterDiscovery', 31, 
+         '''Whether to perform router discovery (RFC1256) (boolean).'''),
+        ('RouterSolicitationAddress', 32, 
+         '''Where to send router solicitation requests (RFC1256) (IPv4 address).'''),
+        ('StaticRoute', 33, 
+         '''List of network and router address pairs addresses.'''),
+        ('TrailerEncapsulation', 34, 
+         '''Whether to negotiate the use of trailers for ARP (RTF893) (boolean).'''),
+        ('ARPCacheTimeout', 35, 
+         '''The timeout in seconds for ARP cache entries (32-bit decimal value).'''),
+        ('EthernetEncapsulation', 36, 
+         '''Whether to use IEEE 802.3 (RTF1042) rather than of v2 (RFC894) ethernet encapsulation (boolean).'''),
+        ('TCPDefaultTTL', 37, 
+         '''Default time-to-live for TCP sends (non-zero 8-bit decimal value).'''),
+        ('TCPKeepaliveInterval', 38, 
+         '''The interface in seconds between TCP keepalive messages (32-bit decimal value).'''),
+        ('TCPKeepaliveGarbage', 39, 
+         '''Whether to include a byte of garbage in TCP keepalive messages for backward compatibility (boolean).'''),
+        ('NISDomain', 40, 
+         '''The NIS (Sun Network Information Services) domain name (string).'''),
+        ('NISServers', 41, 
+         '''Space separated list of IPv4 NIS server addresses.'''),
+        ('NTPServers', 42, 
+         '''Space separated list of IPv4 NTP (RFC1035) server addresses.'''),
+        ('VendorSpecificInfo', 43, 
+         '''Vendor specific information. Only accessible using :py:attr:`DHCPOptionEncoding.hex_p` .'''),
+        ('NetBIOSNameServers', 44, 
+         '''Space separated list of IPv4 NetBIOS name server (NBNS) addresses (RFC1001,RFC1002).'''),
+        ('NetBIOSDatagramServers', 45, 
+         '''Space separated list of IPv4 NetBIOS datagram distribution server (NBDD) addresses (RFC1001,RFC1002).'''),
+        ('NetBIOSNodeType', 46, 
+         '''NetBIOS node type (RFC1001,RFC1002): 1=B-node, 2=P-node, 4=M-node, and 8=H-node (8-bit decimal value).'''),
+        ('NetBIOSScope', 47, 
+         '''NetBIOS scope (RFC1001,RFC1002). Only accessible using :py:attr:`DHCPOptionEncoding.hex_p` .'''),
+        ('XWindowsFontServers', 48, 
+         '''Space separated list of IPv4 X windows font server addresses.'''),
+        ('XWindowsDisplayManager', 49, 
+         '''Space separated list of IPv4 X windows display manager addresses.'''),
+        ('NetWareIPDomainName', 62, 
+         '''Netware IP domain name (RFC2242) (string).'''),
+        ('NetWareIPInformation', 63, 
+         '''Netware IP information (RFC2242). Only accessible using :py:attr:`DHCPOptionEncoding.hex_p` .'''),
+        ('NISPlusDomain', 64, 
+         '''The NIS+ domain name (string).'''),
+        ('NISPlusServers', 65, 
+         '''Space separated list of IPv4 NIS+ server addresses.'''),
+        ('TFTPServerName', 66, 
+         '''TFTP server name (string).'''),
+        ('BootfileName', 67, 
+         '''Bootfile name (string).'''),
+        ('MobileIPHomeAgents', 68, 
+         '''Space separated list of IPv4 mobile IP agent addresses.'''),
+        ('SMTPServers', 69, 
+         '''Space separated list of IPv4 simple mail transport protocol (SMPT) server addresses.'''),
+        ('POP3Servers', 70, 
+         '''Space separated list of IPv4 post office protocol 3 (POP3) server addresses.'''),
+        ('NNTPServers', 71, 
+         '''Space separated list of IPv4 network news transport protocol (NTTP) server addresses.'''),
+        ('WWWServers', 72, 
+         '''Space separated list of default IPv4 world wide web (WWW) server addresses.'''),
+        ('FingerServers', 73, 
+         '''Space separated list of default IPv4 finger server addresses.'''),
+        ('IRCServers', 74, 
+         '''Space separated list of default IPv4 internet relay chat (IRC) server  addresses.'''),
+        ('StreetTalkServers', 75, 
+         '''Space separated list of IPv4 StreetTalk server addresses.'''),
+        ('STDAServers', 76, 
+         '''Space separated list of IPv4 StreetTalk directory assistance (STDA) server addresses.'''),
+        ('SLPDirectoryAgent', 78, 
+         '''Addresses of one or more service location protocol (SLP) directory agent, and an indicator of whether their use is mandatory. Only accessible using :py:attr:`DHCPOptionEncoding.hex_p` .'''),
+        ('SLPServiceScope', 79, 
+         '''List of service scopes for the service location protocol (SLP) and whether using the list is mandator. Only accessible using :py:attr:`DHCPOptionEncoding.hex_p` .'''),
+        ('DomainSearch', 119, 
+         '''Domain search list, see RFC3397 and section 4.1.4 in RFC1035 for encoding.  Only accessible using :py:attr:`DHCPOptionEncoding.hex_p` .'''),
+        ] 
+
+
+class DHCPOptionEncoding(Enum):
+    """Value format is specific to the option and generally user friendly.
+
+
+    .. describe:: normal(0)
+
+            Value format is specific to the option and generally user friendly.
 
     .. describe:: hex_p(1)
 
-            
+            Value format is a series of hex bytes (09314f3200fe), optionally colons
+            as byte separators (9:31:4f:32::fe).
 
     """
-    __uuid__ = '88ea6d70-8648-4871-ba30-1f49c61cfaa2'
+    __uuid__ = '84b6d460-2838-4682-c0d6-ef5b573ef28a'
     _enums = [
-        ('Legacy', 0, 
-         ''''''),
+        ('Normal', 0, 
+         '''Value format is specific to the option and generally user friendly.'''),
         ('Hex', 1, 
-         ''''''),
+         '''Value format is a series of hex bytes (09314f3200fe), optionally colons
+            as byte separators (9:31:4f:32::fe).'''),
+        ] 
+
+
+class DHCPConfigScope(Enum):
+    """:py:func:`IDHCPServer.global_config` 
+
+
+    .. describe:: global_p(0)
+
+            :py:func:`IDHCPServer.global_config` 
+
+    .. describe:: group(1)
+
+            :py:func:`IDHCPServer.group_configs` 
+
+    .. describe:: machine_nic(2)
+
+            :py:func:`IDHCPServer.individual_configs` 
+
+    .. describe:: mac(3)
+
+            :py:func:`IDHCPServer.individual_configs` 
+
+    """
+    __uuid__ = '469c42e4-b9ec-43f2-bdcb-9e9d1eb434ae'
+    _enums = [
+        ('Global', 0, 
+         ''':py:func:`IDHCPServer.global_config` '''),
+        ('Group', 1, 
+         ''':py:func:`IDHCPServer.group_configs` '''),
+        ('MachineNIC', 2, 
+         ''':py:func:`IDHCPServer.individual_configs` '''),
+        ('MAC', 3, 
+         ''':py:func:`IDHCPServer.individual_configs` '''),
+        ] 
+
+
+class DHCPGroupConditionType(Enum):
+    """MAC address
+
+
+    .. describe:: mac(0)
+
+            MAC address
+
+    .. describe:: mac_wildcard(1)
+
+            MAC address wildcard pattern.
+
+    .. describe:: vendor_class_id(2)
+
+            Vendor class ID
+
+    .. describe:: vendor_class_id_wildcard(3)
+
+            Vendor class ID wildcard pattern.
+
+    .. describe:: user_class_id(4)
+
+            User class ID
+
+    .. describe:: user_class_id_wildcard(5)
+
+            User class ID wildcard pattern.
+
+    """
+    __uuid__ = '2cb9280f-ada2-4194-dee8-bfb8ad77119d'
+    _enums = [
+        ('MAC', 0, 
+         '''MAC address'''),
+        ('MACWildcard', 1, 
+         '''MAC address wildcard pattern.'''),
+        ('vendorClassID', 2, 
+         '''Vendor class ID'''),
+        ('vendorClassIDWildcard', 3, 
+         '''Vendor class ID wildcard pattern.'''),
+        ('userClassID', 4, 
+         '''User class ID'''),
+        ('userClassIDWildcard', 5, 
+         '''User class ID wildcard pattern.'''),
         ] 
 
 
@@ -2128,10 +3220,6 @@ class VFSType(Enum):
 
             
 
-    .. describe:: oci(5)
-
-            
-
     """
     __uuid__ = '813999ba-b949-48a8-9230-aadc6285e2f2'
     _enums = [
@@ -2142,8 +3230,6 @@ class VFSType(Enum):
         ('S3', 3, 
          ''''''),
         ('WebDav', 4, 
-         ''''''),
-        ('OCI', 5, 
          ''''''),
         ] 
 
@@ -2417,8 +3503,64 @@ class VirtualSystemDescriptionType(Enum):
 
             
 
+    .. describe:: cloud_instance_id(37)
+
+            
+
+    .. describe:: cloud_image_id(38)
+
+            
+
+    .. describe:: cloud_instance_state(39)
+
+            
+
+    .. describe:: cloud_image_state(40)
+
+            
+
+    .. describe:: cloud_instance_display_name(41)
+
+            
+
+    .. describe:: cloud_image_display_name(42)
+
+            
+
+    .. describe:: cloud_oci_launch_mode(43)
+
+            
+
+    .. describe:: cloud_private_ip(44)
+
+            
+
+    .. describe:: cloud_boot_volume_id(45)
+
+            
+
+    .. describe:: cloud_ocivcn_compartment(46)
+
+            
+
+    .. describe:: cloud_oci_subnet_compartment(47)
+
+            
+
+    .. describe:: cloud_public_ssh_key(48)
+
+            
+
+    .. describe:: booting_firmware(49)
+
+            
+
+    .. describe:: hard_disk_controller_virtio_scsi(60)
+
+            
+
     """
-    __uuid__ = '425d0e49-eb9c-43e8-bb0d-be7f78fd3b47'
+    __uuid__ = '6e18c6d7-e1b7-4cb0-9706-1f31d18248f8'
     _enums = [
         ('Ignore', 1, 
          ''''''),
@@ -2499,6 +3641,34 @@ class VirtualSystemDescriptionType(Enum):
         ('CloudKeepObject', 35, 
          ''''''),
         ('CloudLaunchInstance', 36, 
+         ''''''),
+        ('CloudInstanceId', 37, 
+         ''''''),
+        ('CloudImageId', 38, 
+         ''''''),
+        ('CloudInstanceState', 39, 
+         ''''''),
+        ('CloudImageState', 40, 
+         ''''''),
+        ('CloudInstanceDisplayName', 41, 
+         ''''''),
+        ('CloudImageDisplayName', 42, 
+         ''''''),
+        ('CloudOCILaunchMode', 43, 
+         ''''''),
+        ('CloudPrivateIP', 44, 
+         ''''''),
+        ('CloudBootVolumeId', 45, 
+         ''''''),
+        ('CloudOCIVCNCompartment', 46, 
+         ''''''),
+        ('CloudOCISubnetCompartment', 47, 
+         ''''''),
+        ('CloudPublicSSHKey', 48, 
+         ''''''),
+        ('BootingFirmware', 49, 
+         ''''''),
+        ('HardDiskControllerVirtioSCSI', 60, 
          ''''''),
         ] 
 
@@ -2715,7 +3885,7 @@ class RecordingVideoRateControlMode(Enum):
 
 
 class GraphicsControllerType(Enum):
-    """Graphics controller type, used with :py:func:`IMachine.graphics_controller_type` .
+    """Graphics controller type, used with :py:func:`IGraphicsAdapter.graphics_controller_type` .
 
 
     .. describe:: null(0)
@@ -3027,6 +4197,40 @@ class HostNetworkInterfaceType(Enum):
         ] 
 
 
+class UpdateCheckType(Enum):
+    """Which type of software to check whether a new version exists.
+
+
+    .. describe:: none(0)
+
+            No flags specified. Do not use this.
+
+    .. describe:: virtual_box(1)
+
+            
+
+    .. describe:: extension_pack(2)
+
+            
+
+    .. describe:: guest_additions(3)
+
+            
+
+    """
+    __uuid__ = 'ac34bb91-6739-4791-b30f-ce84e57928bb'
+    _enums = [
+        ('None', 0, 
+         '''No flags specified. Do not use this.'''),
+        ('VirtualBox', 1, 
+         ''''''),
+        ('ExtensionPack', 2, 
+         ''''''),
+        ('GuestAdditions', 3, 
+         ''''''),
+        ] 
+
+
 class ProxyMode(Enum):
     """Proxy setting: System (default), NoProxy and Manual. :py:func:`ISystemProperties.proxy_mode` 
 
@@ -3052,6 +4256,34 @@ class ProxyMode(Enum):
          '''Direct connection to the Internet.'''),
         ('Manual', 2, 
          '''Use the manual proxy from :py:func:`ISystemProperties.proxy_url` .'''),
+        ] 
+
+
+class VBoxUpdateTarget(Enum):
+    """The preferred release type used for determining whether a newer version of VirtualBox is available. :py:func:`ISystemProperties.v_box_update_target` 
+
+
+    .. describe:: stable(0)
+
+            Stable releases: new maintenance and minor releases within the same major release version.  This is the default.
+
+    .. describe:: all_releases(1)
+
+            All releases: new maintenance, minor, and major releases.
+
+    .. describe:: with_betas(2)
+
+            With betas: new maintenance, minor, and major releases as well as beta releases.
+
+    """
+    __uuid__ = '900d4a76-7b08-4af8-a453-f331e783eaee'
+    _enums = [
+        ('Stable', 0, 
+         '''Stable releases: new maintenance and minor releases within the same major release version.  This is the default.'''),
+        ('AllReleases', 1, 
+         '''All releases: new maintenance, minor, and major releases.'''),
+        ('WithBetas', 2, 
+         '''With betas: new maintenance, minor, and major releases as well as beta releases.'''),
         ] 
 
 
@@ -3087,7 +4319,7 @@ class AdditionsFacilityType(Enum):
 
             Guest graphics mode. If not enabled, seamless rendering will not work, resize hints
             are not immediately acted on and guest display resizes are probably not initiated by
-            the guest additions.
+            the Guest Additions.
 
     .. describe:: monitor_attach(1101)
 
@@ -3115,7 +4347,7 @@ class AdditionsFacilityType(Enum):
         ('Graphics', 1100, 
          '''Guest graphics mode. If not enabled, seamless rendering will not work, resize hints
             are not immediately acted on and guest display resizes are probably not initiated by
-            the guest additions.'''),
+            the Guest Additions.'''),
         ('MonitorAttach', 1101, 
          '''Guest supports monitor hotplug.'''),
         ('All', 2147483646, 
@@ -3298,6 +4530,44 @@ class AdditionsUpdateFlag(Enum):
             actual Guest Additions update inside the guest was started.
             This can be necessary due to needed interaction with the guest
             OS during the installation phase.'''),
+        ] 
+
+
+class GuestShutdownFlag(Enum):
+    """Guest shutdown flags.
+
+
+    .. describe:: none(0)
+
+            No flag set.
+
+    .. describe:: power_off(1)
+
+            Performs a reboot after shutdown.
+
+    .. describe:: reboot(2)
+
+            Performs a reboot after shutdown.
+
+    .. describe:: force(4)
+
+            Force the system to shutdown/reboot regardless of objecting
+            application or other stuff. This flag might not be realized on
+            all systems.
+
+    """
+    __uuid__ = '28D19C9C-5862-4930-B29A-F117712B4864'
+    _enums = [
+        ('None', 0, 
+         '''No flag set.'''),
+        ('PowerOff', 1, 
+         '''Performs a reboot after shutdown.'''),
+        ('Reboot', 2, 
+         '''Performs a reboot after shutdown.'''),
+        ('Force', 4, 
+         '''Force the system to shutdown/reboot regardless of objecting
+            application or other stuff. This flag might not be realized on
+            all systems.'''),
         ] 
 
 
@@ -4041,7 +5311,7 @@ class FsObjRenameFlag(Enum):
 
 class ProcessCreateFlag(Enum):
     """Guest process execution flags.
-    The values are passed to the guest additions, so its not possible
+    The values are passed to the Guest Additions, so its not possible
     to change (move) or reuse values.here. See EXECUTEPROCESSFLAG_XXX
     in GuestControlSvc.h.
 
@@ -4333,7 +5603,7 @@ class PathStyle(Enum):
 
     .. describe:: unknown(8)
 
-            The path style is not known, most likely because the guest additions
+            The path style is not known, most likely because the Guest Additions
             aren't active yet.
 
     """
@@ -4345,7 +5615,7 @@ class PathStyle(Enum):
         ('UNIX', 2, 
          '''UNIX-style paths with forward slashes only.'''),
         ('Unknown', 8, 
-         '''The path style is not known, most likely because the guest additions
+         '''The path style is not known, most likely because the Guest Additions
             aren't active yet.'''),
         ] 
 
@@ -5243,11 +6513,13 @@ class FramebufferCapabilities(Enum):
 
     .. describe:: vhwa(2)
 
-            Supports VHWA interface. If set, then IFramebuffer::processVHWACommand can be called.
+            Supports VHWA interface. If set, then
+            IFramebuffer::processVHWACommand can be called. <!-- no link, otherwise trouble with javadoc -->
 
     .. describe:: visible_region(4)
 
-            Supports visible region. If set, then IFramebuffer::setVisibleRegion can be called.
+            Supports visible region. If set, then
+            IFramebuffer::setVisibleRegion can be called. <!-- no link, otherwise trouble with javadoc -->
 
     .. describe:: render_cursor(8)
 
@@ -5266,9 +6538,11 @@ class FramebufferCapabilities(Enum):
         ('UpdateImage', 1, 
          '''Requires NotifyUpdateImage. NotifyUpdate must not be called.'''),
         ('VHWA', 2, 
-         '''Supports VHWA interface. If set, then IFramebuffer::processVHWACommand can be called.'''),
+         '''Supports VHWA interface. If set, then
+            IFramebuffer::processVHWACommand can be called. <!-- no link, otherwise trouble with javadoc -->'''),
         ('VisibleRegion', 4, 
-         '''Supports visible region. If set, then IFramebuffer::setVisibleRegion can be called.'''),
+         '''Supports visible region. If set, then
+            IFramebuffer::setVisibleRegion can be called. <!-- no link, otherwise trouble with javadoc -->'''),
         ('RenderCursor', 8, 
          '''This framebuffer implementation can render a pointer cursor itself.  Unless the
             MoveCursor capability is also set the cursor will always be rendered at the
@@ -5308,7 +6582,7 @@ class GuestMonitorStatus(Enum):
 
 
 class ScreenLayoutMode(Enum):
-    """How IDisplay::setScreenLayout method should work.
+    """How :py:func:`IDisplay.set_screen_layout`  method should work.
 
 
     .. describe:: apply_p(0)
@@ -5323,8 +6597,14 @@ class ScreenLayoutMode(Enum):
 
             Attach new screens and always set the new mode for existing screens.
 
+    .. describe:: silent(3)
+
+            Do not notify the guest of the change.  Normally this is wished, but it
+            might not be when re-setting monitor information from the last session
+            (no hotplug happened, as it is still the same virtual monitor).
+
     """
-    __uuid__ = 'c7a9ee66-cfed-438b-9f8c-d3adf7588a4d'
+    __uuid__ = '8fa1964c-8774-11e9-ae5d-1f419105e68d'
     _enums = [
         ('Apply', 0, 
          '''If the guest is already at desired mode then the API might avoid setting the mode.'''),
@@ -5332,6 +6612,10 @@ class ScreenLayoutMode(Enum):
          '''Always set the new mode even if the guest is already at desired mode.'''),
         ('Attach', 2, 
          '''Attach new screens and always set the new mode for existing screens.'''),
+        ('Silent', 3, 
+         '''Do not notify the guest of the change.  Normally this is wished, but it
+            might not be when re-setting monitor information from the last session
+            (no hotplug happened, as it is still the same virtual monitor).'''),
         ] 
 
 
@@ -5367,6 +6651,10 @@ class NetworkAttachmentType(Enum):
 
             
 
+    .. describe:: cloud(7)
+
+            
+
     """
     __uuid__ = '524a8f9d-4b86-4b51-877d-1aa27c4ebeac'
     _enums = [
@@ -5383,6 +6671,8 @@ class NetworkAttachmentType(Enum):
         ('Generic', 5, 
          ''''''),
         ('NATNetwork', 6, 
+         ''''''),
+        ('Cloud', 7, 
          ''''''),
         ] 
 
@@ -5419,6 +6709,14 @@ class NetworkAdapterType(Enum):
 
             Virtio network device.
 
+    .. describe:: am79_c960(7)
+
+            AMD PCnet-ISA/NE2100 network card (Am79C960).
+
+    .. describe:: virtio_1_0(8)
+
+            Virtio 1.0 network device.
+
     """
     __uuid__ = '3c2281e4-d952-4e87-8c7d-24379cb6a81c'
     _enums = [
@@ -5436,6 +6734,10 @@ class NetworkAdapterType(Enum):
          '''Intel PRO/1000 MT Server network card (82545EM).'''),
         ('Virtio', 6, 
          '''Virtio network device.'''),
+        ('Am79C960', 7, 
+         '''AMD PCnet-ISA/NE2100 network card (Am79C960).'''),
+        ('Virtio_1_0', 8, 
+         '''Virtio 1.0 network device.'''),
         ] 
 
 
@@ -6026,8 +7328,12 @@ class StorageBus(Enum):
 
             
 
+    .. describe:: virtio_scsi(8)
+
+            
+
     """
-    __uuid__ = '21371490-8542-4b5a-a74d-ee9ac2d45a90'
+    __uuid__ = 'f9510869-7d07-46ba-96a6-6728fbf4adee'
     _enums = [
         ('Null', 0, 
          '''@c null value. Never used by the API.'''),
@@ -6044,6 +7350,8 @@ class StorageBus(Enum):
         ('USB', 6, 
          ''''''),
         ('PCIe', 7, 
+         ''''''),
+        ('VirtioSCSI', 8, 
          ''''''),
         ] 
 
@@ -6097,8 +7405,12 @@ class StorageControllerType(Enum):
 
             An NVMe storage controller.
 
+    .. describe:: virtio_scsi(11)
+
+            Virtio SCSI storage controller.
+
     """
-    __uuid__ = '9427f309-82e7-468f-9964-abfefc4d3058'
+    __uuid__ = 'a77d457d-66a3-4368-b24c-293d0f562a9f'
     _enums = [
         ('Null', 0, 
          '''@c null value. Never used by the API.'''),
@@ -6122,6 +7434,8 @@ class StorageControllerType(Enum):
          '''Special USB based storage controller.'''),
         ('NVMe', 10, 
          '''An NVMe storage controller.'''),
+        ('VirtioSCSI', 11, 
+         '''Virtio SCSI storage controller.'''),
         ] 
 
 
@@ -6553,12 +7867,32 @@ class VBoxEventType(Enum):
 
             See :py:class:`ICursorPositionChangedEvent` ICursorPositionChangedEvent.
 
-    .. describe:: last(101)
+    .. describe:: on_guest_additions_status_changed(101)
+
+            See :py:class:`IGuestAdditionsStatusChangedEvent` IGuestAdditionsStatusChangedEvent.
+
+    .. describe:: on_guest_monitor_info_changed(102)
+
+            See :py:class:`IGuestMonitorInfoChangedEvent` IGuestMonitorInfoChangedEvent.
+
+    .. describe:: on_guest_file_size_changed(103)
+
+            See :py:class:`IGuestFileSizeChangedEvent` IGuestFileSizeChangedEvent.
+
+    .. describe:: on_clipboard_file_transfer_mode_changed(104)
+
+            See :py:class:`IClipboardFileTransferModeChangedEvent` IClipboardFileTransferModeChangedEvent.
+
+    .. describe:: on_cloud_provider_registered(105)
+
+            See :py:class:`ICloudProviderRegisteredEvent` ICloudProviderRegisteredEvent.
+
+    .. describe:: last(106)
 
             Must be last event, used for iterations and structures relying on numerical event values.
 
     """
-    __uuid__ = '822087CA-4703-49E4-B20D-C6D794E67969'
+    __uuid__ = 'd5d15e38-808d-11e9-aaac-4bc5d973ca37'
     _enums = [
         ('Invalid', 0, 
          '''Invalid event, must be first.'''),
@@ -6725,7 +8059,17 @@ class VBoxEventType(Enum):
          '''See :py:class:`IProgressTaskCompletedEvent` IProgressTaskCompletedEvent.'''),
         ('OnCursorPositionChanged', 100, 
          '''See :py:class:`ICursorPositionChangedEvent` ICursorPositionChangedEvent.'''),
-        ('Last', 101, 
+        ('OnGuestAdditionsStatusChanged', 101, 
+         '''See :py:class:`IGuestAdditionsStatusChangedEvent` IGuestAdditionsStatusChangedEvent.'''),
+        ('OnGuestMonitorInfoChanged', 102, 
+         '''See :py:class:`IGuestMonitorInfoChangedEvent` IGuestMonitorInfoChangedEvent.'''),
+        ('OnGuestFileSizeChanged', 103, 
+         '''See :py:class:`IGuestFileSizeChangedEvent` IGuestFileSizeChangedEvent.'''),
+        ('OnClipboardFileTransferModeChanged', 104, 
+         '''See :py:class:`IClipboardFileTransferModeChangedEvent` IClipboardFileTransferModeChangedEvent.'''),
+        ('OnCloudProviderRegistered', 105, 
+         '''See :py:class:`ICloudProviderRegisteredEvent` ICloudProviderRegisteredEvent.'''),
+        ('Last', 106, 
          '''Must be last event, used for iterations and structures relying on numerical event values.'''),
         ] 
 
@@ -6801,14 +8145,20 @@ class FormValueType(Enum):
 
             
 
+    .. describe:: ranged_integer(3)
+
+            
+
     """
-    __uuid__ = '56ad9e8e-3e78-11e9-b661-bfeead3ff066'
+    __uuid__ = '43d794a0-7c98-11e9-a346-a36d5fa858a5'
     _enums = [
         ('Boolean', 0, 
          ''''''),
         ('String', 1, 
          ''''''),
         ('Choice', 2, 
+         ''''''),
+        ('RangedInteger', 3, 
          ''''''),
         ] 
 
@@ -7041,7 +8391,7 @@ class INATNetwork(Interface):
     port-forwanding rules. so perhaps we should support only single instance of NAT
     network.
     """
-    __uuid__ = '4bbc405d-f268-4483-9a52-f43ffdbf67f8'
+    __uuid__ = '4fdebbf0-be30-49c0-b315-e9749e1bded1'
     __wsmap__ = 'managed'
     
     @property
@@ -7273,23 +8623,95 @@ class INATNetwork(Interface):
         self._call("removePortForwardRule",
                      in_p=[i_sipv6, rule_name])
 
-    def start(self, trunk_type):
-        """Type of internal network trunk.
-
-        in trunk_type of type str
-            Type of internal network trunk.
+    def start(self):
+        """
 
         """
-        if not isinstance(trunk_type, basestring):
-            raise TypeError("trunk_type can only be an instance of type basestring")
-        self._call("start",
-                     in_p=[trunk_type])
+        self._call("start")
 
     def stop(self):
         """
 
         """
         self._call("stop")
+
+
+class ICloudNetwork(Interface):
+    """
+    TBD: User-friendly, descriptive name of cloud subnet. For example, domain
+    names of subnet and vcn, separated by dot.
+    """
+    __uuid__ = 'd8e3496e-735f-4fde-8a54-427d49409b5f'
+    __wsmap__ = 'managed'
+    
+    @property
+    def network_name(self):
+        """Get or set str value for 'networkName'
+        TBD: User-friendly, descriptive name of cloud subnet. For example, domain
+        names of subnet and vcn, separated by dot.
+        """
+        ret = self._get_attr("networkName")
+        return ret
+
+    @network_name.setter
+    def network_name(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("networkName", value)
+
+    @property
+    def enabled(self):
+        """Get or set bool value for 'enabled'"""
+        ret = self._get_attr("enabled")
+        return ret
+
+    @enabled.setter
+    def enabled(self, value):
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
+        return self._set_attr("enabled", value)
+
+    @property
+    def provider(self):
+        """Get or set str value for 'provider'
+        Cloud provider short name.
+        """
+        ret = self._get_attr("provider")
+        return ret
+
+    @provider.setter
+    def provider(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("provider", value)
+
+    @property
+    def profile(self):
+        """Get or set str value for 'profile'
+        Cloud profile name.
+        """
+        ret = self._get_attr("profile")
+        return ret
+
+    @profile.setter
+    def profile(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("profile", value)
+
+    @property
+    def network_id(self):
+        """Get or set str value for 'networkId'
+        Cloud network id.
+        """
+        ret = self._get_attr("networkId")
+        return ret
+
+    @network_id.setter
+    def network_id(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("networkId", value)
 
 
 class IDHCPServer(Interface):
@@ -7299,7 +8721,7 @@ class IDHCPServer(Interface):
     To enumerate all the DHCP servers on the host, use the
     :py:func:`IVirtualBox.dhcp_servers`  attribute.
     """
-    __uuid__ = 'ea2d467f-b6c2-4b9a-8eb5-6e2f275dd72e'
+    __uuid__ = 'cadef0a2-a1a9-4ac2-8e80-c049af69dac8'
     __wsmap__ = 'managed'
     
     @property
@@ -7362,150 +8784,29 @@ class IDHCPServer(Interface):
         ret = self._get_attr("upperIP")
         return ret
 
-    def add_global_option(self, option, value):
+    @property
+    def global_config(self):
+        """Get IDHCPGlobalConfig value for 'globalConfig'
+        Global configuration that applies to all clients.
         """
-
-        in option of type :class:`DhcpOpt`
-
-        in value of type str
-
-        """
-        if not isinstance(option, DhcpOpt):
-            raise TypeError("option can only be an instance of type DhcpOpt")
-        if not isinstance(value, basestring):
-            raise TypeError("value can only be an instance of type basestring")
-        self._call("addGlobalOption",
-                     in_p=[option, value])
-
-    def remove_global_option(self, option):
-        """removes the specified option
-
-        in option of type :class:`DhcpOpt`
-
-        raises :class:`OleErrorInvalidarg`
-            invalid option id supplied
-        
-        """
-        if not isinstance(option, DhcpOpt):
-            raise TypeError("option can only be an instance of type DhcpOpt")
-        self._call("removeGlobalOption",
-                     in_p=[option])
-
-    def remove_global_options(self):
-        """removes all global options
-
-        raises :class:`OleErrorFail`
-            failed to remove global options
-        
-        """
-        self._call("removeGlobalOptions")
+        ret = self._get_attr("globalConfig")
+        return IDHCPGlobalConfig(ret)
 
     @property
-    def global_options(self):
-        """Get str value for 'globalOptions'"""
-        ret = self._get_attr("globalOptions")
-        return ret
+    def group_configs(self):
+        """Get IDHCPGroupConfig value for 'groupConfigs'
+        Configuration groups that applies to selected clients, selection is flexible.
+        """
+        ret = self._get_attr("groupConfigs")
+        return [IDHCPGroupConfig(a) for a in ret]
 
     @property
-    def vm_configs(self):
-        """Get str value for 'vmConfigs'"""
-        ret = self._get_attr("vmConfigs")
-        return ret
-
-    def add_vm_slot_option(self, vmname, slot, option, value):
+    def individual_configs(self):
+        """Get IDHCPIndividualConfig value for 'individualConfigs'
+        Individual NIC configurations either by MAC address or VM + NIC number.
         """
-
-        in vmname of type str
-
-        in slot of type int
-
-        in option of type :class:`DhcpOpt`
-
-        in value of type str
-
-        """
-        if not isinstance(vmname, basestring):
-            raise TypeError("vmname can only be an instance of type basestring")
-        if not isinstance(slot, baseinteger):
-            raise TypeError("slot can only be an instance of type baseinteger")
-        if not isinstance(option, DhcpOpt):
-            raise TypeError("option can only be an instance of type DhcpOpt")
-        if not isinstance(value, basestring):
-            raise TypeError("value can only be an instance of type basestring")
-        self._call("addVmSlotOption",
-                     in_p=[vmname, slot, option, value])
-
-    def remove_vm_slot_option(self, vmname, slot, option):
-        """removes the specified option
-
-        in vmname of type str
-
-        in slot of type int
-
-        in option of type :class:`DhcpOpt`
-
-        raises :class:`OleErrorInvalidarg`
-            invalid VM, slot, or option id supplied
-        
-        """
-        if not isinstance(vmname, basestring):
-            raise TypeError("vmname can only be an instance of type basestring")
-        if not isinstance(slot, baseinteger):
-            raise TypeError("slot can only be an instance of type baseinteger")
-        if not isinstance(option, DhcpOpt):
-            raise TypeError("option can only be an instance of type DhcpOpt")
-        self._call("removeVmSlotOption",
-                     in_p=[vmname, slot, option])
-
-    def remove_vm_slot_options(self, vmname, slot):
-        """removes all option for the specified adapter
-
-        in vmname of type str
-
-        in slot of type int
-
-        raises :class:`OleErrorInvalidarg`
-            invalid VM or slot supplied
-        
-        """
-        if not isinstance(vmname, basestring):
-            raise TypeError("vmname can only be an instance of type basestring")
-        if not isinstance(slot, baseinteger):
-            raise TypeError("slot can only be an instance of type baseinteger")
-        self._call("removeVmSlotOptions",
-                     in_p=[vmname, slot])
-
-    def get_vm_slot_options(self, vmname, slot):
-        """
-
-        in vmname of type str
-
-        in slot of type int
-
-        return option of type str
-
-        """
-        if not isinstance(vmname, basestring):
-            raise TypeError("vmname can only be an instance of type basestring")
-        if not isinstance(slot, baseinteger):
-            raise TypeError("slot can only be an instance of type baseinteger")
-        option = self._call("getVmSlotOptions",
-                     in_p=[vmname, slot])
-        return option
-
-    def get_mac_options(self, mac):
-        """
-
-        in mac of type str
-
-        return option of type str
-
-        """
-        if not isinstance(mac, basestring):
-            raise TypeError("mac can only be an instance of type basestring")
-        option = self._call("getMacOptions",
-                     in_p=[mac])
-        return option
+        ret = self._get_attr("individualConfigs")
+        return [IDHCPIndividualConfig(a) for a in ret]
 
     def set_configuration(self, ip_address, network_mask, from_ip_address, to_ip_address):
         """configures the server
@@ -7537,11 +8838,8 @@ class IDHCPServer(Interface):
         self._call("setConfiguration",
                      in_p=[ip_address, network_mask, from_ip_address, to_ip_address])
 
-    def start(self, network_name, trunk_name, trunk_type):
+    def start(self, trunk_name, trunk_type):
         """Starts DHCP server process.
-
-        in network_name of type str
-            Name of internal network DHCP server should attach to.
 
         in trunk_name of type str
             Name of internal network trunk.
@@ -7553,14 +8851,12 @@ class IDHCPServer(Interface):
             Failed to start the process.
         
         """
-        if not isinstance(network_name, basestring):
-            raise TypeError("network_name can only be an instance of type basestring")
         if not isinstance(trunk_name, basestring):
             raise TypeError("trunk_name can only be an instance of type basestring")
         if not isinstance(trunk_type, basestring):
             raise TypeError("trunk_type can only be an instance of type basestring")
         self._call("start",
-                     in_p=[network_name, trunk_name, trunk_type])
+                     in_p=[trunk_name, trunk_type])
 
     def stop(self):
         """Stops DHCP server process.
@@ -7579,6 +8875,443 @@ class IDHCPServer(Interface):
         
         """
         self._call("restart")
+
+    def find_lease_by_mac(self, mac, type_p):
+        """Queries the persistent lease database by MAC address.
+        
+        This is handy if the host wants to connect to a server running inside
+        a VM on a host only network.
+
+        in mac of type str
+            The MAC address to look up.
+
+        in type_p of type int
+            Reserved, MBZ.
+
+        out address of type str
+            The assigned address.
+
+        out state of type str
+            The lease state.
+
+        out issued of type int
+            Timestamp of when the lease was issued, in seconds since 1970-01-01 UTC.
+
+        out expire of type int
+            Timestamp of when the lease expires/expired, in seconds since 1970-01-01 UTC.
+
+        raises :class:`VBoxErrorObjectNotFound`
+            If MAC address not in the database.
+        
+        raises :class:`VBoxErrorFileError`
+            If not able to read the lease database file.
+        
+        """
+        if not isinstance(mac, basestring):
+            raise TypeError("mac can only be an instance of type basestring")
+        if not isinstance(type_p, baseinteger):
+            raise TypeError("type_p can only be an instance of type baseinteger")
+        (address, state, issued, expire) = self._call("findLeaseByMAC",
+                     in_p=[mac, type_p])
+        return (address, state, issued, expire)
+
+    def get_config(self, scope, name, slot, may_add):
+        """Gets or adds a configuration.
+
+        in scope of type :class:`DHCPConfigScope`
+            The kind of configuration being sought or added.
+
+        in name of type str
+            Meaning depends on the @a scope:
+            - Ignored when the @a scope is :py:attr:`DHCPConfigScope.global_p` .
+            - A VM name or UUID for :py:attr:`DHCPConfigScope.machine_nic` .
+            - A MAC address for :py:attr:`DHCPConfigScope.mac` .
+            - A group name for :py:attr:`DHCPConfigScope.group` .
+
+        in slot of type int
+            The NIC slot when @a scope is set to :py:attr:`DHCPConfigScope.machine_nic` ,
+            must be zero for all other scope values.
+
+        in may_add of type bool
+            Set to @c TRUE if the configuration should be added if not found.
+            If set to @c FALSE the method will fail with VBOX_E_OBJECT_NOT_FOUND.
+
+        return config of type :class:`IDHCPConfig`
+            The requested configuration.
+
+        """
+        if not isinstance(scope, DHCPConfigScope):
+            raise TypeError("scope can only be an instance of type DHCPConfigScope")
+        if not isinstance(name, basestring):
+            raise TypeError("name can only be an instance of type basestring")
+        if not isinstance(slot, baseinteger):
+            raise TypeError("slot can only be an instance of type baseinteger")
+        if not isinstance(may_add, bool):
+            raise TypeError("may_add can only be an instance of type bool")
+        config = self._call("getConfig",
+                     in_p=[scope, name, slot, may_add])
+        config = IDHCPConfig(config)
+        return config
+
+
+class IDHCPConfig(Interface):
+    """
+    The DHCP server has several configuration levels: global, group and
+    individual MAC.  This interface implements the settings common to
+    each level.
+    """
+    __uuid__ = '00f4a8dc-0002-4b81-0077-1dcb004571ba'
+    __wsmap__ = 'managed'
+    
+    @property
+    def scope(self):
+        """Get DHCPConfigScope value for 'scope'
+        Indicates the kind of config this is (mostly for IDHCPIndividualConfig).
+        """
+        ret = self._get_attr("scope")
+        return DHCPConfigScope(ret)
+
+    @property
+    def min_lease_time(self):
+        """Get or set int value for 'minLeaseTime'
+        The minimum lease time in seconds, ignored if zero.
+        """
+        ret = self._get_attr("minLeaseTime")
+        return ret
+
+    @min_lease_time.setter
+    def min_lease_time(self, value):
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
+        return self._set_attr("minLeaseTime", value)
+
+    @property
+    def default_lease_time(self):
+        """Get or set int value for 'defaultLeaseTime'
+        The default lease time in seconds, ignored if zero.
+        """
+        ret = self._get_attr("defaultLeaseTime")
+        return ret
+
+    @default_lease_time.setter
+    def default_lease_time(self, value):
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
+        return self._set_attr("defaultLeaseTime", value)
+
+    @property
+    def max_lease_time(self):
+        """Get or set int value for 'maxLeaseTime'
+        The maximum lease time in seconds, ignored if zero.
+        """
+        ret = self._get_attr("maxLeaseTime")
+        return ret
+
+    @max_lease_time.setter
+    def max_lease_time(self, value):
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
+        return self._set_attr("maxLeaseTime", value)
+
+    @property
+    def forced_options(self):
+        """Get or set DHCPOption value for 'forcedOptions'
+        List of DHCP options which should be forced upon the clients in this
+        config scope when they are available, whether the clients asks for them
+        or not.
+        """
+        ret = self._get_attr("forcedOptions")
+        return [DHCPOption(a) for a in ret]
+
+    @forced_options.setter
+    def forced_options(self, value):
+        if not isinstance(value, DHCPOption):
+            raise TypeError("value is not an instance of DHCPOption")
+        return self._set_attr("forcedOptions", value)
+
+    @property
+    def suppressed_options(self):
+        """Get or set DHCPOption value for 'suppressedOptions'
+        List of DHCP options which should not be sent to the clients in
+        this config scope.  This is intended for cases where one client or a
+        group of clients shouldn't see one or more (typically global) options.
+        """
+        ret = self._get_attr("suppressedOptions")
+        return [DHCPOption(a) for a in ret]
+
+    @suppressed_options.setter
+    def suppressed_options(self, value):
+        if not isinstance(value, DHCPOption):
+            raise TypeError("value is not an instance of DHCPOption")
+        return self._set_attr("suppressedOptions", value)
+
+    def set_option(self, option, encoding, value):
+        """Sets a DHCP option.
+
+        in option of type :class:`DHCPOption`
+            The DHCP option.
+
+        in encoding of type :class:`DHCPOptionEncoding`
+            The value encoding.
+
+        in value of type str
+            The DHCP option value.  The exact format depends on the DHCP
+            @a option value and @a encoding, see see :py:class:`DHCPOption` 
+            for the :py:attr:`DHCPOptionEncoding.normal`  format.
+
+        """
+        if not isinstance(option, DHCPOption):
+            raise TypeError("option can only be an instance of type DHCPOption")
+        if not isinstance(encoding, DHCPOptionEncoding):
+            raise TypeError("encoding can only be an instance of type DHCPOptionEncoding")
+        if not isinstance(value, basestring):
+            raise TypeError("value can only be an instance of type basestring")
+        self._call("setOption",
+                     in_p=[option, encoding, value])
+
+    def remove_option(self, option):
+        """Removes the given DHCP option.
+
+        in option of type :class:`DHCPOption`
+
+        """
+        if not isinstance(option, DHCPOption):
+            raise TypeError("option can only be an instance of type DHCPOption")
+        self._call("removeOption",
+                     in_p=[option])
+
+    def remove_all_options(self):
+        """Removes all the options.
+        
+        One exception here is the DhcpOpt_SubnetMask option in the global scope
+        that is linked to the :py:func:`IDHCPServer.network_mask`  attribute
+        and therefore cannot be removed.
+
+        """
+        self._call("removeAllOptions")
+
+    def get_option(self, option):
+        """Gets the value of a single DHCP option.
+
+        in option of type :class:`DHCPOption`
+            The DHCP option being sought.
+
+        out encoding of type :class:`DHCPOptionEncoding`
+            The value encoding.
+
+        return value of type str
+            The value of the requested DHCP option. The exact format depends on
+            the DHCP @a option value and the @a encoding, see :py:class:`DHCPOption` 
+            for the :py:attr:`DHCPOptionEncoding.normal`  format.
+
+        """
+        if not isinstance(option, DHCPOption):
+            raise TypeError("option can only be an instance of type DHCPOption")
+        (value, encoding) = self._call("getOption",
+                     in_p=[option])
+        encoding = DHCPOptionEncoding(encoding)
+        return (value, encoding)
+
+    def get_all_options(self):
+        """Gets all DHCP options and their values
+
+        out options of type :class:`DHCPOption`
+            Array containing the DHCP option numbers.
+
+        out encodings of type :class:`DHCPOptionEncoding`
+            Array of value encodings that runs parallel to @a options.
+
+        return values of type str
+            Array of values that runs parallel to @a options and @a encodings.  The
+            format depends on both of those.
+
+        """
+        (values, options, encodings) = self._call("getAllOptions")
+        options = [DHCPOption(a) for a in options]
+        encodings = [DHCPOptionEncoding(a) for a in encodings]
+        return (values, options, encodings)
+
+    def remove(self):
+        """Remove this group or individual configuration.
+        Will of course not work on global configurations.
+
+        """
+        self._call("remove")
+
+
+class IDHCPGlobalConfig(IDHCPConfig):
+    """
+    The global DHCP server configuration, see :py:func:`IDHCPServer.global_config` .
+    """
+    __uuid__ = '46735de7-f4c4-4020-a185-0d2881bcfa8b'
+    __wsmap__ = 'managed'
+    
+
+class IDHCPGroupCondition(Interface):
+    """
+    Whether this is an inclusive or exclusive group membership condition
+    """
+    __uuid__ = '5ca9e537-5a1d-43f1-6f27-6a0db298a9a8'
+    __wsmap__ = 'managed'
+    
+    @property
+    def inclusive(self):
+        """Get or set bool value for 'inclusive'
+        Whether this is an inclusive or exclusive group membership condition
+        """
+        ret = self._get_attr("inclusive")
+        return ret
+
+    @inclusive.setter
+    def inclusive(self, value):
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
+        return self._set_attr("inclusive", value)
+
+    @property
+    def type_p(self):
+        """Get or set DHCPGroupConditionType value for 'type'
+        Defines how the :py:func:`IDHCPGroupCondition.value`  is interpreted.
+        """
+        ret = self._get_attr("type")
+        return DHCPGroupConditionType(ret)
+
+    @type_p.setter
+    def type_p(self, value):
+        if not isinstance(value, DHCPGroupConditionType):
+            raise TypeError("value is not an instance of DHCPGroupConditionType")
+        return self._set_attr("type", value)
+
+    @property
+    def value(self):
+        """Get or set str value for 'value'
+        The condition value.
+        """
+        ret = self._get_attr("value")
+        return ret
+
+    @value.setter
+    def value(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("value", value)
+
+    def remove(self):
+        """Remove this condition from the group.
+
+        """
+        self._call("remove")
+
+
+class IDHCPGroupConfig(IDHCPConfig):
+    """
+    A configuration that applies to a group of NICs.
+    """
+    __uuid__ = '537707f7-ebf9-4d5c-7aea-877bfc4256ba'
+    __wsmap__ = 'managed'
+    
+    @property
+    def name(self):
+        """Get or set str value for 'name'
+        The group name.
+        """
+        ret = self._get_attr("name")
+        return ret
+
+    @name.setter
+    def name(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("name", value)
+
+    @property
+    def conditions(self):
+        """Get IDHCPGroupCondition value for 'conditions'
+        Group membership conditions.
+        
+        Add new conditions by calling :py:func:`IDHCPGroupConfig.add_condition` 
+        and use :py:func:`IDHCPGroupCondition.remove`  to remove.
+        """
+        ret = self._get_attr("conditions")
+        return [IDHCPGroupCondition(a) for a in ret]
+
+    def add_condition(self, inclusive, type_p, value):
+        """Adds a new condition.
+
+        in inclusive of type bool
+
+        in type_p of type :class:`DHCPGroupConditionType`
+
+        in value of type str
+
+        return condition of type :class:`IDHCPGroupCondition`
+
+        """
+        if not isinstance(inclusive, bool):
+            raise TypeError("inclusive can only be an instance of type bool")
+        if not isinstance(type_p, DHCPGroupConditionType):
+            raise TypeError("type_p can only be an instance of type DHCPGroupConditionType")
+        if not isinstance(value, basestring):
+            raise TypeError("value can only be an instance of type basestring")
+        condition = self._call("addCondition",
+                     in_p=[inclusive, type_p, value])
+        condition = IDHCPGroupCondition(condition)
+        return condition
+
+    def remove_all_conditions(self):
+        """Removes all conditions.
+
+        """
+        self._call("removeAllConditions")
+
+
+class IDHCPIndividualConfig(IDHCPConfig):
+    """
+    Configuration for a single NIC, either given directly by MAC address or by
+    VM + adaptor slot number.
+    """
+    __uuid__ = 'c40c2b86-73a5-46cc-8227-93fe57d006a6'
+    __wsmap__ = 'managed'
+    
+    @property
+    def mac_address(self):
+        """Get str value for 'MACAddress'
+        The MAC address.  If a :py:attr:`DHCPConfigScope.machine_nic`  config, this
+        will be queried via the VM ID.
+        """
+        ret = self._get_attr("MACAddress")
+        return ret
+
+    @property
+    def machine_id(self):
+        """Get str value for 'machineId'
+        The virtual machine ID if a :py:attr:`DHCPConfigScope.machine_nic`  config,
+        null UUID for :py:attr:`DHCPConfigScope.mac` .
+        """
+        ret = self._get_attr("machineId")
+        return ret
+
+    @property
+    def slot(self):
+        """Get int value for 'slot'
+        The NIC slot number of the VM if a :py:attr:`DHCPConfigScope.machine_nic`  config.
+        """
+        ret = self._get_attr("slot")
+        return ret
+
+    @property
+    def fixed_address(self):
+        """Get or set str value for 'fixedAddress'
+        Fixed IPv4 address assignment, dynamic if empty.
+        """
+        ret = self._get_attr("fixedAddress")
+        return ret
+
+    @fixed_address.setter
+    def fixed_address(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("fixedAddress", value)
 
 
 class IVirtualBox(Interface):
@@ -7667,9 +9400,18 @@ class IVirtualBox(Interface):
     @property
     def api_revision(self):
         """Get int value for 'APIRevision'
-        To be defined exactly, but we need something that the Validation Kit
-        can use to figure which methods and attributes can safely be used on a
-        continuously changing trunk (and occasional branch).
+        This is mainly intended for the VBox Validation Kit so it can fluently
+        deal with incompatible API changes and new functionality during
+        development (i.e. on trunk).
+        
+        The high 7 bits (62:56) is the major version number, the next 8 bits
+        (55:48) are the minor version number, the next 8 bits (47:40) are the
+        build number, and the rest (39:0) is the API revision number.
+        
+        The API revision number is manually increased on trunk when making
+        incompatible changes that the validation kit or others needs to be able
+        to detect and cope with dynamically.  It can also be used to indicate
+        the presence of new features on both trunk and branches.
         """
         ret = self._get_attr("APIRevision")
         return ret
@@ -7848,6 +9590,14 @@ class IVirtualBox(Interface):
         """
         ret = self._get_attr("genericNetworkDrivers")
         return ret
+
+    @property
+    def cloud_networks(self):
+        """Get ICloudNetwork value for 'cloudNetworks'
+        Names of all configured cloud networks.
+        """
+        ret = self._get_attr("cloudNetworks")
+        return [ICloudNetwork(a) for a in ret]
 
     @property
     def cloud_provider_manager(self):
@@ -8506,15 +10256,15 @@ at the specified location.
     def set_extra_data(self, key, value):
         """Sets associated global extra data.
         
-        If you pass @c null or empty string as a key @a value, the given @a key
-        will be deleted.
+        If you pass @c null or an empty string as a key @a value, the given
+        @a key will be deleted.
         
         
-        Key must contain only printable ASCII characters.
+        Key must contain printable (non-control) UTF-8 characters only.
         
         
         Before performing the actual data change, this method will ask all
-        registered event listener using the
+        registered event listeners using the
         :py:class:`IExtraDataCanChangeEvent` 
         notification for a permission. If one of the listeners refuses the
         new value, the change will not be performed.
@@ -8661,6 +10411,47 @@ at the specified location.
         if not isinstance(network, INATNetwork):
             raise TypeError("network can only be an instance of type INATNetwork")
         self._call("removeNATNetwork",
+                     in_p=[network])
+
+    def create_cloud_network(self, network_name):
+        """
+
+        in network_name of type str
+
+        return network of type :class:`ICloudNetwork`
+
+        """
+        if not isinstance(network_name, basestring):
+            raise TypeError("network_name can only be an instance of type basestring")
+        network = self._call("createCloudNetwork",
+                     in_p=[network_name])
+        network = ICloudNetwork(network)
+        return network
+
+    def find_cloud_network_by_name(self, network_name):
+        """
+
+        in network_name of type str
+
+        return network of type :class:`ICloudNetwork`
+
+        """
+        if not isinstance(network_name, basestring):
+            raise TypeError("network_name can only be an instance of type basestring")
+        network = self._call("findCloudNetworkByName",
+                     in_p=[network_name])
+        network = ICloudNetwork(network)
+        return network
+
+    def remove_cloud_network(self, network):
+        """
+
+        in network of type :class:`ICloudNetwork`
+
+        """
+        if not isinstance(network, ICloudNetwork):
+            raise TypeError("network can only be an instance of type ICloudNetwork")
+        self._call("removeCloudNetwork",
                      in_p=[network])
 
     def check_firmware_present(self, firmware_type, version):
@@ -9380,6 +11171,23 @@ class IAppliance(Interface):
         self._call("addPasswords",
                      in_p=[identifiers, passwords])
 
+    def create_virtual_system_descriptions(self, requested):
+        """Creates a number of :py:class:`IVirtualSystemDescription`  objects and store them
+        in the :py:func:`virtual_system_descriptions`  array.
+
+        in requested of type int
+            Requested number of new virtual system description objects
+
+        return created of type int
+            Actually created number of virtual system description objects
+
+        """
+        if not isinstance(requested, baseinteger):
+            raise TypeError("requested can only be an instance of type baseinteger")
+        created = self._call("createVirtualSystemDescriptions",
+                     in_p=[requested])
+        return created
+
 
 class IVirtualSystemDescription(Interface):
     """
@@ -9390,7 +11198,7 @@ class IVirtualSystemDescription(Interface):
     VirtualBox virtual machines. See :py:class:`IAppliance`  for the steps required to
     import an OVF into VirtualBox.
     """
-    __uuid__ = 'ec49259c-1c50-4353-97a5-0fd92e2caac2'
+    __uuid__ = '01510f40-c196-4d26-b8db-4c8c389f1f82'
     __wsmap__ = 'managed'
     
     @property
@@ -9673,7 +11481,7 @@ class IUnattended(Interface):
     installer and allow restarting from the second step.
     
     
-    Note! Steps one is currently not implemented.
+    Note! Step two is currently not implemented.
     """
     __uuid__ = '6f89464f-7193-426c-a41f-522e8f537fa0'
     __wsmap__ = 'managed'
@@ -9789,7 +11597,7 @@ class IUnattended(Interface):
     @property
     def install_guest_additions(self):
         """Get or set bool value for 'installGuestAdditions'
-        Indicates whether the guest additions should be installed or not.
+        Indicates whether the Guest Additions should be installed or not.
         
         Setting this to false does not affect additions shipped with the linux
         distribution, only the installation of additions pointed to by
@@ -10232,7 +12040,7 @@ class IInternalMachineControl(Interface):
     information about the saved state file and delete this file from disk
     when appropriate.
     """
-    __uuid__ = 'cdbc59df-4f4d-4cf2-809c-917601355afc'
+    __uuid__ = '0075FD6C-00C2-4484-0077-C057003D9C90'
     __wsmap__ = 'suppress'
     
     def update_state(self, state):
@@ -10462,6 +12270,88 @@ class IInternalMachineControl(Interface):
         (names, values, timestamps, flags) = self._call("pullGuestProperties")
         return (names, values, timestamps, flags)
 
+    def clipboard_area_register(self, parms):
+        """Registers a new clipboard area.
+
+        in parms of type str
+            Registration parameters. Currently not used and therefore ignored.
+
+        out id_p of type int
+            Returns the new clipboard area which got registered.
+
+        """
+        if not isinstance(parms, list):
+            raise TypeError("parms can only be an instance of type list")
+        for a in parms[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(
+                        "array can only contain objects of type basestring")
+        id_p = self._call("clipboardAreaRegister",
+                     in_p=[parms])
+        return id_p
+
+    def clipboard_area_unregister(self, id_p):
+        """Unregisters a formerly registered clipboard area.
+
+        in id_p of type int
+            Clipboard area to unregister.
+
+        """
+        if not isinstance(id_p, baseinteger):
+            raise TypeError("id_p can only be an instance of type baseinteger")
+        self._call("clipboardAreaUnregister",
+                     in_p=[id_p])
+
+    def clipboard_area_attach(self, id_p):
+        """Attaches to a registered clipboard area.
+
+        in id_p of type int
+            Clipboard area to attach to.
+
+        """
+        if not isinstance(id_p, baseinteger):
+            raise TypeError("id_p can only be an instance of type baseinteger")
+        self._call("clipboardAreaAttach",
+                     in_p=[id_p])
+
+    def clipboard_area_detach(self, id_p):
+        """Detaches from a registered clipboard area.
+
+        in id_p of type int
+            Clipboard area to detach from.
+
+        """
+        if not isinstance(id_p, baseinteger):
+            raise TypeError("id_p can only be an instance of type baseinteger")
+        self._call("clipboardAreaDetach",
+                     in_p=[id_p])
+
+    def clipboard_area_get_most_recent(self):
+        """Returns the most recent (last registered) clipboard area.
+
+        out id_p of type int
+            Returns the most recent clipboard area.
+
+        """
+        id_p = self._call("clipboardAreaGetMostRecent")
+        return id_p
+
+    def clipboard_area_get_ref_count(self, id_p):
+        """Returns the current reference count of a clipboard area.
+
+        in id_p of type int
+            Clipboard area to return reference count for.
+
+        out refcount of type int
+            Returns the current reference count.
+
+        """
+        if not isinstance(id_p, baseinteger):
+            raise TypeError("id_p can only be an instance of type baseinteger")
+        refcount = self._call("clipboardAreaGetRefCount",
+                     in_p=[id_p])
+        return refcount
+
     def push_guest_property(self, name, value, timestamp, flags):
         """Update a single guest property in IMachine.
 
@@ -10639,12 +12529,96 @@ class IInternalMachineControl(Interface):
         return result
 
 
+class IGraphicsAdapter(Interface):
+    """
+    The IGraphicsAdapter interface represents the graphics adapter
+    of the virtual machine.
+    """
+    __uuid__ = 'f692806f-febe-4049-b476-1292a8e45b09'
+    __wsmap__ = 'managed'
+    
+    @property
+    def graphics_controller_type(self):
+        """Get or set GraphicsControllerType value for 'graphicsControllerType'
+        Graphics controller type.
+        """
+        ret = self._get_attr("graphicsControllerType")
+        return GraphicsControllerType(ret)
+
+    @graphics_controller_type.setter
+    def graphics_controller_type(self, value):
+        if not isinstance(value, GraphicsControllerType):
+            raise TypeError("value is not an instance of GraphicsControllerType")
+        return self._set_attr("graphicsControllerType", value)
+
+    @property
+    def vram_size(self):
+        """Get or set int value for 'VRAMSize'
+        Video memory size in megabytes.
+        """
+        ret = self._get_attr("VRAMSize")
+        return ret
+
+    @vram_size.setter
+    def vram_size(self, value):
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
+        return self._set_attr("VRAMSize", value)
+
+    @property
+    def accelerate3_d_enabled(self):
+        """Get or set bool value for 'accelerate3DEnabled'
+        This setting determines whether VirtualBox allows this machine to make
+        use of the 3D graphics support available on the host.
+        """
+        ret = self._get_attr("accelerate3DEnabled")
+        return ret
+
+    @accelerate3_d_enabled.setter
+    def accelerate3_d_enabled(self, value):
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
+        return self._set_attr("accelerate3DEnabled", value)
+
+    @property
+    def accelerate2_d_video_enabled(self):
+        """Get or set bool value for 'accelerate2DVideoEnabled'
+        This setting determines whether VirtualBox allows this machine to make
+        use of the 2D video acceleration support available on the host.
+        """
+        ret = self._get_attr("accelerate2DVideoEnabled")
+        return ret
+
+    @accelerate2_d_video_enabled.setter
+    def accelerate2_d_video_enabled(self, value):
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
+        return self._set_attr("accelerate2DVideoEnabled", value)
+
+    @property
+    def monitor_count(self):
+        """Get or set int value for 'monitorCount'
+        Number of virtual monitors.
+        
+        Only effective on Windows XP and later guests with
+        Guest Additions installed.
+        """
+        ret = self._get_attr("monitorCount")
+        return ret
+
+    @monitor_count.setter
+    def monitor_count(self, value):
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
+        return self._set_attr("monitorCount", value)
+
+
 class IBIOSSettings(Interface):
     """
     The IBIOSSettings interface represents BIOS settings of the virtual
     machine. This is used only in the :py:func:`IMachine.bios_settings`  attribute.
     """
-    __uuid__ = 'f13f667d-3624-4ac5-99c1-3d982ebd8d98'
+    __uuid__ = '73af4152-7e67-4144-bf34-41c38e8b4cc7'
     __wsmap__ = 'managed'
     
     @property
@@ -10799,11 +12773,27 @@ class IBIOSSettings(Interface):
         """Get str value for 'nonVolatileStorageFile'
         The location of the file storing the non-volatile memory content when
         the VM is powered off.  The file does not always exist.
-        
-        This feature will be realized after VirtualBox v4.3.0.
         """
         ret = self._get_attr("nonVolatileStorageFile")
         return ret
+
+    @property
+    def smbios_uuid_little_endian(self):
+        """Get or set bool value for 'SMBIOSUuidLittleEndian'
+        Flag to control whether the SMBIOS system UUID is presented in little endian
+        form to the guest as mandated by the SMBIOS spec chapter 7.2.1.
+        Before VirtualBox version 6.1 it was always presented in big endian form
+        and to retain the old behavior this flag was introduced so it can be changed.
+        VMs created with VBox 6.1 will default to true for this flag.
+        """
+        ret = self._get_attr("SMBIOSUuidLittleEndian")
+        return ret
+
+    @smbios_uuid_little_endian.setter
+    def smbios_uuid_little_endian(self, value):
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
+        return self._set_attr("SMBIOSUuidLittleEndian", value)
 
 
 class IRecordingScreenSettings(Interface):
@@ -11335,7 +13325,7 @@ class IMachine(Interface):
     
     :py:class:`ISession` , :py:class:`IConsole` 
     """
-    __uuid__ = '5047460a-265d-4538-b23e-ddba5fb84976'
+    __uuid__ = '85632c68-b5bb-4316-a900-5eb28d3413df'
     __wsmap__ = 'managed'
     
     @property
@@ -11618,7 +13608,7 @@ class IMachine(Interface):
         Virtual CPUID portability level, the higher number the fewer newer
         or vendor specific CPU feature is reported to the guest (via the CPUID
         instruction).  The default level of zero (0) means that all virtualized
-        feautres supported by the host is pass thru to the guest.  While the
+        features supported by the host is pass thru to the guest.  While the
         three (3) is currently the level supressing the most features.
         
         Exactly which of the CPUID features are left out by the VMM at which
@@ -11677,79 +13667,12 @@ class IMachine(Interface):
         return self._set_attr("pageFusionEnabled", value)
 
     @property
-    def graphics_controller_type(self):
-        """Get or set GraphicsControllerType value for 'graphicsControllerType'
-        Graphics controller type.
+    def graphics_adapter(self):
+        """Get IGraphicsAdapter value for 'graphicsAdapter'
+        Graphics adapter object.
         """
-        ret = self._get_attr("graphicsControllerType")
-        return GraphicsControllerType(ret)
-
-    @graphics_controller_type.setter
-    def graphics_controller_type(self, value):
-        if not isinstance(value, GraphicsControllerType):
-            raise TypeError("value is not an instance of GraphicsControllerType")
-        return self._set_attr("graphicsControllerType", value)
-
-    @property
-    def vram_size(self):
-        """Get or set int value for 'VRAMSize'
-        Video memory size in megabytes.
-        """
-        ret = self._get_attr("VRAMSize")
-        return ret
-
-    @vram_size.setter
-    def vram_size(self, value):
-        if not isinstance(value, baseinteger):
-            raise TypeError("value is not an instance of baseinteger")
-        return self._set_attr("VRAMSize", value)
-
-    @property
-    def accelerate3_d_enabled(self):
-        """Get or set bool value for 'accelerate3DEnabled'
-        This setting determines whether VirtualBox allows this machine to make
-        use of the 3D graphics support available on the host.
-        """
-        ret = self._get_attr("accelerate3DEnabled")
-        return ret
-
-    @accelerate3_d_enabled.setter
-    def accelerate3_d_enabled(self, value):
-        if not isinstance(value, bool):
-            raise TypeError("value is not an instance of bool")
-        return self._set_attr("accelerate3DEnabled", value)
-
-    @property
-    def accelerate2_d_video_enabled(self):
-        """Get or set bool value for 'accelerate2DVideoEnabled'
-        This setting determines whether VirtualBox allows this machine to make
-        use of the 2D video acceleration support available on the host.
-        """
-        ret = self._get_attr("accelerate2DVideoEnabled")
-        return ret
-
-    @accelerate2_d_video_enabled.setter
-    def accelerate2_d_video_enabled(self, value):
-        if not isinstance(value, bool):
-            raise TypeError("value is not an instance of bool")
-        return self._set_attr("accelerate2DVideoEnabled", value)
-
-    @property
-    def monitor_count(self):
-        """Get or set int value for 'monitorCount'
-        Number of virtual monitors.
-        
-        Only effective on Windows XP and later guests with
-        Guest Additions installed.
-        """
-        ret = self._get_attr("monitorCount")
-        return ret
-
-    @monitor_count.setter
-    def monitor_count(self, value):
-        if not isinstance(value, baseinteger):
-            raise TypeError("value is not an instance of baseinteger")
-        return self._set_attr("monitorCount", value)
+        ret = self._get_attr("graphicsAdapter")
+        return IGraphicsAdapter(ret)
 
     @property
     def bios_settings(self):
@@ -12154,6 +14077,23 @@ class IMachine(Interface):
         return self._set_attr("clipboardMode", value)
 
     @property
+    def clipboard_file_transfers_enabled(self):
+        """Get or set bool value for 'clipboardFileTransfersEnabled'
+        Sets or retrieves whether clipboard file transfers are allowed or not.
+        
+        When set to @a true, clipboard file transfers between supported
+        host and guest OSes are allowed.
+        """
+        ret = self._get_attr("clipboardFileTransfersEnabled")
+        return ret
+
+    @clipboard_file_transfers_enabled.setter
+    def clipboard_file_transfers_enabled(self, value):
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
+        return self._set_attr("clipboardFileTransfersEnabled", value)
+
+    @property
     def dn_d_mode(self):
         """Get or set DnDMode value for 'dnDMode'
         Sets or retrieves the current drag'n drop mode.
@@ -12252,81 +14192,6 @@ class IMachine(Interface):
         if not isinstance(value, ParavirtProvider):
             raise TypeError("value is not an instance of ParavirtProvider")
         return self._set_attr("paravirtProvider", value)
-
-    @property
-    def fault_tolerance_state(self):
-        """Get or set FaultToleranceState value for 'faultToleranceState'
-        Fault tolerance state; disabled, source or target.
-        This property can be changed at any time. If you change it for a running
-        VM, then the fault tolerance address and port must be set beforehand.
-        """
-        ret = self._get_attr("faultToleranceState")
-        return FaultToleranceState(ret)
-
-    @fault_tolerance_state.setter
-    def fault_tolerance_state(self, value):
-        if not isinstance(value, FaultToleranceState):
-            raise TypeError("value is not an instance of FaultToleranceState")
-        return self._set_attr("faultToleranceState", value)
-
-    @property
-    def fault_tolerance_port(self):
-        """Get or set int value for 'faultTolerancePort'
-        The TCP port the fault tolerance source or target will use for
-        communication.
-        """
-        ret = self._get_attr("faultTolerancePort")
-        return ret
-
-    @fault_tolerance_port.setter
-    def fault_tolerance_port(self, value):
-        if not isinstance(value, baseinteger):
-            raise TypeError("value is not an instance of baseinteger")
-        return self._set_attr("faultTolerancePort", value)
-
-    @property
-    def fault_tolerance_address(self):
-        """Get or set str value for 'faultToleranceAddress'
-        The address the fault tolerance source or target.
-        """
-        ret = self._get_attr("faultToleranceAddress")
-        return ret
-
-    @fault_tolerance_address.setter
-    def fault_tolerance_address(self, value):
-        if not isinstance(value, basestring):
-            raise TypeError("value is not an instance of basestring")
-        return self._set_attr("faultToleranceAddress", value)
-
-    @property
-    def fault_tolerance_password(self):
-        """Get or set str value for 'faultTolerancePassword'
-        The password to check for on the standby VM. This is just a
-        very basic measure to prevent simple hacks and operators accidentally
-        choosing the wrong standby VM.
-        """
-        ret = self._get_attr("faultTolerancePassword")
-        return ret
-
-    @fault_tolerance_password.setter
-    def fault_tolerance_password(self, value):
-        if not isinstance(value, basestring):
-            raise TypeError("value is not an instance of basestring")
-        return self._set_attr("faultTolerancePassword", value)
-
-    @property
-    def fault_tolerance_sync_interval(self):
-        """Get or set int value for 'faultToleranceSyncInterval'
-        The interval in ms used for syncing the state between source and target.
-        """
-        ret = self._get_attr("faultToleranceSyncInterval")
-        return ret
-
-    @fault_tolerance_sync_interval.setter
-    def fault_tolerance_sync_interval(self, value):
-        if not isinstance(value, baseinteger):
-            raise TypeError("value is not an instance of baseinteger")
-        return self._set_attr("faultToleranceSyncInterval", value)
 
     @property
     def rtc_use_utc(self):
@@ -12568,7 +14433,8 @@ class IMachine(Interface):
         is "host", which indicates the host CPU.  All other names are subject
         to change.
         
-        The profiles are found in src/VBox/VMM/VMMR3/cpus/.
+        Use the :py:func:`ISystemProperties.get_cpu_profiles`  method to get
+        currently available CPU profiles.
         """
         ret = self._get_attr("CPUProfile")
         return ret
@@ -12677,7 +14543,7 @@ class IMachine(Interface):
         self._call("lockMachine",
                      in_p=[session, lock_type])
 
-    def launch_vm_process(self, session, name, environment):
+    def launch_vm_process(self, session, name, environment_changes):
         """Spawns a new process that will execute the virtual machine and obtains a shared
         lock on the machine for the calling session.
         
@@ -12720,29 +14586,14 @@ class IMachine(Interface):
         For details on the teleportation progress operation, see
         :py:func:`IConsole.power_up` .
         
-        <!-- TODO/r=bird: What about making @a environment into a smart array?  Guess
-        this predates our safe array support by a year or so... Dmitry wrote the text here, right?
-        Just rename it to @a environmentChanges and shorten the documentation to say the string
-        are applied onto the server environment putenv style, i.e. "VAR=VALUE" for setting/replacing
-        and "VAR" for unsetting. -->
-        The @a environment argument is a string containing definitions of
-        environment variables in the following format:
-        
-        ::
-
-             NAME[=VALUE]\n
-             NAME[=VALUE]\n
-             ...
-
-
-        where \\n is the new line character. These environment
-        variables will be appended to the environment of the VirtualBox server
-        process. If an environment variable exists both in the server process
-        and in this list, the value from this list takes precedence over the
-        server's variable. If the value of the environment variable is
-        omitted, this variable will be removed from the resulting environment.
-        If the environment string is @c null or empty, the server environment
-        is inherited by the started process as is.
+        The @a environmentChanges argument is a list of strings where every string contains
+        environment variable in the putenv style, i.e. "VAR=VALUE" for setting/replacing
+        and "VAR" for unsetting. These environment variables will be applied to the environment
+        of the VirtualBox server process. If an environment variable exists both in the server
+        process and in this list, the value from this list takes precedence over the
+        server's variable. If the value of the environment variable is omitted, this variable
+        will be removed from the resulting environment. If the list is empty, the server
+        environment is inherited by the started process as is.
 
         in session of type :class:`ISession`
             Client session object to which the VM process will be connected (this
@@ -12766,8 +14617,8 @@ class IMachine(Interface):
             :py:func:`IMachine.default_frontend`  and
             :py:func:`ISystemProperties.default_frontend` .
 
-        in environment of type str
-            Environment to pass to the VM process.
+        in environment_changes of type str
+            The list of putenv-style changes to the VM process environment.
 
         return progress of type :class:`IProgress`
             Progress object to track the operation completion.
@@ -12795,10 +14646,14 @@ class IMachine(Interface):
             raise TypeError("session can only be an instance of type ISession")
         if not isinstance(name, basestring):
             raise TypeError("name can only be an instance of type basestring")
-        if not (isinstance(environment, basestring) or isinstance(environment, list)):
-            raise TypeError("environment can only be an instance of type basestring or list")
+        if not isinstance(environment_changes, list):
+            raise TypeError("environment_changes can only be an instance of type list")
+        for a in environment_changes[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(
+                        "array can only contain objects of type basestring")
         progress = self._call("launchVMProcess",
-                     in_p=[session, name, environment])
+                     in_p=[session, name, environment_changes])
         progress = IProgress(progress)
         return progress
 
@@ -13978,11 +15833,11 @@ created differencing media, should not happen).
         @a key will be deleted.
         
         
-        Key must contain only printable ASCII characters.
+        Key must contain printable (non-control) UTF-8 characters only.
         
         
         Before performing the actual data change, this method will ask all
-        registered listeners using the
+        registered event listeners using the
         :py:class:`IExtraDataCanChangeEvent` 
         notification for a permission. If one of the listeners refuses the
         new value, the change will not be performed.
@@ -15473,8 +17328,15 @@ text explains the reason for the failure.
         in flags of type str
             Additional flags, to be defined later.
 
-        raises :class:`OleErrorNotimpl`
-            This method is not implemented yet.
+        raises :class:`OleErrorFail`
+            General error.
+        
+        raises :class:`VBoxErrorInvalidVmState`
+            The machine is in invalid state.
+        
+        raises :class:`VBoxErrorObjectInUse`
+            Some of the applied objects already exist. The method has been
+called to already configured machine.
         
         """
         if not isinstance(flags, basestring):
@@ -16568,10 +18430,271 @@ class IHostVideoInputDevice(Interface):
     @property
     def alias(self):
         """Get str value for 'alias'
-        An alias which can be used for IConsole::webcamAttach
+        An alias which can be used for :py:func:`IEmulatedUSB.webcam_attach` 
         """
         ret = self._get_attr("alias")
         return ret
+
+
+class IHostUpdate(Interface):
+    """
+    Represents the state of the update checking logic (a singleton returned
+    by :py:func:`IHost.update`  attribute).
+    """
+    __uuid__ = '6fa2671b-0547-448e-bc7c-94e9e173bf57'
+    __wsmap__ = 'managed'
+    
+    def update_check(self, check_type):
+        """Check for a newer version of software based on the 'checkType' value.
+
+        in check_type of type :class:`UpdateCheckType`
+            The type of software to check.
+
+        return progress of type :class:`IProgress`
+            Progress object to track operation completion.
+
+        """
+        if not isinstance(check_type, UpdateCheckType):
+            raise TypeError("check_type can only be an instance of type UpdateCheckType")
+        progress = self._call("updateCheck",
+                     in_p=[check_type])
+        progress = IProgress(progress)
+        return progress
+
+    @property
+    def update_response(self):
+        """Get bool value for 'updateResponse'
+        The response from the :py:func:`IHostUpdate.update_check`  method.
+        """
+        ret = self._get_attr("updateResponse")
+        return ret
+
+    @property
+    def update_version(self):
+        """Get str value for 'updateVersion'
+        The newer version of the software returned by calling the update check
+        :py:func:`IHostUpdate.update_check`  method.
+        """
+        ret = self._get_attr("updateVersion")
+        return ret
+
+    @property
+    def update_url(self):
+        """Get str value for 'updateURL'
+        The download URL of the newer software version returned by calling the
+        update check :py:func:`IHostUpdate.update_check`  method.
+        """
+        ret = self._get_attr("updateURL")
+        return ret
+
+    @property
+    def update_check_needed(self):
+        """Get bool value for 'updateCheckNeeded'
+        Is it time to check for a newer version of software?
+        """
+        ret = self._get_attr("updateCheckNeeded")
+        return ret
+
+
+class IHostDrivePartition(Interface):
+    """
+    The IHostDrivePartition interface represents the partition of the host drive.
+    To enumerate all available drives partitions in the host, use the
+    :py:func:`IHost.host_drives`  attribute.
+    """
+    __uuid__ = '4f529a14-ace3-407c-9c49-066e8e8027f0'
+    __wsmap__ = 'struct'
+    
+    @property
+    def number(self):
+        """Get int value for 'number'
+        The number of the partition.
+        <!-- @todo r=bird: This is weird numbering scheme for MBR disk as it goes 1,2,3,4,5,7,9,11,...
+        And has no practical use.  It would be better to use the system specific device node numbering here. -->
+        """
+        ret = self._get_attr("number")
+        return ret
+
+    @property
+    def size(self):
+        """Get int value for 'size'
+        The partition size in bytes.
+        """
+        ret = self._get_attr("size")
+        return ret
+
+    @property
+    def start(self):
+        """Get int value for 'start'
+        The start byte offset of this partition in bytes relative to the
+        beginning of the hard disk.
+        """
+        ret = self._get_attr("start")
+        return ret
+
+    @property
+    def type_p(self):
+        """Get PartitionType value for 'type'
+        A translation of :py:func:`IHostDrivePartition.type_mbr`  and
+        :py:func:`IHostDrivePartition.type_uuid`  when possible, otherwise
+        set to :py:func:`PartitionType.unknown` .
+        """
+        ret = self._get_attr("type")
+        return PartitionType(ret)
+
+    @property
+    def active(self):
+        """Get bool value for 'active'
+        The partition is bootable when TRUE.
+        """
+        ret = self._get_attr("active")
+        return ret
+
+    @property
+    def type_mbr(self):
+        """Get int value for 'typeMBR'
+        The raw MBR partition type, 0 for non-MBR disks.
+        """
+        ret = self._get_attr("typeMBR")
+        return ret
+
+    @property
+    def start_cylinder(self):
+        """Get int value for 'startCylinder'
+        The cylinder (0..1023) of the first sector in the partition on an MBR disk, zero for not an MBR disk.
+        """
+        ret = self._get_attr("startCylinder")
+        return ret
+
+    @property
+    def start_head(self):
+        """Get int value for 'startHead'
+        The head (0..255) of the first sector in the partition on an MBR disk, zero for not an MBR disk.
+        """
+        ret = self._get_attr("startHead")
+        return ret
+
+    @property
+    def start_sector(self):
+        """Get int value for 'startSector'
+        The sector (0..63) of the first sector in the partition on an MBR disk, zero for not an MBR disk.
+        """
+        ret = self._get_attr("startSector")
+        return ret
+
+    @property
+    def end_cylinder(self):
+        """Get int value for 'endCylinder'
+        The cylinder (0..1023) of the last sector (inclusive) in the partition on an MBR disk, zero for not an MBR disk.
+        """
+        ret = self._get_attr("endCylinder")
+        return ret
+
+    @property
+    def end_head(self):
+        """Get int value for 'endHead'
+        The head (0..255) of the last sector (inclusive) in the partition on an MBR disk, zero for not an MBR disk.
+        """
+        ret = self._get_attr("endHead")
+        return ret
+
+    @property
+    def end_sector(self):
+        """Get int value for 'endSector'
+        The sector (1..63) of the last sector (inclusive) in the partition on an MBR disk, zero for not an MBR disk.
+        """
+        ret = self._get_attr("endSector")
+        return ret
+
+    @property
+    def type_uuid(self):
+        """Get str value for 'typeUuid'
+        The partition type when GUID partitioning scheme is used, NULL UUID value for not a GPT disks.
+        """
+        ret = self._get_attr("typeUuid")
+        return ret
+
+    @property
+    def uuid(self):
+        """Get str value for 'uuid'
+        The GUID of the partition when GUID partitioning scheme is used, NULL UUID value for not a GPT disks.
+        """
+        ret = self._get_attr("uuid")
+        return ret
+
+    @property
+    def name(self):
+        """Get str value for 'name'
+        The name of the partition if GPT partitioning is used, empty if not a GPT disk.
+        """
+        ret = self._get_attr("name")
+        return ret
+
+
+class IHostDrive(Interface):
+    """
+    The IHostDrive interface represents the drive of the physical machine.
+    It is not complete medium description and, therefore, it is not IMedium
+    based. The interface is used just for getting a host drive partitions info.
+    """
+    __uuid__ = '70e2e0c3-332c-4d72-b822-2db16e2cb31b'
+    __wsmap__ = 'managed'
+    
+    @property
+    def drive_path(self):
+        """Get str value for 'drivePath'
+        The path of the drive. Platform dependent.
+        """
+        ret = self._get_attr("drivePath")
+        return ret
+
+    @property
+    def partitioning_type(self):
+        """Get PartitioningType value for 'partitioningType'
+        The scheme of the partitions the disk has.
+        """
+        ret = self._get_attr("partitioningType")
+        return PartitioningType(ret)
+
+    @property
+    def uuid(self):
+        """Get str value for 'uuid'
+        The GUID of the disk.
+        """
+        ret = self._get_attr("uuid")
+        return ret
+
+    @property
+    def sector_size(self):
+        """Get int value for 'sectorSize'
+        The size of the sector in bytes.
+        """
+        ret = self._get_attr("sectorSize")
+        return ret
+
+    @property
+    def size(self):
+        """Get int value for 'size'
+        The size of the disk in bytes.
+        """
+        ret = self._get_attr("size")
+        return ret
+
+    @property
+    def model(self):
+        """Get str value for 'model'
+        The model string of the drive if available.
+        """
+        ret = self._get_attr("model")
+        return ret
+
+    @property
+    def partitions(self):
+        """Get IHostDrivePartition value for 'partitions'
+        List of partitions available on the host drive.
+        """
+        ret = self._get_attr("partitions")
+        return [IHostDrivePartition(a) for a in ret]
 
 
 class IHost(Interface):
@@ -16586,7 +18709,7 @@ class IHost(Interface):
     and so on) and also allows for manipulating some of the host's hardware,
     such as global USB device filters and host interface networking.
     """
-    __uuid__ = 'dbe11e5f-7f10-46e7-94c4-1e95bf4b6627'
+    __uuid__ = 'fc0759a6-a5e2-41e1-93ca-64776335eb2d'
     __wsmap__ = 'managed'
     
     @property
@@ -16707,6 +18830,14 @@ class IHost(Interface):
         """
         ret = self._get_attr("processorOnlineCoreCount")
         return ret
+
+    @property
+    def host_drives(self):
+        """Get IHostDrive value for 'hostDrives'
+        List of the host drive available to use in the VirtualBox.
+        """
+        ret = self._get_attr("hostDrives")
+        return [IHostDrive(a) for a in ret]
 
     def get_processor_speed(self, cpu_id):
         """Query the (approximate) maximum speed of a specified host CPU in
@@ -17197,6 +19328,46 @@ class IHost(Interface):
         self._call("removeUSBDeviceSource",
                      in_p=[id_p])
 
+    @property
+    def update(self):
+        """Get IHostUpdate value for 'update'
+        The check for newer software object (singleton).
+        """
+        ret = self._get_attr("update")
+        return IHostUpdate(ret)
+
+
+class ICPUProfile(Interface):
+    """
+    CPU profile. Immutable.
+    """
+    __uuid__ = 'b7fda727-7a08-46ee-8dd8-f8d7308b519c'
+    __wsmap__ = 'managed'
+    
+    @property
+    def name(self):
+        """Get str value for 'name'
+        The name.
+        """
+        ret = self._get_attr("name")
+        return ret
+
+    @property
+    def full_name(self):
+        """Get str value for 'fullName'
+        The full name.
+        """
+        ret = self._get_attr("fullName")
+        return ret
+
+    @property
+    def architecture(self):
+        """Get CPUArchitecture value for 'architecture'
+        The CPU architecture.
+        """
+        ret = self._get_attr("architecture")
+        return CPUArchitecture(ret)
+
 
 class ISystemProperties(Interface):
     """
@@ -17207,7 +19378,7 @@ class ISystemProperties(Interface):
     and parameters. Most of the properties are read-only, but some can be
     changed by a user.
     """
-    __uuid__ = 'd55176e5-6730-4e9e-fc1f-a59b1f44f78f'
+    __uuid__ = '81c55eb1-d584-41a7-aa0b-08b71cddd773'
     __wsmap__ = 'managed'
     
     @property
@@ -17704,7 +19875,7 @@ class ISystemProperties(Interface):
     @property
     def proxy_url(self):
         """Get or set str value for 'proxyURL'
-        Proxy server URL for the :py:func:`ProxyMode.manual`  proxy mode.
+        Proxy server URL for the :py:attr:`ProxyMode.manual`  proxy mode.
         
         The format is: [{type}"://"][{userid}[@{password}]:]{server}[":"{port}]
         
@@ -17715,12 +19886,12 @@ class ISystemProperties(Interface):
         
         The port number defaults to 80 for http, 443 for https and 1080 for the socks ones.
         
-        The password is currently stored as plain text!  Use the :py:func:`ProxyMode.system` 
+        The password is currently stored as plain text!  Use the :py:attr:`ProxyMode.system` 
         mode if you consider the proxy password to be sensitive.
         
-        An empty string will cause the behavior to be identical to :py:func:`ProxyMode.system` .
+        An empty string will cause the behavior to be identical to :py:attr:`ProxyMode.system` .
         For compatibility with libproxy, an URL starting with "direct://" will cause
-        :py:func:`ProxyMode.no_proxy`  behavior.
+        :py:attr:`ProxyMode.no_proxy`  behavior.
         """
         ret = self._get_attr("proxyURL")
         return ret
@@ -17730,6 +19901,328 @@ class ISystemProperties(Interface):
         if not isinstance(value, basestring):
             raise TypeError("value is not an instance of basestring")
         return self._set_attr("proxyURL", value)
+
+    @property
+    def supported_paravirt_providers(self):
+        """Get ParavirtProvider value for 'supportedParavirtProviders'
+        Returns an array of officially supported values for enum :py:class:`ParavirtProvider` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedParavirtProviders")
+        return [ParavirtProvider(a) for a in ret]
+
+    @property
+    def supported_clipboard_modes(self):
+        """Get ClipboardMode value for 'supportedClipboardModes'
+        Returns an array of officially supported values for enum :py:class:`ClipboardMode` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedClipboardModes")
+        return [ClipboardMode(a) for a in ret]
+
+    @property
+    def supported_dn_d_modes(self):
+        """Get DnDMode value for 'supportedDnDModes'
+        Returns an array of officially supported values for enum :py:class:`DnDMode` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedDnDModes")
+        return [DnDMode(a) for a in ret]
+
+    @property
+    def supported_firmware_types(self):
+        """Get FirmwareType value for 'supportedFirmwareTypes'
+        Returns an array of officially supported values for enum :py:class:`FirmwareType` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedFirmwareTypes")
+        return [FirmwareType(a) for a in ret]
+
+    @property
+    def supported_pointing_hid_types(self):
+        """Get PointingHIDType value for 'supportedPointingHIDTypes'
+        Returns an array of officially supported values for enum :py:class:`PointingHIDType` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedPointingHIDTypes")
+        return [PointingHIDType(a) for a in ret]
+
+    @property
+    def supported_keyboard_hid_types(self):
+        """Get KeyboardHIDType value for 'supportedKeyboardHIDTypes'
+        Returns an array of officially supported values for enum :py:class:`KeyboardHIDType` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedKeyboardHIDTypes")
+        return [KeyboardHIDType(a) for a in ret]
+
+    @property
+    def supported_vfs_types(self):
+        """Get VFSType value for 'supportedVFSTypes'
+        Returns an array of officially supported values for enum :py:class:`VFSType` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedVFSTypes")
+        return [VFSType(a) for a in ret]
+
+    @property
+    def supported_import_options(self):
+        """Get ImportOptions value for 'supportedImportOptions'
+        Returns an array of officially supported values for enum :py:class:`ImportOptions` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedImportOptions")
+        return [ImportOptions(a) for a in ret]
+
+    @property
+    def supported_export_options(self):
+        """Get ExportOptions value for 'supportedExportOptions'
+        Returns an array of officially supported values for enum :py:class:`ExportOptions` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedExportOptions")
+        return [ExportOptions(a) for a in ret]
+
+    @property
+    def supported_recording_audio_codecs(self):
+        """Get RecordingAudioCodec value for 'supportedRecordingAudioCodecs'
+        Returns an array of officially supported values for enum :py:class:`RecordingAudioCodec` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedRecordingAudioCodecs")
+        return [RecordingAudioCodec(a) for a in ret]
+
+    @property
+    def supported_recording_video_codecs(self):
+        """Get RecordingVideoCodec value for 'supportedRecordingVideoCodecs'
+        Returns an array of officially supported values for enum :py:class:`RecordingVideoCodec` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedRecordingVideoCodecs")
+        return [RecordingVideoCodec(a) for a in ret]
+
+    @property
+    def supported_recording_vs_methods(self):
+        """Get RecordingVideoScalingMethod value for 'supportedRecordingVSMethods'
+        Returns an array of officially supported values for enum :py:class:`RecordingVideoScalingMethod` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedRecordingVSMethods")
+        return [RecordingVideoScalingMethod(a) for a in ret]
+
+    @property
+    def supported_recording_vrc_modes(self):
+        """Get RecordingVideoRateControlMode value for 'supportedRecordingVRCModes'
+        Returns an array of officially supported values for enum :py:class:`RecordingVideoRateControlMode` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedRecordingVRCModes")
+        return [RecordingVideoRateControlMode(a) for a in ret]
+
+    @property
+    def supported_graphics_controller_types(self):
+        """Get GraphicsControllerType value for 'supportedGraphicsControllerTypes'
+        Returns an array of officially supported values for enum :py:class:`GraphicsControllerType` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedGraphicsControllerTypes")
+        return [GraphicsControllerType(a) for a in ret]
+
+    @property
+    def supported_clone_options(self):
+        """Get CloneOptions value for 'supportedCloneOptions'
+        Returns an array of officially supported values for enum :py:class:`CloneOptions` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedCloneOptions")
+        return [CloneOptions(a) for a in ret]
+
+    @property
+    def supported_autostop_types(self):
+        """Get AutostopType value for 'supportedAutostopTypes'
+        Returns an array of officially supported values for enum :py:class:`AutostopType` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedAutostopTypes")
+        return [AutostopType(a) for a in ret]
+
+    @property
+    def supported_vm_proc_priorities(self):
+        """Get VMProcPriority value for 'supportedVMProcPriorities'
+        Returns an array of officially supported values for enum :py:class:`VMProcPriority` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedVMProcPriorities")
+        return [VMProcPriority(a) for a in ret]
+
+    @property
+    def supported_network_attachment_types(self):
+        """Get NetworkAttachmentType value for 'supportedNetworkAttachmentTypes'
+        Returns an array of officially supported values for enum :py:class:`NetworkAttachmentType` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedNetworkAttachmentTypes")
+        return [NetworkAttachmentType(a) for a in ret]
+
+    @property
+    def supported_network_adapter_types(self):
+        """Get NetworkAdapterType value for 'supportedNetworkAdapterTypes'
+        Returns an array of officially supported values for enum :py:class:`NetworkAdapterType` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedNetworkAdapterTypes")
+        return [NetworkAdapterType(a) for a in ret]
+
+    @property
+    def supported_port_modes(self):
+        """Get PortMode value for 'supportedPortModes'
+        Returns an array of officially supported values for enum :py:class:`PortMode` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedPortModes")
+        return [PortMode(a) for a in ret]
+
+    @property
+    def supported_uart_types(self):
+        """Get UartType value for 'supportedUartTypes'
+        Returns an array of officially supported values for enum :py:class:`UartType` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedUartTypes")
+        return [UartType(a) for a in ret]
+
+    @property
+    def supported_usb_controller_types(self):
+        """Get USBControllerType value for 'supportedUSBControllerTypes'
+        Returns an array of officially supported values for enum :py:class:`USBControllerType` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedUSBControllerTypes")
+        return [USBControllerType(a) for a in ret]
+
+    @property
+    def supported_audio_driver_types(self):
+        """Get AudioDriverType value for 'supportedAudioDriverTypes'
+        Returns an array of officially supported values for enum :py:class:`AudioDriverType` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedAudioDriverTypes")
+        return [AudioDriverType(a) for a in ret]
+
+    @property
+    def supported_audio_controller_types(self):
+        """Get AudioControllerType value for 'supportedAudioControllerTypes'
+        Returns an array of officially supported values for enum :py:class:`AudioControllerType` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedAudioControllerTypes")
+        return [AudioControllerType(a) for a in ret]
+
+    @property
+    def supported_storage_buses(self):
+        """Get StorageBus value for 'supportedStorageBuses'
+        Returns an array of officially supported values for enum :py:class:`StorageBus` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedStorageBuses")
+        return [StorageBus(a) for a in ret]
+
+    @property
+    def supported_storage_controller_types(self):
+        """Get StorageControllerType value for 'supportedStorageControllerTypes'
+        Returns an array of officially supported values for enum :py:class:`StorageControllerType` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedStorageControllerTypes")
+        return [StorageControllerType(a) for a in ret]
+
+    @property
+    def supported_chipset_types(self):
+        """Get ChipsetType value for 'supportedChipsetTypes'
+        Returns an array of officially supported values for enum :py:class:`ChipsetType` ,
+        in the sense of what is e.g. worth offering in the VirtualBox GUI.
+        """
+        ret = self._get_attr("supportedChipsetTypes")
+        return [ChipsetType(a) for a in ret]
+
+    @property
+    def v_box_update_enabled(self):
+        """Get or set bool value for 'VBoxUpdateEnabled'
+        Is the VirtualBox update check enabled?
+        """
+        ret = self._get_attr("VBoxUpdateEnabled")
+        return ret
+
+    @v_box_update_enabled.setter
+    def v_box_update_enabled(self, value):
+        if not isinstance(value, bool):
+            raise TypeError("value is not an instance of bool")
+        return self._set_attr("VBoxUpdateEnabled", value)
+
+    @property
+    def v_box_update_frequency(self):
+        """Get or set int value for 'VBoxUpdateFrequency'
+        How often should a check for a newer version of VirtualBox be made? (in days)
+        """
+        ret = self._get_attr("VBoxUpdateFrequency")
+        return ret
+
+    @v_box_update_frequency.setter
+    def v_box_update_frequency(self, value):
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
+        return self._set_attr("VBoxUpdateFrequency", value)
+
+    @property
+    def v_box_update_last_check_date(self):
+        """Get or set str value for 'VBoxUpdateLastCheckDate'
+        When was the update check last performed? If updating this attribute the
+        string must be in ISO 8601 format (e.g. 2020-05-11T21:13:39.348416000Z).
+        """
+        ret = self._get_attr("VBoxUpdateLastCheckDate")
+        return ret
+
+    @v_box_update_last_check_date.setter
+    def v_box_update_last_check_date(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("VBoxUpdateLastCheckDate", value)
+
+    @property
+    def v_box_update_target(self):
+        """Get or set VBoxUpdateTarget value for 'VBoxUpdateTarget'
+        The preferred release type used for determining whether a newer version of VirtualBox is available.
+        """
+        ret = self._get_attr("VBoxUpdateTarget")
+        return VBoxUpdateTarget(ret)
+
+    @v_box_update_target.setter
+    def v_box_update_target(self, value):
+        if not isinstance(value, VBoxUpdateTarget):
+            raise TypeError("value is not an instance of VBoxUpdateTarget")
+        return self._set_attr("VBoxUpdateTarget", value)
+
+    @property
+    def v_box_update_count(self):
+        """Get or set int value for 'VBoxUpdateCount'
+        The count of update check attempts.
+        """
+        ret = self._get_attr("VBoxUpdateCount")
+        return ret
+
+    @v_box_update_count.setter
+    def v_box_update_count(self, value):
+        if not isinstance(value, baseinteger):
+            raise TypeError("value is not an instance of baseinteger")
+        return self._set_attr("VBoxUpdateCount", value)
+
+    @property
+    def supported_v_box_update_target_types(self):
+        """Get VBoxUpdateTarget value for 'supportedVBoxUpdateTargetTypes'
+        Returns an array of officially supported values for enum :py:class:`VBoxUpdateTarget` .
+        """
+        ret = self._get_attr("supportedVBoxUpdateTargetTypes")
+        return [VBoxUpdateTarget(a) for a in ret]
 
     def get_max_network_adapters(self, chipset):
         """Maximum total number of network adapters associated with every
@@ -17864,6 +20357,43 @@ class ISystemProperties(Interface):
         device_types = [DeviceType(a) for a in device_types]
         return device_types
 
+    def get_storage_bus_for_storage_controller_type(self, storage_controller_type):
+        """Returns the :py:class:`StorageBus`  enum value
+        for a given storage controller type.
+
+        in storage_controller_type of type :class:`StorageControllerType`
+            The storage controller type to get the value for.
+
+        return storage_bus of type :class:`StorageBus`
+            The storage bus which is applicable.
+
+        """
+        if not isinstance(storage_controller_type, StorageControllerType):
+            raise TypeError("storage_controller_type can only be an instance of type StorageControllerType")
+        storage_bus = self._call("getStorageBusForStorageControllerType",
+                     in_p=[storage_controller_type])
+        storage_bus = StorageBus(storage_bus)
+        return storage_bus
+
+    def get_storage_controller_types_for_storage_bus(self, storage_bus):
+        """Returns the possible :py:class:`StorageControllerType`  enum values
+        for a given storage bus.
+
+        in storage_bus of type :class:`StorageBus`
+            The storage bus type to get the values for.
+
+        return storage_controller_type of type :class:`StorageControllerType`
+            The enum values (sorted by what should be a sensible decreasing
+            importance of the type) which are valid.
+
+        """
+        if not isinstance(storage_bus, StorageBus):
+            raise TypeError("storage_bus can only be an instance of type StorageBus")
+        storage_controller_type = self._call("getStorageControllerTypesForStorageBus",
+                     in_p=[storage_bus])
+        storage_controller_type = [StorageControllerType(a) for a in storage_controller_type]
+        return storage_controller_type
+
     def get_default_io_cache_setting_for_storage_controller(self, controller_type):
         """Returns the default I/O cache setting for the
         given storage controller
@@ -17921,6 +20451,29 @@ class ISystemProperties(Interface):
         max_instances = self._call("getMaxInstancesOfUSBControllerType",
                      in_p=[chipset, type_p])
         return max_instances
+
+    def get_cpu_profiles(self, architecture, name_pattern):
+        """Returns CPU profiles matching the given criteria.
+
+        in architecture of type :class:`CPUArchitecture`
+            The architecture to get profiles for. Required.
+
+        in name_pattern of type str
+            Name pattern. Simple wildcard matching using asterisk (*) and
+            question mark (?).
+
+        return profiles of type :class:`ICPUProfile`
+            The matching CPU profiles.
+
+        """
+        if not isinstance(architecture, CPUArchitecture):
+            raise TypeError("architecture can only be an instance of type CPUArchitecture")
+        if not isinstance(name_pattern, basestring):
+            raise TypeError("name_pattern can only be an instance of type basestring")
+        profiles = self._call("getCPUProfiles",
+                     in_p=[architecture, name_pattern])
+        profiles = [ICPUProfile(a) for a in profiles]
+        return profiles
 
 
 class IGuestOSType(Interface):
@@ -18238,7 +20791,7 @@ class IDnDBase(Interface):
     """
     Base abstract interface for drag'n drop.
     """
-    __uuid__ = '4132147b-42f8-cd96-7570-6a8800e3342c'
+    __uuid__ = '00727A73-000A-4C4A-006D-E7D300351186'
     __wsmap__ = 'managed'
     
     @property
@@ -18247,15 +20800,6 @@ class IDnDBase(Interface):
         Returns all supported drag'n drop formats.
         """
         ret = self._get_attr("formats")
-        return ret
-
-    @property
-    def protocol_version(self):
-        """Get int value for 'protocolVersion'
-        Returns the protocol version which is used to communicate
-        with the guest.
-        """
-        ret = self._get_attr("protocolVersion")
         return ret
 
     def is_format_supported(self, format_p):
@@ -18686,7 +21230,7 @@ class IGuestSession(Interface):
     available via :py:func:`IGuestSession.environment_base` .  (One reason
     for why we record changes to a base environment instead of working
     directly on an environment block is that we need to be compatible
-    with older guest additions.  Another reason is that this way it is always
+    with older Guest Additions.  Another reason is that this way it is always
     possible to undo all the changes you've scheduled.)
     """
     __uuid__ = '3E14C189-4A75-437E-B0BB-7E7C90D0DF2A'
@@ -18786,11 +21330,11 @@ class IGuestSession(Interface):
         <!-- @todo/TODO/FIXME: This doesn't end up in the PDF.
         -->
         
-        Access fails with VBOX_E_NOT_SUPPORTED if the guest additions does not
+        Access fails with VBOX_E_NOT_SUPPORTED if the Guest Additions does not
         support the session base environment feature.  Support for this was
         introduced with protocol version XXXX.
         
-        Access fails with VBOX_E_INVALID_OBJECT_STATE if the guest additions
+        Access fails with VBOX_E_INVALID_OBJECT_STATE if the Guest Additions
         has yet to report the session base environment.
         """
         ret = self._get_attr("environmentBase")
@@ -19234,7 +21778,7 @@ option was requested.
             method return @c false (because a symlink isn't a directory).
 
         return exists of type bool
-            Returns @c true if the directory exists, @c false if not.
+            Returns @c true if the directory exists, @c false if not, or is not a directory.
 
         raises :class:`VBoxErrorIprtError`
             Error while checking existence of the directory specified.
@@ -19254,6 +21798,11 @@ option was requested.
         
         This method follows symbolic links by default at the moment, this
         may change in the future.
+        
+        One idiosyncrasy of the current implementation is that you will NOT
+        get VBOX_E_OBJECT_NOT_FOUND returned here if the directory doesn't exist.
+        Instead the read function will fail with VBOX_E_IPRT_ERROR.  This will
+        be fixed soon.
 
         in path of type str
             Path to the directory to open. Guest path style.
@@ -19401,12 +21950,12 @@ option was requested.
             :py:func:`IGuestSession.environment_does_base_variable_exist` .
 
         raises :class:`VBoxErrorNotSupported`
-            If the guest additions does not
+            If the Guest Additions does not
 support the session base environment feature.  Support for this was
 introduced with protocol version XXXX.
         
         raises :class:`VBoxErrorInvalidObjectState`
-            If the guest additions has
+            If the Guest Additions has
 yet to report the session base environment.
         
         """
@@ -19428,12 +21977,12 @@ yet to report the session base environment.
             TRUE if the variable exists, FALSE if not.
 
         raises :class:`VBoxErrorNotSupported`
-            If the guest additions does not
+            If the Guest Additions does not
 support the session base environment feature.  Support for this was
 introduced with protocol version XXXX.
         
         raises :class:`VBoxErrorInvalidObjectState`
-            If the guest additions has
+            If the Guest Additions has
 yet to report the session base environment.
         
         """
@@ -20131,7 +22680,7 @@ option was requested.
             The changes are applied to the base environment of the impersonated
             guest user (:py:func:`IGuestSession.environment_base` ) when
             creating the process.  (This is done on the guest side of things in
-            order to be compatible with older guest additions.  That is one of
+            order to be compatible with older Guest Additions.  That is one of
             the motivations for not passing in the whole environment here.)
 
         in flags of type :class:`ProcessCreateFlag`
@@ -20211,7 +22760,7 @@ option was requested.
             The changes are applied to the base environment of the impersonated
             guest user (:py:func:`IGuestSession.environment_base` ) when
             creating the process.  (This is done on the guest side of things in
-            order to be compatible with older guest additions.  That is one of
+            order to be compatible with older Guest Additions.  That is one of
             the motivations for not passing in the whole environment here.)
 
         in flags of type :class:`ProcessCreateFlag`
@@ -20227,14 +22776,14 @@ option was requested.
         in priority of type :class:`ProcessPriority`
             Process priority to use for execution, see :py:class:`ProcessPriority` 
             for available priority levels.
-            This is silently ignored if not supported by guest additions.
+            This is silently ignored if not supported by Guest Additions.
 
         in affinity of type int
             Processor affinity to set for the new process.  This is a list of
             guest CPU numbers the process is allowed to run on.
             
             This is silently ignored if the guest does not support setting the
-            affinity of processes, or if the guest additions does not implemet
+            affinity of processes, or if the Guest Additions does not implemet
             this feature.
 
         return guest_process of type :class:`IGuestProcess`
@@ -20792,6 +23341,12 @@ class IFile(Interface):
         
         The :py:func:`IFile.seek`  is used to change this attribute without
         transfering any file data like read and write does.
+        
+        This will not always be correct with older Guest Additions
+        (version 5.2.30 and earlier, as well as versions 6.0.0 thru 6.0.8)
+        after a calling :py:func:`IFile.read_at`  or :py:func:`IFile.write_at` ,
+        or after calling :py:func:`IFile.write`  on a file in append mode.
+        The correct file offset can be obtained using :py:func:`IFile.seek` .
         """
         ret = self._get_attr("offset")
         return ret
@@ -20870,6 +23425,8 @@ class IFile(Interface):
 
     def read(self, to_read, timeout_ms):
         """Reads data from this file.
+        
+        The file current position (:py:func:`IFile.offset` ) is updated on success.
 
         in to_read of type int
             Number of bytes to read.
@@ -20881,9 +23438,6 @@ class IFile(Interface):
         return data of type str
             Array of data read.
 
-        raises :class:`OleErrorNotimpl`
-            The method is not implemented yet.
-        
         """
         if not isinstance(to_read, baseinteger):
             raise TypeError("to_read can only be an instance of type baseinteger")
@@ -20895,6 +23449,8 @@ class IFile(Interface):
 
     def read_at(self, offset, to_read, timeout_ms):
         """Reads data from an offset of this file.
+        
+        The file current position (:py:func:`IFile.offset` ) is updated on success.
 
         in offset of type int
             Offset in bytes to start reading.
@@ -20909,9 +23465,6 @@ class IFile(Interface):
         return data of type str
             Array of data read.
 
-        raises :class:`OleErrorNotimpl`
-            The method is not implemented yet.
-        
         """
         if not isinstance(offset, baseinteger):
             raise TypeError("offset can only be an instance of type baseinteger")
@@ -20977,9 +23530,6 @@ class IFile(Interface):
         in size of type int
             The new file size.
 
-        raises :class:`OleErrorNotimpl`
-            The method is not implemented yet.
-        
         """
         if not isinstance(size, baseinteger):
             raise TypeError("size can only be an instance of type baseinteger")
@@ -20988,6 +23538,8 @@ class IFile(Interface):
 
     def write(self, data, timeout_ms):
         """Writes bytes to this file.
+        
+        The file current position (:py:func:`IFile.offset` ) is updated on success.
 
         in data of type str
             Array of bytes to write. The size of the array also specifies
@@ -21015,9 +23567,14 @@ class IFile(Interface):
 
     def write_at(self, offset, data, timeout_ms):
         """Writes bytes at a certain offset to this file.
+        
+        The file current position (:py:func:`IFile.offset` ) is updated on success.
 
         in offset of type int
-            Offset in bytes to start writing.
+            Offset in bytes to start writing.  If the file was opened with the
+            :py:func:`IFile.access_mode`  set to :py:attr:`FileAccessMode.append_only` 
+            or :py:attr:`FileAccessMode.append_read` , the offset is ignored and the
+            write always goes to the end of the file.
 
         in data of type str
             Array of bytes to write. The size of the array also specifies
@@ -21030,9 +23587,6 @@ class IFile(Interface):
         return written of type int
             How many bytes were written.
 
-        raises :class:`OleErrorNotimpl`
-            The method is not implemented yet.
-        
         """
         if not isinstance(offset, baseinteger):
             raise TypeError("offset can only be an instance of type baseinteger")
@@ -21253,7 +23807,7 @@ class IGuest(Interface):
     Guest Additions are installed and other OS-specific virtual machine
     properties.
     """
-    __uuid__ = '13a11514-402e-022e-6180-c3944de3f9c8'
+    __uuid__ = '00892186-A4AF-4627-B21F-FC561CE4473C'
     __wsmap__ = 'managed'
     
     @property
@@ -21565,10 +24119,34 @@ class IGuest(Interface):
         sessions = [IGuestSession(a) for a in sessions]
         return sessions
 
+    def shutdown(self, flags):
+        """Shuts down (and optionally halts and/or reboots) the guest.
+        Needs supported Guest Additions installed.
+
+        in flags of type :class:`GuestShutdownFlag`
+            :py:class:`GuestShutdownFlag`  flags.
+
+        raises :class:`VBoxErrorNotSupported`
+            Guest OS is not supported for shutting down, or the
+already installed Guest Additions are not supported.
+        
+        raises :class:`VBoxErrorIprtError`
+            Error while shutting down.
+        
+        """
+        if not isinstance(flags, list):
+            raise TypeError("flags can only be an instance of type list")
+        for a in flags[:10]:
+            if not isinstance(a, GuestShutdownFlag):
+                raise TypeError(
+                        "array can only contain objects of type GuestShutdownFlag")
+        self._call("shutdown",
+                     in_p=[flags])
+
     def update_guest_additions(self, source, arguments, flags):
         """Automatically updates already installed Guest Additions in a VM.
         
-        At the moment only Windows guests are supported.
+        At the moment only Windows and Linux guests are supported.
         
         Because the VirtualBox Guest Additions drivers are not WHQL-certified
         yet there might be warning dialogs during the actual Guest Additions
@@ -21579,6 +24157,9 @@ class IGuest(Interface):
         the mentioned Windows versions anyway, the flag
         AdditionsUpdateFlag_WaitForUpdateStartOnly can be specified. See
         :py:class:`AdditionsUpdateFlag`  for more information.
+        
+        The guest needs to be restarted in order to make use of the updated
+        Guest Additions.
 
         in source of type str
             Path to the Guest Additions .ISO file to use for the update.
@@ -21918,6 +24499,7 @@ class IInternalProgressControl(Interface):
         as the completion state of this progress it needs to be done separately.
 
         in progress_other of type :class:`IProgress`
+            Other progress object to be "cloned".
 
         in timeout_ms of type int
             Timeout (in ms). Pass 0 for an infinite timeout.
@@ -22338,9 +24920,17 @@ class IMediumAttachment(Interface):
     without losing the contents of the differencing hard disk actually
     attached to the machine in place of it.
     """
-    __uuid__ = 'cbc97ce0-dfae-4c70-a6aa-769e5186363b'
+    __uuid__ = '8d095cb0-0126-43e0-b05d-326e74abb356'
     __wsmap__ = 'struct'
     
+    @property
+    def machine(self):
+        """Get IMachine value for 'machine'
+        Machine object for this medium attachment.
+        """
+        ret = self._get_attr("machine")
+        return IMachine(ret)
+
     @property
     def medium(self):
         """Get IMedium value for 'medium'
@@ -24118,7 +26708,7 @@ class IMediumIO(Interface):
         
         A ISO-9660 image will have one subdir in the root for each format present
         in the image, so the API user can select which data view to access (iso9660,
-        rockridge, jolie, udf, hfs, ...).
+        rockridge, joliet, udf, hfs, ...).
         
         A partitioned harddisk image will have subdirs for each partition.  The
         the filesystem content of each partition can be accessed thru the subdirs
@@ -24308,7 +26898,7 @@ class IKeyboard(Interface):
     Use this interface to send keystrokes or the Ctrl-Alt-Del sequence
     to the virtual machine.
     """
-    __uuid__ = 'a7c88b82-2330-44e3-b247-1421a018f9c1'
+    __uuid__ = '755e6bdf-1640-41f9-bd74-3ef5fd653250'
     __wsmap__ = 'managed'
     
     @property
@@ -24375,6 +26965,29 @@ class IKeyboard(Interface):
         
         """
         self._call("releaseKeys")
+
+    def put_usage_code(self, usage_code, usage_page, key_release):
+        """Sends a USB HID usage code and page to the keyboard. The
+        keyRelease flag is set when the key is being released.
+
+        in usage_code of type int
+
+        in usage_page of type int
+
+        in key_release of type bool
+
+        raises :class:`VBoxErrorIprtError`
+            Could not send usage code to virtual keyboard.
+        
+        """
+        if not isinstance(usage_code, baseinteger):
+            raise TypeError("usage_code can only be an instance of type baseinteger")
+        if not isinstance(usage_page, baseinteger):
+            raise TypeError("usage_page can only be an instance of type baseinteger")
+        if not isinstance(key_release, bool):
+            raise TypeError("key_release can only be an instance of type bool")
+        self._call("putUsageCode",
+                     in_p=[usage_code, usage_page, key_release])
 
     @property
     def event_source(self):
@@ -24757,7 +27370,7 @@ class IDisplaySourceBitmap(Interface):
     """
     Information about the screen bitmap.
     """
-    __uuid__ = '0b78daeb-f52f-43b9-99e8-4a3c226cbe2d'
+    __uuid__ = '5094f67a-8084-11e9-b185-dbe296e54799'
     __wsmap__ = 'suppress'
     
     @property
@@ -24892,12 +27505,16 @@ class IFramebuffer(Interface):
         registered.
 
         in x of type int
+            X position of update.
 
         in y of type int
+            Y position of update.
 
         in width of type int
+            Width of update.
 
         in height of type int
+            Height of update.
 
         """
         if not isinstance(x, baseinteger):
@@ -24915,12 +27532,16 @@ class IFramebuffer(Interface):
         """Informs about an update and provides 32bpp bitmap.
 
         in x of type int
+            X position of update.
 
         in y of type int
+            Y position of update.
 
         in width of type int
+            Width of update.
 
         in height of type int
+            Height of update.
 
         in image of type str
             Array with 32BPP image data.
@@ -25106,7 +27727,7 @@ class IFramebuffer(Interface):
         """Notifies framebuffer about 3D backend event.
 
         in type_p of type int
-            event type. Currently only VBOX3D_NOTIFY_EVENT_TYPE_VISIBLE_3DDATA is supported.
+            event type. VBOX3D_NOTIFY_TYPE_* in VBoxVideo3D.h
 
         in data of type str
             event-specific data, depends on the supplied event type
@@ -25277,7 +27898,7 @@ class IDisplay(Interface):
     IFramebuffer interface. Examples of the output target are a window on
     the host computer or an RDP session's display on a remote computer.
     """
-    __uuid__ = 'ab4164db-c13e-4dab-842d-61ee3f0c1e87'
+    __uuid__ = '4680b2de-8690-11e9-b83d-5719e53cf1de'
     __wsmap__ = 'managed'
     
     @property
@@ -25367,33 +27988,34 @@ class IDisplay(Interface):
         framebuffer = IFramebuffer(framebuffer)
         return framebuffer
 
-    def set_video_mode_hint(self, display, enabled, change_origin, origin_x, origin_y, width, height, bits_per_pixel):
-        """Asks VirtualBox to request the given video mode from
-        the guest. This is just a hint and it cannot be guaranteed
-        that the requested resolution will be used. Guest Additions
-        are required for the request to be seen by guests. The caller
-        should issue the request and wait for a resolution change and
-        after a timeout retry.
+    def set_video_mode_hint(self, display, enabled, change_origin, origin_x, origin_y, width, height, bits_per_pixel, notify):
+        """Changes the monitor information reported by a given output of the guest
+        graphics device.  This information can be read by the guest if suitable
+        drivers and driver tools are available, including but not limited to
+        those in the Guest Additions.  The guest will receive monitor hotplug
+        notification when the monitor information is changed, and the
+        information itself will be available to the guest until the next change.
+        The information should not be resent if the guest does not resize in
+        response.  The guest might have chosen to ignore the change, or the
+        resize might happen later when a suitable driver is started.
         
         Specifying @c 0 for either @a width, @a height or @a bitsPerPixel
         parameters means that the corresponding values should be taken from the
         current video mode (i.e. left unchanged).
         
-        If the guest OS supports multi-monitor configuration then the @a display
-        parameter specifies the number of the guest display to send the hint to:
-        @c 0 is the primary display, @c 1 is the first secondary and
-        so on. If the multi-monitor configuration is not supported, @a display
-        must be @c 0.
+        @todo Rename this to @a setMonitorInfo for 7.0.
 
         in display of type int
-            The number of the guest display to send the hint to.
+            The number of the guest output to change.
 
         in enabled of type bool
-            @c True, if this guest screen is enabled,
+            @c True if a monitor is connected,
             @c False otherwise.
+            For historical reasons the Windows drivers can
+            and do override this setting.  Call this a virtual hardware quirk.
 
         in change_origin of type bool
-            @c True, if the origin of the guest screen should be changed,
+            @c True, if the position of the guest screen is specified,
             @c False otherwise.
 
         in origin_x of type int
@@ -25411,8 +28033,16 @@ class IDisplay(Interface):
         in bits_per_pixel of type int
             The number of bits per pixel of the guest screen.
 
+        in notify of type bool
+            Whether the guest should be notified of the change.  Normally this
+            is wished, but it might not be when re-setting monitor information
+            from the last session (no hotplug happened, as it is still the same
+            virtual monitor).  Might also be useful if several monitors are to be
+            changed at once, but this would not reflect physical hardware well,
+            and we also have @a setScreenLayout for that.
+
         raises :class:`OleErrorInvalidarg`
-            The @a display is not associated with any monitor.
+            The @a display value is higher then the number of outputs.
         
         """
         if not isinstance(display, baseinteger):
@@ -25431,8 +28061,55 @@ class IDisplay(Interface):
             raise TypeError("height can only be an instance of type baseinteger")
         if not isinstance(bits_per_pixel, baseinteger):
             raise TypeError("bits_per_pixel can only be an instance of type baseinteger")
+        if not isinstance(notify, bool):
+            raise TypeError("notify can only be an instance of type bool")
         self._call("setVideoModeHint",
-                     in_p=[display, enabled, change_origin, origin_x, origin_y, width, height, bits_per_pixel])
+                     in_p=[display, enabled, change_origin, origin_x, origin_y, width, height, bits_per_pixel, notify])
+
+    def get_video_mode_hint(self, display):
+        """Queries the monitor information for a given guest output.  See
+        @a setVideoModeHint.  If no monitor information has been set yet by a
+        front-end the preferred mode values returned will be zero.
+        
+        @todo Rename this to @a getMonitorInfo for 7.0.
+
+        in display of type int
+            The number of the guest output to query.
+
+        out enabled of type bool
+            @c True if a monitor is connected,
+            @c False otherwise.
+            For historical reasons the Windows drivers can
+            and do override the setting requested by the host.
+
+        out change_origin of type bool
+            @c True, if the position of the guest screen was specified,
+            @c False otherwise.
+
+        out origin_x of type int
+            The X origin of the guest screen.
+
+        out origin_y of type int
+            The Y origin of the guest screen.
+
+        out width of type int
+            The width of the monitor preferred mode.
+
+        out height of type int
+            The height of the monitor preferred mode.
+
+        out bits_per_pixel of type int
+            The number of bits per pixel of the monitor preferred mode.
+
+        raises :class:`OleErrorInvalidarg`
+            The @a display value is higher than the number of outputs.
+        
+        """
+        if not isinstance(display, baseinteger):
+            raise TypeError("display can only be an instance of type baseinteger")
+        (enabled, change_origin, origin_x, origin_y, width, height, bits_per_pixel) = self._call("getVideoModeHint",
+                     in_p=[display])
+        return (enabled, change_origin, origin_x, origin_y, width, height, bits_per_pixel)
 
     def set_seamless_mode(self, enabled):
         """Enables or disables seamless guest display rendering (seamless desktop
@@ -25929,6 +28606,20 @@ class INetworkAdapter(Interface):
         return self._set_attr("genericDriver", value)
 
     @property
+    def cloud_network(self):
+        """Get or set str value for 'cloudNetwork'
+        Name of the cloud network the VM is attached to.
+        """
+        ret = self._get_attr("cloudNetwork")
+        return ret
+
+    @cloud_network.setter
+    def cloud_network(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError("value is not an instance of basestring")
+        return self._set_attr("cloudNetwork", value)
+
+    @property
     def cable_connected(self):
         """Get or set bool value for 'cableConnected'
         Flag whether the adapter reports the cable as connected or not.
@@ -26360,7 +29051,7 @@ class IMachineDebugger(Interface):
     
     See include/VBox/dbgfcorefmt.h for details on the file format.
     """
-    __uuid__ = 'e91bb944-f211-4bd5-b44c-8f1d0beafa13'
+    __uuid__ = '00ae6af4-00a7-4104-0009-49bc00b2da80'
     __wsmap__ = 'managed'
     
     def dump_guest_core(self, filename, compression):
@@ -26773,6 +29464,9 @@ class IMachineDebugger(Interface):
 
         in pattern of type str
             The selection pattern. A bit similar to filename globbing.
+            Wildchars are '*' and '?', where the asterisk matches zero or
+            more characters and question mark matches exactly one character.
+            Multiple pattern can be joined by putting '|' between them.
 
         """
         if not isinstance(pattern, basestring):
@@ -26785,6 +29479,9 @@ class IMachineDebugger(Interface):
 
         in pattern of type str
             The selection pattern. A bit similar to filename globbing.
+            Wildchars are '*' and '?', where the asterisk matches zero or
+            more characters and question mark matches exactly one character.
+            Multiple pattern can be joined by putting '|' between them.
 
         """
         if not isinstance(pattern, basestring):
@@ -26797,6 +29494,9 @@ class IMachineDebugger(Interface):
 
         in pattern of type str
             The selection pattern. A bit similar to filename globbing.
+            Wildchars are '*' and '?', where the asterisk matches zero or
+            more characters and question mark matches exactly one character.
+            Multiple pattern can be joined by putting '|' between them.
 
         in with_descriptions of type bool
             Whether to include the descriptions.
@@ -26812,6 +29512,34 @@ class IMachineDebugger(Interface):
         stats = self._call("getStats",
                      in_p=[pattern, with_descriptions])
         return stats
+
+    def get_cpu_load(self, cpu_id):
+        """Get the load percentages (as observed by the VMM) for all virtual CPUs
+        or a specific one.
+
+        in cpu_id of type int
+            The ID of the virtual CPU to retrieve stats for, pass 0x7fffffff
+            or higher for the average accross all CPUs.
+
+        out pct_executing of type int
+            Percentage of the interval that the CPU(s) spend executing guest code.
+
+        out pct_halted of type int
+            Percentage of the interval that the CPU(s) spend halted.
+
+        out pct_other of type int
+            Percentage of the interval that the CPU(s) preempted by the host
+            scheduler, on virtualization overhead and on other tasks.
+
+        return ms_interval of type int
+            The interval the percentage was calculated over in milliseconds
+
+        """
+        if not isinstance(cpu_id, baseinteger):
+            raise TypeError("cpu_id can only be an instance of type baseinteger")
+        (ms_interval, pct_executing, pct_halted, pct_other) = self._call("getCPULoad",
+                     in_p=[cpu_id])
+        return (ms_interval, pct_executing, pct_halted, pct_other)
 
     @property
     def single_step(self):
@@ -27283,7 +30011,7 @@ class IUSBDevice(Interface):
     :py:func:`IConsole.usb_devices`  attribute which lists all USB devices
     attached to a running virtual machine's USB controller.
     """
-    __uuid__ = '202c8c43-2d2d-4866-acf7-56ffae36f1f9'
+    __uuid__ = '6dc83c2c-81a9-4005-9d52-fc45a78bf3f5'
     __wsmap__ = 'managed'
     
     @property
@@ -27348,7 +30076,10 @@ class IUSBDevice(Interface):
     @property
     def address(self):
         """Get str value for 'address'
-        Host specific address of the device.
+        Host-specific address of the device, uniquely
+        identifying a physically connected device in the system.
+        Note that the address of a USB device may change across
+        device re-plugs and host suspend/resume cycles or reboots.
         """
         ret = self._get_attr("address")
         return ret
@@ -27356,10 +30087,21 @@ class IUSBDevice(Interface):
     @property
     def port(self):
         """Get int value for 'port'
-        Host USB port number the device is physically
+        Host USB port number on the hub the device is physically
         connected to.
         """
         ret = self._get_attr("port")
+        return ret
+
+    @property
+    def port_path(self):
+        """Get str value for 'portPath'
+        Host-specific identifier of the port (including hub) the USB
+        device is physically connected to. Note that hubs may be
+        dynamically added and removed, and that hub enumeration may not
+        be consistent across host reboots.
+        """
+        ret = self._get_attr("portPath")
         return ret
 
     @property
@@ -27368,16 +30110,6 @@ class IUSBDevice(Interface):
         The major USB version of the device - 1, 2 or 3.
         """
         ret = self._get_attr("version")
-        return ret
-
-    @property
-    def port_version(self):
-        """Get int value for 'portVersion'
-        The major USB version of the host USB port the device is
-        physically connected to - 1, 2 or 3. For devices not connected to
-        anything this will have the same value as the version attribute.
-        """
-        ret = self._get_attr("portVersion")
         return ret
 
     @property
@@ -28397,9 +31129,15 @@ class IInternalSessionControl(Interface):
         self._call("onParallelPortChange",
                      in_p=[parallel_port])
 
-    def on_storage_controller_change(self):
+    def on_storage_controller_change(self, machine_id, controller_name):
         """Triggered when settings of a storage controller of the
         associated virtual machine have changed.
+
+        in machine_id of type str
+            The id of the machine containing the storage controller.
+
+        in controller_name of type str
+            The name of the storage controller.
 
         raises :class:`VBoxErrorInvalidVmState`
             Session state prevents operation.
@@ -28408,7 +31146,12 @@ class IInternalSessionControl(Interface):
             Session type prevents operation.
         
         """
-        self._call("onStorageControllerChange")
+        if not isinstance(machine_id, basestring):
+            raise TypeError("machine_id can only be an instance of type basestring")
+        if not isinstance(controller_name, basestring):
+            raise TypeError("controller_name can only be an instance of type basestring")
+        self._call("onStorageControllerChange",
+                     in_p=[machine_id, controller_name])
 
     def on_medium_change(self, medium_attachment, force):
         """Triggered when attached media of the
@@ -28497,6 +31240,18 @@ class IInternalSessionControl(Interface):
             raise TypeError("clipboard_mode can only be an instance of type ClipboardMode")
         self._call("onClipboardModeChange",
                      in_p=[clipboard_mode])
+
+    def on_clipboard_file_transfer_mode_change(self, enabled):
+        """Notification when the shared clipboard file transfers mode changes.
+
+        in enabled of type bool
+            Flag whether clipboard file transfers are allowed or not.
+
+        """
+        if not isinstance(enabled, bool):
+            raise TypeError("enabled can only be an instance of type bool")
+        self._call("onClipboardFileTransferModeChange",
+                     in_p=[enabled])
 
     def on_dn_d_mode_change(self, dnd_mode):
         """Notification when the drag'n drop mode changes.
@@ -28705,19 +31460,25 @@ class IInternalSessionControl(Interface):
         modify guest properties.
 
         in name of type str
+            Name of guest property.
 
         in value of type str
+            Value of guest property.
 
         in flags of type str
+            Flags of guest property.
 
         in access_mode of type int
             0 = get, 1 = set, 2 = delete.
 
         out ret_value of type str
+            When getting: Value of guest property.
 
         out ret_timestamp of type int
+            When getting: Timestamp of guest property.
 
         out ret_flags of type str
+            When getting: Flags of guest property.
 
         raises :class:`VBoxErrorInvalidVmState`
             Machine session is not open.
@@ -31406,16 +34167,26 @@ class IParallelPortChangedEvent(IEvent):
 class IStorageControllerChangedEvent(IEvent):
     """
     Notification when a
-    :py:func:`IMachine.medium_attachments` medium attachment
+    :py:func:`IMachine.storage_controllers` storage controllers
     changes.
     """
-    __uuid__ = '715212BF-DA59-426E-8230-3831FAA52C56'
+    __uuid__ = '6BB335CC-1C58-440C-BB7B-3A1397284C7B'
     __wsmap__ = 'managed'
     id = VBoxEventType.on_storage_controller_changed
     @property
-    def midl_does_not_like_empty_interfaces(self):
-        """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
-        ret = self._get_attr("midlDoesNotLikeEmptyInterfaces")
+    def machin_id(self):
+        """Get str value for 'machinId'
+        The id of the machine containing the storage controller.
+        """
+        ret = self._get_attr("machinId")
+        return ret
+
+    @property
+    def controller_name(self):
+        """Get str value for 'controllerName'
+        The name of the storage controller.
+        """
+        ret = self._get_attr("controllerName")
         return ret
 
 
@@ -31451,6 +34222,22 @@ class IClipboardModeChangedEvent(IEvent):
         """
         ret = self._get_attr("clipboardMode")
         return ClipboardMode(ret)
+
+
+class IClipboardFileTransferModeChangedEvent(IEvent):
+    """
+    Notification when the shared clipboard file transfer mode changes.
+    """
+    __uuid__ = '00391758-00B1-4E9D-0000-11FA00F9D583'
+    __wsmap__ = 'managed'
+    id = VBoxEventType.on_clipboard_file_transfer_mode_changed
+    @property
+    def enabled(self):
+        """Get bool value for 'enabled'
+        Whether file transfers are allowed or not.
+        """
+        ret = self._get_attr("enabled")
+        return ret
 
 
 class IDnDModeChangedEvent(IEvent):
@@ -31922,7 +34709,7 @@ class IGuestFileIOEvent(IGuestFileEvent):
 
 class IGuestFileOffsetChangedEvent(IGuestFileIOEvent):
     """
-    Notification when a guest file changed its current offset.
+    Notification when a guest file changed its current offset via :py:func:`IFile.seek` .
     """
     __uuid__ = 'e8f79a21-1207-4179-94cf-ca250036308f'
     __wsmap__ = 'managed'
@@ -31931,6 +34718,20 @@ class IGuestFileOffsetChangedEvent(IGuestFileIOEvent):
     def midl_does_not_like_empty_interfaces(self):
         """Get bool value for 'midlDoesNotLikeEmptyInterfaces'"""
         ret = self._get_attr("midlDoesNotLikeEmptyInterfaces")
+        return ret
+
+
+class IGuestFileSizeChangedEvent(IGuestFileEvent):
+    """
+    Notification when a guest file changed its size via :py:func:`IFile.set_size` .
+    """
+    __uuid__ = 'd78374e9-486e-472f-481b-969746af2480'
+    __wsmap__ = 'managed'
+    id = VBoxEventType.on_guest_file_size_changed
+    @property
+    def new_size(self):
+        """Get int value for 'newSize'"""
+        ret = self._get_attr("newSize")
         return ret
 
 
@@ -32859,7 +35660,7 @@ class IProgressEvent(IEvent):
     """
     __uuid__ = 'daaf9016-1f04-4191-aa2f-1fac9646ae4c'
     __wsmap__ = 'managed'
-
+    id = VBoxEventType.progress_event
     @property
     def progress_id(self):
         """Get str value for 'progressId'
@@ -32928,6 +35729,79 @@ class ICursorPositionChangedEvent(IEvent):
         Reported Y position
         """
         ret = self._get_attr("y")
+        return ret
+
+
+class IGuestAdditionsStatusChangedEvent(IEvent):
+    """
+    The guest addition status changed.
+    """
+    __uuid__ = 'a443da5b-aa82-4720-bc84-bd097b2b13b8'
+    __wsmap__ = 'managed'
+    id = VBoxEventType.on_guest_additions_status_changed
+    @property
+    def facility(self):
+        """Get AdditionsFacilityType value for 'facility'
+        Facility this event relates to.
+        """
+        ret = self._get_attr("facility")
+        return AdditionsFacilityType(ret)
+
+    @property
+    def status(self):
+        """Get AdditionsFacilityStatus value for 'status'
+        The new facility status.
+        """
+        ret = self._get_attr("status")
+        return AdditionsFacilityStatus(ret)
+
+    @property
+    def run_level(self):
+        """Get AdditionsRunLevelType value for 'runLevel'
+        The new run level.
+        """
+        ret = self._get_attr("runLevel")
+        return AdditionsRunLevelType(ret)
+
+    @property
+    def timestamp(self):
+        """Get int value for 'timestamp'
+        The millisecond timestamp associated with the event.
+        """
+        ret = self._get_attr("timestamp")
+        return ret
+
+
+class IGuestMonitorInfoChangedEvent(IEvent):
+    """
+    The guest reports cursor position data.
+    """
+    __uuid__ = '0b3cdeb2-808e-11e9-b773-133d9330f849'
+    __wsmap__ = 'managed'
+    id = VBoxEventType.on_guest_monitor_info_changed
+    @property
+    def output(self):
+        """Get int value for 'output'
+        The virtual display output on which the monitor has changed.
+        """
+        ret = self._get_attr("output")
+        return ret
+
+
+class IStringArray(Interface):
+    """
+    When you need to return an array of strings asynchronously
+    (under a progress) you cannot use by-value out parameter
+    type="wstring" safearray="yes"
+    dir="out", hence this wrapper.
+    """
+    __uuid__ = '3890b2c8-604d-11e9-92d3-53cb473db9fb'
+    __wsmap__ = 'managed'
+    
+    @property
+    def values(self):
+        """Get str value for 'values'"""
+        ret = self._get_attr("values")
         return ret
 
 
@@ -33009,11 +35883,71 @@ class IBooleanFormValue(IFormValue):
         return progress
 
 
-class IStringFormValue(IFormValue):
-    """"""
-    __uuid__ = '4378aa22-3e8a-11e9-8ce9-03940555aae1'
+class IRangedIntegerFormValue(IFormValue):
+    """
+    Counterpart of the :py:func:`IFormValue.label`  attribute.
+    May be null or empty.  Usually used for units.
+    """
+    __uuid__ = 'b31c4052-7bdc-11e9-8bc2-8ffdb8b19219'
     __wsmap__ = 'managed'
     
+    @property
+    def suffix(self):
+        """Get str value for 'suffix'
+        Counterpart of the :py:func:`IFormValue.label`  attribute.
+        May be null or empty.  Usually used for units.
+        """
+        ret = self._get_attr("suffix")
+        return ret
+
+    @property
+    def minimum(self):
+        """Get int value for 'minimum'"""
+        ret = self._get_attr("minimum")
+        return ret
+
+    @property
+    def maximum(self):
+        """Get int value for 'maximum'"""
+        ret = self._get_attr("maximum")
+        return ret
+
+    def get_integer(self):
+        """
+
+        return value of type int
+
+        """
+        value = self._call("getInteger")
+        return value
+
+    def set_integer(self, value):
+        """
+
+        in value of type int
+
+        return progress of type :class:`IProgress`
+
+        """
+        if not isinstance(value, baseinteger):
+            raise TypeError("value can only be an instance of type baseinteger")
+        progress = self._call("setInteger",
+                     in_p=[value])
+        progress = IProgress(progress)
+        return progress
+
+
+class IStringFormValue(IFormValue):
+    """"""
+    __uuid__ = 'cb6f0f2c-8384-11e9-921d-8b984e28a686'
+    __wsmap__ = 'managed'
+    
+    @property
+    def multiline(self):
+        """Get bool value for 'multiline'"""
+        ret = self._get_attr("multiline")
+        return ret
+
     def get_string(self):
         """
 
@@ -33086,6 +36020,30 @@ class IForm(Interface):
         ret = self._get_attr("values")
         return [IFormValue(a) for a in ret]
 
+    def get_field_group(self, field):
+        """
+
+        in field of type str
+
+        return group of type str
+
+        """
+        if not isinstance(field, basestring):
+            raise TypeError("field can only be an instance of type basestring")
+        group = self._call("getFieldGroup",
+                     in_p=[field])
+        return group
+
+    def apply_p(self):
+        """
+
+        return progress of type :class:`IProgress`
+
+        """
+        progress = self._call("apply")
+        progress = IProgress(progress)
+        return progress
+
 
 class IVirtualSystemDescriptionForm(IForm):
     """"""
@@ -33103,50 +36061,330 @@ class IVirtualSystemDescriptionForm(IForm):
         return description
 
 
-class ICloudClient(Interface):
-    """
-    Returns parameters to be shown to the user for the cloud export and launch operation.
-    """
-    __uuid__ = '07c04464-981c-4418-8fcf-5ad12aed7c38'
+class ICloudNetworkGatewayInfo(Interface):
+    """"""
+    __uuid__ = '89a63ace-0c65-11ea-ad23-0ff257c71a7f'
     __wsmap__ = 'managed'
     
-    def get_export_launch_parameters(self):
-        """Returns parameters to be shown to the user for the cloud export and launch operation.
+    @property
+    def public_ip(self):
+        """Get str value for 'publicIP'"""
+        ret = self._get_attr("publicIP")
+        return ret
 
-        return json_string of type str
-            the parameters with values in json format.
+    @property
+    def secondary_public_ip(self):
+        """Get str value for 'secondaryPublicIP'"""
+        ret = self._get_attr("secondaryPublicIP")
+        return ret
 
+    @property
+    def mac_address(self):
+        """Get str value for 'macAddress'"""
+        ret = self._get_attr("macAddress")
+        return ret
+
+    @property
+    def instance_id(self):
+        """Get str value for 'instanceId'"""
+        ret = self._get_attr("instanceId")
+        return ret
+
+
+class ICloudNetworkEnvironmentInfo(Interface):
+    """"""
+    __uuid__ = '181dfb55-394d-44d3-9edb-af2c4472c40a'
+    __wsmap__ = 'managed'
+    
+    @property
+    def tunnel_network_id(self):
+        """Get str value for 'tunnelNetworkId'"""
+        ret = self._get_attr("tunnelNetworkId")
+        return ret
+
+
+class ICloudMachine(Interface):
+    """
+    Virtual virtual machine (sic) in the cloud.
+    
+    Reading object attributes returns cached values, use
+    :py:func:`refresh`  to refresh them.
+    """
+    __uuid__ = '8e3b08e6-a605-11ea-9edf-3bfdab40b718'
+    __wsmap__ = 'managed'
+    
+    @property
+    def id_p(self):
+        """Get str value for 'id'
+        UUID of the cloud machine.
         """
-        json_string = self._call("getExportLaunchParameters")
-        return json_string
+        ret = self._get_attr("id")
+        return ret
 
-    def export_launch_vm(self, description, progress, virtual_box):
-        """Exports and optionally launch a VM described in description parameter
+    @property
+    def accessible(self):
+        """Get bool value for 'accessible'
+        Whether this virtual machine is currently accessible or not.
+        TBD...
+        """
+        ret = self._get_attr("accessible")
+        return ret
 
-        in description of type :class:`IVirtualSystemDescription`
-            VirtualSystemDescription object which is describing a machine and all required parameters.
+    @property
+    def access_error(self):
+        """Get IVirtualBoxErrorInfo value for 'accessError'
+        Error information describing the reason of machine
+        inaccessibility.
+        
+        Reading this property is only valid after the last call to
+        :py:func:`accessible`  returned @c false (i.e. the
+        machine is currently inaccessible). Otherwise, a @c null
+        IVirtualBoxErrorInfo object will be returned.
+        """
+        ret = self._get_attr("accessError")
+        return IVirtualBoxErrorInfo(ret)
 
-        in progress of type :class:`IProgress`
+    @property
+    def name(self):
+        """Get str value for 'name'
+        Convenience shortcut to retrieve the name of the cloud
+        machine.  The name is part of the machine settings that are
+        hidden behind the settings form (see :py:func:`get_settings_form` ).
+        """
+        ret = self._get_attr("name")
+        return ret
+
+    @property
+    def os_type_id(self):
+        """Get str value for 'OSTypeId'
+        Convenience shortcut to retrieve the OS Type id of the cloud
+        machine.  It is part of the machine settings that are hidden
+        behind the settings form (see :py:func:`get_settings_form` ).
+        """
+        ret = self._get_attr("OSTypeId")
+        return ret
+
+    @property
+    def state(self):
+        """Get CloudMachineState value for 'state'
+        Machine state.
+        """
+        ret = self._get_attr("state")
+        return CloudMachineState(ret)
+
+    def refresh(self):
+        """Refresh information by reading it from the cloud.
+
+        return progress of type :class:`IProgress`
             Progress object to track the operation completion.
 
-        in virtual_box of type :class:`IVirtualBox`
-            Reference to the server-side API root object.
+        """
+        progress = self._call("refresh")
+        progress = IProgress(progress)
+        return progress
+
+    def get_details_form(self):
+        """Obtain a form with the current settings for this cloud
+        machine.  The form is not editable.
+
+        return form of type :class:`IForm`
+            A form with the cloud machine settings.
 
         """
-        if not isinstance(description, IVirtualSystemDescription):
-            raise TypeError("description can only be an instance of type IVirtualSystemDescription")
-        if not isinstance(progress, IProgress):
-            raise TypeError("progress can only be an instance of type IProgress")
-        if not isinstance(virtual_box, IVirtualBox):
-            raise TypeError("virtual_box can only be an instance of type IVirtualBox")
-        self._call("exportLaunchVM",
-                     in_p=[description, progress, virtual_box])
+        form = self._call("getDetailsForm")
+        form = IForm(form)
+        return form
 
-    def get_export_launch_description_form(self):
-        """Returns a form for editing the virtual system description.
-        Since the data for the form are fetched from the cloud a
-        progress object is also returned to indicate if/when the form
-        is ready to be used.
+    def get_settings_form(self):
+        """Obtain a form with settings for this cloud machine.
+        The form is editable.
+
+        out form of type :class:`IForm`
+            A form with the cloud machine settings.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        (progress, form) = self._call("getSettingsForm")
+        progress = IProgress(progress)
+        form = IForm(form)
+        return (progress, form)
+
+    def power_up(self):
+        """Start cloud virtual machine execution.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        progress = self._call("powerUp")
+        progress = IProgress(progress)
+        return progress
+
+    def reboot(self):
+        """Reboot cloud virtual machine.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        progress = self._call("reboot")
+        progress = IProgress(progress)
+        return progress
+
+    def shutdown(self):
+        """Shutdown cloud virtual machine.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        progress = self._call("shutdown")
+        progress = IProgress(progress)
+        return progress
+
+    def power_down(self):
+        """Initiates the power down procedure to stop the virtual machine
+        execution.
+        
+        The completion of the power down procedure is tracked using the returned
+        IProgress object. After the operation is complete, the machine will go
+        to the PoweredOff state.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        raises :class:`VBoxErrorInvalidVmState`
+            Virtual machine must be Running, to be powered down.
+        
+        """
+        progress = self._call("powerDown")
+        progress = IProgress(progress)
+        return progress
+
+    def terminate(self):
+        """Terminate cloud virtual machine.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        progress = self._call("terminate")
+        progress = IProgress(progress)
+        return progress
+
+    def unregister(self):
+        """Unregister this cloud machine, but leave the cloud artifacts
+        intact.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        progress = self._call("unregister")
+        progress = IProgress(progress)
+        return progress
+
+    def remove(self):
+        """Unregister this cloud machine and delete all its cloud artifacts.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        progress = self._call("remove")
+        progress = IProgress(progress)
+        return progress
+
+    def create_console_connection(self, ssh_public_key):
+        """SSH public key authorized to connect to the console.
+
+        in ssh_public_key of type str
+            SSH public key authorized to connect to the console.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        if not isinstance(ssh_public_key, basestring):
+            raise TypeError("ssh_public_key can only be an instance of type basestring")
+        progress = self._call("createConsoleConnection",
+                     in_p=[ssh_public_key])
+        progress = IProgress(progress)
+        return progress
+
+    def delete_console_connection(self):
+        """Progress object to track the operation completion.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        progress = self._call("deleteConsoleConnection")
+        progress = IProgress(progress)
+        return progress
+
+    @property
+    def console_connection_fingerprint(self):
+        """Get str value for 'consoleConnectionFingerprint'
+        The fingerprint of the ssh key that is authorized to access
+        the machine's console connection.
+        """
+        ret = self._get_attr("consoleConnectionFingerprint")
+        return ret
+
+    @property
+    def serial_console_command(self):
+        """Get str value for 'serialConsoleCommand'
+        The shell command to establish ssh connection to the cloud
+        machine serial console.
+        """
+        ret = self._get_attr("serialConsoleCommand")
+        return ret
+
+    @property
+    def serial_console_command_windows(self):
+        """Get str value for 'serialConsoleCommandWindows'
+        The PowerShell command to establish ssh connection to the
+        cloud machine serial console using PuTTY's plink.
+        """
+        ret = self._get_attr("serialConsoleCommandWindows")
+        return ret
+
+    @property
+    def vnc_console_command(self):
+        """Get str value for 'VNCConsoleCommand'
+        The shell command to establish ssh port forwarding for the
+        VNC connection to the cloud machine console.
+        """
+        ret = self._get_attr("VNCConsoleCommand")
+        return ret
+
+    @property
+    def vnc_console_command_windows(self):
+        """Get str value for 'VNCConsoleCommandWindows'
+        The PowerShell command to establish ssh port forwarding for the
+        VNC connection to the cloud machine console using PuTTY's plink.
+        """
+        ret = self._get_attr("VNCConsoleCommandWindows")
+        return ret
+
+
+class ICloudClient(Interface):
+    """
+    Returns a form for editing the virtual system description for
+    exporting a local VM into a cloud custom image.
+    """
+    __uuid__ = '5fa3a8db-1c4f-4cda-b8d4-7982ef60fefb'
+    __wsmap__ = 'managed'
+    
+    def get_export_description_form(self, description):
+        """Returns a form for editing the virtual system description for
+        exporting a local VM into a cloud custom image.
+
+        in description of type :class:`IVirtualSystemDescription`
+            Virtual system description to be edited.
 
         out form of type :class:`IVirtualSystemDescriptionForm`
             An IForm instance for editing the virtual system description.
@@ -33155,46 +36393,570 @@ class ICloudClient(Interface):
             Progress object to track the operation completion.
 
         """
-        (progress, form) = self._call("getExportLaunchDescriptionForm")
+        if not isinstance(description, IVirtualSystemDescription):
+            raise TypeError("description can only be an instance of type IVirtualSystemDescription")
+        (progress, form) = self._call("getExportDescriptionForm",
+                     in_p=[description])
         progress = IProgress(progress)
         form = IVirtualSystemDescriptionForm(form)
         return (progress, form)
+
+    def export_vm(self, description, progress):
+        """Export local VM into the cloud, creating a custom image.
+
+        in description of type :class:`IVirtualSystemDescription`
+            Virtual system description object which describes the
+            machine and all required parameters.
+
+        in progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        if not isinstance(description, IVirtualSystemDescription):
+            raise TypeError("description can only be an instance of type IVirtualSystemDescription")
+        if not isinstance(progress, IProgress):
+            raise TypeError("progress can only be an instance of type IProgress")
+        self._call("exportVM",
+                     in_p=[description, progress])
+
+    def get_launch_description_form(self, description):
+        """Virtual system description to be edited.
+
+        in description of type :class:`IVirtualSystemDescription`
+            Virtual system description to be edited.
+
+        out form of type :class:`IVirtualSystemDescriptionForm`
+            An IForm instance for editing the virtual system description.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        if not isinstance(description, IVirtualSystemDescription):
+            raise TypeError("description can only be an instance of type IVirtualSystemDescription")
+        (progress, form) = self._call("getLaunchDescriptionForm",
+                     in_p=[description])
+        progress = IProgress(progress)
+        form = IVirtualSystemDescriptionForm(form)
+        return (progress, form)
+
+    def launch_vm(self, description):
+        """Virtual system description object which describes the
+        machine and all required parameters.
+
+        in description of type :class:`IVirtualSystemDescription`
+            Virtual system description object which describes the
+            machine and all required parameters.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        if not isinstance(description, IVirtualSystemDescription):
+            raise TypeError("description can only be an instance of type IVirtualSystemDescription")
+        progress = self._call("launchVM",
+                     in_p=[description])
+        progress = IProgress(progress)
+        return progress
+
+    def get_import_description_form(self, description):
+        """Returns a form for editing the virtual system description for
+        import from cloud.
+
+        in description of type :class:`IVirtualSystemDescription`
+            Virtual system description to be edited.
+
+        out form of type :class:`IVirtualSystemDescriptionForm`
+            An IForm instance for editing the virtual system description.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        if not isinstance(description, IVirtualSystemDescription):
+            raise TypeError("description can only be an instance of type IVirtualSystemDescription")
+        (progress, form) = self._call("getImportDescriptionForm",
+                     in_p=[description])
+        progress = IProgress(progress)
+        form = IVirtualSystemDescriptionForm(form)
+        return (progress, form)
+
+    def import_instance(self, description, progress):
+        """Import an existing cloud instance to the local host.
+        All needed parameters are passed in the description (VSD).
+
+        in description of type :class:`IVirtualSystemDescription`
+            VirtualSystemDescription object which is describing a machine and all required parameters.
+
+        in progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        if not isinstance(description, IVirtualSystemDescription):
+            raise TypeError("description can only be an instance of type IVirtualSystemDescription")
+        if not isinstance(progress, IProgress):
+            raise TypeError("progress can only be an instance of type IProgress")
+        self._call("importInstance",
+                     in_p=[description, progress])
+
+    def get_cloud_machine(self, id_p):
+        """Create an object that represents a cloud machine with the
+        specified UUID.  Note that the operation is synchronous.  The
+        returned machine is initiatally in inaccessible state and
+        requires a refresh to get its data from the cloud.
+
+        in id_p of type str
+            UUID of a cloud machine.
+
+        return machine of type :class:`ICloudMachine`
+            Object that represents the cloud machine with the specified UUID.
+
+        """
+        if not isinstance(id_p, basestring):
+            raise TypeError("id_p can only be an instance of type basestring")
+        machine = self._call("getCloudMachine",
+                     in_p=[id_p])
+        machine = ICloudMachine(machine)
+        return machine
+
+    def read_cloud_machine_list(self):
+        """Make the list of cloud machines available via
+        :py:func:`cloud_machine_list`  attribute.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        progress = self._call("readCloudMachineList")
+        progress = IProgress(progress)
+        return progress
+
+    @property
+    def cloud_machine_list(self):
+        """Get ICloudMachine value for 'cloudMachineList'
+        See :py:func:`read_cloud_machine_list` .
+        """
+        ret = self._get_attr("cloudMachineList")
+        return [ICloudMachine(a) for a in ret]
+
+    def add_cloud_machine(self, instance_id):
+        """Adopt a running instance and register it as cloud machine.
+        This is kinda like adding a local .vbox file as a local VM.
+
+        in instance_id of type str
+            ID of an instance to be added as a cloud machine.
+
+        out machine of type :class:`ICloudMachine`
+            Object that represents the newly registered cloud machine.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        if not isinstance(instance_id, basestring):
+            raise TypeError("instance_id can only be an instance of type basestring")
+        (progress, machine) = self._call("addCloudMachine",
+                     in_p=[instance_id])
+        progress = IProgress(progress)
+        machine = ICloudMachine(machine)
+        return (progress, machine)
+
+    def create_cloud_machine(self, description):
+        """This is transitional method that combines
+        :py:func:`launch_vm`  and :py:func:`add_cloud_machine` .
+
+        in description of type :class:`IVirtualSystemDescription`
+            Virtual system description object which describes the
+            machine and all required parameters.
+
+        out machine of type :class:`ICloudMachine`
+            Object that represents the newly created cloud machine.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        if not isinstance(description, IVirtualSystemDescription):
+            raise TypeError("description can only be an instance of type IVirtualSystemDescription")
+        (progress, machine) = self._call("createCloudMachine",
+                     in_p=[description])
+        progress = IProgress(progress)
+        machine = ICloudMachine(machine)
+        return (progress, machine)
 
     def list_instances(self, machine_state):
         """Returns the list of the instances in the Cloud.
 
         in machine_state of type :class:`CloudMachineState`
+            State of each VM.
 
-        out return_names of type str
+        out return_names of type :class:`IStringArray`
             VM names.
 
-        return return_ids of type str
+        out return_ids of type :class:`IStringArray`
             VM ids.
 
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
         """
-        if not isinstance(machine_state, CloudMachineState):
-            raise TypeError("machine_state can only be an instance of type CloudMachineState")
-        (return_ids, return_names) = self._call("listInstances",
+        if not isinstance(machine_state, list):
+            raise TypeError("machine_state can only be an instance of type list")
+        for a in machine_state[:10]:
+            if not isinstance(a, CloudMachineState):
+                raise TypeError(
+                        "array can only contain objects of type CloudMachineState")
+        (progress, return_names, return_ids) = self._call("listInstances",
                      in_p=[machine_state])
-        return (return_ids, return_names)
+        progress = IProgress(progress)
+        return_names = IStringArray(return_names)
+        return_ids = IStringArray(return_ids)
+        return (progress, return_names, return_ids)
+
+    def list_source_instances(self):
+        """Returns the list of instances in the cloud that can be
+        added/adopted as VirtualBox cloud machines.
+
+        out return_names of type :class:`IStringArray`
+            Instance names.
+
+        out return_ids of type :class:`IStringArray`
+            Instance idss.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        (progress, return_names, return_ids) = self._call("listSourceInstances")
+        progress = IProgress(progress)
+        return_names = IStringArray(return_names)
+        return_ids = IStringArray(return_ids)
+        return (progress, return_names, return_ids)
 
     def list_images(self, image_state):
         """Returns the list of the images in the Cloud.
 
         in image_state of type :class:`CloudImageState`
+            State of each image.
 
-        out return_names of type str
+        out return_names of type :class:`IStringArray`
             Images names.
 
-        return return_ids of type str
+        out return_ids of type :class:`IStringArray`
             Images ids.
 
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
         """
-        if not isinstance(image_state, CloudImageState):
-            raise TypeError("image_state can only be an instance of type CloudImageState")
-        (return_ids, return_names) = self._call("listImages",
+        if not isinstance(image_state, list):
+            raise TypeError("image_state can only be an instance of type list")
+        for a in image_state[:10]:
+            if not isinstance(a, CloudImageState):
+                raise TypeError(
+                        "array can only contain objects of type CloudImageState")
+        (progress, return_names, return_ids) = self._call("listImages",
                      in_p=[image_state])
-        return (return_ids, return_names)
+        progress = IProgress(progress)
+        return_names = IStringArray(return_names)
+        return_ids = IStringArray(return_ids)
+        return (progress, return_names, return_ids)
+
+    def list_boot_volumes(self):
+        """Returns the list of boot volumes in the Cloud.
+
+        out return_names of type :class:`IStringArray`
+            Boot volume names.
+
+        out return_ids of type :class:`IStringArray`
+            Boot volume ids.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        (progress, return_names, return_ids) = self._call("listBootVolumes")
+        progress = IProgress(progress)
+        return_names = IStringArray(return_names)
+        return_ids = IStringArray(return_ids)
+        return (progress, return_names, return_ids)
+
+    def list_source_boot_volumes(self):
+        """Returns the list of boot volumes in the cloud that can be
+        added/adopted as VirtualBox cloud machines.
+
+        out return_names of type :class:`IStringArray`
+            Boot volume names.
+
+        out return_ids of type :class:`IStringArray`
+            Boot volume ids.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        (progress, return_names, return_ids) = self._call("listSourceBootVolumes")
+        progress = IProgress(progress)
+        return_names = IStringArray(return_names)
+        return_ids = IStringArray(return_ids)
+        return (progress, return_names, return_ids)
+
+    def get_instance_info(self, uid, description):
+        """Returns the information about an instance in the Cloud.
+
+        in uid of type str
+            The id of instance in the Cloud.
+
+        in description of type :class:`IVirtualSystemDescription`
+            VirtualSystemDescription object which is describing a machine
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        if not isinstance(uid, basestring):
+            raise TypeError("uid can only be an instance of type basestring")
+        if not isinstance(description, IVirtualSystemDescription):
+            raise TypeError("description can only be an instance of type IVirtualSystemDescription")
+        progress = self._call("getInstanceInfo",
+                     in_p=[uid, description])
+        progress = IProgress(progress)
+        return progress
+
+    def start_instance(self, uid):
+        """Start an existing instance with passed id.
+
+        in uid of type str
+            The id of instance in the Cloud.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        if not isinstance(uid, basestring):
+            raise TypeError("uid can only be an instance of type basestring")
+        progress = self._call("startInstance",
+                     in_p=[uid])
+        progress = IProgress(progress)
+        return progress
+
+    def pause_instance(self, uid):
+        """Pause an existing instance with passed id.
+
+        in uid of type str
+            The id of instance in the Cloud.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        if not isinstance(uid, basestring):
+            raise TypeError("uid can only be an instance of type basestring")
+        progress = self._call("pauseInstance",
+                     in_p=[uid])
+        progress = IProgress(progress)
+        return progress
+
+    def terminate_instance(self, uid):
+        """Terminate an existing instance with passed id.
+
+        in uid of type str
+            the id of instance in the Cloud.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        if not isinstance(uid, basestring):
+            raise TypeError("uid can only be an instance of type basestring")
+        progress = self._call("terminateInstance",
+                     in_p=[uid])
+        progress = IProgress(progress)
+        return progress
+
+    def create_image(self, parameters):
+        """Create an image in the Cloud.
+
+        in parameters of type str
+            Each parameter in the array must be in the form "name=value".
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        if not isinstance(parameters, list):
+            raise TypeError("parameters can only be an instance of type list")
+        for a in parameters[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(
+                        "array can only contain objects of type basestring")
+        progress = self._call("createImage",
+                     in_p=[parameters])
+        progress = IProgress(progress)
+        return progress
+
+    def export_image(self, image, parameters):
+        """Export an existing VBox image in the Cloud.
+
+        in image of type :class:`IMedium`
+            Reference to the existing VBox image.
+
+        in parameters of type str
+            Each parameter in the array must be in the form "name=value".
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        if not isinstance(image, IMedium):
+            raise TypeError("image can only be an instance of type IMedium")
+        if not isinstance(parameters, list):
+            raise TypeError("parameters can only be an instance of type list")
+        for a in parameters[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(
+                        "array can only contain objects of type basestring")
+        progress = self._call("exportImage",
+                     in_p=[image, parameters])
+        progress = IProgress(progress)
+        return progress
+
+    def import_image(self, uid, parameters):
+        """Import an existing image in the Cloud to the local host.
+
+        in uid of type str
+            the id of image in the Cloud.
+
+        in parameters of type str
+            Each parameter in the array must be in the form "name=value".
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        if not isinstance(uid, basestring):
+            raise TypeError("uid can only be an instance of type basestring")
+        if not isinstance(parameters, list):
+            raise TypeError("parameters can only be an instance of type list")
+        for a in parameters[:10]:
+            if not isinstance(a, basestring):
+                raise TypeError(
+                        "array can only contain objects of type basestring")
+        progress = self._call("importImage",
+                     in_p=[uid, parameters])
+        progress = IProgress(progress)
+        return progress
+
+    def delete_image(self, uid):
+        """Delete an existing image with passed id from the Cloud.
+
+        in uid of type str
+            The id of image in the Cloud.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        if not isinstance(uid, basestring):
+            raise TypeError("uid can only be an instance of type basestring")
+        progress = self._call("deleteImage",
+                     in_p=[uid])
+        progress = IProgress(progress)
+        return progress
+
+    def get_image_info(self, uid):
+        """Returns the information about an image in the Cloud.
+
+        in uid of type str
+            The id of image in the Cloud.
+
+        out info_array of type :class:`IStringArray`
+            An array where the image settings or properties is returned.
+            Each parameter in the array must be in the form "name=value".
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        if not isinstance(uid, basestring):
+            raise TypeError("uid can only be an instance of type basestring")
+        (progress, info_array) = self._call("getImageInfo",
+                     in_p=[uid])
+        progress = IProgress(progress)
+        info_array = IStringArray(info_array)
+        return (progress, info_array)
+
+    def start_cloud_network_gateway(self, network, ssh_public_key):
+        """The id of image in the Cloud.
+
+        in network of type :class:`ICloudNetwork`
+            The id of image in the Cloud.
+
+        in ssh_public_key of type str
+            The id of image in the Cloud.
+
+        out gateway_info of type :class:`ICloudNetworkGatewayInfo`
+            Information about the started gateway.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        if not isinstance(network, ICloudNetwork):
+            raise TypeError("network can only be an instance of type ICloudNetwork")
+        if not isinstance(ssh_public_key, basestring):
+            raise TypeError("ssh_public_key can only be an instance of type basestring")
+        (progress, gateway_info) = self._call("startCloudNetworkGateway",
+                     in_p=[network, ssh_public_key])
+        progress = IProgress(progress)
+        gateway_info = ICloudNetworkGatewayInfo(gateway_info)
+        return (progress, gateway_info)
+
+    def setup_cloud_network_environment(self, tunnel_network_name, tunnel_network_range, gateway_os_name, gateway_os_version, gateway_shape):
+        """The name of tunnelling network to be created in the Cloud. If this parameter
+        is empty the default value "VirtualBox Tunneling Network" is assumed.
+
+        in tunnel_network_name of type str
+            The name of tunnelling network to be created in the Cloud. If this parameter
+            is empty the default value "VirtualBox Tunneling Network" is assumed.
+
+        in tunnel_network_range of type str
+            The IP address range of tunnelling network to be created in the Cloud. If this
+            parameter is empty the default value "10.0.0.0/16" is assumed.
+
+        in gateway_os_name of type str
+            The name of the operating system to be used for cloud gateway instances.
+            The default value is "Oracle Linux".
+
+        in gateway_os_version of type str
+            The version of the operating system to be used for cloud gateway instances.
+            The default value is "7.8".
+
+        in gateway_shape of type str
+            The shape of cloud gateway instance. The default value is "VM.Standard2.1".
+
+        out network_environment_info of type :class:`ICloudNetworkEnvironmentInfo`
+            Information about the created network environment.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        if not isinstance(tunnel_network_name, basestring):
+            raise TypeError("tunnel_network_name can only be an instance of type basestring")
+        if not isinstance(tunnel_network_range, basestring):
+            raise TypeError("tunnel_network_range can only be an instance of type basestring")
+        if not isinstance(gateway_os_name, basestring):
+            raise TypeError("gateway_os_name can only be an instance of type basestring")
+        if not isinstance(gateway_os_version, basestring):
+            raise TypeError("gateway_os_version can only be an instance of type basestring")
+        if not isinstance(gateway_shape, basestring):
+            raise TypeError("gateway_shape can only be an instance of type basestring")
+        (progress, network_environment_info) = self._call("setupCloudNetworkEnvironment",
+                     in_p=[tunnel_network_name, tunnel_network_range, gateway_os_name, gateway_os_version, gateway_shape])
+        progress = IProgress(progress)
+        network_environment_info = ICloudNetworkEnvironmentInfo(network_environment_info)
+        return (progress, network_environment_info)
 
 
 class ICloudProfile(Interface):
@@ -33571,4 +37333,22 @@ class ICloudProviderManager(Interface):
                      in_p=[provider_name])
         provider = ICloudProvider(provider)
         return provider
+
+
+class ICloudProviderRegisteredEvent(IEvent):
+    """"""
+    __uuid__ = '3d515696-eb98-11ea-96ac-8b4794b20214'
+    __wsmap__ = 'managed'
+    id = VBoxEventType.on_cloud_provider_registered
+    @property
+    def id_p(self):
+        """Get str value for 'id'"""
+        ret = self._get_attr("id")
+        return ret
+
+    @property
+    def registered(self):
+        """Get bool value for 'registered'"""
+        ret = self._get_attr("registered")
+        return ret
 
