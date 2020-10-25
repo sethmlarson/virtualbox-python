@@ -18,7 +18,7 @@ setup(
     maintainer=about["__maintainer__"],
     maintainer_email=about["__maintainer_email__"],
     url=about["__url__"],
-    description="Complete implementation of VirtualBox's COM API with a Pythoninc interface",
+    description="Complete implementation of VirtualBox's COM API with a Pythonic interface",
     long_description=open("README.rst").read(),
     license=about["__license__"],
     zip_safe=False,

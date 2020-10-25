@@ -1,4 +1,4 @@
-# Complete implementation of VirtualBox's COM API with a Pythoninc interface.
+# Complete implementation of VirtualBox's COM API with a Pythonic interface.
 #
 # Note: Commenting, and API structure generation was carved from
 #       VirtualBox project's VirtualBox.xidl Main API definition.
@@ -81,11 +81,11 @@ about how to call a method or attribute from a specific programming language.
 """
 
 
-vbox_version = "6.1.14"
+vbox_version = "6.1.16"
 lib_version = 1.3
 lib_app_uuid = "819B4D85-9CEE-493C-B6FC-64FFE759B3C9"
 lib_uuid = "d7569351-1750-46f0-936e-bd127d5bc264"
-xidl_hash = "f6fc2decce1cdf49f616583addcd3ab4"
+xidl_hash = "09a60b2cdcbf61f994e4eb01863c81d1"
 
 
 class VBoxErrorObjectNotFound(VBoxError):
@@ -2106,7 +2106,7 @@ class PartitionType(Enum):
 
     .. describe:: linux_srv(307)
 
-            Linux /srv partition..
+            Linux /srv partition.
 
     .. describe:: linux_plain_dm_crypt(308)
 
@@ -2599,7 +2599,7 @@ class PartitionType(Enum):
         ("LinuxRootARM32", 304, """Linux root partition for ARM32."""),
         ("LinuxRootARM64", 305, """Linux root partition for ARM64 / AArch64."""),
         ("LinuxHome", 306, """Linux /home partition."""),
-        ("LinuxSrv", 307, """Linux /srv partition.."""),
+        ("LinuxSrv", 307, """Linux /srv partition."""),
         ("LinuxPlainDmCrypt", 308, """Linux plain dm-crypt partition."""),
         ("LinuxLUKS", 309, """Linux unitified key setup (LUKS) partition."""),
         ("LinuxReserved", 310, """Linux reserved partition."""),
@@ -8303,17 +8303,33 @@ class VBoxEventType(Enum):
 
             See :py:class:`IClipboardFileTransferModeChangedEvent` IClipboardFileTransferModeChangedEvent.
 
-    .. describe:: on_cloud_provider_registered(105)
+    .. describe:: on_cloud_provider_list_changed(105)
 
-            See :py:class:`ICloudProviderRegisteredEvent` ICloudProviderRegisteredEvent.
+            See :py:class:`ICloudProviderListChangedEvent` .
 
-    .. describe:: last(106)
+    .. describe:: on_cloud_provider_registered(106)
+
+            See :py:class:`ICloudProviderRegisteredEvent` .
+
+    .. describe:: on_cloud_provider_uninstall(107)
+
+            See :py:class:`ICloudProviderUninstallEvent` .
+
+    .. describe:: on_cloud_profile_registered(108)
+
+            See :py:class:`ICloudProfileRegisteredEvent` .
+
+    .. describe:: on_cloud_profile_changed(109)
+
+            See :py:class:`ICloudProfileChangedEvent` .
+
+    .. describe:: last(110)
 
             Must be last event, used for iterations and structures relying on numerical event values.
 
     """
 
-    __uuid__ = "d5d15e38-808d-11e9-aaac-4bc5d973ca37"
+    __uuid__ = "2ab7c196-f232-11ea-a5d2-83b96bc30bcc"
     _enums = [
         ("Invalid", 0, """Invalid event, must be first."""),
         (
@@ -8709,13 +8725,33 @@ class VBoxEventType(Enum):
             """See :py:class:`IClipboardFileTransferModeChangedEvent` IClipboardFileTransferModeChangedEvent.""",
         ),
         (
-            "OnCloudProviderRegistered",
+            "OnCloudProviderListChanged",
             105,
-            """See :py:class:`ICloudProviderRegisteredEvent` ICloudProviderRegisteredEvent.""",
+            """See :py:class:`ICloudProviderListChangedEvent` .""",
+        ),
+        (
+            "OnCloudProviderRegistered",
+            106,
+            """See :py:class:`ICloudProviderRegisteredEvent` .""",
+        ),
+        (
+            "OnCloudProviderUninstall",
+            107,
+            """See :py:class:`ICloudProviderUninstallEvent` .""",
+        ),
+        (
+            "OnCloudProfileRegistered",
+            108,
+            """See :py:class:`ICloudProfileRegisteredEvent` .""",
+        ),
+        (
+            "OnCloudProfileChanged",
+            109,
+            """See :py:class:`ICloudProfileChangedEvent` .""",
         ),
         (
             "Last",
-            106,
+            110,
             """Must be last event, used for iterations and structures relying on numerical event values.""",
         ),
     ]
@@ -19196,9 +19232,9 @@ class IHostDrivePartition(Interface):
     @property
     def number(self):
         """Get int value for 'number'
-        The number of the partition.
-        <!-- @todo r=bird: This is weird numbering scheme for MBR disk as it goes 1,2,3,4,5,7,9,11,...
-        And has no practical use.  It would be better to use the system specific device node numbering here. -->
+        The number of the partition. Represents the system number of the
+        partition, e.g. /dev/sdX in the linux, where X is the number
+        returned.
         """
         ret = self._get_attr("number")
         return ret
@@ -19225,7 +19261,7 @@ class IHostDrivePartition(Interface):
         """Get PartitionType value for 'type'
         A translation of :py:func:`IHostDrivePartition.type_mbr`  and
         :py:func:`IHostDrivePartition.type_uuid`  when possible, otherwise
-        set to :py:func:`PartitionType.unknown` .
+        set to :py:attr:`PartitionType.unknown` .
         """
         ret = self._get_attr("type")
         return PartitionType(ret)
@@ -19322,8 +19358,14 @@ class IHostDrivePartition(Interface):
 class IHostDrive(Interface):
     """
     The IHostDrive interface represents the drive of the physical machine.
-    It is not complete medium description and, therefore, it is not IMedium
-    based. The interface is used just for getting a host drive partitions info.
+    It is not a complete medium description and, therefore, it is not IMedium
+    based. The interface is used to get information about a host drive and
+    its partitioning.
+
+    The object operates in limited mode if the user cannot open the drive
+    and parse the partition table.  In limited mode on the
+    :py:func:`IHostDrive.drive_path`  and :py:func:`IHostDrive.model`
+    attributes can be accessed, the rest will fail with E_ACCESSDENIED.
     """
 
     __uuid__ = "70e2e0c3-332c-4d72-b822-2db16e2cb31b"
@@ -36895,7 +36937,11 @@ class IRangedIntegerFormValue(IFormValue):
 
 
 class IStringFormValue(IFormValue):
-    """"""
+    """
+    Intnded for cases when a read-only string value is used to
+    display information and different string is to be used when
+    copying to the clipboard.
+    """
 
     __uuid__ = "cb6f0f2c-8384-11e9-921d-8b984e28a686"
     __wsmap__ = "managed"
@@ -36928,6 +36974,16 @@ class IStringFormValue(IFormValue):
         progress = self._call("setString", in_p=[text])
         progress = IProgress(progress)
         return progress
+
+    @property
+    def clipboard_string(self):
+        """Get str value for 'clipboardString'
+        Intnded for cases when a read-only string value is used to
+        display information and different string is to be used when
+        copying to the clipboard.
+        """
+        ret = self._get_attr("clipboardString")
+        return ret
 
 
 class IChoiceFormValue(IFormValue):
@@ -37503,6 +37559,29 @@ class ICloudClient(Interface):
         See :py:func:`read_cloud_machine_list` .
         """
         ret = self._get_attr("cloudMachineList")
+        return [ICloudMachine(a) for a in ret]
+
+    def read_cloud_machine_stub_list(self):
+        """Make the list of cloud machine stubs available via
+        :py:func:`cloud_machine_stub_list`  attribute.
+        Like with :py:func:`get_cloud_machine` , the returned machines
+        are initiatally inaccessible and require a refresh to get
+        their data from the cloud.
+
+        return progress of type :class:`IProgress`
+            Progress object to track the operation completion.
+
+        """
+        progress = self._call("readCloudMachineStubList")
+        progress = IProgress(progress)
+        return progress
+
+    @property
+    def cloud_machine_stub_list(self):
+        """Get ICloudMachine value for 'cloudMachineStubList'
+        See :py:func:`read_cloud_machine_stub_list` .
+        """
+        ret = self._get_attr("cloudMachineStubList")
         return [ICloudMachine(a) for a in ret]
 
     def add_cloud_machine(self, instance_id):
@@ -38302,10 +38381,32 @@ class ICloudProviderManager(Interface):
         return provider
 
 
-class ICloudProviderRegisteredEvent(IEvent):
-    """"""
+class ICloudProviderListChangedEvent(IEvent):
+    """
+    Each individual provider that is installed or uninstalled is
+    reported as an :py:class:`ICloudProviderRegisteredEvent` .  When
+    the batch is done this event is sent and listerns can get the
+    new list.
+    """
 
-    __uuid__ = "3d515696-eb98-11ea-96ac-8b4794b20214"
+    __uuid__ = "a54d9cca-f23f-11ea-9755-efd0f1f792d9"
+    __wsmap__ = "managed"
+    id = VBoxEventType.on_cloud_provider_list_changed
+
+    @property
+    def registered(self):
+        """Get bool value for 'registered'"""
+        ret = self._get_attr("registered")
+        return ret
+
+
+class ICloudProviderRegisteredEvent(IEvent):
+    """
+    A cloud provider was installed or uninstalled.
+    See also :py:class:`ICloudProviderListChangedEvent` .
+    """
+
+    __uuid__ = "e28e227a-f231-11ea-9641-9b500c6d5365"
     __wsmap__ = "managed"
     id = VBoxEventType.on_cloud_provider_registered
 
@@ -38319,4 +38420,72 @@ class ICloudProviderRegisteredEvent(IEvent):
     def registered(self):
         """Get bool value for 'registered'"""
         ret = self._get_attr("registered")
+        return ret
+
+
+class ICloudProviderUninstallEvent(IEvent):
+    """
+    A cloud provider is about to be uninstalled.
+    Unlike :py:class:`ICloudProviderRegisteredEvent`  this one is
+    waitable and is sent *before* an attempt is made to
+    uninstall a provider.  Listerns should release references to the
+    provider and related objects if they have any, or the
+    uninstallation of the provider is going to fail because it's
+    still in use.
+    """
+
+    __uuid__ = "f01f1066-f231-11ea-8eee-33bb2afb0b6e"
+    __wsmap__ = "managed"
+    id = VBoxEventType.on_cloud_provider_can_uninstall
+
+    @property
+    def id_p(self):
+        """Get str value for 'id'"""
+        ret = self._get_attr("id")
+        return ret
+
+
+class ICloudProfileRegisteredEvent(IEvent):
+    """"""
+
+    __uuid__ = "6a5e65ba-eeb9-11ea-ae38-73242bc0f172"
+    __wsmap__ = "managed"
+    id = VBoxEventType.on_cloud_profile_registered
+
+    @property
+    def provider_id(self):
+        """Get str value for 'providerId'"""
+        ret = self._get_attr("providerId")
+        return ret
+
+    @property
+    def name(self):
+        """Get str value for 'name'"""
+        ret = self._get_attr("name")
+        return ret
+
+    @property
+    def registered(self):
+        """Get bool value for 'registered'"""
+        ret = self._get_attr("registered")
+        return ret
+
+
+class ICloudProfileChangedEvent(IEvent):
+    """"""
+
+    __uuid__ = "83795a4c-fce1-11ea-8a17-636028ae0be2"
+    __wsmap__ = "managed"
+    id = VBoxEventType.on_cloud_profile_changed
+
+    @property
+    def provider_id(self):
+        """Get str value for 'providerId'"""
+        ret = self._get_attr("providerId")
+        return ret
+
+    @property
+    def name(self):
+        """Get str value for 'name'"""
+        ret = self._get_attr("name")
         return ret
