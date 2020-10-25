@@ -26,7 +26,7 @@ def to_string(value):
 
 
 LIB_IMPORTS = """\
-# Complete implementation of VirtualBox's COM API with a Pythoninc interface.
+# Complete implementation of VirtualBox's COM API with a Pythonic interface.
 #
 # Note: Commenting, and API structure generation was carved from 
 #       VirtualBox project's VirtualBox.xidl Main API definition.
@@ -678,7 +678,7 @@ def get_vbox_version(config_kmk):
         config = f.read()
     major = b"6"  # re.search(b"VBOX_VERSION_MAJOR = (?P<major>[\d])", config).groupdict()['major']
     minor = b"1"  # re.search(b"VBOX_VERSION_MINOR = (?P<minor>[\d])", config).groupdict()['minor']
-    build = b"14"  # re.search(b"VBOX_VERSION_BUILD = (?P<build>[\d])", config).groupdict()['build']
+    build = b"16"  # re.search(b"VBOX_VERSION_BUILD = (?P<build>[\d])", config).groupdict()['build']
     return b".".join([major, minor, build])
 
 
