@@ -265,6 +265,8 @@ ENUM_ROW = """\
         ('%(label)s', %(value)s, 
          '''%(doc)s'''),"""
 
+VBOXEVENT_ENUM_VALUES = set()
+
 
 def process_enum_node(node):
     name = node.getAttribute("name")
@@ -278,6 +280,8 @@ def process_enum_node(node):
             continue
         doc = get_doc(child)
         label = str(child.getAttribute("name"))
+        if name == "VBoxEventType":
+            VBOXEVENT_ENUM_VALUES.add(pythonic_name(label))
         value = child.getAttribute("value")
         if "0x" in value:
             value = int(value[2:], 16)
@@ -328,7 +332,15 @@ def process_interface_node(node):
     event_id = node.getAttribute("id")
     if event_id:
         event_id = pythonic_name(event_id)
-        event_id = "id = VBoxEventType.%(event_id)s" % dict(event_id=event_id)
+        # Work-around for a typo in Virtualbox.xidl:
+        if event_id == "on_cloud_provider_can_uninstall":
+            event_id = "on_cloud_provider_uninstall"
+
+        # Some event IDs aren't actually a part of the VBoxEventType enum
+        if event_id in VBOXEVENT_ENUM_VALUES:
+            event_id = "id = VBoxEventType.%(event_id)s" % dict(event_id=event_id)
+        else:
+            event_id = ""
     class_def = CLASS_DEF % dict(
         name=name, extends=extends, doc=doc, uuid=uuid, wsmap=wsmap, event_id=event_id
     )

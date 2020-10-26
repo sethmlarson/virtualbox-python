@@ -36646,7 +36646,6 @@ class IProgressEvent(IEvent):
 
     __uuid__ = "daaf9016-1f04-4191-aa2f-1fac9646ae4c"
     __wsmap__ = "managed"
-    id = VBoxEventType.progress_event
 
     @property
     def progress_id(self):
@@ -38436,7 +38435,7 @@ class ICloudProviderUninstallEvent(IEvent):
 
     __uuid__ = "f01f1066-f231-11ea-8eee-33bb2afb0b6e"
     __wsmap__ = "managed"
-    id = VBoxEventType.on_cloud_provider_can_uninstall
+    id = VBoxEventType.on_cloud_provider_uninstall
 
     @property
     def id_p(self):
