@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.1.1 (10/26/2020)
+------------------
+
+* Fix bug in VirtualBox API specification where ``VBoxEventType.progress_event`` and
+  ``VBoxEventType.on_cloud_provider_can_uninstall`` are both mentioned but are not valid event types.
+
 2.1.0 (10/25/2020)
 ----------------
 
