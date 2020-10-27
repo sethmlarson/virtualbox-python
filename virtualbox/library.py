@@ -34276,8 +34276,7 @@ class IEventSource(Interface):
         if not isinstance(timeout, baseinteger):
             raise TypeError("timeout can only be an instance of type baseinteger")
         event = self._call("getEvent", in_p=[listener, timeout])
-        event = IEvent(event)
-        return event
+        return IEvent(event) if event else None
 
     def event_processed(self, listener, event):
         """Must be called for waitable events after a particular listener finished its
