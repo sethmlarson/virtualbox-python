@@ -181,12 +181,21 @@ class IMachine(library.IMachine):
         return session
 
     # Simplify the launch_vm_process. Build a ISession if it has not been defined...
-    def launch_vm_process(self, session=None, type_p="gui", environment=""):
+    def launch_vm_process(self, session=None, type_p="gui", environment=None):
         if session is None:
             local_session = library.ISession()
         else:
             local_session = session
-        p = super(IMachine, self).launch_vm_process(local_session, type_p, environment)
+
+        environment_changes = []
+        if environment is not None:
+            # Split string of environment changes by new line symbol
+            if isinstance(environment, basestring):
+                environment_changes = environment.splitlines()
+            else:
+                environment_changes = environment
+
+        p = super(IMachine, self).launch_vm_process(local_session, type_p, environment_changes)
         if session is None:
             p.wait_for_completion(-1)
             local_session.unlock_machine()
