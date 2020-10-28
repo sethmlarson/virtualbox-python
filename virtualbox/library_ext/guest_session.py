@@ -89,7 +89,7 @@ class IGuestSession(library.IGuestSession):
             flag_none = [library.ProcessInputFlag.none]
             flag_eof = [library.ProcessInputFlag.end_of_file]
             while index < len(stdin):
-                array = map(lambda a: str(ord(a)), stdin[index:])
+                array = [str(ord(a)) for a in stdin[index:]]
                 wrote = process.write_array(0, flag_none, array, 0)
                 if wrote == 0:
                     raise Exception("Failed to write ANY bytes to %s" % process)
