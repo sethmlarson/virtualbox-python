@@ -26,10 +26,10 @@ class EnumType(type):
 
     def __init__(cls, name, bases, dct):
         cls._value = None
-        cls._lookup_label = dict((v, l) for l, v, _ in cls._enums)
-        cls._lookup_doc = dict((v, d) for _, v, d in cls._enums)
-        for l, v, _ in cls._enums:
-            setattr(cls, pythonic_name(l), cls(v))
+        cls._lookup_label = dict((vl, lu) for lu, vl, _ in cls._enums)
+        cls._lookup_doc = dict((vl, dt) for _, vl, dt in cls._enums)
+        for lu, vl, _ in cls._enums:
+            setattr(cls, pythonic_name(lu), cls(vl))
 
     def __getitem__(cls, k):
         if not hasattr(cls, k):
