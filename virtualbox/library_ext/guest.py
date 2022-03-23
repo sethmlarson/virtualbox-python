@@ -23,6 +23,10 @@ class IGuest(library.IGuest):
                 break
             time.sleep(0.1)
         else:
+            # Wait for session termination
+            if session is not None:
+                session.close()
+                session.wait_for(int(library.GuestSessionWaitForFlag.terminate), timeout_ms=timeout_ms)
             if len(password) == 0:
                 raise SystemError(
                     "GuestSession failed to start. Could be because "
