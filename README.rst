@@ -32,7 +32,7 @@ Getting Started
 Listing Available Machines
 --------------------------
 
- .. code-block::
+ .. code-block:: py
 
     >>> import virtualbox
     >>> vbox = virtualbox.VirtualBox()
@@ -42,7 +42,7 @@ Listing Available Machines
 Launching a Machine
 -------------------
 
-  .. code-block::
+  .. code-block:: py
 
     >>> session = virtualbox.Session()
     >>> machine = vbox.find_machine("windows")
@@ -54,7 +54,7 @@ Launching a Machine
 Querying the Machine
 --------------------
 
- .. code-block::
+ .. code-block:: py
 
     >>> session.state
     SessionState(2)  # locked
@@ -65,7 +65,7 @@ Querying the Machine
 Interacting with the Machine
 ----------------------------
 
- .. code-block::
+ .. code-block:: py
 
     >>> session.console.keyboard.put_keys("Hello, world!")
     >>> guest_session = session.console.guest.create_session("Seth Larson", "password")
@@ -103,7 +103,7 @@ Interacting with the Machine
 Registering Event Handlers
 --------------------------
 
- .. code-block::
+ .. code-block:: py
 
     >>> def test(event):
     >>>    print("scancode received: %r" % event.scancodes)
@@ -119,7 +119,7 @@ Registering Event Handlers
 Powering-Down a Machine
 -----------------------
 
-  .. code-block::
+  .. code-block:: py
 
     >>> session.console.power_down()
 
