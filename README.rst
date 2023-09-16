@@ -1,10 +1,8 @@
 virtualbox-python
 *****************
 
-.. image:: https://img.shields.io/travis/sethmlarson/virtualbox-python/master.svg
-   :target: https://travis-ci.org/sethmlarson/virtualbox-python
-
-Complete implementation of VirtualBox's COM API with a Pythonic interface.
+**NOTE: ⚠️ I am no longer actively maintaining this project. If you have a vested interest in seeing it continued to be maintained please reach out to me via email.
+Complete implementation of VirtualBox's COM API with a Pythonic interface.**
 
 Installation
 ============
